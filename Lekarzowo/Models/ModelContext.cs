@@ -35,8 +35,15 @@ namespace Lekarzowo.Models
         public virtual DbSet<Visit> Visit { get; set; }
         public virtual DbSet<Workinghours> Workinghours { get; set; }
 
+
+
+
+
         //widoki
-        public DbQuery<View_AddressData> View_AddressData { get; set; }
+        public virtual DbQuery<View_AddressData> View_AddressData { get; set; }
+
+
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -62,7 +69,8 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
-                    .HasColumnType("NUMBER(38)");
+                    .HasColumnType("NUMBER(38)")
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -109,7 +117,8 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
-                    .HasColumnType("NUMBER(38)");
+                    .HasColumnType("NUMBER(38)")
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Description)
                     .IsRequired()
@@ -132,7 +141,8 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
-                    .HasColumnType("NUMBER(38)");
+                    .HasColumnType("NUMBER(38)")
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Curedate)
                     .HasColumnName("CUREDATE")
@@ -183,11 +193,12 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
-                    .HasColumnType("NUMBER(38)");
+                    .HasColumnType("NUMBER(38)")
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Blocknumber)
                     .HasColumnName("BLOCKNUMBER")
-                    .HasColumnType("NUMBER(38)");
+                    .HasColumnType("VARCHAR2(15)");
 
                 entity.Property(e => e.CityId)
                     .HasColumnName("CITY_ID")
@@ -199,8 +210,9 @@ namespace Lekarzowo.Models
                     .HasColumnType("VARCHAR2(127)");
 
                 entity.Property(e => e.Postcode)
+                    .IsRequired()
                     .HasColumnName("POSTCODE")
-                    .HasColumnType("NUMBER(38)");
+                    .HasColumnType("VARCHAR2(15)");
 
                 entity.Property(e => e.Streetname)
                     .IsRequired()
@@ -228,7 +240,8 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
-                    .HasColumnType("NUMBER(38)");
+                    .HasColumnType("NUMBER(38)")
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -390,7 +403,8 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
-                    .HasColumnType("NUMBER(38)");
+                    .HasColumnType("NUMBER(38)")
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Birthdate)
                     .HasColumnName("BIRTHDATE")
@@ -436,7 +450,8 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
-                    .HasColumnType("NUMBER(38)");
+                    .HasColumnType("NUMBER(38)")
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Dateofissue)
                     .HasColumnName("DATEOFISSUE")
@@ -488,7 +503,8 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
-                    .HasColumnType("NUMBER(38)");
+                    .HasColumnType("NUMBER(38)")
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Canceled)
                     .HasColumnName("CANCELED")
@@ -533,7 +549,8 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
-                    .HasColumnType("NUMBER(38)");
+                    .HasColumnType("NUMBER(38)")
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.LocalId)
                     .HasColumnName("LOCAL_ID")
@@ -558,7 +575,8 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
-                    .HasColumnType("NUMBER(38)");
+                    .HasColumnType("NUMBER(38)")
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -580,7 +598,8 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
-                    .HasColumnType("NUMBER(38)");
+                    .HasColumnType("NUMBER(38)")
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -702,7 +721,8 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
-                    .HasColumnType("NUMBER(38)");
+                    .HasColumnType("NUMBER(38)")
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.DoctorId)
                     .HasColumnName("DOCTOR_ID")
@@ -729,7 +749,86 @@ namespace Lekarzowo.Models
                     .HasConstraintName("WORKINGHOURS_LOCAL");
             });
 
+
+
+
+
+
+            //widoki
+            modelBuilder.Query<View_AddressData>().ToView("VW_ADDRESS_DATA");
+
+
+
+
+            //sekwencje
+
+
+
+
+
+            modelBuilder.HasSequence("CITY_PK");
+
+            modelBuilder.HasSequence("CITY_SEQ");
+
             modelBuilder.HasSequence("DEPT_SEQ");
+
+            modelBuilder.HasSequence("ISEQ$$_1079246");
+
+            modelBuilder.HasSequence("ISEQ$$_1079248");
+
+            modelBuilder.HasSequence("ISEQ$$_1079253");
+
+            modelBuilder.HasSequence("ISEQ$$_1079256");
+
+            modelBuilder.HasSequence("ISEQ$$_1079259");
+
+            modelBuilder.HasSequence("ISEQ$$_1079263");
+
+            modelBuilder.HasSequence("ISEQ$$_1079268");
+
+            modelBuilder.HasSequence("ISEQ$$_1079271");
+
+            modelBuilder.HasSequence("ISEQ$$_1079274");
+
+            modelBuilder.HasSequence("ISEQ$$_1079277");
+
+            modelBuilder.HasSequence("ISEQ$$_1079288");
+
+            modelBuilder.HasSequence("ISEQ$$_1079291");
+
+            modelBuilder.HasSequence("ISEQ$$_1079294");
+
+            modelBuilder.HasSequence("ISEQ$$_1079297");
+
+            modelBuilder.HasSequence("ISEQ$$_1079300");
+
+            modelBuilder.HasSequence("ISEQ$$_1079303");
+
+            modelBuilder.HasSequence("ISEQ$$_1079310");
+
+            modelBuilder.HasSequence("ISEQ$$_1079703");
+
+            modelBuilder.HasSequence("ISEQ$$_1079708");
+
+            modelBuilder.HasSequence("ISEQ$$_1079711");
+
+            modelBuilder.HasSequence("ISEQ$$_1079714");
+
+            modelBuilder.HasSequence("ISEQ$$_1079717");
+
+            modelBuilder.HasSequence("ISEQ$$_1079728");
+
+            modelBuilder.HasSequence("ISEQ$$_1079731");
+
+            modelBuilder.HasSequence("ISEQ$$_1079734");
+
+            modelBuilder.HasSequence("ISEQ$$_1079737");
+
+            modelBuilder.HasSequence("ISEQ$$_1079740");
+
+            modelBuilder.HasSequence("ISEQ$$_1079743");
+
+            modelBuilder.HasSequence("ISEQ$$_1079750");
 
             modelBuilder.HasSequence("SEQ_ZWIAZEK");
         }

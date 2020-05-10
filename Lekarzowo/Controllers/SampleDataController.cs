@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lekarzowo.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lekarzowo.Controllers
@@ -9,10 +10,11 @@ namespace Lekarzowo.Controllers
     [Route("api/[controller]")]
     public class SampleDataController : Controller
     {
-        private static string[] Summaries = new[]
-        {
+        private static string[] Summaries = new[]{
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
+
+        private static ModelContext _context = new ModelContext();
 
         [HttpGet("[action]")]
         public IEnumerable<WeatherForecast> WeatherForecasts()
@@ -25,6 +27,14 @@ namespace Lekarzowo.Controllers
                 Summary = Summaries[rng.Next(Summaries.Length)]
             });
         }
+
+
+        [HttpGet("[action]")]
+        public IEnumerable<View_AddressData> AddressData()
+        {
+            return _context.View_AddressData.ToList();
+        }
+        
 
         public class WeatherForecast
         {

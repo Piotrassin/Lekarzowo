@@ -16,14 +16,14 @@ namespace Lekarzowo.Models
         public int RoomNumber { get; private set; }
         [Column("City_Name")]
         public String CityName { get; private set; }
-        [Column("LocalName")]
+        [Column("Local_Name")]
         public String LocalName { get; private set; }
         [Column("Local_StreetName")]
         public String LocalStreetName { get; private set; }
         [Column("Local_StreetNumber")]
         public int LocalStreetNumber { get; private set; }
         [Column("Local_BlockNumber")]
-        public int LocalBlockNumber { get; private set; }
+        public int? LocalBlockNumber { get; private set; }
         [Column("Local_Postcode")]
         public String LocalPostcode { get; private set; }
 
