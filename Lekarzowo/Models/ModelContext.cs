@@ -41,7 +41,7 @@ namespace Lekarzowo.Models
 
         //widoki
         public virtual DbQuery<View_AddressData> View_AddressData { get; set; }
-
+        public virtual DbQuery<View_DocsAndSpecs> View_DocsAndSpecs { get; set; }
 
 
 
@@ -756,7 +756,7 @@ namespace Lekarzowo.Models
 
             //widoki
             modelBuilder.Query<View_AddressData>().ToView("VW_ADDRESS_DATA");
-
+            modelBuilder.Query<View_DocsAndSpecs>().ToView("VW_DOCS_AND_SPECS");
 
 
 

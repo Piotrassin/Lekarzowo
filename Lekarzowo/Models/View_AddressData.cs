@@ -23,7 +23,7 @@ namespace Lekarzowo.Models
         [Column("Local_StreetNumber")]
         public int LocalStreetNumber { get; private set; }
         [Column("Local_BlockNumber")]
-        public int? LocalBlockNumber { get; private set; }
+        public String LocalBlockNumber { get; private set; }
         [Column("Local_Postcode")]
         public String LocalPostcode { get; private set; }
 
