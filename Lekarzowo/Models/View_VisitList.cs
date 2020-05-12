@@ -7,5 +7,6 @@ namespace Lekarzowo.Models
 {
     public class View_VisitList
     {
+        //zmiany w bazie
     }
 }

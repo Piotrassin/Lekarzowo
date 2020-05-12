@@ -10,6 +10,7 @@ namespace Lekarzowo.Models
     {
         [Column("Patient_Id")]
         public int PatientId { get; set; }
+
         [Column("Person_Name")]
         public String PatientName { get; set; }
 

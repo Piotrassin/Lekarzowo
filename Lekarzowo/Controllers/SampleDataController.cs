@@ -34,7 +34,54 @@ namespace Lekarzowo.Controllers
         {
             return _context.View_AddressData.ToList();
         }
-        
+
+        [HttpGet("[action]")]
+        public IEnumerable<View_DocsAndSpecs> DocsAndSpecs()
+        {
+            return _context.View_DocsAndSpecs.ToList();
+        }
+
+        [HttpGet("[action]")]
+        public IEnumerable<View_DoctorList> DoctorList()
+        {
+            return _context.View_DoctorList.ToList();
+        }
+
+        [HttpGet("[action]")]
+        public IEnumerable<View_DoctorSchedule> DoctorSchedule()
+        {
+            return _context.View_DoctorSchedule.ToList();
+        }
+
+        [HttpGet("[action]")]
+        public IEnumerable<View_IllnessMedDetails> IllnessMedDetails()
+        {
+            return _context.View_IllnessMedDetails.ToList();
+        }
+
+        [HttpGet("[action]")]
+        public IEnumerable<View_IllnessMedList> IllnessMedList()
+        {
+            return _context.View_IllnessMedList.ToList();
+        }
+
+        [HttpGet("[action]")]
+        public IEnumerable<View_PatientIllnesses> PatientIllnesses()
+        {
+            return _context.View_PatientIllnesses.ToList();
+        }
+
+        //[HttpGet("[action]")]
+        //public IEnumerable<View_VisitDetails> AddressData()
+        //{
+        //    return _context.View_VisitDetails.ToList();
+        //}
+        //[HttpGet("[action]")]
+        //public IEnumerable<View_VisitList> AddressData()
+        //{
+        //    return _context.View_VisitList.ToList();
+        //}
+
 
         public class WeatherForecast
         {
