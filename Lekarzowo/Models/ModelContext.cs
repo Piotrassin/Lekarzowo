@@ -7,13 +7,11 @@ namespace Lekarzowo.Models
 	public partial class ModelContext : DbContext
 	{
 		public ModelContext()
-		{
-		}
+		{ }
 
 		public ModelContext(DbContextOptions<ModelContext> options)
 			: base(options)
-		{
-		}
+		{ }
 
 		public virtual DbSet<City> City { get; set; }
 		public virtual DbSet<Doctor> Doctor { get; set; }
@@ -37,8 +35,6 @@ namespace Lekarzowo.Models
 
 
 
-
-
 		//widoki
 		public virtual DbQuery<View_AddressData> View_AddressData { get; set; }
 		public virtual DbQuery<View_DocsAndSpecs> View_DocsAndSpecs { get; set; }
@@ -46,10 +42,10 @@ namespace Lekarzowo.Models
 		public virtual DbQuery<View_DoctorSchedule> View_DoctorSchedule { get; set; }
 		public virtual DbQuery<View_IllnessMedDetails> View_IllnessMedDetails { get; set; }
 		public virtual DbQuery<View_IllnessMedList> View_IllnessMedList { get; set; }
-		public virtual DbQuery<View_PatientIllnesses> View_PatientIllnesses { get; set; }
+		//public virtual DbQuery<View_PatientIllnesses> View_PatientIllnesses { get; set; }
 
-		//public virtual DbQuery<View_VisitDetails> View_VisitDetails { get; set; }
-		//public virtual DbQuery<View_VisitList> View_VisitList { get; set; }
+		public virtual DbQuery<View_VisitDetails> View_VisitDetails { get; set; }
+		public virtual DbQuery<View_VisitList> View_VisitList { get; set; }
 
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -768,10 +764,10 @@ namespace Lekarzowo.Models
 			modelBuilder.Query<View_DoctorSchedule>().ToView("VW_DOCTOR_SCHEDULE");
 			modelBuilder.Query<View_IllnessMedDetails>().ToView("VW_ILLNESS_MED_DETAILS");
 			modelBuilder.Query<View_IllnessMedList>().ToView("VW_ILLNESS_MED_LIST");
-			modelBuilder.Query<View_PatientIllnesses>().ToView("VW_PATIENT_ILLNESSES");
+			//modelBuilder.Query<View_PatientIllnesses>().ToView("VW_PATIENT_ILLNESSES");
 
-			//modelBuilder.Query<View_VisitDetails>().ToView("VW_VISIT_DETAILS");
-			//modelBuilder.Query<View_VisitList>().ToView("VW_VISIT_LIST");
+			modelBuilder.Query<View_VisitDetails>().ToView("VW_VISIT_DETAILS");
+			modelBuilder.Query<View_VisitList>().ToView("VW_VISIT_LIST");
 
 			//sekwencje
 
