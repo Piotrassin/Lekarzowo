@@ -7,7 +7,7 @@ namespace Lekarzowo.Models
     {
         public Room()
         {
-            Visit = new HashSet<Visit>();
+            Reservation = new HashSet<Reservation>();
         }
 
         public decimal Id { get; set; }
@@ -15,6 +15,6 @@ namespace Lekarzowo.Models
         public decimal LocalId { get; set; }
 
         public virtual Local Local { get; set; }
-        public virtual ICollection<Visit> Visit { get; set; }
+        public virtual ICollection<Reservation> Reservation { get; set; }
     }
 }
