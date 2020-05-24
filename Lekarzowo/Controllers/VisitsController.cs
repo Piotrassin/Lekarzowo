@@ -13,12 +13,8 @@ namespace Lekarzowo.Controllers
     [ApiController]
     public class VisitsController : ControllerBase
     {
-        private readonly ModelContext _context;
+        private readonly ModelContext _context = new ModelContext();
 
-        public VisitsController(ModelContext context)
-        {
-            _context = context;
-        }
 
         // GET: api/Visits
         [HttpGet]
@@ -111,6 +107,21 @@ namespace Lekarzowo.Controllers
             return visit;
         }
 
+        // GET: api/Visits/Details
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<View_VisitDetails>>> Details()
+        {
+            return await _context.View_VisitDetails.ToListAsync();
+        }
+
+        // GET: api/Visits/List
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<View_VisitList>>> List()
+        {
+            return await _context.View_VisitList.ToListAsync();
+        }
+
+        // to chyba można wywalić
         private bool VisitExists(decimal id)
         {
             return _context.Visit.Any(e => e.ReservationId == id);
