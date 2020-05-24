@@ -59,7 +59,7 @@ namespace Lekarzowo.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseOracle("Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=db-oracle.pjwstk.edu.pl)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=BAZA.PJWSTK.EDU.PL)));Persist Security Info=True;User Id=S17437;Password=oracle12;");
+                optionsBuilder.UseOracle("Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=db-oracle)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=BAZA.PJWSTK.EDU.PL)));Persist Security Info=True;User Id=S17437;Password=oracle12;");
             }
         }
 
@@ -129,15 +129,10 @@ namespace Lekarzowo.Models
                     .HasColumnType("NUMBER(38)")
                     .ValueGeneratedOnAdd();
 
-                entity.Property(e => e.Description)
-                    .IsRequired()
-                    .HasColumnName("DESCRIPTION")
-                    .HasColumnType("VARCHAR2(255)");
-
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnName("NAME")
-                    .HasColumnType("VARCHAR2(63)");
+                    .HasColumnType("VARCHAR2(127)");
             });
 
             modelBuilder.Entity<Illnesshistory>(entity =>
@@ -159,7 +154,7 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Description)
                     .HasColumnName("DESCRIPTION")
-                    .HasColumnType("VARCHAR2(255)");
+                    .HasColumnType("VARCHAR2(1023)");
 
                 entity.Property(e => e.IllnessId)
                     .HasColumnName("ILLNESS_ID")
@@ -255,7 +250,7 @@ namespace Lekarzowo.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnName("NAME")
-                    .HasColumnType("VARCHAR2(63)");
+                    .HasColumnType("VARCHAR2(127)");
             });
 
             modelBuilder.Entity<Medicinehistory>(entity =>
@@ -283,7 +278,7 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Description)
                     .HasColumnName("DESCRIPTION")
-                    .HasColumnType("VARCHAR2(127)");
+                    .HasColumnType("VARCHAR2(255)");
 
                 entity.Property(e => e.Finishdate)
                     .HasColumnName("FINISHDATE")
@@ -330,7 +325,7 @@ namespace Lekarzowo.Models
                 entity.Property(e => e.Description)
                     .IsRequired()
                     .HasColumnName("DESCRIPTION")
-                    .HasColumnType("VARCHAR2(255)");
+                    .HasColumnType("VARCHAR2(1023)");
 
                 entity.HasOne(d => d.Illness)
                     .WithMany(p => p.Oldillnesshistory)
@@ -368,7 +363,7 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Description)
                     .HasColumnName("DESCRIPTION")
-                    .HasColumnType("VARCHAR2(255)");
+                    .HasColumnType("VARCHAR2(1023)");
 
                 entity.HasOne(d => d.Medicine)
                     .WithMany(p => p.Oldmedicinehistory)
@@ -422,7 +417,7 @@ namespace Lekarzowo.Models
                 entity.Property(e => e.Email)
                     .IsRequired()
                     .HasColumnName("EMAIL")
-                    .HasColumnType("VARCHAR2(63)");
+                    .HasColumnType("VARCHAR2(127)");
 
                 entity.Property(e => e.Gender)
                     .IsRequired()
@@ -432,7 +427,7 @@ namespace Lekarzowo.Models
                 entity.Property(e => e.Lastname)
                     .IsRequired()
                     .HasColumnName("LASTNAME")
-                    .HasColumnType("VARCHAR2(63)");
+                    .HasColumnType("VARCHAR2(127)");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -469,7 +464,7 @@ namespace Lekarzowo.Models
                 entity.Property(e => e.Description)
                     .IsRequired()
                     .HasColumnName("DESCRIPTION")
-                    .HasColumnType("VARCHAR2(255)");
+                    .HasColumnType("VARCHAR2(511)");
 
                 entity.Property(e => e.DoctorId)
                     .HasColumnName("DOCTOR_ID")
@@ -600,7 +595,7 @@ namespace Lekarzowo.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnName("NAME")
-                    .HasColumnType("VARCHAR2(63)");
+                    .HasColumnType("VARCHAR2(127)");
 
                 entity.Property(e => e.Price)
                     .HasColumnName("PRICE")
@@ -636,30 +631,32 @@ namespace Lekarzowo.Models
 
             modelBuilder.Entity<Treatmentonvisit>(entity =>
             {
-                entity.HasKey(e => e.TreatmentId)
-                    .HasName("TREATMENTONVISIT_PK");
-
                 entity.ToTable("TREATMENTONVISIT");
 
-                entity.HasIndex(e => e.TreatmentId)
+                entity.HasIndex(e => e.Id)
                     .HasName("TREATMENTONVISIT_PK")
                     .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .HasColumnType("NUMBER(38)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Description)
+                    .HasColumnName("DESCRIPTION")
+                    .HasColumnType("VARCHAR2(511)");
 
                 entity.Property(e => e.TreatmentId)
                     .HasColumnName("TREATMENT_ID")
                     .HasColumnType("NUMBER(38)");
-
-                entity.Property(e => e.Description)
-                    .HasColumnName("DESCRIPTION")
-                    .HasColumnType("VARCHAR2(255)");
 
                 entity.Property(e => e.VisitId)
                     .HasColumnName("VISIT_ID")
                     .HasColumnType("NUMBER(38)");
 
                 entity.HasOne(d => d.Treatment)
-                    .WithOne(p => p.Treatmentonvisit)
-                    .HasForeignKey<Treatmentonvisit>(d => d.TreatmentId)
+                    .WithMany(p => p.Treatmentonvisit)
+                    .HasForeignKey(d => d.TreatmentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("TREAMENTONVISIT_TREATMENT");
 
@@ -687,31 +684,11 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Description)
                     .HasColumnName("DESCRIPTION")
-                    .HasColumnType("VARCHAR2(127)");
-
-                entity.Property(e => e.DoctorId)
-                    .HasColumnName("DOCTOR_ID")
-                    .HasColumnType("NUMBER(38)");
-
-                entity.Property(e => e.PatientId)
-                    .HasColumnName("PATIENT_ID")
-                    .HasColumnType("NUMBER(38)");
+                    .HasColumnType("VARCHAR2(1023)");
 
                 entity.Property(e => e.Price)
                     .HasColumnName("PRICE")
                     .HasColumnType("NUMBER(38)");
-
-                entity.HasOne(d => d.Doctor)
-                    .WithMany(p => p.Visit)
-                    .HasForeignKey(d => d.DoctorId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("VISIT_DOCTOR");
-
-                entity.HasOne(d => d.Patient)
-                    .WithMany(p => p.Visit)
-                    .HasForeignKey(d => d.PatientId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("VISIT_PATIENT");
 
                 entity.HasOne(d => d.Reservation)
                     .WithOne(p => p.Visit)
@@ -764,6 +741,12 @@ namespace Lekarzowo.Models
 
 
 
+
+
+
+
+
+
             //widoki
             modelBuilder.Query<View_AddressData>().ToView("VW_ADDRESS_DATA");
             modelBuilder.Query<View_DocsAndSpecs>().ToView("VW_DOCS_AND_SPECS");
@@ -777,34 +760,31 @@ namespace Lekarzowo.Models
 
 
 
+            modelBuilder.HasSequence("ISEQ$$_1118873");
 
+            modelBuilder.HasSequence("ISEQ$$_1118878");
 
+            modelBuilder.HasSequence("ISEQ$$_1118881");
 
-            //sekwencje
+            modelBuilder.HasSequence("ISEQ$$_1118884");
 
-            modelBuilder.HasSequence("ISEQ$$_1101779");
+            modelBuilder.HasSequence("ISEQ$$_1118887");
 
-            modelBuilder.HasSequence("ISEQ$$_1101784");
+            modelBuilder.HasSequence("ISEQ$$_1118898");
 
-            modelBuilder.HasSequence("ISEQ$$_1101787");
+            modelBuilder.HasSequence("ISEQ$$_1118901");
 
-            modelBuilder.HasSequence("ISEQ$$_1101790");
+            modelBuilder.HasSequence("ISEQ$$_1118904");
 
-            modelBuilder.HasSequence("ISEQ$$_1101793");
+            modelBuilder.HasSequence("ISEQ$$_1118907");
 
-            modelBuilder.HasSequence("ISEQ$$_1101804");
+            modelBuilder.HasSequence("ISEQ$$_1118910");
 
-            modelBuilder.HasSequence("ISEQ$$_1101807");
+            modelBuilder.HasSequence("ISEQ$$_1118913");
 
-            modelBuilder.HasSequence("ISEQ$$_1101810");
+            modelBuilder.HasSequence("ISEQ$$_1118916");
 
-            modelBuilder.HasSequence("ISEQ$$_1101813");
-
-            modelBuilder.HasSequence("ISEQ$$_1101816");
-
-            modelBuilder.HasSequence("ISEQ$$_1101819");
-
-            modelBuilder.HasSequence("ISEQ$$_1101826");
+            modelBuilder.HasSequence("ISEQ$$_1118921");
 
             modelBuilder.HasSequence("SEQ_ZWIAZEK");
         }

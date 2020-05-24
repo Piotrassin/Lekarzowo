@@ -9,7 +9,6 @@ namespace Lekarzowo.Models
         {
             Referral = new HashSet<Referral>();
             Reservation = new HashSet<Reservation>();
-            Visit = new HashSet<Visit>();
             Workinghours = new HashSet<Workinghours>();
         }
 
@@ -20,7 +19,6 @@ namespace Lekarzowo.Models
         public virtual Speciality Speciality { get; set; }
         public virtual ICollection<Referral> Referral { get; set; }
         public virtual ICollection<Reservation> Reservation { get; set; }
-        public virtual ICollection<Visit> Visit { get; set; }
         public virtual ICollection<Workinghours> Workinghours { get; set; }
     }
 }
