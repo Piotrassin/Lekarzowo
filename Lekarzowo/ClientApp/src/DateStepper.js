@@ -13,13 +13,18 @@ class DateStepper extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      activeStep: 0
+      activeStep: 0,
+      type: this.props.type
     };
     this.setActiveStep = this.setActiveStep.bind(this);
   }
 
   getStepperDates(){
     return ['20.12.2019', '10.12.2019', '11.12.2019', '2019,12-12'];
+  }
+
+  getPreviousDates() {
+    return ['11.12.2019', '2019,12-12']
   }
 
   getStepContent(step){
@@ -48,10 +53,12 @@ class DateStepper extends React.Component {
   }
 
   render() {
-    var steps = this.getStepperDates();
+    var steps = this.state.type == 0 ? this.getStepperDates() :
+      this.getPreviousDates();
     return (
-      <div className = "stepper" >
-        <b>Wizyty</b>
+        <div className="stepper" >
+            <b className="big-black">{this.props.title}</b>
+
         <Stepper
         activeStep = {this.state.activeStep}
         orientation = "vertical"
@@ -62,18 +69,15 @@ class DateStepper extends React.Component {
             <StepLabel>{label}</StepLabel>
 
             <AppontmentSmall
-              name = "Grzegoozr"
-              sunrname = "Waszka"
-              specialty = "Doctorr" >
+              name = "Dr. Ross"
+              surname = "Geller"
+                    specialty="Diznozaurolog"
+                    index = "0"
+                    class = {this.props.class}
+                >
 
               </AppontmentSmall>
-              <RedirectButton
 
-                    id={index}
-                    redirectTo={"/visit/"+index}
-                    buttonStyle="button-primary"
-                    text="Modyfikuj"
-                  />
 
 
           </Step>

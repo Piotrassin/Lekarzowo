@@ -1,4 +1,5 @@
 import React from "react"
+import RedirectButton from "./RedirectButton";
 import './Main.css';
 
 class AppontmentSmall extends React.Component {
@@ -8,9 +9,16 @@ class AppontmentSmall extends React.Component {
 
   render(){
     return(
-      <div className = "appointment">
+      <div className = {this.props.class}>
         <a>{this.props.name} {this.props.surname}</a>
-        <b>{this.props.specialty}</b>
+            <b>{this.props.specialty}</b>
+            <RedirectButton
+
+                id={this.props.index}
+                redirectTo={"/visit/" + this.props.index}
+                buttonStyle="button-primary"
+                text="Przejdź"
+            />
       </div>
     );
   }

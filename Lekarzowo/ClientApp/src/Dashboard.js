@@ -13,9 +13,14 @@ import {
 
 class Dashboard extends React.Component {
   constructor(props){
-    super(props);
+      super(props);
+      this.state = {
+
+      };
     this.getVisits = this.getVisits.bind(this);
   }
+
+    
 
   getVisits() {
     return [{
@@ -45,6 +50,13 @@ class Dashboard extends React.Component {
 
     ];
   }
+   
+    componentDidMount() {
+        fetch('http://localhost:5001/api/visits')
+            .then(response => response.json())
+            .then(dataMine => this.setState({ "name": dataMine[0].name, "roomcount": dataMine[0].roomcount, 'establishmentdate': dataMine[0].establishmentdate.split(["T"])[0] }))
+            .catch(err => console.log(err));
+    }
 
   handleClickAllVisit() {
     console.log("kliknieto");

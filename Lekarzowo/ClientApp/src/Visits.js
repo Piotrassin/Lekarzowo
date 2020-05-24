@@ -12,7 +12,14 @@ class Visits extends React.Component {
       return(
         <div className="container">
           <Main />
-          <DateStepper />
+          <DateStepper
+          type = "0"
+          title = "Wizyty Nadchodzące"
+          class = "appointment"/>
+          <DateStepper
+          type = "1"
+          title = "Wizyty Poprzednie"
+          class = "appointment-dashed"/>
         </div>
       );
   }
