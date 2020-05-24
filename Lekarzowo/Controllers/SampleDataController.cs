@@ -71,16 +71,6 @@ namespace Lekarzowo.Controllers
         //    return _context.View_PatientIllnesses.ToList();
         //}
 
-        [HttpGet("[action]")]
-        public IEnumerable<View_VisitDetails> VisitDetails()
-        {
-            return _context.View_VisitDetails.ToList();
-        }
-        [HttpGet("[action]")]
-        public IEnumerable<View_VisitList> VisitList()
-        {
-            return _context.View_VisitList.ToList();
-        }
 
 
         public class WeatherForecast
