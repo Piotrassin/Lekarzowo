@@ -8,22 +8,46 @@ import SicknessSmall from './SicknessSmall';
 class VisitDetails extends React.Component {
   constructor(props){
     super(props);
+    this.state = {
+      medicineHistory: [],
+      sicknessHistory: []
+    }
     this.getMedicineHistory = this.getMedicineHistory.bind(this);
     this.getSicknessHistory = this.getSicknessHistory.bind(this);
   }
+  componentDidMount() {
+    fetch('https://localhost:5001/api/visits/details')
+        .then(response => response.json())
+        .then(dataMine =>
+          this.setState({ medicineHistory: dataMine.map(item => {
+            var med_arr = item.medicineName.split(" ");
+            return {name: med_arr[0], dose: med_arr[1]};
+          }),
+        sicknessHistory:  dataMine.map(item => {
+
+          return {name: item.illnessName, startDate: item.medicineHistoryStartDate, endDate:  item.medicineHistoryEndDate};
+        }) })
+          //console.log(dataMine)
+        )
+        .catch(err => console.log(err));
+  }
 
   getMedicineHistory() {
-    return [
+    /*return [
       {name: "Xanax",dose: "2 x dzienne"},
       {name: "Ibufen",dose: "1 x dzienne"}
-    ];
+    ];*/
+
+    return this.state.medicineHistory.filter((v,i,a)=>a.findIndex(t=>(t.name === v.name && t.dose===v.dose))===i);
+
   }
   getSicknessHistory() {
-    return [
+    /*return [
       {name: "Padaczka",startDate: "20-10-1997", endDate: "teraz"},
       {name: "Padaczka",startDate: "20-10-1997", endDate: "teraz"},
       {name: "Padaczka",startDate: "20-10-1997", endDate: "teraz"}
-    ];
+    ];*/
+    return this.state.sicknessHistory.filter((v,i,a)=>a.findIndex(t=>(t.name === v.name && t.startDate===v.startDate && t.endDate===v.endDate))===i);
   }
 
   render(){

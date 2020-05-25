@@ -14,17 +14,32 @@ class DateStepper extends React.Component {
     super(props);
     this.state = {
       activeStep: 0,
-      type: this.props.type
+      type: this.props.type,
+      visit_arr: []
     };
     this.setActiveStep = this.setActiveStep.bind(this);
   }
+  componentDidMount() {
+    fetch('https://localhost:5001/api/Visits/List')
+        .then(response => response.json())
+        .then(dataMine =>
+          this.setState({ visit_arr: dataMine })
+          //console.log(dataMine)
+        )
+        .catch(err => console.log(err));
+
+  }
 
   getStepperDates(){
-    return ['20.12.2019', '10.12.2019', '11.12.2019', '2019,12-12'];
+    return this.state.visit_arr.filter((value) => new Date(value.reservationStartTime) > Date.now())
+    //return ['20.12.2019', '10.12.2019', '11.12.2019', '2019,12-12'];
+    //return this.state.visit_arr;
   }
 
   getPreviousDates() {
-    return ['11.12.2019', '2019,12-12']
+    //return ['11.12.2019', '2019,12-12']
+    //return this.state.visit_arr;
+    return this.state.visit_arr.filter((value) => new Date(value.reservationStartTime) <= Date.now())
   }
 
   getStepContent(step){
@@ -65,14 +80,14 @@ class DateStepper extends React.Component {
         >
         {steps.map((label, index) => (
           <Step
-          key = {label} >
-            <StepLabel>{label}</StepLabel>
+          key = {label.reservationId} >
+            <StepLabel>{label.reservationId}</StepLabel>
 
             <AppontmentSmall
-              name = "Dr. Ross"
-              surname = "Geller"
-                    specialty="Diznozaurolog"
-                    index = "0"
+              name = {label.doctorName}
+              surname = {label.doctorLastname}
+                    specialty={label.specialityName}
+                    index = {label.reservationId}
                     class = {this.props.class}
                 >
 

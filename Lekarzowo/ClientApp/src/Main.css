@@ -150,6 +150,8 @@ overflow: scroll;
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-height: 20px;
+  overflow: auto;
 }
 .left-margin-small {
   margin-left: 20px;
@@ -158,6 +160,8 @@ overflow: scroll;
   margin-left: 20px;
   margin-top: 10px;
   display: inline;
+  min-height: 10px;
+  margin-bottom: 10px;
 }
 .medicine-image {
   float: left;
