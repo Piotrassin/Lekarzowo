@@ -107,11 +107,11 @@ namespace Lekarzowo.Controllers
             return visit;
         }
 
-        // GET: api/Visits/Details
-        [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<View_VisitDetails>>> Details()
+        // GET: api/Visits/Details/1
+        [HttpGet("[action]/{id}")]
+        public async Task<ActionResult<View_VisitDetails>> Details(decimal id)
         {
-            return await _context.View_VisitDetails.ToListAsync();
+            return await _context.View_VisitDetails.Where(x => x.ReservationId == id).FirstOrDefaultAsync();
         }
 
         // GET: api/Visits/List

@@ -737,16 +737,6 @@ namespace Lekarzowo.Models
 
 
 
-
-
-
-
-
-
-
-
-
-
             //widoki
             modelBuilder.Query<View_AddressData>().ToView("VW_ADDRESS_DATA");
             modelBuilder.Query<View_DocsAndSpecs>().ToView("VW_DOCS_AND_SPECS");
