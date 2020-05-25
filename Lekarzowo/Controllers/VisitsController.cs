@@ -109,9 +109,9 @@ namespace Lekarzowo.Controllers
 
         // GET: api/Visits/Details/1
         [HttpGet("[action]/{id}")]
-        public async Task<ActionResult<View_VisitDetails>> Details(decimal id)
+        public async Task<ActionResult<IEnumerable<View_VisitDetails>>> Details(decimal id)
         {
-            return await _context.View_VisitDetails.Where(x => x.ReservationId == id).FirstOrDefaultAsync();
+            return await _context.View_VisitDetails.Where(x => x.ReservationId == id).ToListAsync();
         }
 
         // GET: api/Visits/List
