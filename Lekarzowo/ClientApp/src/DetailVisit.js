@@ -13,7 +13,8 @@ class DetailVisit extends React.Component {
       return(
         <div className="container">
           <Main />
-          <VisitDetails />
+          <VisitDetails
+          id = {this.props.location.state.dataEdit}/>
         </div>
       );
   }

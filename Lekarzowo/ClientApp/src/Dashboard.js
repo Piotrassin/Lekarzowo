@@ -15,15 +15,27 @@ class Dashboard extends React.Component {
   constructor(props){
       super(props);
       this.state = {
-
+        visit_arr: []
       };
     this.getVisits = this.getVisits.bind(this);
   }
 
-    
+  componentDidMount() {
+    fetch('https://localhost:5001/api/Visits/List')
+        .then(response => response.json())
+        .then(dataMine =>
+          this.setState({ visit_arr: dataMine })
+          //console.log(dataMine)
+        )
+        .catch(err => console.log(err));
+
+  }
+
 
   getVisits() {
-    return [{
+
+    return this.state.visit_arr;
+    /*return [{
       "date": "26.06.19",
       "time_start": "19:00",
       "time_end": "20:00",
@@ -48,15 +60,10 @@ class Dashboard extends React.Component {
       "specialty": "Dinozaurolog"
     }
 
-    ];
+  ];*/
   }
-   
-    componentDidMount() {
-        fetch('http://localhost:5001/api/visits')
-            .then(response => response.json())
-            .then(dataMine => this.setState({ "name": dataMine[0].name, "roomcount": dataMine[0].roomcount, 'establishmentdate': dataMine[0].establishmentdate.split(["T"])[0] }))
-            .catch(err => console.log(err));
-    }
+
+
 
   handleClickAllVisit() {
     console.log("kliknieto");
@@ -80,14 +87,14 @@ class Dashboard extends React.Component {
         <div className = "visit-dashboard-container">
           <div className = "visit-dashboard-head">
           <b className = "big-black">Twoje Wizyty</b>
-          <a className="menu-item"><NavLink to="/visits">Przejdź</NavLink></a>
+          <a className="button-primary custom-btn"><NavLink to="/visits">Przejdź</NavLink></a>
           </div>
           <div className = "visits-container">
           {visits.map((visit, index ) => (
             <div className = "visit-item">
-              <a className = "small-dash">{visit.date} | {visit.time_start} - {visit.time_end}</a>
-              <b className = "standarder-black">{visit.doctor_name} {visit.doctor_surname}</b>
-              <a className = "small-black">{visit.specialty}</a>
+              <a className = "small-dash">{visit.reservationStartTime.split("T")[0]}</a>
+              <b className = "standarder-black">{visit.doctorName} {visit.doctorLastname}</b>
+              <a className = "small-black">{visit.specialityName}</a>
             </div>
           ))}
           </div>
@@ -107,9 +114,11 @@ class Dashboard extends React.Component {
           </div>
         </div>
         <div className = "chart-container">
+        <br/>
         <b className = "big-black">Twój wykres 1</b>
         </div>
         <div className = "chart-container-2">
+        <br/>
         <b className = "big-black">Twój wykres 2</b>
         </div>
       </div>

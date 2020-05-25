@@ -48,7 +48,7 @@ class Main extends React.Component {
 <img src = {logo} className = "imge"/>
 <div className = "icons">
 <img src = {addSign} className = "addSign" style = {{width: 25}} />
-<img src = {addSign} className = "addSign" style = {{width: 25}} />
+
 </div>
 
 </div>

@@ -81,7 +81,7 @@ class DateStepper extends React.Component {
         {steps.map((label, index) => (
           <Step
           key = {label.reservationId} >
-            <StepLabel>{label.reservationId}</StepLabel>
+            <StepLabel>{label.reservationStartTime.split("T")[0]}</StepLabel>
 
             <AppontmentSmall
               name = {label.doctorName}
