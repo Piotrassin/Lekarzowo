@@ -21,7 +21,7 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount() {
-    fetch('https://localhost:5001/api/Visits/List')
+    fetch('https://localhost:44360/api/Visits/List')
         .then(response => response.json())
         .then(dataMine =>
           this.setState({ visit_arr: dataMine })
@@ -74,7 +74,7 @@ class Dashboard extends React.Component {
     return (
       <div className ="dashboard">
       <div className = "headline-container">
-        <b className = "headline">Dr. Adam Adamowski</b>
+        <b className = "headline">Janina Kowalska</b>
       </div>
       <div className = "dash-container">
         <div className = "hello-container">

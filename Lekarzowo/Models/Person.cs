@@ -12,7 +12,7 @@ namespace Lekarzowo.Models
         public string Email { get; set; }
         public string Password { get; set; }
         public string Gender { get; set; }
-        public long? Pesel { get; set; }
+        public string Pesel { get; set; }
 
         public virtual Doctor Doctor { get; set; }
         public virtual Patient Patient { get; set; }

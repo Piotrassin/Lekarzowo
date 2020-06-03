@@ -23,7 +23,7 @@ class VisitDetails extends React.Component {
     this.getTreatmentHistory = this.getTreatmentHistory.bind(this);
   }
   componentDidMount() {
-    fetch('https://localhost:5001/api/visits/details/' + this.props.id)
+      fetch('https://localhost:44360/api/visits/details/' + this.props.id)
         .then(response => response.json())
         .then(dataMine =>
           this.setState({ medicineHistory: dataMine.map(item => {
