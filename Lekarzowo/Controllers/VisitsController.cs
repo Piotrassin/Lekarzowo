@@ -13,8 +13,12 @@ namespace Lekarzowo.Controllers
     [ApiController]
     public class VisitsController : ControllerBase
     {
-        private readonly ModelContext _context = new ModelContext();
+        private readonly ModelContext _context;
 
+        public VisitsController(ModelContext context)
+        {
+            _context = context;
+        }
 
         // GET: api/Visits
         [HttpGet]
