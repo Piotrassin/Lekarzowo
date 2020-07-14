@@ -70,18 +70,53 @@ namespace Lekarzowo.Controllers
 
             return NoContent();
         }
-
+        /// <summary>
+        /// Registration of a new person in the system.
+        /// </summary>
+        /// <param name="person"></param>
+        /// <returns></returns>
         // POST: api/People
         [HttpPost]
-        public async Task<ActionResult<Person>> PostPerson(Person person)
+        public  ActionResult<Person> PostPerson(Person person)
         {
-            var hash = BCrypt.Net.BCrypt.HashPassword("abc", 10);
+            person.Password = BCrypt.Net.BCrypt.HashPassword(person.Password, 10);
+            Person user = PersonExists(person.Email);
 
-            _context.Person.Add(person);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPerson", new { id = person.Id }, person);
+            if (user != null)
+            {
+                return StatusCode(409, "User with that email address already exists");
+            }
+            _context.Person.Add(
+                new Person() 
+                { 
+                    Name = person.Name,
+                    Lastname = person.Lastname,
+                    Birthdate = person.Birthdate,
+                    Gender = person.Gender,
+                    Email = person.Email,
+                    Pesel = person.Pesel,
+                    Password = person.Password,     
+                }
+            );
+            _context.SaveChangesAsync();
+            //return CreatedAtAction("GetPerson", new { id = person.Id }, person);
+            return StatusCode(201);
         }
+
+        //[HttpPost("Login")]
+        //public async Task<ActionResult<Person>> LoginPerson(string email, string password)
+        //{
+        //    Person person = await _context.Person.FirstOrDefaultAsync(p => p.Email == email);
+
+        //    if (BCrypt.Net.BCrypt.Verify(password, person.Password))
+        //    {
+        //        return person;
+        //    }
+        //    return StatusCode(418);
+            
+        //    //return CreatedAtAction("GetPerson", new { id = person.Id }, person);
+        //}
+
 
         // DELETE: api/People/5
         [HttpDelete("{id}")]
@@ -102,6 +137,16 @@ namespace Lekarzowo.Controllers
         private bool PersonExists(decimal id)
         {
             return _context.Person.Any(e => e.Id == id);
+        }
+
+        private Person PersonExists(string email)
+        {
+            return _context.Person.SingleOrDefault(e => e.Email == email);
+        }
+
+        private Person PersonExists(string email, string password)
+        {
+            return _context.Person.SingleOrDefault(e => e.Email == email && e.Password == password);
         }
     }
 }
