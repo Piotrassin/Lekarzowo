@@ -86,36 +86,35 @@ namespace Lekarzowo.Controllers
             {
                 return StatusCode(409, "User with that email address already exists");
             }
-            _context.Person.Add(
-                new Person() 
-                { 
-                    Name = person.Name,
-                    Lastname = person.Lastname,
-                    Birthdate = person.Birthdate,
-                    Gender = person.Gender,
-                    Email = person.Email,
-                    Pesel = person.Pesel,
-                    Password = person.Password,     
-                }
-            );
+            _context.Person.Add(person);
             _context.SaveChangesAsync();
             //return CreatedAtAction("GetPerson", new { id = person.Id }, person);
             return StatusCode(201);
         }
 
-        //[HttpPost("Login")]
-        //public async Task<ActionResult<Person>> LoginPerson(string email, string password)
-        //{
-        //    Person person = await _context.Person.FirstOrDefaultAsync(p => p.Email == email);
+        [HttpPost("Login")]
+        public async Task<ActionResult<Person>> LoginPerson(Person person)
+        {
+            try
+            {
+                Person storedPerson = await _context.Person.SingleOrDefaultAsync(p => p.Email == person.Email);
+                if (storedPerson == null)
+                {
+                    return NotFound();
+                }
+                else if (BCrypt.Net.BCrypt.Verify(person.Password, storedPerson.Password))
+                {
+                    return storedPerson;
+                }
 
-        //    if (BCrypt.Net.BCrypt.Verify(password, person.Password))
-        //    {
-        //        return person;
-        //    }
-        //    return StatusCode(418);
-            
-        //    //return CreatedAtAction("GetPerson", new { id = person.Id }, person);
-        //}
+                return NotFound();
+            }
+            catch (Exception e)
+            {
+                //throw;
+                return StatusCode(409, e); ;
+            }
+        }
 
 
         // DELETE: api/People/5
