@@ -98,16 +98,12 @@ namespace Lekarzowo.Controllers
             try
             {
                 Person storedPerson = await _context.Person.SingleOrDefaultAsync(p => p.Email == person.Email);
-                if (storedPerson == null)
+                if (storedPerson == null || BCrypt.Net.BCrypt.Verify(person.Password, storedPerson.Password))
                 {
                     return NotFound();
                 }
-                else if (BCrypt.Net.BCrypt.Verify(person.Password, storedPerson.Password))
-                {
-                    return storedPerson;
-                }
-
-                return NotFound();
+                return storedPerson;
+             
             }
             catch (Exception e)
             {
