@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lekarzowo.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class PeopleController : ControllerBase
@@ -70,48 +72,7 @@ namespace Lekarzowo.Controllers
 
             return NoContent();
         }
-        /// <summary>
-        /// Registration of a new person in the system.
-        /// </summary>
-        /// <param name="person"></param>
-        /// <returns></returns>
-        // POST: api/People
-        [HttpPost]
-        public  ActionResult<Person> PostPerson(Person person)
-        {
-            person.Password = BCrypt.Net.BCrypt.HashPassword(person.Password, 10);
-            Person user = PersonExists(person.Email);
-
-            if (user != null)
-            {
-                return StatusCode(409, "User with that email address already exists");
-            }
-            _context.Person.Add(person);
-            _context.SaveChangesAsync();
-            //return CreatedAtAction("GetPerson", new { id = person.Id }, person);
-            return StatusCode(201);
-        }
-
-        [HttpPost("Login")]
-        public async Task<ActionResult<Person>> LoginPerson(Person person)
-        {
-            try
-            {
-                Person storedPerson = await _context.Person.SingleOrDefaultAsync(p => p.Email == person.Email);
-                if (storedPerson == null || BCrypt.Net.BCrypt.Verify(person.Password, storedPerson.Password))
-                {
-                    return NotFound();
-                }
-                return storedPerson;
-             
-            }
-            catch (Exception e)
-            {
-                //throw;
-                return StatusCode(409, e); ;
-            }
-        }
-
+        
 
         // DELETE: api/People/5
         [HttpDelete("{id}")]
@@ -132,16 +93,6 @@ namespace Lekarzowo.Controllers
         private bool PersonExists(decimal id)
         {
             return _context.Person.Any(e => e.Id == id);
-        }
-
-        private Person PersonExists(string email)
-        {
-            return _context.Person.SingleOrDefault(e => e.Email == email);
-        }
-
-        private Person PersonExists(string email, string password)
-        {
-            return _context.Person.SingleOrDefault(e => e.Email == email && e.Password == password);
         }
     }
 }
