@@ -6,9 +6,9 @@ namespace Lekarzowo.Models
 {
     public partial class ModelContext : DbContext
     {
-        public ModelContext()
-        {
-        }
+        //public ModelContext()
+        //{
+        //}
 
         public ModelContext(DbContextOptions<ModelContext> options)
             : base(options)
@@ -51,17 +51,6 @@ namespace Lekarzowo.Models
         public virtual DbQuery<View_VisitList> View_VisitList { get; set; }
 
 
-
-
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseOracle("Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=db-oracle)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=BAZA.PJWSTK.EDU.PL)));Persist Security Info=True;User Id=S17437;Password=oracle12;");
-            }
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -129,15 +118,10 @@ namespace Lekarzowo.Models
                     .HasColumnType("NUMBER(38)")
                     .ValueGeneratedOnAdd();
 
-                entity.Property(e => e.Description)
-                    .IsRequired()
-                    .HasColumnName("DESCRIPTION")
-                    .HasColumnType("VARCHAR2(255)");
-
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnName("NAME")
-                    .HasColumnType("VARCHAR2(63)");
+                    .HasColumnType("VARCHAR2(127)");
             });
 
             modelBuilder.Entity<Illnesshistory>(entity =>
@@ -159,7 +143,7 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Description)
                     .HasColumnName("DESCRIPTION")
-                    .HasColumnType("VARCHAR2(255)");
+                    .HasColumnType("VARCHAR2(1023)");
 
                 entity.Property(e => e.IllnessId)
                     .HasColumnName("ILLNESS_ID")
@@ -255,12 +239,12 @@ namespace Lekarzowo.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnName("NAME")
-                    .HasColumnType("VARCHAR2(63)");
+                    .HasColumnType("VARCHAR2(127)");
             });
 
             modelBuilder.Entity<Medicinehistory>(entity =>
             {
-                entity.HasKey(e => new { e.Startdate, e.IllnesshistoryId, e.MedicineId })
+                entity.HasKey(e => new { e.MedicineId, e.IllnesshistoryId, e.Startdate })
                     .HasName("MEDICINEHISTORY_PK");
 
                 entity.ToTable("MEDICINEHISTORY");
@@ -269,21 +253,21 @@ namespace Lekarzowo.Models
                     .HasName("MEDICINEHISTORY_PK")
                     .IsUnique();
 
-                entity.Property(e => e.Startdate)
-                    .HasColumnName("STARTDATE")
-                    .HasColumnType("DATE");
+                entity.Property(e => e.MedicineId)
+                    .HasColumnName("MEDICINE_ID")
+                    .HasColumnType("NUMBER(38)");
 
                 entity.Property(e => e.IllnesshistoryId)
                     .HasColumnName("ILLNESSHISTORY_ID")
                     .HasColumnType("NUMBER(38)");
 
-                entity.Property(e => e.MedicineId)
-                    .HasColumnName("MEDICINE_ID")
-                    .HasColumnType("NUMBER(38)");
+                entity.Property(e => e.Startdate)
+                    .HasColumnName("STARTDATE")
+                    .HasColumnType("DATE");
 
                 entity.Property(e => e.Description)
                     .HasColumnName("DESCRIPTION")
-                    .HasColumnType("VARCHAR2(127)");
+                    .HasColumnType("VARCHAR2(255)");
 
                 entity.Property(e => e.Finishdate)
                     .HasColumnName("FINISHDATE")
@@ -304,7 +288,7 @@ namespace Lekarzowo.Models
 
             modelBuilder.Entity<Oldillnesshistory>(entity =>
             {
-                entity.HasKey(e => new { e.Date, e.PatientId, e.IllnessId })
+                entity.HasKey(e => new { e.IllnessId, e.PatientId, e.Date })
                     .HasName("OLDILLNESSHISTORY_PK");
 
                 entity.ToTable("OLDILLNESSHISTORY");
@@ -313,15 +297,15 @@ namespace Lekarzowo.Models
                     .HasName("OLDILLNESSHISTORY_PK")
                     .IsUnique();
 
-                entity.Property(e => e.Date).HasColumnType("DATE");
+                entity.Property(e => e.IllnessId)
+                    .HasColumnName("ILLNESS_ID")
+                    .HasColumnType("NUMBER(38)");
 
                 entity.Property(e => e.PatientId)
                     .HasColumnName("PATIENT_ID")
                     .HasColumnType("NUMBER(38)");
 
-                entity.Property(e => e.IllnessId)
-                    .HasColumnName("ILLNESS_ID")
-                    .HasColumnType("NUMBER(38)");
+                entity.Property(e => e.Date).HasColumnType("DATE");
 
                 entity.Property(e => e.Curedate)
                     .HasColumnName("CUREDATE")
@@ -330,7 +314,7 @@ namespace Lekarzowo.Models
                 entity.Property(e => e.Description)
                     .IsRequired()
                     .HasColumnName("DESCRIPTION")
-                    .HasColumnType("VARCHAR2(255)");
+                    .HasColumnType("VARCHAR2(1023)");
 
                 entity.HasOne(d => d.Illness)
                     .WithMany(p => p.Oldillnesshistory)
@@ -347,7 +331,7 @@ namespace Lekarzowo.Models
 
             modelBuilder.Entity<Oldmedicinehistory>(entity =>
             {
-                entity.HasKey(e => new { e.Date, e.PatientId, e.MedicineId })
+                entity.HasKey(e => new { e.MedicineId, e.PatientId, e.Date })
                     .HasName("OLDMEDICINEHISTORY_PK");
 
                 entity.ToTable("OLDMEDICINEHISTORY");
@@ -356,19 +340,19 @@ namespace Lekarzowo.Models
                     .HasName("OLDMEDICINEHISTORY_PK")
                     .IsUnique();
 
-                entity.Property(e => e.Date).HasColumnType("DATE");
+                entity.Property(e => e.MedicineId)
+                    .HasColumnName("MEDICINE_ID")
+                    .HasColumnType("NUMBER(38)");
 
                 entity.Property(e => e.PatientId)
                     .HasColumnName("PATIENT_ID")
                     .HasColumnType("NUMBER(38)");
 
-                entity.Property(e => e.MedicineId)
-                    .HasColumnName("MEDICINE_ID")
-                    .HasColumnType("NUMBER(38)");
+                entity.Property(e => e.Date).HasColumnType("DATE");
 
                 entity.Property(e => e.Description)
                     .HasColumnName("DESCRIPTION")
-                    .HasColumnType("VARCHAR2(255)");
+                    .HasColumnType("VARCHAR2(1023)");
 
                 entity.HasOne(d => d.Medicine)
                     .WithMany(p => p.Oldmedicinehistory)
@@ -422,17 +406,17 @@ namespace Lekarzowo.Models
                 entity.Property(e => e.Email)
                     .IsRequired()
                     .HasColumnName("EMAIL")
-                    .HasColumnType("VARCHAR2(63)");
+                    .HasColumnType("VARCHAR2(127)");
 
                 entity.Property(e => e.Gender)
                     .IsRequired()
                     .HasColumnName("GENDER")
-                    .HasColumnType("CHAR(1)");
+                    .HasColumnType("VARCHAR2(1)");
 
                 entity.Property(e => e.Lastname)
                     .IsRequired()
                     .HasColumnName("LASTNAME")
-                    .HasColumnType("VARCHAR2(63)");
+                    .HasColumnType("VARCHAR2(127)");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -442,11 +426,11 @@ namespace Lekarzowo.Models
                 entity.Property(e => e.Password)
                     .IsRequired()
                     .HasColumnName("PASSWORD")
-                    .HasColumnType("CHAR(256)");
+                    .HasColumnType("VARCHAR2(256)");
 
                 entity.Property(e => e.Pesel)
                     .HasColumnName("PESEL")
-                    .HasColumnType("NUMBER(11)");
+                    .HasColumnType("VARCHAR2(11)");
             });
 
             modelBuilder.Entity<Referral>(entity =>
@@ -469,7 +453,7 @@ namespace Lekarzowo.Models
                 entity.Property(e => e.Description)
                     .IsRequired()
                     .HasColumnName("DESCRIPTION")
-                    .HasColumnType("VARCHAR2(255)");
+                    .HasColumnType("VARCHAR2(511)");
 
                 entity.Property(e => e.DoctorId)
                     .HasColumnName("DOCTOR_ID")
@@ -600,7 +584,7 @@ namespace Lekarzowo.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnName("NAME")
-                    .HasColumnType("VARCHAR2(63)");
+                    .HasColumnType("VARCHAR2(127)");
 
                 entity.Property(e => e.Price)
                     .HasColumnName("PRICE")
@@ -636,30 +620,32 @@ namespace Lekarzowo.Models
 
             modelBuilder.Entity<Treatmentonvisit>(entity =>
             {
-                entity.HasKey(e => e.TreatmentId)
-                    .HasName("TREATMENTONVISIT_PK");
-
                 entity.ToTable("TREATMENTONVISIT");
 
-                entity.HasIndex(e => e.TreatmentId)
+                entity.HasIndex(e => e.Id)
                     .HasName("TREATMENTONVISIT_PK")
                     .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .HasColumnType("NUMBER(38)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Description)
+                    .HasColumnName("DESCRIPTION")
+                    .HasColumnType("VARCHAR2(511)");
 
                 entity.Property(e => e.TreatmentId)
                     .HasColumnName("TREATMENT_ID")
                     .HasColumnType("NUMBER(38)");
-
-                entity.Property(e => e.Description)
-                    .HasColumnName("DESCRIPTION")
-                    .HasColumnType("VARCHAR2(255)");
 
                 entity.Property(e => e.VisitId)
                     .HasColumnName("VISIT_ID")
                     .HasColumnType("NUMBER(38)");
 
                 entity.HasOne(d => d.Treatment)
-                    .WithOne(p => p.Treatmentonvisit)
-                    .HasForeignKey<Treatmentonvisit>(d => d.TreatmentId)
+                    .WithMany(p => p.Treatmentonvisit)
+                    .HasForeignKey(d => d.TreatmentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("TREAMENTONVISIT_TREATMENT");
 
@@ -687,31 +673,11 @@ namespace Lekarzowo.Models
 
                 entity.Property(e => e.Description)
                     .HasColumnName("DESCRIPTION")
-                    .HasColumnType("VARCHAR2(127)");
-
-                entity.Property(e => e.DoctorId)
-                    .HasColumnName("DOCTOR_ID")
-                    .HasColumnType("NUMBER(38)");
-
-                entity.Property(e => e.PatientId)
-                    .HasColumnName("PATIENT_ID")
-                    .HasColumnType("NUMBER(38)");
+                    .HasColumnType("VARCHAR2(1023)");
 
                 entity.Property(e => e.Price)
                     .HasColumnName("PRICE")
                     .HasColumnType("NUMBER(38)");
-
-                entity.HasOne(d => d.Doctor)
-                    .WithMany(p => p.Visit)
-                    .HasForeignKey(d => d.DoctorId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("VISIT_DOCTOR");
-
-                entity.HasOne(d => d.Patient)
-                    .WithMany(p => p.Visit)
-                    .HasForeignKey(d => d.PatientId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("VISIT_PATIENT");
 
                 entity.HasOne(d => d.Reservation)
                     .WithOne(p => p.Visit)
@@ -764,6 +730,8 @@ namespace Lekarzowo.Models
 
 
 
+
+
             //widoki
             modelBuilder.Query<View_AddressData>().ToView("VW_ADDRESS_DATA");
             modelBuilder.Query<View_DocsAndSpecs>().ToView("VW_DOCS_AND_SPECS");
@@ -782,31 +750,31 @@ namespace Lekarzowo.Models
 
             //sekwencje
 
-            modelBuilder.HasSequence("ISEQ$$_1101779");
+            modelBuilder.HasSequence("ISEQ$$_1132701");
 
-            modelBuilder.HasSequence("ISEQ$$_1101784");
+            modelBuilder.HasSequence("ISEQ$$_1132706");
 
-            modelBuilder.HasSequence("ISEQ$$_1101787");
+            modelBuilder.HasSequence("ISEQ$$_1132709");
 
-            modelBuilder.HasSequence("ISEQ$$_1101790");
+            modelBuilder.HasSequence("ISEQ$$_1132712");
 
-            modelBuilder.HasSequence("ISEQ$$_1101793");
+            modelBuilder.HasSequence("ISEQ$$_1132715");
 
-            modelBuilder.HasSequence("ISEQ$$_1101804");
+            modelBuilder.HasSequence("ISEQ$$_1132726");
 
-            modelBuilder.HasSequence("ISEQ$$_1101807");
+            modelBuilder.HasSequence("ISEQ$$_1132729");
 
-            modelBuilder.HasSequence("ISEQ$$_1101810");
+            modelBuilder.HasSequence("ISEQ$$_1132732");
 
-            modelBuilder.HasSequence("ISEQ$$_1101813");
+            modelBuilder.HasSequence("ISEQ$$_1132735");
 
-            modelBuilder.HasSequence("ISEQ$$_1101816");
+            modelBuilder.HasSequence("ISEQ$$_1132738");
 
-            modelBuilder.HasSequence("ISEQ$$_1101819");
+            modelBuilder.HasSequence("ISEQ$$_1132741");
 
-            modelBuilder.HasSequence("ISEQ$$_1101826");
+            modelBuilder.HasSequence("ISEQ$$_1132744");
 
-            modelBuilder.HasSequence("SEQ_ZWIAZEK");
+            modelBuilder.HasSequence("ISEQ$$_1132749");
         }
     }
 }

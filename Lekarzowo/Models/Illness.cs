@@ -13,7 +13,6 @@ namespace Lekarzowo.Models
 
         public decimal Id { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
 
         public virtual ICollection<Illnesshistory> Illnesshistory { get; set; }
         public virtual ICollection<Oldillnesshistory> Oldillnesshistory { get; set; }

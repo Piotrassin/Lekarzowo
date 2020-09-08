@@ -1,20 +1,34 @@
-import React, { Component } from 'react';
-import { Route } from 'react-router';
-import { Layout } from './components/Layout';
-import { Home } from './components/Home';
-import { FetchData } from './components/FetchData';
-import { Counter } from './components/Counter';
+import React from 'react';
+import Dashboard from './Dashboard'
+import Main from './Main'
+import MainA from './MainA'
+import DetailVisit from './DetailVisit'
+import Visits from './Visits'
+import {
+  Route,
+  NavLink,
+  HashRouter,
+  Redirect
+} from "react-router-dom";
 
-export default class App extends Component {
-  static displayName = App.name;
+class App extends React.Component {
+  constructor(props){
+    super(props);
+  }
 
-  render () {
-    return (
-      <Layout>
-        <Route exact path='/' component={Home} />
-        <Route path='/counter' component={Counter} />
-        <Route path='/fetch-data' component={FetchData} />
-      </Layout>
-    );
+  render() {
+      return(
+        <HashRouter>
+        <div>
+        <Route exact path="/" component={MainA}/>
+        <Route exact path="/visits" component={Visits}/>
+        <Route path="/visit" render={(routeProps) => (
+              <DetailVisit {...routeProps}/>
+          )}/>
+        </div>
+        </HashRouter>
+      );
   }
 }
+
+export default App;

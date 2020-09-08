@@ -1,0 +1,411 @@
+.side-menu {
+  background: rgb(255,255,255);
+  background: linear-gradient(0deg, rgba(255,255,255,1) -20%, rgba(0,117,222,1) 35%);
+  height: auto;
+  min-height: 100%;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+}
+.imge {
+  width: 50px;
+}
+
+.icons {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  height: 200px;
+  justify-content: space-between;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  height: 100%;
+font-family: roboto;
+}
+#root {
+  background-color: #E4F0FB;
+}
+
+.appointment {
+  padding: 10px;
+  padding-right: 100px;
+  background-color: #2e4fa6;
+  border-radius: 10px;
+  margin: 15px;
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+.appointment-dashed {
+  padding: 10px;
+  padding-right: 100px;
+  background-color: #626878;
+  border-radius: 10px;
+  margin: 15px;
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+.MuiPaper-root {
+  min-width: 300px;
+overflow: scroll;
+}
+.stepper {
+  overflow: scroll;
+  margin-left: 60px;
+  margin-top: 30px;
+  height: 92vh;
+
+  min-width: 40%;
+  background-color: white;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.VisitPanels {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+}
+.visit-summary {
+  width: 76%;
+  height: 100vh;
+  background-color: #E9F4FF;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+.visit-member {
+  width: 24%;
+  height: 100vh;
+  background-color: #0075DE;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.standard-dashed {
+  margin-top: 20px;
+  font-size: 20px;
+  color: #E4E4E4;
+}
+.small-dashed {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #E4E4E4;
+}
+.small-dark {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #3A5166;
+}
+.small-white {
+
+  font-size: 18px;
+  color: #FFFFFF;
+}
+.standard-white {
+  margin-top: 20px;
+  font-size: 20px;
+  color: #FFFFFF;
+}
+.standard-black {
+  font-size: 20px;
+  color: #000000;
+  margin-top: 60px;
+  margin-left: 20px;
+}
+.standard-blue {
+  margin-top: 20px;
+  font-size: 20px;
+  color: #073662;
+}
+.big-white {
+  margin-top: 10px;
+  font-size: 30px;
+  color: #FFFFFF;
+}
+.big-black {
+  margin-top: 10px;
+  font-size: 25px;
+  color: #000000;
+}
+.huge-white {
+  margin-top: 10px;
+  font-size:40px;
+  color: #FFFFFF;
+}
+.avatar {
+  margin-top: 20px;
+  width: 200px;
+  border-radius: 50%;
+}
+.medicine-history {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 20px;
+  overflow: auto;
+}
+.left-margin-small {
+  margin-left: 20px;
+}
+.medicine-holder {
+  margin-left: 20px;
+  margin-top: 10px;
+  display: inline;
+  min-height: 10px;
+  margin-bottom: 10px;
+}
+.medicine-image {
+  float: left;
+  margin-right: 10px;
+}
+.container-medicine-text {
+    display: flex;
+    flex-direction: column;
+    height: 10px;
+}
+.margin-top-small {
+  margin-top: 2px;
+}
+.sickness-holder {
+  background-color: white;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  margin-left: 20px;
+  width: 80%;
+  margin-top: 15px;
+}
+.treatment-holder {
+  background-color: #073662;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  margin-left: 20px;
+  width: 90%;
+  margin-top: 15px;
+}
+.headline {
+  font-size: 36px;
+  color: #000000;
+}
+.subheadline {
+  font-size: 24px;
+  color: #5F5F5F;
+}
+.headline-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.row-container {
+  width: 100%;
+  height: 40vh;
+  display: flex;
+  justify-content: space-around;
+}
+.active-treatments {
+  margin-left: 30px;
+  width: 95%;
+  height: 40vh;
+
+}
+.actions-container {
+  width: 45%;
+  height: 40vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.active-medicine {
+  width: 45%;
+  height: 40vh;
+}
+.basic-container {
+  background-color: white;
+  border-radius: 20px;
+
+}
+.add-medicine {
+  height: 20%;
+  background-color: #CCAE92;
+}
+.add-treatment {
+  height: 20%;
+  background-color: #97BCDE;
+}
+.end {
+  height: 20%;
+  background-color: #9E3030;
+}
+.dashboard {
+
+}
+.dash-container {
+  display: grid;
+  grid-template-columns: 25% 25% 10% auto;
+  grid-template-rows:33% 10% auto;
+  column-gap: 15px;
+  row-gap: 15px;
+  height: 90vh;
+  width: 93.5vw;
+  margin-left: 10px;
+
+}
+.hello-container {
+  background-image: url("images/Rec_backgouond.png");
+grid-column-start: 1;
+grid-column-end: 3;
+grid-row: 1;
+height: 100%;
+min-width: 100%;
+border-radius: 20px;
+}
+.medicine-hello {
+  width: 230px;
+  float: left;
+  margin-left: 30px;
+  margin-top: 30px;
+  margin-right: 70px;
+}
+.hello-txt-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+
+}
+.visit-dashboard-container {
+   background-color: white;
+   grid-column-start: 3;
+   grid-column-end: 5;
+   grid-row-start: 1;
+   grid-row-end: 3;
+   border-radius: 20px;
+}
+.big-white {
+  margin-top: 10px;
+  font-size: 30px;
+  color: #FFFFFF;
+}
+.visit-dashboard-head {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px;
+  align-items: center;
+}
+.visit-add-action {
+  grid-column: 1;
+  grid-row: 2;
+  background-color: red;
+  border-radius: 20px;
+  background-color: #CCAE92;
+  cursor: pointer;
+}
+.medicine-add-action {
+  grid-column: 2;
+  grid-row: 2;
+  background-color: red;
+  border-radius: 20px;
+  background-color: #97BCDE;
+}
+.chart-container {
+  background-color: white;
+  grid-column-start: 1;
+  grid-column-end: 4;
+  grid-row: 3;
+  border-radius: 20px;
+}
+.chart-container-2 {
+  background-color: white;
+  grid-column: 4;
+  grid-row: 3;
+  border-radius: 20px;
+}
+.visits-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.visit-item {
+  margin-top: 10px;
+  background-color: #E3F2FF;
+  height: 65px;
+  width: 90%;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+  padding-left: 10px;
+}
+.writer-img {
+  margin-top: 5px;
+  margin-left: 25px;
+  float: left;
+  margin-right: 50px;
+}
+.bottle-img {
+  margin-top: 5px;
+  margin-left: 25px;
+  float: left;
+  margin-right: 50px;
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+.action-txt {
+  margin-top: 5px;
+}
+.button-primary {
+    padding: 5px 30px;
+  border-radius: 5px;
+  background-color: #5c89ff;
+  display: block;
+  float: right;
+  color: white;
+  font-size: 15px;
+  border: none;
+    cursor: pointer;
+
+}
+.med-container {
+  display: flex;
+  flex-direction: column;
+}
+.treatment-container {
+  display: flex;
+  flex-direction: column;
+}
+.custom-btn {
+  color: white;
+  text-decoration: none;
+}
+a:link {
+
+}
+
+/* visited link */
+a:visited {
+  color: white;
+  text-decoration: none;
+}
+
+/* mouse over link */
+a:hover {
+
+}
+
+/* selected link */
+a:active {
+  
+}

@@ -8,6 +8,7 @@ namespace Lekarzowo.Models
         public Treatment()
         {
             Referral = new HashSet<Referral>();
+            Treatmentonvisit = new HashSet<Treatmentonvisit>();
         }
 
         public decimal Id { get; set; }
@@ -15,7 +16,7 @@ namespace Lekarzowo.Models
         public decimal Price { get; set; }
         public DateTime Time { get; set; }
 
-        public virtual Treatmentonvisit Treatmentonvisit { get; set; }
         public virtual ICollection<Referral> Referral { get; set; }
+        public virtual ICollection<Treatmentonvisit> Treatmentonvisit { get; set; }
     }
 }

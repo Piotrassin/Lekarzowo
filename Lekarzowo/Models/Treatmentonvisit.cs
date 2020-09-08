@@ -5,6 +5,7 @@ namespace Lekarzowo.Models
 {
     public partial class Treatmentonvisit
     {
+        public decimal Id { get; set; }
         public decimal TreatmentId { get; set; }
         public decimal VisitId { get; set; }
         public string Description { get; set; }
