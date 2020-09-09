@@ -5,92 +5,100 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
 using Microsoft.AspNetCore.Authorization;
+using Lekarzowo.Repositories;
 
 namespace Lekarzowo.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PeopleController : ControllerBase
     {
-        private readonly ModelContext _context;
+        //private readonly ModelContext _context;
 
-        public PeopleController(ModelContext context)
+        //public PeopleController(ModelContext context)
+        //{
+        //    _context = context;
+        //}
+
+        private readonly IPeopleRepository _repository;
+        public PeopleController(IPeopleRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         // GET: api/People
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Person>>> GetPerson()
+        public IEnumerable<Person> GetPerson()
         {
-            return await _context.Person.ToListAsync();
+            return _repository.GetAll();
+            //return await _context.Person.ToListAsync();
         }
 
-        // GET: api/People/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Person>> GetPerson(decimal id)
-        {
-            var person = await _context.Person.FindAsync(id);
+        //// GET: api/People/5
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<Person>> GetPerson(decimal id)
+        //{
+        //    var person = await _context.Person.FindAsync(id);
 
-            if (person == null)
-            {
-                return NotFound();
-            }
+        //    if (person == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return person;
-        }
+        //    return person;
+        //}
 
-        // PUT: api/People/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPerson(decimal id, Person person)
-        {
-            if (id != person.Id)
-            {
-                return BadRequest();
-            }
+        //// PUT: api/People/5
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutPerson(decimal id, Person person)
+        //{
+        //    if (id != person.Id)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            _context.Entry(person).State = EntityState.Modified;
+        //    _context.Entry(person).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PersonExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!PersonExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
         
 
-        // DELETE: api/People/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Person>> DeletePerson(decimal id)
-        {
-            var person = await _context.Person.FindAsync(id);
-            if (person == null)
-            {
-                return NotFound();
-            }
+        //// DELETE: api/People/5
+        //[HttpDelete("{id}")]
+        //public async Task<ActionResult<Person>> DeletePerson(decimal id)
+        //{
+        //    var person = await _context.Person.FindAsync(id);
+        //    if (person == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.Person.Remove(person);
-            await _context.SaveChangesAsync();
+        //    _context.Person.Remove(person);
+        //    await _context.SaveChangesAsync();
 
-            return person;
-        }
+        //    return person;
+        //}
 
-        private bool PersonExists(decimal id)
-        {
-            return _context.Person.Any(e => e.Id == id);
-        }
+        //private bool PersonExists(decimal id)
+        //{
+        //    return _context.Person.Any(e => e.Id == id);
+        //}
     }
 }

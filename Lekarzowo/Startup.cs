@@ -1,5 +1,6 @@
 using Lekarzowo.Helpers;
 using Lekarzowo.Models;
+using Lekarzowo.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -60,7 +61,7 @@ namespace Lekarzowo
             {
                 configuration.RootPath = "ClientApp/build";
             });
-
+            services.AddScoped<IPeopleRepository, PeopleRepository>();
             services.AddEntityFrameworkOracle()
                 .AddDbContext<ModelContext>(options =>
                 {
