@@ -111,10 +111,10 @@ namespace Lekarzowo.Controllers
         }
 
 
-        private Person PersonExists(string email, string password)
-        {
-            return _context.Person.SingleOrDefault(e => e.Email == email && e.Password == password);
-        }
+        //private Person PersonExists(string email, string password)
+        //{
+        //    return _context.Person.SingleOrDefault(e => e.Email == email && e.Password == password);
+        //}
 
 
     }

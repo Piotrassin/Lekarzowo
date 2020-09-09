@@ -23,35 +23,47 @@ namespace Lekarzowo.Repositories
             return _context.Person.ToList();
         }
 
-        //public Student GetStudentByID(int id)
-        //{
-        //    return _context.Students.Find(id);
-        //}
+        public Person GetByID(decimal personID)
+        {
+            return _context.Person.Find(personID);
+        }
+        public Person GetByEmail(string email)
+        {
+            return _context.Person.FirstOrDefault(p => p.Email == email);
+        }
 
-        //public void InsertStudent(Student student)
-        //{
-        //    _context.Students.Add(student);
-        //}
+        public void Insert(Person person)
+        {
+            _context.Person.Add(person);
+        }
 
-        //public void DeleteStudent(int studentID)
-        //{
-        //    Student student = _context.Students.Find(studentID);
-        //    _context.Students.Remove(student);
-        //}
+        public void Delete(int personID)
+        {
+            var person = _context.Person.Find(personID);
+            _context.Person.Remove(person);
+        }
 
-        //public void UpdateStudent(Student student)
-        //{
-        //    _context.Entry(student).State = EntityState.Modified;
-        //}
-
-        //public void Save()
-        //{
-        //    _context.SaveChanges();
-        //}
-
+        public void Update(Person person)
+        {
+            _context.Entry(person).State = EntityState.Modified;
+        }
+        public void Save()
+        {
+            _context.SaveChanges();
+        }
+        public bool PersonExists(decimal id)
+        {
+            return _context.Person.Any(e => e.Id == id);
+        }
 
         #region Disposing
-        protected virtual void Dispose(bool disposing)
+        public void Dispose()
+        {
+            _context.Dispose();
+        }
+
+        //raczej zbędne
+        public void Dispose(bool disposing)
         {
             if (!this.disposed)
             {
@@ -63,45 +75,13 @@ namespace Lekarzowo.Repositories
             this.disposed = true;
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        #endregion
-
-
-
-        //IEnumerable<Person> IPeopleRepository.GetAll()
+        //public void Dispose()
         //{
-        //    throw new NotImplementedException();
+        //    Dispose(true);
+        //    GC.SuppressFinalize(this);
         //}
 
-        public Person GetByID(int personID)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Insert(Person person)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Delete(int personID)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Update(Person person)
-        {
-            throw new NotImplementedException();
-        }
-
-        void IPeopleRepository.Dispose(bool disposing)
-        {
-            throw new NotImplementedException();
-        }
-
+        #endregion
 
     }
 }

@@ -6,15 +6,12 @@ namespace Lekarzowo.Models
 {
     public partial class ModelContext : DbContext
     {
-        //public ModelContext()
-        //{
-        //}
-
         public ModelContext(DbContextOptions<ModelContext> options)
             : base(options)
-        {
-        }
+        { }
 
+
+        #region DbSets
         public virtual DbSet<City> City { get; set; }
         public virtual DbSet<Doctor> Doctor { get; set; }
         public virtual DbSet<Illness> Illness { get; set; }
@@ -34,11 +31,11 @@ namespace Lekarzowo.Models
         public virtual DbSet<Treatmentonvisit> Treatmentonvisit { get; set; }
         public virtual DbSet<Visit> Visit { get; set; }
         public virtual DbSet<Workinghours> Workinghours { get; set; }
+        #endregion
 
 
 
-
-        //widoki
+        #region SQLViews
         public virtual DbQuery<View_AddressData> View_AddressData { get; set; }
         public virtual DbQuery<View_DocsAndSpecs> View_DocsAndSpecs { get; set; }
         public virtual DbQuery<View_DoctorList> View_DoctorList { get; set; }
@@ -49,7 +46,7 @@ namespace Lekarzowo.Models
 
         public virtual DbQuery<View_VisitDetails> View_VisitDetails { get; set; }
         public virtual DbQuery<View_VisitList> View_VisitList { get; set; }
-
+        #endregion
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -57,6 +54,7 @@ namespace Lekarzowo.Models
             modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:DefaultSchema", "S17437");
 
+            #region Entities
             modelBuilder.Entity<City>(entity =>
             {
                 entity.ToTable("CITY");
@@ -723,16 +721,10 @@ namespace Lekarzowo.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("WORKINGHOURS_LOCAL");
             });
+            #endregion  
 
 
-
-
-
-
-
-
-
-            //widoki
+            #region ViewMapping
             modelBuilder.Query<View_AddressData>().ToView("VW_ADDRESS_DATA");
             modelBuilder.Query<View_DocsAndSpecs>().ToView("VW_DOCS_AND_SPECS");
             modelBuilder.Query<View_DoctorList>().ToView("VW_DOCTOR_LIST");
@@ -742,14 +734,10 @@ namespace Lekarzowo.Models
             //modelBuilder.Query<View_PatientIllnesses>().ToView("VW_PATIENT_ILLNESSES");
             modelBuilder.Query<View_VisitDetails>().ToView("VW_VISIT_DETAILS");
             modelBuilder.Query<View_VisitList>().ToView("VW_VISIT_LIST");
+            #endregion
 
 
-
-
-
-
-            //sekwencje
-
+            #region Sequences
             modelBuilder.HasSequence("ISEQ$$_1132701");
 
             modelBuilder.HasSequence("ISEQ$$_1132706");
@@ -775,6 +763,8 @@ namespace Lekarzowo.Models
             modelBuilder.HasSequence("ISEQ$$_1132744");
 
             modelBuilder.HasSequence("ISEQ$$_1132749");
+
+            #endregion
         }
     }
 }

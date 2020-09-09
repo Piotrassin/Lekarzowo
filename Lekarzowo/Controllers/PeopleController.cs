@@ -27,58 +27,79 @@ namespace Lekarzowo.Controllers
             _repository = repository;
         }
 
+
         // GET: api/People
         [HttpGet]
-        public IEnumerable<Person> GetPerson()
+        public ActionResult<IEnumerable<Person>> GetPerson()
         {
-            return _repository.GetAll();
-            //return await _context.Person.ToListAsync();
+            return Ok(_repository.GetAll());
         }
 
-        //// GET: api/People/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Person>> GetPerson(decimal id)
-        //{
-        //    var person = await _context.Person.FindAsync(id);
 
-        //    if (person == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // GET: api/People/5
+        [HttpGet("{id}")]
+        public ActionResult<Person> GetPerson(decimal id)
+        {
+            var person =  _repository.GetByID(id);
 
-        //    return person;
-        //}
+            if (person == null)
+            {
+                return NotFound();
+            }
 
-        //// PUT: api/People/5
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutPerson(decimal id, Person person)
-        //{
-        //    if (id != person.Id)
-        //    {
-        //        return BadRequest();
-        //    }
+            return Ok(person);
+        }
 
-        //    _context.Entry(person).State = EntityState.Modified;
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!PersonExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+        //POST: api/People
+        [AllowAnonymous]
+        [HttpPost]
+        public ActionResult<Person> RegisterUser(Person person)
+        {
+            //TODO: przenieść jako metoda do AuthenticationController
+            person.Password = BCrypt.Net.BCrypt.HashPassword(person.Password, 10);
 
-        //    return NoContent();
-        //}
-        
+            //TODO: Może zmienić na metodę Exists(Email email)?
+            Person user = _repository.GetByEmail(person.Email);
+
+            if (user != null)
+            {
+                return StatusCode(409, "User with that email address already exists");
+            }
+
+            _repository.Insert(person);
+            _repository.Save();
+
+            //return CreatedAtAction("GetPerson", new { id = person.Id }, person);
+            return StatusCode(201);
+        }
+
+
+        // PUT: api/People/5
+        [HttpPut("{id}")]
+        public ActionResult PutPerson(decimal id, Person person)
+        {
+            if (id != person.Id)
+            {
+                return BadRequest();
+            }
+            if (_repository.PersonExists(person.Id))
+            {
+                _repository.Update(person);
+            }
+
+            try
+            {
+                _repository.Save();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                return StatusCode(503, e.Message);
+            }
+
+            return NoContent();
+        }
+
 
         //// DELETE: api/People/5
         //[HttpDelete("{id}")]
@@ -96,9 +117,5 @@ namespace Lekarzowo.Controllers
         //    return person;
         //}
 
-        //private bool PersonExists(decimal id)
-        //{
-        //    return _context.Person.Any(e => e.Id == id);
-        //}
     }
 }
