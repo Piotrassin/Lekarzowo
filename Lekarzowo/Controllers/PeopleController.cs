@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
 using Microsoft.AspNetCore.Authorization;
 using Lekarzowo.Repositories;
+using Lekarzowo.Services;
+using System;
 
 namespace Lekarzowo.Controllers
 {
@@ -22,8 +24,10 @@ namespace Lekarzowo.Controllers
         //}
 
         private readonly IPeopleRepository _repository;
-        public PeopleController(IPeopleRepository repository)
+        private readonly IJWTService _jwtService;
+        public PeopleController(IPeopleRepository repository, IJWTService jwtService)
         {
+            _jwtService = jwtService;
             _repository = repository;
         }
 
@@ -56,8 +60,7 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public ActionResult<Person> RegisterUser(Person person)
         {
-            //TODO: przenieść jako metoda do AuthenticationController
-            person.Password = BCrypt.Net.BCrypt.HashPassword(person.Password, 10);
+            person.Password = AuthService.CreateHash(person.Password);
 
             //TODO: Może zmienić na metodę Exists(Email email)?
             Person user = _repository.GetByEmail(person.Email);
@@ -72,6 +75,35 @@ namespace Lekarzowo.Controllers
 
             //return CreatedAtAction("GetPerson", new { id = person.Id }, person);
             return StatusCode(201);
+        }
+
+        //POST: api/People/Login
+        [AllowAnonymous]
+        [HttpPost("Login")]
+        public ActionResult<Person> LoginUser(Person current)
+        {
+            try
+            {
+                Person stored = _repository.GetByEmail(current.Email);
+                if (stored == null || !AuthService.VerifyPassword(current.Password, stored.Password))
+                {
+                    return NotFound();
+                }
+                var token = _jwtService.GenerateAccessToken(stored);
+                return Accepted(new
+                {
+                    Id = stored.Id,
+                    Username = stored.Name,
+                    FirstName = stored.Lastname,
+                    LastName = stored.Email,
+                    Token = token
+                });
+            }
+            catch (Exception e)
+            {
+                //throw;
+                return Conflict(e.Message); ;
+            }
         }
 
 
@@ -101,21 +133,21 @@ namespace Lekarzowo.Controllers
         }
 
 
-        //// DELETE: api/People/5
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult<Person>> DeletePerson(decimal id)
-        //{
-        //    var person = await _context.Person.FindAsync(id);
-        //    if (person == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // DELETE: api/People/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Person>> DeletePerson(decimal id)
+        {
+            var person = _repository.GetByID(id);
+            if (person == null)
+            {
+                return NotFound();
+            }
 
-        //    _context.Person.Remove(person);
-        //    await _context.SaveChangesAsync();
+            _repository.Delete(person);
+            _repository.Save();
 
-        //    return person;
-        //}
+            return person;
+        }
 
     }
 }

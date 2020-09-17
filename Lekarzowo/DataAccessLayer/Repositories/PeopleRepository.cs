@@ -37,9 +37,8 @@ namespace Lekarzowo.Repositories
             _context.Person.Add(person);
         }
 
-        public void Delete(int personID)
+        public void Delete(Person person)
         {
-            var person = _context.Person.Find(personID);
             _context.Person.Remove(person);
         }
 
@@ -51,6 +50,7 @@ namespace Lekarzowo.Repositories
         {
             _context.SaveChanges();
         }
+
         public bool PersonExists(decimal id)
         {
             return _context.Person.Any(e => e.Id == id);

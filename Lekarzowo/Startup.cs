@@ -1,10 +1,10 @@
 using Lekarzowo.Helpers;
 using Lekarzowo.Models;
 using Lekarzowo.Repositories;
+using Lekarzowo.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
@@ -27,12 +27,21 @@ namespace Lekarzowo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            #region Accessing appsettings.json
             var appSettings = Configuration.GetSection("SecretSection");
             services.Configure<SecretSettings>(appSettings);
 
             var secretSettings = appSettings.Get<SecretSettings>();
             var key = Encoding.ASCII.GetBytes(secretSettings.Secret);
+            #endregion
 
+            #region Accessing appsettings.json v2.0
+            services.AddOptions();
+            services.Configure<SecretSettings>(Configuration.GetSection("SecretSection"));
+            services.AddScoped<IJWTService, JWTService>();
+            #endregion
+
+            #region Authentication config
             services.AddAuthentication(s =>
             {
                 s.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -40,7 +49,7 @@ namespace Lekarzowo
             })
             .AddJwtBearer(b =>
             {
-                //TODO: DEVELOPMENT ONLY
+                //TODO: false FOR DEVELOPMENT ONLY
                 b.RequireHttpsMetadata = false;
 
                 b.SaveToken = true;
@@ -52,7 +61,10 @@ namespace Lekarzowo
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
-            });
+            });            
+            //services.AddScoped<JWTService>(s => s.GetService<IOptions<SecretSettings>>().Value);
+            services.AddScoped<JWTService>();
+            #endregion
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
@@ -62,6 +74,7 @@ namespace Lekarzowo
                 configuration.RootPath = "ClientApp/build";
             });
             services.AddScoped<IPeopleRepository, PeopleRepository>();
+
             services.AddEntityFrameworkOracle()
                 .AddDbContext<ModelContext>(options =>
                 {

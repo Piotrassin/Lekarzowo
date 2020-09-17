@@ -12,7 +12,7 @@ namespace Lekarzowo.Repositories
         Person GetByID(decimal personID);
         Person GetByEmail(string email);
         void Insert(Person person);
-        void Delete(int personID);
+        void Delete(Person person);
         void Update(Person person);
         void Save();
         bool PersonExists(decimal id);
