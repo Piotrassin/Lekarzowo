@@ -34,7 +34,7 @@ namespace Lekarzowo.Controllers
 
         // GET: api/People
         [HttpGet]
-        public ActionResult<IEnumerable<Person>> GetPerson()
+        public ActionResult<IEnumerable<Person>> GetPeople()
         {
             return Ok(_repository.GetAll());
         }
@@ -105,7 +105,6 @@ namespace Lekarzowo.Controllers
                 return Conflict(e.Message); ;
             }
         }
-
 
         // PUT: api/People/5
         [HttpPut("{id}")]
