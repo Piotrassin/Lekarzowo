@@ -36,7 +36,7 @@ namespace Lekarzowo.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Person>> GetPeople()
         {
-            return Ok(_repository.GetAll());
+            return _repository.GetAll().ToList();
         }
 
 
@@ -51,7 +51,7 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            return Ok(person);
+            return person;
         }
 
 
