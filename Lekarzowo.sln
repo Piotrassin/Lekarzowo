@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lekarzowo", "Lekarzowo\Lekarzowo.csproj", "{39900C15-53DB-41A1-90D3-5ADE965161BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lekarzowo.Tests", "Lekarzowo.Tests\Lekarzowo.Tests.csproj", "{77A25E85-F852-43DD-AE67-55DBFDEA1A37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lekarzowo.Tests", "Lekarzowo.Tests\Lekarzowo.Tests.csproj", "{77A25E85-F852-43DD-AE67-55DBFDEA1A37}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

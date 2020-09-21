@@ -3,6 +3,7 @@ using Lekarzowo.Controllers;
 using Lekarzowo.Models;
 using Lekarzowo.Repositories;
 using Lekarzowo.Services;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,30 +65,28 @@ namespace Lekarzowo.Tests
             }
         }
 
-        //[Theory]
-        //[InlineData(43, "test123123123")]
-        //[InlineData(-1, "test2")]
-        //[InlineData(null, "test3")]
-        //[InlineData(61, null)]
-        //public void GetPerson_Wrong(int id, string password)
-        //{
-        //    using (var mock = AutoMock.GetLoose())
-        //    {
-        //        //Arrange
-        //        mock.Mock<IPeopleRepository>()
-        //            .Setup(x => x.GetByID(id))
-        //            .Returns(GetSamplePeople().FirstOrDefault(x => x.Id == id));
+        [Theory]
+        [InlineData(4000)]
+        [InlineData(-1)]
+        [InlineData(null)]
+        [InlineData(1.5)]
+        public void GetPerson_Wrong(int id)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                //Arrange
+                mock.Mock<IPeopleRepository>()
+                    .Setup(x => x.GetByID(id))
+                    .Returns(GetSamplePeople().FirstOrDefault(x => x.Id == id));
 
-        //        //Act
-        //        PeopleController PeopleCtrl = mock.Create<PeopleController>();
-        //        Person actual = PeopleCtrl.GetPerson(id).Value;
+                //Act
+                PeopleController PeopleCtrl = mock.Create<PeopleController>();
+                var actual = PeopleCtrl.GetPerson(id).Result;
 
-        //        //Assert
-        //        Assert.True(actual != null);
-        //        Assert.True(!String.IsNullOrEmpty(actual.Password));
-        //        Assert.True(AuthService.VerifyPassword(password, actual.Password));
-        //    }
-        //}
+                //Assert
+                Assert.IsType<NotFoundResult>(actual);
+            }
+        }
 
         private IEnumerable<Person> GetSamplePeople()
         {
