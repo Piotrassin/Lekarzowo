@@ -4,6 +4,7 @@ using Lekarzowo.Models;
 using Lekarzowo.Repositories;
 using Lekarzowo.Services;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,6 +86,91 @@ namespace Lekarzowo.Tests
 
                 //Assert
                 Assert.IsType<NotFoundResult>(actual);
+            }
+        }
+
+        // <summary>
+        // TODO: TESTY DO POZOSTAŁYCH METOD
+        // </summary>
+        // <returns></returns>
+        
+        [Theory]
+        [InlineData(1, "test4", "testowy", "1981-1-1", "abc@mail.mail", "test4", "F", "80101012345")]
+        public void RegisterUser_Valid(int id, string name, string lastname, DateTime bday, string email, string pwd, string gender, string pesel)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                //Arrange
+                Person person = new Person  //hasło test
+                {
+                    Id = id,
+                    Name = name,
+                    Lastname = lastname,
+                    Birthdate = bday,
+                    Pesel = pesel,
+                    Gender = gender,
+                    Email = email,
+                    Password = pwd
+                };
+
+                mock.Mock<IPeopleRepository>()
+                    .Setup(x => x.GetByEmail(person.Email))
+                    .Returns(GetSamplePeople().FirstOrDefault(x => x.Email == email));
+
+                mock.Mock<IPeopleRepository>()
+                    .Setup(x => x.Insert(person));
+
+                mock.Mock<IPeopleRepository>()
+                    .Setup(x => x.Save());
+
+                //Act
+                PeopleController PeopleCtrl = mock.Create<PeopleController>();
+                var actual = PeopleCtrl.RegisterUser(person);
+
+                //Assert
+                mock.Mock<IPeopleRepository>().Verify(x => x.Insert(person), Times.Exactly(1));
+                mock.Mock<IPeopleRepository>().Verify(x => x.Save(), Times.Exactly(1));
+                Assert.IsType<CreatedResult>(actual);
+            }
+        }
+
+        [Theory]
+        [InlineData(1, "test4", "testowy", "1981-1-1", "test@work.pl", "test4", "F", "80101012345")]
+        public void RegisterUser_Wrong(int id, string name, string lastname, DateTime bday, string email, string pwd, string gender, string pesel)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                //Arrange
+                Person person = new Person  //hasło test
+                {
+                    Id = id,
+                    Name = name,
+                    Lastname = lastname,
+                    Birthdate = bday,
+                    Pesel = pesel,
+                    Gender = gender,
+                    Email = email,
+                    Password = pwd
+                };
+
+                mock.Mock<IPeopleRepository>()
+                    .Setup(x => x.GetByEmail(person.Email))
+                    .Returns(GetSamplePeople().FirstOrDefault(x => x.Email == email));
+
+                mock.Mock<IPeopleRepository>()
+                    .Setup(x => x.Insert(person));
+
+                mock.Mock<IPeopleRepository>()
+                    .Setup(x => x.Save());
+
+                //Act
+                PeopleController PeopleCtrl = mock.Create<PeopleController>();
+                var actual = PeopleCtrl.RegisterUser(person);
+
+                //Assert
+                mock.Mock<IPeopleRepository>().Verify(x => x.Insert(person), Times.Exactly(0));
+                mock.Mock<IPeopleRepository>().Verify(x => x.Save(), Times.Exactly(0));
+                Assert.IsType<ConflictObjectResult>(actual);
             }
         }
 

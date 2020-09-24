@@ -58,23 +58,24 @@ namespace Lekarzowo.Controllers
         //POST: api/People
         [AllowAnonymous]
         [HttpPost]
-        public ActionResult<Person> RegisterUser(Person person)
+        public IActionResult RegisterUser(Person person)
         {
             person.Password = AuthService.CreateHash(person.Password);
 
-            //TODO: Może zmienić na metodę Exists(Email email)?
+            //TODO: Może zmienić na metodę Exists(email)?
             Person user = _repository.GetByEmail(person.Email);
 
             if (user != null)
             {
-                return StatusCode(409, "User with that email address already exists");
+                return Conflict("User with that email address already exists");
+                //return StatusCode(409, "User with that email address already exists");
             }
 
             _repository.Insert(person);
             _repository.Save();
 
             //return CreatedAtAction("GetPerson", new { id = person.Id }, person);
-            return StatusCode(201);
+            return Created("", null);
         }
 
         //POST: api/People/Login
