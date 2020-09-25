@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class, IEntity
+    public abstract class GenericRepository<T> : IGenericRepository<T> where T : class, IEntity
     {
         private readonly ModelContext _context;
-        private DbSet<T> table = null;
+        private readonly DbSet<T> table = null;
 
         public GenericRepository(ModelContext context)
         {

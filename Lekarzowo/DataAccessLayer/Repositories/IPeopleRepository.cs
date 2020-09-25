@@ -9,7 +9,7 @@ namespace Lekarzowo.Repositories
     public interface IPeopleRepository
     {
         IEnumerable<Person> GetAll();
-        Person GetByID(decimal personID);
+        Person GetByID(decimal Id);
         Person GetByEmail(string email);
         void Insert(Person person);
         void Delete(Person person);

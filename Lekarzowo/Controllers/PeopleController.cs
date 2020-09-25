@@ -135,7 +135,7 @@ namespace Lekarzowo.Controllers
 
         // DELETE: api/People/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Person>> DeletePerson(decimal id)
+        public  ActionResult<Person> DeletePerson(decimal id)
         {
             var person = _repository.GetByID(id);
             if (person == null)
