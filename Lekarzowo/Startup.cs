@@ -1,3 +1,4 @@
+using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.Helpers;
 using Lekarzowo.Models;
 using Lekarzowo.Repositories;
@@ -61,7 +62,7 @@ namespace Lekarzowo
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
-            });            
+            });
             //services.AddScoped<JWTService>(s => s.GetService<IOptions<SecretSettings>>().Value);
             services.AddScoped<JWTService>();
             #endregion
@@ -74,6 +75,7 @@ namespace Lekarzowo
                 configuration.RootPath = "ClientApp/build";
             });
             services.AddScoped<IPeopleRepository, PeopleRepository>();
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             services.AddEntityFrameworkOracle()
                 .AddDbContext<ModelContext>(options =>
