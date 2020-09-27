@@ -9,58 +9,21 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 {
     public class LocalsRepository : GenericRepository<Local>, ILocalsRepository
     {
-        /// <summary>
-        /// Przetestować czy dziedziczenie po GenericRepository działa poprawnie i czy jest on inicjowany.
-        /// </summary>
         private readonly ModelContext _context;
         public LocalsRepository(ModelContext context) : base(context)
         {
             this._context = context;
         }
 
-        //public void Delete(Local t)
-        //{
-        //    _context.Local.Remove(t);
-        //}
 
-        //public bool Exists(decimal Id)
-        //{
-        //    return _context.Person.Any(e => e.Id == Id);
-        //}
-
-        //public bool Exists(string name)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
+            /// <summary>
+            /// Nie działa nie wiedzieć czemu
+            /// </summary>
+            /// <param name="local"></param>
+            /// <returns></returns>
         public bool Exists(Local local)
         {
-            throw new NotImplementedException();
+            return _context.Local.Any(x => x.Postcode == "00-902");
         }
-
-        //public IEnumerable<Local> GetAll()
-        //{
-        //    return _context.Local.ToList();
-        //}
-
-        //public Local GetByID(decimal id)
-        //{
-        //    return _context.Local.Find(id);
-        //}
-
-        //public void Insert(Local t)
-        //{
-        //    _context.Local.Add(t);
-        //}
-
-        //public void Save()
-        //{
-        //    _context.SaveChanges();
-        //}
-
-        //public void Update(Local t)
-        //{
-        //    _context.Entry(t).State = EntityState.Modified;
-        //}
     }
 }

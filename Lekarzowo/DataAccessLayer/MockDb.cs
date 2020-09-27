@@ -7,9 +7,14 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer
 {
+    /// <summary>
+    /// TODO: Zrobić bazę danych w pamięci do testów
+    /// </summary>
     public class MockDb
     {
+
         private DbContextOptions<ModelContext> options;
+
 
         public MockDb()
         {

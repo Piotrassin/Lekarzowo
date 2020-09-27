@@ -14,9 +14,9 @@ namespace Lekarzowo.Controllers
     [ApiController]
     public class LocalsController : ControllerBase
     {
-        private readonly IGenericRepository<Local> _repository;
+        private readonly ILocalsRepository _repository;
 
-        public LocalsController(IGenericRepository<Local> repository)
+        public LocalsController(ILocalsRepository repository)
         {
             _repository = repository;
         }
@@ -25,7 +25,6 @@ namespace Lekarzowo.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Local>> GetLocals()
         {
-            
             return _repository.GetAll().ToList();
         }
 

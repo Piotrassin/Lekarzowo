@@ -78,6 +78,7 @@ namespace Lekarzowo
             services.AddScoped<IPeopleRepository, PeopleRepository>();
             services.AddScoped<ILocalsRepository, LocalsRepository>();
 
+
             services.AddEntityFrameworkOracle()
                 .AddDbContext<ModelContext>(options =>
                 {
