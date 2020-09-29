@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Lekarzowo.DataAccessLayer;
+using System;
 using System.Collections.Generic;
 
 namespace Lekarzowo.Models
 {
-    public partial class Doctor
+    public partial class Doctor : IEntity
     {
         public Doctor()
         {
@@ -11,6 +12,7 @@ namespace Lekarzowo.Models
             Reservation = new HashSet<Reservation>();
             Workinghours = new HashSet<Workinghours>();
         }
+        public string Name { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public decimal Id { get; set; }
         public decimal SpecialityId { get; set; }
@@ -20,5 +22,6 @@ namespace Lekarzowo.Models
         public virtual ICollection<Referral> Referral { get; set; }
         public virtual ICollection<Reservation> Reservation { get; set; }
         public virtual ICollection<Workinghours> Workinghours { get; set; }
+        
     }
 }

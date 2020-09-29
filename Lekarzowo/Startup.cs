@@ -76,6 +76,7 @@ namespace Lekarzowo
             });
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IPeopleRepository, PeopleRepository>();
+            services.AddScoped<IDoctorsRepository, DoctorsRepository>();
             services.AddScoped<ILocalsRepository, LocalsRepository>();
 
 

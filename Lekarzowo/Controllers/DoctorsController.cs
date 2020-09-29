@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
+using Lekarzowo.DataAccessLayer.Repositories;
 
 namespace Lekarzowo.Controllers
 {
@@ -13,25 +14,25 @@ namespace Lekarzowo.Controllers
     [ApiController]
     public class DoctorsController : ControllerBase
     {
-        private readonly ModelContext _context;
+        private readonly IDoctorsRepository _repository;
 
-        public DoctorsController(ModelContext context)
+        public DoctorsController(IDoctorsRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         // GET: api/Doctors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Doctor>>> GetDoctor()
+        public ActionResult<IEnumerable<Doctor>> GetDoctors()
         {
-            return await _context.Doctor.ToListAsync();
+            return _repository.GetAll().ToList();
         }
 
         // GET: api/Doctors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Doctor>> GetDoctor(decimal id)
+        public ActionResult<Doctor> GetDoctor(decimal id)
         {
-            var doctor = await _context.Doctor.FindAsync(id);
+            var doctor = _repository.GetByID(id);
 
             if (doctor == null)
             {
@@ -43,18 +44,21 @@ namespace Lekarzowo.Controllers
 
         // PUT: api/Doctors/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDoctor(decimal id, Doctor doctor)
+        public IActionResult PutDoctor(decimal id, Doctor doctor)
         {
             if (id != doctor.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(doctor).State = EntityState.Modified;
+            if (_repository.GetByID(doctor.Id) != null)
+            {
+                _repository.Update(doctor);
+            }
 
             try
             {
-                await _context.SaveChangesAsync();
+                _repository.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -70,50 +74,64 @@ namespace Lekarzowo.Controllers
 
             return NoContent();
         }
-
+        /// <summary>
+        /// TODO: Poprawić metodę exists(Doctor) albo exists(name) żeby sprawdzała czy dany obiekt Person istnieje zamiast Doctor
+        /// </summary>
+        /// <param name="doctor"></param>
+        /// <returns></returns>
         // POST: api/Doctors
         [HttpPost]
         public async Task<ActionResult<Doctor>> PostDoctor(Doctor doctor)
         {
-            _context.Doctor.Add(doctor);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (DoctorExists(doctor.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            //_context.Doctor.Add(doctor);
+            //try
+            //{
+            //    await _context.SaveChangesAsync();
+            //}
+            //catch (DbUpdateException)
+            //{
+            //    if (DoctorExists(doctor.Id))
+            //    {
+            //        return Conflict();
+            //    }
+            //    else
+            //    {
+            //        throw;
+            //    }
+            //}
 
-            return CreatedAtAction("GetDoctor", new { id = doctor.Id }, doctor);
+            //return CreatedAtAction("GetDoctor", new { id = doctor.Id }, doctor);
+
+            
+            if (_repository.Exists(doctor))
+            {
+                return Conflict("That doctor already exists");
+            }
+            _repository.Insert(doctor);
+            _repository.Save();
+
+            return Created("", doctor);
         }
 
         // DELETE: api/Doctors/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Doctor>> DeleteDoctor(decimal id)
+        public ActionResult<Doctor> DeleteDoctor(decimal id)
         {
-            var doctor = await _context.Doctor.FindAsync(id);
+            var doctor = _repository.GetByID(id);
             if (doctor == null)
             {
                 return NotFound();
             }
 
-            _context.Doctor.Remove(doctor);
-            await _context.SaveChangesAsync();
+            _repository.Delete(doctor);
+            _repository.Save();
 
             return doctor;
         }
 
         private bool DoctorExists(decimal id)
         {
-            return _context.Doctor.Any(e => e.Id == id);
+            return _repository.Exists(id);
         }
     }
 }
