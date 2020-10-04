@@ -53,6 +53,11 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return table.Any(x => x.Id == Id);
         }
 
+        /// <summary>
+        /// Bez nadpisania własną metodą, wyszukuje po parametrze Name danego obiektu.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns>bool</returns>
         public bool Exists(T t)
         {
             return table.Any(x => x.Name == t.Name);

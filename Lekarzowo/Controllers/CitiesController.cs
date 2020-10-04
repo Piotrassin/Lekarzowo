@@ -80,7 +80,7 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public IActionResult PostCity(City city)
         {
-            if (_repository.Exists(city.Name))
+            if (_repository.Exists(city))
             {
                 return Conflict("City with that name already exists");
             }

@@ -80,7 +80,7 @@ namespace Lekarzowo.Controllers
         public IActionResult PostLocal(Local local)
         {
             
-            if (_repository.Exists(local.Name))
+            if (_repository.Exists(local))
             {
                 return Conflict("That local already exists");
             }
