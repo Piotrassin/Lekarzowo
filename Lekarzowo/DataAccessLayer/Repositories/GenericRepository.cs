@@ -53,9 +53,9 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return table.Any(x => x.Id == Id);
         }
 
-        public bool Exists(string name)
+        public bool Exists(T t)
         {
-            return table.Any(x => x.Name == name);
+            return table.Any(x => x.Name == t.Name);
         }
     }
 }

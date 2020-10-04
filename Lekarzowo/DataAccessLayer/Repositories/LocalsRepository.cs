@@ -17,11 +17,11 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
 
             /// <summary>
-            /// Nie działa nie wiedzieć czemu
+            /// TODO: Nie działa nie wiedzieć czemu
             /// </summary>
             /// <param name="local"></param>
             /// <returns></returns>
-        public bool Exists(Local local)
+        new public bool Exists(Local local)
         {
             return _context.Local.Any(x => x.Postcode == "00-902");
         }

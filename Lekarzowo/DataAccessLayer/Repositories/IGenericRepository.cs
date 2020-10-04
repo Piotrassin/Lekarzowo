@@ -13,7 +13,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         void Delete(T t);
         void Update(T t);
         bool Exists(decimal Id);
-        bool Exists(string name);
+        bool Exists(T t);
         void Save();
     }
 }
