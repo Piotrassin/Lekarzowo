@@ -1,10 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using Lekarzowo.DataAccessLayer;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
 namespace Lekarzowo.Models
 {
-    public partial class Person
+    public partial class Person : IEntity
     {
         public decimal Id { get; set; }
         public string Name { get; set; }

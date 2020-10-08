@@ -8,6 +8,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 {
     public interface ILocalsRepository : IGenericRepository<Local>
     {
-        bool Exists(Local local);
+        new bool Exists(Local local);
     }
 }

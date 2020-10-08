@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lekarzowo.DataAccessLayer;
+using System;
 using System.Collections.Generic;
 
 namespace Lekarzowo.Models

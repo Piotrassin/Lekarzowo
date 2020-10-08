@@ -1,10 +1,16 @@
 ﻿using Lekarzowo.DataAccessLayer;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
 namespace Lekarzowo.Models
-{
-    public partial class Doctor : IEntity
+{    
+    /// <summary>
+     /// ORA-00904 "d.Name" invalid identifier
+     /// Błąd obszedłem przez wycięcie implementacji IEntity przez klasę Doctor. Wtedy problem z atrybutem "Name" znika.
+     /// </summary>
+    public partial class Doctor
+        //: IEntity
     {
         public Doctor()
         {
@@ -12,7 +18,9 @@ namespace Lekarzowo.Models
             Reservation = new HashSet<Reservation>();
             Workinghours = new HashSet<Workinghours>();
         }
-        public string Name { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        //[JsonIgnore]
+        //public string Name { get; set; }
 
         public decimal Id { get; set; }
         public decimal SpecialityId { get; set; }

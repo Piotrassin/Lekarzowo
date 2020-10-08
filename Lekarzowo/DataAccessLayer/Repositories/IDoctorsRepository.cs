@@ -8,6 +8,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 {
     public interface IDoctorsRepository : IGenericRepository<Doctor>
     {
-        new bool Exists(Doctor doctor);
+
     }
 }

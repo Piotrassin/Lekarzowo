@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lekarzowo.DataAccessLayer;
+using System;
 using System.Collections.Generic;
 
 namespace Lekarzowo.Models
@@ -13,7 +14,7 @@ namespace Lekarzowo.Models
             Referral = new HashSet<Referral>();
             Reservation = new HashSet<Reservation>();
         }
-
+        
         public decimal Id { get; set; }
 
         public virtual Person IdNavigation { get; set; }

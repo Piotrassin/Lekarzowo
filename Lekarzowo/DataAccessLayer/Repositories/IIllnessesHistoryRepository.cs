@@ -8,5 +8,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 {
     public interface IIllnessesHistoryRepository : IGenericRepository<Illnesshistory>
     {
+
     }
 }

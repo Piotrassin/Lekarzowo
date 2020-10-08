@@ -30,7 +30,7 @@ namespace Lekarzowo.Controllers
 
         // GET: api/Doctors/5
         [HttpGet("{id}")]
-        public ActionResult<Doctor> GetDoctor(decimal id)
+        public ActionResult<bool> GetDoctor(decimal id)
         {
             var doctor = _repository.GetByID(id);
 
@@ -39,7 +39,8 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            return doctor;
+            return _repository.Exists(doctor);
+            //return doctor;
         }
 
         // PUT: api/Doctors/5
