@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
+    /// <summary>
+    /// DO POPRAWY: ORA-9004 "d.Name"
+    /// </summary>
     public class DoctorsRepository : GenericRepository<Doctor>, IDoctorsRepository
     {
         private readonly ModelContext _context;

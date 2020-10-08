@@ -14,9 +14,9 @@ namespace Lekarzowo.Controllers
     [ApiController]
     public class IllnessesController : ControllerBase
     {
-        private readonly IIllnessRepository _repository;
+        private readonly IIllnessesRepository _repository;
 
-        public IllnessesController(IIllnessRepository repository)
+        public IllnessesController(IIllnessesRepository repository)
         {
             _repository = repository;
         }
@@ -76,7 +76,7 @@ namespace Lekarzowo.Controllers
 
         // POST: api/Illnesses
         [HttpPost]
-        public async Task<ActionResult<Doctor>> PostDoctor(Illness illness)
+        public ActionResult<Doctor> PostDoctor(Illness illness)
         {
             #region wygenerowane przez EF core. Przydatne?
             //_context.Doctor.Add(doctor);

@@ -1,14 +1,17 @@
-﻿using System;
+﻿using Lekarzowo.DataAccessLayer;
+using System;
 using System.Collections.Generic;
 
 namespace Lekarzowo.Models
 {
-    public partial class Illnesshistory
+    public partial class Illnesshistory :IEntity
     {
         public Illnesshistory()
         {
             Medicinehistory = new HashSet<Medicinehistory>();
         }
+        public string Name { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
 
         public decimal Id { get; set; }
         public decimal PatientId { get; set; }

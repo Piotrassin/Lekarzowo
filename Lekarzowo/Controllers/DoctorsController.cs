@@ -74,14 +74,10 @@ namespace Lekarzowo.Controllers
 
             return NoContent();
         }
-        /// <summary>
-        /// TODO: Poprawić metodę exists(Doctor) albo exists(name) żeby sprawdzała czy dany obiekt Person istnieje zamiast Doctor
-        /// </summary>
-        /// <param name="doctor"></param>
-        /// <returns></returns>
+
         // POST: api/Doctors
         [HttpPost]
-        public async Task<ActionResult<Doctor>> PostDoctor(Doctor doctor)
+        public ActionResult<Doctor> PostDoctor(Doctor doctor)
         {
             //_context.Doctor.Add(doctor);
             //try

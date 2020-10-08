@@ -78,7 +78,8 @@ namespace Lekarzowo
             services.AddScoped<IPeopleRepository, PeopleRepository>();
             services.AddScoped<IDoctorsRepository, DoctorsRepository>();
             services.AddScoped<ILocalsRepository, LocalsRepository>();
-            services.AddScoped<IIllnessRepository, IllnessRepository>();
+            services.AddScoped<IIllnessesRepository, IllnessesRepository>();
+            services.AddScoped<IIllnessesHistoryRepository, IllnessesHistoryRepository>();
 
 
             services.AddEntityFrameworkOracle()

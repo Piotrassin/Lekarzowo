@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class IllnessRepository : GenericRepository<Illness>, IIllnessRepository
+    public class IllnessesHistoryRepository : GenericRepository<Illnesshistory>, IIllnessesHistoryRepository
     {
         private readonly ModelContext _context;
 
-        public IllnessRepository(ModelContext context) : base(context)
+        public IllnessesHistoryRepository(ModelContext context) : base(context)
         {
             this._context = context;
         }
