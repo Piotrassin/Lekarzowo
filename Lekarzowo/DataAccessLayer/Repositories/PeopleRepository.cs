@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Repositories;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

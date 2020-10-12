@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
-    interface IReservationsRepository : IBaseRepository<Reservation>
+    public interface IReservationsRepository : IBaseRepository<Reservation>
     {
     }
 }

@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Lekarzowo.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lekarzowo.Models
+namespace Lekarzowo.DataAccessLayer.Models
 {
     public interface IModelContext : IDisposable
     {

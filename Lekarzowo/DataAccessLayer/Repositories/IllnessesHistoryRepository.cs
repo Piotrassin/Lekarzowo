@@ -1,4 +1,5 @@
-﻿using Lekarzowo.Models;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,9 +17,12 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             this._context = context;
         }
 
-        public bool Exists(Illnesshistory t)
+        public bool Exists(Illnesshistory illnesshistory)
         {
-            throw new NotImplementedException();
+            return _context.Illnesshistory.Any(x =>
+                x.PatientId == illnesshistory.PatientId &&
+                x.IllnessId == illnesshistory.IllnessId &&
+                x.VisitId == illnesshistory.VisitId);
         }
     }
 }

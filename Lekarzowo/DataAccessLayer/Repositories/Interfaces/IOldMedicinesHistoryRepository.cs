@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
-    interface IOldMedicinesHistoryRepository : IBaseRepository<Oldmedicinehistory>
+    public interface IOldMedicinesHistoryRepository : IBaseRepository<Oldmedicinehistory>
     {
     }
 }

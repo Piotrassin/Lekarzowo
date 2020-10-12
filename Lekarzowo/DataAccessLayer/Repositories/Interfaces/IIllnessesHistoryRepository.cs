@@ -8,6 +8,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 {
     public interface IIllnessesHistoryRepository : IBaseRepository<Illnesshistory>
     {
-
+        bool Exists(Illnesshistory illnesshistory);
     }
 }

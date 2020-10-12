@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Lekarzowo.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace Lekarzowo.Models
+namespace Lekarzowo.DataAccessLayer.Models
 {
     public partial class ModelContext : DbContext
     {

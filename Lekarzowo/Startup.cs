@@ -1,6 +1,7 @@
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.Helpers;
-using Lekarzowo.Models;
 using Lekarzowo.Repositories;
 using Lekarzowo.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -80,6 +81,9 @@ namespace Lekarzowo
             services.AddScoped<IIllnessesRepository, IllnessesRepository>();
             services.AddScoped<IIllnessesHistoryRepository, IllnessesHistoryRepository>();
             services.AddScoped<ILocalsRepository, LocalsRepository>();
+            services.AddScoped<IMedicinesRepository, MedicinesRepository>();
+            services.AddScoped<IMedicinesHistoryRepository, MedicinesHistoryRepository>();
+            services.AddScoped<IOldIllnessesHistoryRepository, OldIllnessesHistoryRepository>();
             services.AddScoped<IPeopleRepository, PeopleRepository>();
 
 

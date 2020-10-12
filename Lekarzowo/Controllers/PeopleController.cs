@@ -115,7 +115,7 @@ namespace Lekarzowo.Controllers
             {
                 return BadRequest();
             }
-            if (_repository.PersonExists(person.Id))
+            if (_repository.Exists(person.Id))
             {
                 _repository.Update(person);
             }

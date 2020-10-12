@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
-    interface IWorkingHoursRepository : IBaseRepository<Workinghours>
+    public interface IWorkingHoursRepository : IBaseRepository<Workinghours>
     {
     }
 }

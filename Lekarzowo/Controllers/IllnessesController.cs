@@ -76,7 +76,7 @@ namespace Lekarzowo.Controllers
 
         // POST: api/Illnesses
         [HttpPost]
-        public ActionResult<Doctor> PostDoctor(Illness illness)
+        public ActionResult<Doctor> PostIllness(Illness illness)
         {
             #region wygenerowane przez EF core. Przydatne?
             //_context.Doctor.Add(doctor);

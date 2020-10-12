@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
-    interface ITreatmentsOnVisitRepository : IBaseRepository<Treatmentonvisit>
+    public interface ITreatmentsOnVisitRepository : IBaseRepository<Treatmentonvisit>
     {
     }
 }
