@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Lekarzowo.Models
 {
-    public partial class Referral
+    public partial class Referral : IEntity
     {
         public decimal Id { get; set; }
         public DateTime Dateofissue { get; set; }

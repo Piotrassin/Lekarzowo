@@ -74,12 +74,13 @@ namespace Lekarzowo
             {
                 configuration.RootPath = "ClientApp/build";
             });
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            services.AddScoped<IPeopleRepository, PeopleRepository>();
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddScoped<ICityRepository, CityRepository>();
             services.AddScoped<IDoctorsRepository, DoctorsRepository>();
-            services.AddScoped<ILocalsRepository, LocalsRepository>();
             services.AddScoped<IIllnessesRepository, IllnessesRepository>();
             services.AddScoped<IIllnessesHistoryRepository, IllnessesHistoryRepository>();
+            services.AddScoped<ILocalsRepository, LocalsRepository>();
+            services.AddScoped<IPeopleRepository, PeopleRepository>();
 
 
             services.AddEntityFrameworkOracle()

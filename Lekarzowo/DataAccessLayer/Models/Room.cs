@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Lekarzowo.DataAccessLayer;
+using System;
 using System.Collections.Generic;
 
 namespace Lekarzowo.Models
 {
-    public partial class Room
+    public partial class Room : IEntity
     {
         public Room()
         {

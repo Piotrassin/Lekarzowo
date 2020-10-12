@@ -1,4 +1,5 @@
-﻿using Lekarzowo.Models;
+﻿using Lekarzowo.DataAccessLayer.Repositories;
+using Lekarzowo.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -8,52 +9,18 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.Repositories
 {
-    public class PeopleRepository : IDisposable, IPeopleRepository
+    public class PeopleRepository : BaseRepository<Person>, IDisposable, IPeopleRepository
     {
         private bool disposed = false;
         private readonly ModelContext _context;
 
-        public PeopleRepository(ModelContext context)
+        public PeopleRepository(ModelContext context) : base(context)
         {
             this._context = context;
-        }
-
-        public IEnumerable<Person> GetAll()
-        {
-            return _context.Person.ToList();
-        }
-
-        public Person GetByID(decimal personID)
-        {
-            return _context.Person.Find(personID);
         }
         public Person GetByEmail(string email)
         {
             return _context.Person.FirstOrDefault(p => p.Email == email);
-        }
-
-        public void Insert(Person person)
-        {
-            _context.Person.Add(person);
-        }
-
-        public void Delete(Person person)
-        {
-            _context.Person.Remove(person);
-        }
-
-        public void Update(Person person)
-        {
-            _context.Entry(person).State = EntityState.Modified;
-        }
-        public void Save()
-        {
-            _context.SaveChanges();
-        }
-
-        public bool PersonExists(decimal id)
-        {
-            return _context.Person.Any(e => e.Id == id);
         }
 
         #region Disposing

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Lekarzowo.Models
 {
-    public partial class Reservation
+    public partial class Reservation : IEntity
     {
         public decimal Id { get; set; }
         public decimal DoctorId { get; set; }

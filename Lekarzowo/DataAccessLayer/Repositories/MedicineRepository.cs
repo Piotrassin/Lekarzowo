@@ -7,16 +7,15 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class IllnessesHistoryRepository : BaseRepository<Illnesshistory>, IIllnessesHistoryRepository
+    public class MedicineRepository : BaseRepository<Medicine>, IMedicineRepository
     {
         private readonly ModelContext _context;
-
-        public IllnessesHistoryRepository(ModelContext context) : base(context)
+        public MedicineRepository(ModelContext context) : base(context)
         {
-            this._context = context;
+            _context = context;
         }
 
-        public bool Exists(Illnesshistory t)
+        public bool Exists(Medicine t)
         {
             throw new NotImplementedException();
         }

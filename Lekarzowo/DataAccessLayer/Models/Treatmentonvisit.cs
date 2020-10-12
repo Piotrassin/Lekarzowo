@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Lekarzowo.Models
 {
-    public partial class Treatmentonvisit
+    public partial class Treatmentonvisit : IEntity
     {
         public decimal Id { get; set; }
         public decimal TreatmentId { get; set; }

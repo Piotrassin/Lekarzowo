@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public interface IDoctorsRepository : IGenericRepository<Doctor>
+    public interface IMedicineRepository : IBaseRepository<Medicine>
     {
-
+        bool Exists(Medicine t);
     }
 }

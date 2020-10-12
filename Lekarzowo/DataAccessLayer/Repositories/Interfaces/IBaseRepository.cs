@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public interface IGenericRepository<T> where T : class
+    public interface IBaseRepository<T> where T : class
     {
         IEnumerable<T> GetAll();
         T GetByID(decimal id);
@@ -13,7 +13,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         void Delete(T t);
         void Update(T t);
         bool Exists(decimal Id);
-        bool Exists(T t);
         void Save();
     }
 }

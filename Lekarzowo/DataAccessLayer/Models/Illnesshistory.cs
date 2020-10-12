@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Lekarzowo.Models
 {
-    public partial class Illnesshistory
+    public partial class Illnesshistory : IEntity
     {
         public Illnesshistory()
         {

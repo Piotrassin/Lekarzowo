@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class, IEntity
+    public class BaseRepository<T> : IBaseRepository<T> where T : class, IEntity
     {
         private readonly ModelContext _context;
         private readonly DbSet<T> table = null;
 
-        public GenericRepository(ModelContext context)
+        public BaseRepository(ModelContext context)
         {
             this._context = context;
             table = _context.Set<T>();
@@ -51,16 +51,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         public bool Exists(decimal Id)
         {
             return table.Any(x => x.Id == Id);
-        }
-
-        /// <summary>
-        /// Bez nadpisania własną metodą, wyszukuje po parametrze Name danego obiektu.
-        /// </summary>
-        /// <param name="t"></param>
-        /// <returns>bool</returns>
-        public bool Exists(T t)
-        {
-            return table.Any(x => x.Name == t.Name);
         }
     }
 }

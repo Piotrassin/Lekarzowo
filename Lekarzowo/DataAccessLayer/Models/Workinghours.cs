@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Lekarzowo.Models
 {
-    public partial class Workinghours
+    public partial class Workinghours : IEntity
     {
         public decimal Id { get; set; }
         public DateTime From { get; set; }
