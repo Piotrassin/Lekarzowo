@@ -14,9 +14,9 @@ namespace Lekarzowo.Controllers
     [ApiController]
     public class CitiesController : ControllerBase
     {
-        private readonly ICityRepository _repository;
+        private readonly ICitiesRepository _repository;
 
-        public CitiesController(ICityRepository repository)
+        public CitiesController(ICitiesRepository repository)
         {
             _repository = repository;
         }

@@ -1,5 +1,4 @@
 ﻿using Lekarzowo.Models;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class MedicineRepository : BaseRepository<Medicine>, IMedicineRepository
+    public class CitiesRepository : BaseRepository<City>, ICitiesRepository
     {
         private readonly ModelContext _context;
-        public MedicineRepository(ModelContext context) : base(context)
+        public CitiesRepository(ModelContext context) : base(context)
         {
             _context = context;
         }
 
-        public bool Exists(Medicine t)
+        public bool Exists(City city)
         {
-            throw new NotImplementedException();
+            return _context.City.Any(x => x.Name == city.Name);
         }
     }
 }
