@@ -35,6 +35,7 @@ namespace Lekarzowo.Controllers
             return list;
         }
 
+
         /// <summary>
         /// TODO: Parametry powinny być przekazywane wewnątrz ciała, a nie w URI.
         /// </summary>
