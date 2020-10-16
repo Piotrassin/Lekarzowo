@@ -17,6 +17,11 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             this._context = context;
         }
 
+        public IEnumerable<Illnesshistory> GetAll(decimal PatientId)
+        {
+            return _context.Illnesshistory.Where(x => x.PatientId == PatientId).ToList();
+        }
+
         public bool Exists(Illnesshistory illnesshistory)
         {
             return _context.Illnesshistory.Any(x =>

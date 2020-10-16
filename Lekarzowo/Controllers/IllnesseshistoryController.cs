@@ -23,7 +23,7 @@ namespace Lekarzowo.Controllers
 
         // GET: api/Illnesseshistory
         [HttpGet]
-        public ActionResult<IEnumerable<Illnesshistory>> GetIllnesshistory()
+        public ActionResult<IEnumerable<Illnesshistory>> GetIllnesshistories(decimal id)
         {
             return _repository.GetAll().ToList();
         }
@@ -40,6 +40,20 @@ namespace Lekarzowo.Controllers
             }
 
             return illnesshistory;
+        }
+
+        // GET: api/Illnesseshistory/5
+        [HttpGet("patient/{patientId}")]
+        public ActionResult<IEnumerable<Illnesshistory>> GetIllnesshistoryForPatient(decimal patientId)
+        {
+            var illnesshistory = _repository.GetAll(patientId);
+
+            if (illnesshistory == null)
+            {
+                return NotFound();
+            }
+
+            return illnesshistory.ToList();
         }
 
         // PUT: api/Illnesseshistory/5

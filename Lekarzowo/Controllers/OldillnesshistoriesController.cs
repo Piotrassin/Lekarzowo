@@ -23,7 +23,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Oldillnesshistories
-        [HttpGet]
+        [HttpGet("{PatientId}")]
         public async Task<ActionResult<IEnumerable<Oldillnesshistory>>> GetOldillnesshistory()
         {
             return Ok(await _repository.GetAll());
@@ -31,13 +31,13 @@ namespace Lekarzowo.Controllers
 
 
         /// <summary>
-        /// TODO: Parametry powinny być przekazywane wewnątrz ciała, a nie w URI?
+        /// TODO: Parametry powinny być przekazywane wewnątrz ciała, a nie w URI? W jakiś sposób trzeba zapewnić ochronę przed podglądaniem nie swojej historii.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         // GET: api/Oldillnesshistories/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Oldillnesshistory>> GetOldillnesshistory(decimal IlnessId, decimal PatientId)
+        [HttpGet("{PatientId}/{IlnessId}")]
+        public async Task<ActionResult<Oldillnesshistory>> GetOldillnesshistory(decimal PatientId, decimal IlnessId)
         {
             var oldillnesshistory = await _repository.GetByID(IlnessId, PatientId);
 
@@ -50,15 +50,15 @@ namespace Lekarzowo.Controllers
         }
 
         // PUT: api/Oldillnesshistories/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutOldillnesshistory(decimal IllnessId, Oldillnesshistory oldillnesshistory)
+        [HttpPut("{PatientId}/{IlnessId}")]
+        public async Task<IActionResult> PutOldillnesshistory(decimal PatientId, decimal IllnessId, Oldillnesshistory oldillnesshistory)
         {
-            if (IllnessId != oldillnesshistory.IllnessId)
+            if (IllnessId != oldillnesshistory.IllnessId || PatientId != oldillnesshistory.PatientId)
             {
                 return BadRequest();
             }
 
-            if (_repository.GetByID(oldillnesshistory.IllnessId, oldillnesshistory.PatientId) != null)
+            if (! await OldillnesshistoryExists(oldillnesshistory.IllnessId, oldillnesshistory.PatientId))
             {
                 _repository.Update(oldillnesshistory);
             }
@@ -107,8 +107,8 @@ namespace Lekarzowo.Controllers
         }
 
         // DELETE: api/Oldillnesshistories/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Oldillnesshistory>> DeleteOldillnesshistory(decimal IlnessId, decimal PatientId)
+        [HttpDelete("{PatientId}/{IlnessId}")]
+        public async Task<ActionResult<Oldillnesshistory>> DeleteOldillnesshistory(decimal PatientId, decimal IlnessId)
         {
             var oldillnesshistory = await _repository.GetByID(IlnessId, PatientId);
             if (oldillnesshistory == null)

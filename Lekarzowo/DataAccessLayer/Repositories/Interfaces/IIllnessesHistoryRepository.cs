@@ -8,6 +8,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 {
     public interface IIllnessesHistoryRepository : IBaseRepository<Illnesshistory>
     {
+        IEnumerable<Illnesshistory> GetAll(decimal PatientId);
         bool Exists(Illnesshistory illnesshistory);
     }
 }

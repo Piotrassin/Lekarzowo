@@ -45,8 +45,8 @@ namespace Lekarzowo.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        // GET: api/Medicinehistories?IllnessHistoryId=1&MedicineId=1
-        [HttpGet]
+        // GET: api/Medicinehistories/1/1
+        [HttpGet("{IllnessHistoryId}/{MedicineId}")]
         public ActionResult<Medicinehistory> GetMedicinehistory(decimal IllnessHistoryId, decimal MedicineId)
         {
             var medicinehistory = _repository.GetByID(IllnessHistoryId, MedicineId);
@@ -60,7 +60,7 @@ namespace Lekarzowo.Controllers
         }
 
         // PUT: api/Medicinehistories/5
-        [HttpPut("{id}")]
+        [HttpPut("{IllnessHistoryId}/{MedicineId}")]
         public IActionResult PutMedicinehistory(decimal IllnessHistoryId, decimal MedicineId, Medicinehistory medicinehistory)
         {
             if (MedicineId != medicinehistory.MedicineId || IllnessHistoryId != medicinehistory.IllnesshistoryId)
@@ -115,13 +115,14 @@ namespace Lekarzowo.Controllers
 
             return CreatedAtAction("GetMedicinehistory", new { id = medicinehistory.MedicineId }, medicinehistory);
         }
+
         /// <summary>
         /// TODO: Parametry powinny być przekazywane wewnątrz ciała, a nie w URI?
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         // DELETE: api/Medicinehistories/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{IllnessHistoryId}/{MedicineId}")]
         public ActionResult<Medicinehistory> DeleteMedicinehistory(decimal IllnessHistoryId, decimal MedicineId)
         {
             var medicinehistory = _repository.GetByID(IllnessHistoryId, MedicineId);

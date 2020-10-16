@@ -29,7 +29,7 @@ namespace Lekarzowo.Controllers
             return Ok(await _repository.GetAll());
         }
 
-        // GET: api/Oldmedicinehistories/5
+        // GET: api/Oldmedicinehistories/5/5
         [HttpGet("{PatientId}/{MedicineId}")]
         public async Task<ActionResult<Oldmedicinehistory>> GetOldmedicinehistory(decimal PatientId, decimal MedicineId)
         {
@@ -46,15 +46,15 @@ namespace Lekarzowo.Controllers
         }
 
         // PUT: api/Oldmedicinehistories/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutOldmedicinehistory(decimal PatientId, Oldmedicinehistory oldmedicinehistory)
+        [HttpPut("{PatientId}/{MedicineId}")]
+        public async Task<IActionResult> PutOldmedicinehistory(decimal PatientId, decimal MedicineId, Oldmedicinehistory oldmedicinehistory)
         {
-            if (PatientId != oldmedicinehistory.PatientId)
+            if (PatientId != oldmedicinehistory.PatientId || MedicineId != oldmedicinehistory.MedicineId)
             {
                 return BadRequest();
             }
 
-            if (_repository.GetByID(oldmedicinehistory.MedicineId, oldmedicinehistory.PatientId) != null)
+            if (!await OldmedicinehistoryExists(oldmedicinehistory.MedicineId, oldmedicinehistory.PatientId))
             {
                 _repository.Update(oldmedicinehistory);
             }
@@ -103,8 +103,8 @@ namespace Lekarzowo.Controllers
         }
 
         // DELETE: api/Oldmedicinehistories/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Oldmedicinehistory>> DeleteOldmedicinehistory(decimal MedicineId, decimal PatientId)
+        [HttpDelete("{PatientId}/{MedicineId}")]
+        public async Task<ActionResult<Oldmedicinehistory>> DeleteOldmedicinehistory(decimal PatientId, decimal MedicineId)
         {
             var oldmedicinehistory = await _repository.GetByID(MedicineId, PatientId);
             if (oldmedicinehistory == null)
