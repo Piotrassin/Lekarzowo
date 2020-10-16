@@ -84,6 +84,7 @@ namespace Lekarzowo
             services.AddScoped<IMedicinesRepository, MedicinesRepository>();
             services.AddScoped<IMedicinesHistoryRepository, MedicinesHistoryRepository>();
             services.AddScoped<IOldIllnessesHistoryRepository, OldIllnessesHistoryRepository>();
+            services.AddScoped<IOldMedicinesHistoryRepository, OldMedicinesHistoryRepository>();
             services.AddScoped<IPeopleRepository, PeopleRepository>();
 
 

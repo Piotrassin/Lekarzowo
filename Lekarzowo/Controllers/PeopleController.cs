@@ -11,7 +11,7 @@ using System;
 
 namespace Lekarzowo.Controllers
 {
-    //[Authorize]
+    //[Authorize] //wystarczy to odkomentować żeby na wszystkie końcówki z tego kontrolera, była potrzebna autoryzacja, chyba że końcówka jest oznaczona jako [AllowAnonymous].
     [Route("api/[controller]")]
     [ApiController]
     public class PeopleController : ControllerBase

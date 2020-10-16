@@ -22,7 +22,11 @@ namespace Lekarzowo.Controllers
             _repository = context;
         }
 
-
+        /// <summary>
+        /// TODO: GetAll powinna zwracać wszystkie historie przyjmowanego leku przez danego pacjenta. Wszystkie leki gdzie Idpacjenta = IllnessHistory.PatientId mniej więcej.
+        /// </summary>
+        /// <param name="IllnessHistoryId"></param>
+        /// <returns></returns>
         // GET: api/Medicinehistories/1
         [HttpGet("{IllnessHistoryId}")]
         public ActionResult<IEnumerable<Medicinehistory>> GetMedicinehistory(decimal IllnessHistoryId)
@@ -37,7 +41,7 @@ namespace Lekarzowo.Controllers
 
 
         /// <summary>
-        /// TODO: Parametry powinny być przekazywane wewnątrz ciała, a nie w URI.
+        /// TODO: Parametry powinny być przekazywane wewnątrz ciała, a nie w URI?
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -112,7 +116,7 @@ namespace Lekarzowo.Controllers
             return CreatedAtAction("GetMedicinehistory", new { id = medicinehistory.MedicineId }, medicinehistory);
         }
         /// <summary>
-        /// TODO: Parametry powinny być przekazywane wewnątrz ciała, a nie w URI.
+        /// TODO: Parametry powinny być przekazywane wewnątrz ciała, a nie w URI?
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
