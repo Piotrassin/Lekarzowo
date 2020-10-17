@@ -92,7 +92,7 @@ namespace Lekarzowo
             services.AddScoped<IReservationsRepository, ReservationsRepository>();
             services.AddScoped<IRoomsRepository, RoomsRepository>();
             services.AddScoped<ISpecialitiesRepository, SpecialitiesRepository>();
-
+            services.AddScoped<ITreatmentsOnVisitRepository, TreatmentsOnVisitRepository>();
 
 
 
