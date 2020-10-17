@@ -9,7 +9,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : class, IEntity
     {
-        private readonly ModelContext _context;
+        protected readonly ModelContext _context;
         private readonly DbSet<T> table = null;
 
         public BaseRepository(ModelContext context)
