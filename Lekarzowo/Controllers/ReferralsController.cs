@@ -56,6 +56,7 @@ namespace Lekarzowo.Controllers
             {
                 _repository.Update(referral);
             }
+
             try
             {
                 _repository.Save();

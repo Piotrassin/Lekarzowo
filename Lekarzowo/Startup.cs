@@ -89,6 +89,7 @@ namespace Lekarzowo
             services.AddScoped<IPatientsRepository, PatientsRepository>();
             services.AddScoped<IPeopleRepository, PeopleRepository>();
             services.AddScoped<IReferralsRepository, ReferralsRepository>();
+            services.AddScoped<IReservationsRepository, ReservationsRepository>();
 
 
 
