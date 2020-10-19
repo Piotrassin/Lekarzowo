@@ -52,5 +52,15 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             _context.Visit.Attach(t);
             _context.Entry(t).State = EntityState.Modified;
         }
+
+        public async Task<IEnumerable<View_VisitDetails>> DetailsView(decimal id)
+        {
+            return await _context.View_VisitDetails.Where(x => x.ReservationId == id).ToListAsync();
+        }
+
+        public async Task<IEnumerable<View_VisitList>> ListView(decimal PatientId)
+        {
+            return await _context.View_VisitList.Where(x => x.PatientId == PatientId).ToListAsync();
+        }
     }
 }

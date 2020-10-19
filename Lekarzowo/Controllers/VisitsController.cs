@@ -106,19 +106,19 @@ namespace Lekarzowo.Controllers
             return visit;
         }
 
-        //// GET: api/Visits/Details/1
-        //[HttpGet("[action]/{id}")]
-        //public async Task<ActionResult<IEnumerable<View_VisitDetails>>> Details(decimal id)
-        //{
-        //    return await _repository.View_VisitDetails.Where(x => x.ReservationId == id).ToListAsync();
-        //}
+        // GET: api/Visits/Details/1
+        [HttpGet("[action]/{ReservationId}")]
+        public async Task<ActionResult<IEnumerable<View_VisitDetails>>> Details(decimal ReservationId)
+        {
+            return Ok(await _repository.DetailsView(ReservationId));
+        }
 
-        //// GET: api/Visits/List         //TU POPRAWIĆ, ŻEBY ZWRACAŁO LISTĘ WIZYT KONKRETNEGO PACJENTA (ID)
-        //[HttpGet("[action]")]
-        //public async Task<ActionResult<IEnumerable<View_VisitList>>> List()
-        //{
-        //    return await _repository.View_VisitList.ToListAsync();
-        //}
+        // GET: api/Visits/List/1
+        [HttpGet("[action]/{PatientId}")]
+        public async Task<ActionResult<IEnumerable<View_VisitList>>> List(decimal PatientId)
+        {
+            return Ok(await _repository.ListView(PatientId));
+        }
 
         // to chyba można wywalić
         private bool VisitExists(decimal id)
