@@ -2,59 +2,58 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lekarzowo.DataAccessLayer.Repositories;
+using Lekarzowo.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lekarzowo.Models;
-using Lekarzowo.DataAccessLayer.Repositories;
 
 namespace Lekarzowo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DoctorsController : ControllerBase
+    public class IllnessesController : ControllerBase
     {
-        private readonly IDoctorsRepository _repository;
+        private readonly IIllnessesRepository _repository;
 
-        public DoctorsController(IDoctorsRepository repository)
+        public IllnessesController(IIllnessesRepository repository)
         {
             _repository = repository;
         }
 
-        // GET: api/Doctors
+        // GET: api/Illnesses
         [HttpGet]
-        public ActionResult<IEnumerable<Doctor>> GetDoctors()
+        public ActionResult<IEnumerable<Illness>> GetIllnesses()
         {
             return _repository.GetAll().ToList();
         }
 
-        // GET: api/Doctors/5
+        // GET: api/Illnesses/5
         [HttpGet("{id}")]
-        public ActionResult<bool> GetDoctor(decimal id)
+        public ActionResult<Illness> GetIllness(decimal id)
         {
-            var doctor = _repository.GetByID(id);
+            var illness = _repository.GetByID(id);
 
-            if (doctor == null)
+            if (illness == null)
             {
                 return NotFound();
             }
 
-            return _repository.Exists(doctor);
-            //return doctor;
+            return illness;
         }
 
-        // PUT: api/Doctors/5
+        // PUT: api/Illnesses/5
         [HttpPut("{id}")]
-        public IActionResult PutDoctor(decimal id, Doctor doctor)
+        public IActionResult PutIllness(decimal id, Illness illness)
         {
-            if (id != doctor.Id)
+            if (id != illness.Id)
             {
                 return BadRequest();
             }
 
-            if (_repository.GetByID(doctor.Id) != null)
+            if (_repository.GetByID(illness.Id) != null)
             {
-                _repository.Update(doctor);
+                _repository.Update(illness);
             }
 
             try
@@ -63,7 +62,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!DoctorExists(id))
+                if (!IllnessExists(id))
                 {
                     return NotFound();
                 }
@@ -72,14 +71,14 @@ namespace Lekarzowo.Controllers
                     throw;
                 }
             }
-
             return NoContent();
         }
 
-        // POST: api/Doctors
+        // POST: api/Illnesses
         [HttpPost]
-        public ActionResult<Doctor> PostDoctor(Doctor doctor)
+        public ActionResult<Doctor> PostIllness(Illness illness)
         {
+            #region wygenerowane przez EF core. Przydatne?
             //_context.Doctor.Add(doctor);
             //try
             //{
@@ -98,35 +97,35 @@ namespace Lekarzowo.Controllers
             //}
 
             //return CreatedAtAction("GetDoctor", new { id = doctor.Id }, doctor);
+            #endregion
 
-            
-            if (_repository.Exists(doctor))
+            if (_repository.Exists(illness))
             {
-                return Conflict("That doctor already exists");
+                return Conflict("That illness already exists");
             }
-            _repository.Insert(doctor);
+            _repository.Insert(illness);
             _repository.Save();
 
-            return Created("", doctor);
+            return Created("", illness);
         }
 
-        // DELETE: api/Doctors/5
+        // DELETE: api/Illnesses/5
         [HttpDelete("{id}")]
-        public ActionResult<Doctor> DeleteDoctor(decimal id)
+        public ActionResult<Illness> DeleteIllness(decimal id)
         {
-            var doctor = _repository.GetByID(id);
-            if (doctor == null)
+            var illness = _repository.GetByID(id);
+            if (illness == null)
             {
                 return NotFound();
             }
 
-            _repository.Delete(doctor);
+            _repository.Delete(illness);
             _repository.Save();
 
-            return doctor;
+            return illness;
         }
 
-        private bool DoctorExists(decimal id)
+        private bool IllnessExists(decimal id)
         {
             return _repository.Exists(id);
         }
