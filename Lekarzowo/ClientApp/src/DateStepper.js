@@ -20,7 +20,7 @@ class DateStepper extends React.Component {
     this.setActiveStep = this.setActiveStep.bind(this);
   }
   componentDidMount() {
-    fetch('https://localhost:5001/api/Visits/List')
+      fetch('https://localhost:44360/api/Visits/List')
         .then(response => response.json())
         .then(dataMine =>
           this.setState({ visit_arr: dataMine })

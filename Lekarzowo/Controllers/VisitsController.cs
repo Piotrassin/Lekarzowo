@@ -13,8 +13,12 @@ namespace Lekarzowo.Controllers
     [ApiController]
     public class VisitsController : ControllerBase
     {
-        private readonly ModelContext _context = new ModelContext();
+        private readonly ModelContext _context;
 
+        public VisitsController(ModelContext context)
+        {
+            _context = context;
+        }
 
         // GET: api/Visits
         [HttpGet]
@@ -114,7 +118,7 @@ namespace Lekarzowo.Controllers
             return await _context.View_VisitDetails.Where(x => x.ReservationId == id).ToListAsync();
         }
 
-        // GET: api/Visits/List
+        // GET: api/Visits/List         //TU POPRAWIĆ, ŻEBY ZWRACAŁO LISTĘ WIZYT KONKRETNEGO PACJENTA (ID)
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<View_VisitList>>> List()
         {

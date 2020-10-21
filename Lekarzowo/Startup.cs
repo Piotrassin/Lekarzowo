@@ -1,10 +1,16 @@
+using Lekarzowo.Helpers;
+using Lekarzowo.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Lekarzowo
 {
@@ -20,6 +26,33 @@ namespace Lekarzowo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var appSettings = Configuration.GetSection("SecretSection");
+            services.Configure<SecretSettings>(appSettings);
+
+            var secretSettings = appSettings.Get<SecretSettings>();
+            var key = Encoding.ASCII.GetBytes(secretSettings.Secret);
+
+            services.AddAuthentication(s =>
+            {
+                s.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                s.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(b =>
+            {
+                //TODO: DEVELOPMENT ONLY
+                b.RequireHttpsMetadata = false;
+
+                b.SaveToken = true;
+                b.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // In production, the React files will be served from this directory
@@ -27,6 +60,12 @@ namespace Lekarzowo
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            services.AddEntityFrameworkOracle()
+                .AddDbContext<ModelContext>(options =>
+                {
+                    options.UseOracle(Configuration.GetConnectionString("DefaultConnection"));
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +85,7 @@ namespace Lekarzowo
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
@@ -57,7 +97,6 @@ namespace Lekarzowo
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";
-
                 if (env.IsDevelopment())
                 {
                     spa.UseReactDevelopmentServer(npmScript: "start");
