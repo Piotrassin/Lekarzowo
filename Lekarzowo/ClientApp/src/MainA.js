@@ -1,6 +1,7 @@
 import React from 'react';
 import Dashboard from './Dashboard'
 import Main from './Main'
+import Login from './Login'
 import DetailVisit from './DetailVisit'
 import Visits from './Visits'
 import {
@@ -17,9 +18,9 @@ class MainA extends React.Component {
 
   render() {
       return(
-        <div className="container">
-          <Main />
-          <Dashboard />
+        <div className="containerLogin">
+
+          <Login />
         </div>
       );
   }

@@ -13,7 +13,6 @@ class AppontmentSmall extends React.Component {
         <a>{this.props.name} {this.props.surname}</a>
             <b>{this.props.specialty}</b>
             <RedirectButton
-
                 id={this.props.index}
                 redirectTo={"/visit/" + this.props.index}
                 buttonStyle="button-primary"

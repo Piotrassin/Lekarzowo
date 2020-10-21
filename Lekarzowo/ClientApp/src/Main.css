@@ -28,6 +28,12 @@
   height: 100%;
 font-family: roboto;
 }
+.containerLogin{
+  display: flex;
+  min-height: 100vh;
+  height: 100%;
+font-family: roboto;
+}
 #root {
   background-color: #E4F0FB;
 }
@@ -407,5 +413,5 @@ a:hover {
 
 /* selected link */
 a:active {
-  
+
 }
