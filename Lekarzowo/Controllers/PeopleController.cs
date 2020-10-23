@@ -94,9 +94,9 @@ namespace Lekarzowo.Controllers
                 return Accepted(new
                 {
                     Id = stored.Id,
-                    Username = stored.Name,
-                    FirstName = stored.Lastname,
-                    LastName = stored.Email,
+                    FirstName = stored.Name,
+                    LastName = stored.Lastname,
+                    Email = stored.Email,
                     Token = token
                 });
             }

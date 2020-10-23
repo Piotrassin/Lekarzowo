@@ -9,10 +9,10 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 {
     public class CitiesRepository : BaseRepository<City>, ICitiesRepository
     {
-        private readonly ModelContext _context;
+        //private readonly ModelContext _context;
         public CitiesRepository(ModelContext context) : base(context)
         {
-            _context = context;
+            //_context = context;
         }
 
         public bool Exists(City city)
