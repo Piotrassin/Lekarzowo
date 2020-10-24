@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import Main from './Main'
+
 import VisitDetails from './VisitDetails'
 import DateStepper from './DateStepper'
 import Dashboard from './Dashboard'

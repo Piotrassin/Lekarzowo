@@ -1,6 +1,5 @@
 import React from 'react';
 import Dashboard from './Dashboard'
-import Main from './Main'
 import DateStepper from './DateStepper'
 
 class Visits extends React.Component {
@@ -11,7 +10,7 @@ class Visits extends React.Component {
   render() {
       return(
         <div className="container">
-          <Main />
+          
           <DateStepper
           type = "0"
           title = "Wizyty Nadchodzące"

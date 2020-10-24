@@ -1,14 +1,15 @@
 import React from 'react';
 import Dashboard from './Dashboard'
-import Main from './Main'
-import MainA from './MainA'
+import MainContainer from './MainContainer'
+import LoginContainer from './LoginContainer'
 import DetailVisit from './DetailVisit'
 import Visits from './Visits'
 import {
   Route,
   NavLink,
   HashRouter,
-  Redirect
+  Redirect,
+  withRouter
 } from "react-router-dom";
 
 class App extends React.Component {
@@ -20,8 +21,9 @@ class App extends React.Component {
       return(
         <HashRouter>
         <div>
-        <Route exact path="/" component={MainA}/>
+        <Route exact path="/" component={LoginContainer}/>
         <Route exact path="/visits" component={Visits}/>
+        <Route exact path="/dashboard" component={MainContainer}/>
         <Route path="/visit" render={(routeProps) => (
               <DetailVisit {...routeProps}/>
           )}/>

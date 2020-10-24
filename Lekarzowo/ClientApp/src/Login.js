@@ -2,17 +2,78 @@ import React from 'react';
 import './css/login/login.css';
 import doctorDraw from './images/DoctorDraw.svg';
 import logo from './images/logo.svg';
+import { Route , withRouter} from 'react-router-dom';
+import AuthService from './authentication/AuthService.js';
+import Snackbar from './helpers/Snackbar.js';
+
+function validate(email, password){
+  return {
+    email: (!email.includes("@")) && email.length === 0,
+    password: password.length === 0
+  }
+}
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
+    this.onChangeEmail = this.onChangeEmail.bind(this);
+    this.onChangePassword = this.onChangePassword.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.state = {
+      email: "",
+      password: "",
+      waiting: false,
+      touched:{
+        email: false,
+        password: false
+      }
+    };
+  }
+  snackbarRef = React.createRef();
+
+
+  onChangeEmail(event){
+    this.setState({
+    email: event.target.value
+    });
   }
 
-  handleSubmit () {
+  onChangePassword(event){
+    this.setState({
+      password: event.target.value
+    });
+  }
 
+
+  handleSubmit(event) {
+    event.preventDefault();
+    //here set the waiitiing and loading values
+    AuthService.login(this.state.email, this.state.password).then(
+      response => {
+        if(response.status > 400){
+          this.snackbarRef.current.openSnackBar('Złe dane logowania');
+        }else{
+          this.props.history.push('/dashboard');
+          window.location.reload();
+        }
+      }
+    );
+  }
+
+  handleBlur = (field) => (evt) => {
+    this.setState({
+      touched: { ...this.state.touched, [field]: true },
+    });
   }
 
   render() {
+    const errors = validate(this.state.email, this.state.password);
+    const isEnabled = Object.keys(errors).some(x => errors[x]);
+    const shouldMarkError = (field) => {
+      const hasError = errors[field];
+      const shouldShow = this.state.touched[field];
+      return hasError ? shouldShow : false;
+    };
     return(
       <div className = "loginContainer">
         <div className = "loginPictureContainer">
@@ -29,17 +90,26 @@ class Login extends React.Component {
             height="90"
              />
           <form onSubmit = {this.handleSubmit} className = "loginForm">
-            <label for="login" className = "label">Login</label>
+            <label htmlFor="login" className = "label">Login</label>
             <input id = "login"
-            className = "input"
-            type = "text" />
-            <label className = "label">Hasło</label>
-            <input className = "input"
-            type = "password" />
+            className = {shouldMarkError('email') ? "input error" : "input"}
+            type = "text"
+            onBlur={this.handleBlur('email')}
+            value = {this.state.email}
+            onChange = {this.onChangeEmail}
+            />
+            <label htmlFor = "password" className = "label">Hasło</label>
+            <input className = {shouldMarkError('password') ? "input error" : "input"}
+            type = "password"
+            onBlur={this.handleBlur('password')}
+            value = {this.state.password}
+            onChange = {this.onChangePassword}
+            />
             <br/>
-            <button className = "login-button">Zaloguj</button>
+            <button disabled={isEnabled} className = "login-button">Zaloguj</button>
           </form>
         </div>
+        <Snackbar ref = {this.snackbarRef} />
       </div>
     )
   }

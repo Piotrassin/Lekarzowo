@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lekarzowo.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class VisitsController : ControllerBase

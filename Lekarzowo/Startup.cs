@@ -25,6 +25,7 @@ namespace Lekarzowo
         }
 
         public IConfiguration Configuration { get; }
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -67,7 +68,15 @@ namespace Lekarzowo
             //services.AddScoped<JWTService>(s => s.GetService<IOptions<SecretSettings>>().Value);
             services.AddScoped<JWTService>();
             #endregion
-
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://localhost:3000"
+                                                          ).AllowAnyHeader();
+                                  });
+            });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // In production, the React files will be served from this directory
@@ -103,6 +112,7 @@ namespace Lekarzowo
                 {
                     options.UseOracle(Configuration.GetConnectionString("DefaultConnection"));
                 });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -122,6 +132,7 @@ namespace Lekarzowo
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+            app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthentication();
 
             app.UseMvc(routes =>
@@ -139,6 +150,7 @@ namespace Lekarzowo
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
+
         }
     }
 }

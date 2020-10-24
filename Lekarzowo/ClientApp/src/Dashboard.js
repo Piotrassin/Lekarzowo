@@ -2,6 +2,8 @@ import React from "react"
 import med from './images/medicine_img.png';
 import writer from './images/Writer.png';
 import bottle from './images/Bottle.png';
+import UserService from './services/UserService.js'
+import AuthService from './authentication/AuthService.js'
 import './Main.css';
 import {
   Route,
@@ -21,14 +23,23 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount() {
-    fetch('https://localhost:44360/api/Visits/List')
+    //console.log("User " + AuthService.getLoggedUser());
+    UserService.getDashboardContent()
+    .then(response => {
+      if(response.status == 401){
+        this.props.history.push('/');
+      }
+      return response.json();
+    })
+.then(response => console.log(response));
+  /*  fetch('https://localhost:5001/api/Visits/List')
         .then(response => response.json())
         .then(dataMine =>
           this.setState({ visit_arr: dataMine })
           //console.log(dataMine)
         )
         .catch(err => console.log(err));
-
+*/
   }
 
 
@@ -71,10 +82,11 @@ class Dashboard extends React.Component {
 
   render () {
     var visits = this.getVisits();
+    const user = JSON.parse(localStorage.getItem("userData"));
     return (
       <div className ="dashboard">
       <div className = "headline-container">
-        <b className = "headline">Janina Kowalska</b>
+        <b className = "headline"></b>
       </div>
       <div className = "dash-container">
         <div className = "hello-container">

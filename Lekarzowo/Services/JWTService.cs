@@ -25,10 +25,10 @@ namespace Lekarzowo.Services
         public string GenerateAccessToken(Person person)
         {
             //TODO: Docelowo sekret do tworzenia podpisu powinien być pobierany z appsettings.json
-            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.Secret));
+  //          var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.Secret));
 
             //Dev
-            //var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("super sekretny sekret, którego nikt nie może nigdy poznać, bo przypał"));
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("super sekretny sekret, którego nikt nie może nigdy poznać, bo przypał"));
 
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
 
