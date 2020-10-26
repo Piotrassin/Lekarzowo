@@ -2,6 +2,7 @@ import React from 'react';
 import Dashboard from './Dashboard'
 import MainContainer from './MainContainer'
 import LoginContainer from './LoginContainer'
+import RegisterContainer from './RegisterContainer'
 import DetailVisit from './DetailVisit'
 import Visits from './Visits'
 import {
@@ -22,6 +23,7 @@ class App extends React.Component {
         <HashRouter>
         <div>
         <Route exact path="/" component={LoginContainer}/>
+        <Route exact path="/signup" component={RegisterContainer}/>
         <Route exact path="/visits" component={Visits}/>
         <Route exact path="/dashboard" component={MainContainer}/>
         <Route path="/visit" render={(routeProps) => (

@@ -19,6 +19,7 @@ class Login extends React.Component {
     this.onChangeEmail = this.onChangeEmail.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.onRegisterRequest = this.onRegisterRequest.bind(this);
     this.state = {
       email: "",
       password: "",
@@ -44,6 +45,9 @@ class Login extends React.Component {
     });
   }
 
+  onRegisterRequest(event){
+    this.props.history.push("/signup");
+  }
 
   handleSubmit(event) {
     event.preventDefault();
@@ -108,6 +112,10 @@ class Login extends React.Component {
             <br/>
             <button disabled={isEnabled} className = "login-button">Zaloguj</button>
           </form>
+          <button
+          onClick = {this.onRegisterRequest}
+          >Nie masz konta?
+          </button>
         </div>
         <Snackbar ref = {this.snackbarRef} />
       </div>

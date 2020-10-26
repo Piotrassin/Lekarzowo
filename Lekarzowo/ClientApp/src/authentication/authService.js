@@ -30,7 +30,11 @@ class AuthService {
   register(name, lastname, email, birthdate, password, gender, pesel){
     return fetch(url + 'People',  {
       method: 'POST',
-      body: {
+      headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         name: name,
         lastname: password,
         email: email,
@@ -38,7 +42,7 @@ class AuthService {
         password: password,
         gender: gender,
         pesel: pesel
-      }
+      })
     });
   }
 

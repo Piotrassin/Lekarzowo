@@ -12,7 +12,7 @@ import {
   Redirect
 } from "react-router-dom";
 
-class LoginContainer extends React.Component {
+class RegisterContainer extends React.Component {
   constructor(props){
     super(props);
     if(AuthService.getLoggedUser() != null){
@@ -24,10 +24,10 @@ class LoginContainer extends React.Component {
   render() {
       return(
         <div className="containerLogin">
-          <Login history= {this.props.history}/>
+          <Registration history= {this.props.history}/>
         </div>
       );
   }
 }
 
-export default LoginContainer;
+export default RegisterContainer;
