@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
+using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 
 namespace Lekarzowo.Controllers
 {
@@ -13,25 +15,27 @@ namespace Lekarzowo.Controllers
     [ApiController]
     public class VisitsController : ControllerBase
     {
-        private readonly ModelContext _context;
+        private readonly IVisitsRepository _repository;
+        private readonly ISQLPerspectivesRepository _repositorySQL;
 
-        public VisitsController(ModelContext context)
+        public VisitsController(IVisitsRepository repository, ISQLPerspectivesRepository repositorySQL)
         {
-            _context = context;
+            _repository = repository;
+            _repositorySQL = repositorySQL;
         }
 
         // GET: api/Visits
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Visit>>> GetVisit()
         {
-            return await _context.Visit.ToListAsync();
+            return Ok(_repository.GetAll());
         }
 
         // GET: api/Visits/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Visit>> GetVisit(decimal id)
         {
-            var visit = await _context.Visit.FindAsync(id);
+            var visit = _repository.GetByID(id);
 
             if (visit == null)
             {
@@ -50,11 +54,14 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(visit).State = EntityState.Modified;
+            if (_repository.GetByID(visit.ReservationId) != null)
+            {
+                _repository.Update(visit);
+            }
 
             try
             {
-                await _context.SaveChangesAsync();
+                _repository.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -75,60 +82,36 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public async Task<ActionResult<Visit>> PostVisit(Visit visit)
         {
-            _context.Visit.Add(visit);
-            try
+            if (VisitExists(visit.ReservationId))
             {
-                await _context.SaveChangesAsync();
+                return Conflict("That visit already exists");
             }
-            catch (DbUpdateException)
-            {
-                if (VisitExists(visit.ReservationId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _repository.Insert(visit);
+            _repository.Save();
 
-            return CreatedAtAction("GetVisit", new { id = visit.ReservationId }, visit);
+            return Created("", visit);
         }
 
         // DELETE: api/Visits/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Visit>> DeleteVisit(decimal id)
         {
-            var visit = await _context.Visit.FindAsync(id);
+            var visit = _repository.GetByID(id);
             if (visit == null)
             {
                 return NotFound();
             }
 
-            _context.Visit.Remove(visit);
-            await _context.SaveChangesAsync();
+            _repository.Delete(visit);
+            _repository.Save();
 
             return visit;
-        }
-
-        // GET: api/Visits/Details/1
-        [HttpGet("[action]/{id}")]
-        public async Task<ActionResult<IEnumerable<View_VisitDetails>>> Details(decimal id)
-        {
-            return await _context.View_VisitDetails.Where(x => x.ReservationId == id).ToListAsync();
-        }
-
-        // GET: api/Visits/List         //TU POPRAWIĆ, ŻEBY ZWRACAŁO LISTĘ WIZYT KONKRETNEGO PACJENTA (ID)
-        [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<View_VisitList>>> List()
-        {
-            return await _context.View_VisitList.ToListAsync();
         }
 
         // to chyba można wywalić
         private bool VisitExists(decimal id)
         {
-            return _context.Visit.Any(e => e.ReservationId == id);
+            return _repository.Exists(id);
         }
     }
 }

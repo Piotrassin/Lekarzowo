@@ -5,33 +5,40 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
 using Microsoft.AspNetCore.Authorization;
+using Lekarzowo.Repositories;
+using Lekarzowo.Services;
+using System;
 
 namespace Lekarzowo.Controllers
 {
-    [Authorize]
+    //[Authorize] //wystarczy to odkomentować żeby na wszystkie końcówki z tego kontrolera, była potrzebna autoryzacja, chyba że końcówka jest oznaczona jako [AllowAnonymous].
     [Route("api/[controller]")]
     [ApiController]
     public class PeopleController : ControllerBase
     {
-        private readonly ModelContext _context;
 
-        public PeopleController(ModelContext context)
+        private readonly IPeopleRepository _repository;
+        private readonly IJWTService _jwtService;
+        public PeopleController(IPeopleRepository repository, IJWTService jwtService)
         {
-            _context = context;
+            _jwtService = jwtService;
+            _repository = repository;
         }
+
 
         // GET: api/People
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Person>>> GetPerson()
+        public ActionResult<IEnumerable<Person>> GetPeople()
         {
-            return await _context.Person.ToListAsync();
+            return _repository.GetAll().ToList();
         }
+
 
         // GET: api/People/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Person>> GetPerson(decimal id)
+        public ActionResult<Person> GetPerson(decimal id)
         {
-            var person = await _context.Person.FindAsync(id);
+            var person =  _repository.GetByID(id);
 
             if (person == null)
             {
@@ -41,56 +48,100 @@ namespace Lekarzowo.Controllers
             return person;
         }
 
+
+        //POST: api/People
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult RegisterUser(Person person)
+        {
+            person.Password = AuthService.CreateHash(person.Password);
+
+            //TODO: Może zmienić na metodę Exists(email)?
+            Person user = _repository.GetByEmail(person.Email);
+
+            if (user != null)
+            {
+                return Conflict("User with that email address already exists");
+                //return StatusCode(409, "User with that email address already exists");
+            }
+
+            _repository.Insert(person);
+            _repository.Save();
+
+            //return CreatedAtAction("GetPerson", new { id = person.Id }, person);
+            return Created("", null);
+        }
+
+        //POST: api/People/Login
+        [AllowAnonymous]
+        [HttpPost("Login")]
+        public ActionResult<Person> LoginUser(Person current)
+        {
+            try
+            {
+                Person stored = _repository.GetByEmail(current.Email);
+                if (stored == null || !AuthService.VerifyPassword(current.Password, stored.Password))
+                {
+                    return NotFound();
+                }
+                var token = _jwtService.GenerateAccessToken(stored);
+                return Accepted(new
+                {
+                    Id = stored.Id,
+                    FirstName = stored.Name,
+                    LastName = stored.Lastname,
+                    Email = stored.Email,
+                    Token = token
+                });
+            }
+            catch (Exception e)
+            {
+                //throw;
+                return Conflict(e.Message); ;
+            }
+        }
+
         // PUT: api/People/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPerson(decimal id, Person person)
+        public ActionResult PutPerson(decimal id, Person person)
         {
             if (id != person.Id)
             {
                 return BadRequest();
             }
-
-            _context.Entry(person).State = EntityState.Modified;
+            if (_repository.Exists(person.Id))
+            {
+                _repository.Update(person);
+            }
 
             try
             {
-                await _context.SaveChangesAsync();
+                _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
-                if (!PersonExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(503, e.Message);
             }
 
             return NoContent();
         }
-        
+
 
         // DELETE: api/People/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Person>> DeletePerson(decimal id)
+        public  ActionResult<Person> DeletePerson(decimal id)
         {
-            var person = await _context.Person.FindAsync(id);
+            var person = _repository.GetByID(id);
             if (person == null)
             {
                 return NotFound();
             }
 
-            _context.Person.Remove(person);
-            await _context.SaveChangesAsync();
+            _repository.Delete(person);
+            _repository.Save();
 
             return person;
         }
 
-        private bool PersonExists(decimal id)
-        {
-            return _context.Person.Any(e => e.Id == id);
-        }
     }
 }
