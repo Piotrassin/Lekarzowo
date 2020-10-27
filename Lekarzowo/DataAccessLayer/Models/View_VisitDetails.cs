@@ -8,6 +8,11 @@ namespace Lekarzowo.Models
 {
     public class View_VisitDetails
     {
+        /// <summary>
+        /// Sprawdź poprzednie wizyty (Pacjent, Lekarz)
+        /// Patient(Person) + Reservation + Visit + TreatmentOnVisit + Treatment + IllnessHistory + Illness + MedicineHistory + Medicine + Doctor(Person)
+        /// </summary>
+
         [Column("Room_Number")]
         public int RoomNumber { get; set; }
         [Column("City_Name")]

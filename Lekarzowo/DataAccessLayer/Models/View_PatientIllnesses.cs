@@ -9,9 +9,10 @@ namespace Lekarzowo.Models
 	public class View_PatientIllnesses
 	{
 		/// <summary>
-		/// TO DO
+		/// Sprawdź przebyte choroby (Lekarz)
+		/// OldIllnessHistory + IllnessHistory + Illness + Patient(Person)
 		/// </summary>
-		
+
 		[Column("Patient_Id")]
 		public int PatientId { get; set; }
 

@@ -17,39 +17,219 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             _context = context;
         }
 
-        public Task<IEnumerable<View_AddressData>> AddressData(decimal RoomId)
+        public async Task<IEnumerable<object>> AddressData(decimal RoomId)
         {
-            throw new NotImplementedException();
+            return await _context.Room.Where(r => r.Id == RoomId)
+                .Select(r => new
+                {
+                    roomId = r.Id,
+                    roomNumber = r.Number,
+                    localId = r.Local.Id,
+                    localName = r.Local.Name,
+                    localStreetname = r.Local.Streetname,
+                    localStreetnumber = r.Local.Streetnumber,
+                    localBlocknumber = r.Local.Blocknumber,
+                    cityName = r.Local.City.Name,
+                    localPostcode = r.Local.Postcode
+                }).ToListAsync();
         }
 
-        public Task<IEnumerable<View_DocsAndSpecs>> DoctorsAndSpecializations(decimal DoctorId)
+        public async Task<IEnumerable<object>> DoctorsAndSpecializations(decimal DoctorId)
         {
-            throw new NotImplementedException();
+            return await _context.Doctor.Where(doctor => doctor.Id == DoctorId)
+                .Select(doc => new
+                {
+                    doctorId = doc.Id,
+                    specialityName = doc.Speciality.Name,
+                    specialityPricePerHour = doc.Speciality.Price
+                }).ToListAsync();
         }
 
-        public Task<IEnumerable<View_DoctorSchedule>> DoctorSchedule(decimal DoctorId, decimal LocalId)
+        public async Task<IEnumerable<object>> DoctorSchedule(decimal DoctorId, decimal LocalId)
         {
-            throw new NotImplementedException();
+            return await _context.Reservation.Where(d => d.DoctorId == DoctorId && d.Room.LocalId == LocalId)
+                .Select(s => new
+                {
+                    reservationId = s.Id,
+                    reservationStartTime = s.Starttime,
+                    reservationEndTime = s.Endtime,
+                    reservationIsCanceled = s.Canceled,
+                    patientId = s.Patient.Id,
+                    patientName = s.Patient.IdNavigation.Name,
+                    patientLastname = s.Patient.IdNavigation.Lastname,
+                    roomNumber = s.Room.Number,
+                    localName = s.Room.Local.Name,
+                    localStreetName = s.Room.Local.Streetname,
+                    localStreetNumber = s.Room.Local.Streetnumber,
+                    localBlockNumber = s.Room.Local.Blocknumber,
+                    cityName = s.Room.Local.City.Name
+                }).ToListAsync();
         }
 
-        public Task<IEnumerable<View_DoctorList>> DoctorsList(decimal SpecializationId, decimal CityId)
-        {
-            throw new NotImplementedException();
+        public async Task<IEnumerable<object>> DoctorsList(decimal? SpecializationId, decimal? CityId)
+        {           
+            return await _context.Doctor
+                .Where(d => d.SpecialityId == SpecializationId || !SpecializationId.HasValue)
+                .Select(d => new
+                {
+                    doctorId = d.Id,
+                    doctorName = d.IdNavigation.Name,
+                    doctorLastame = d.IdNavigation.Lastname,
+                    specialityName = d.Speciality.Name,
+                    specialityPricePerHour = d.Speciality.Price,
+
+                    WorkingHours = _context.Workinghours
+                    .Where(w => w.Local.CityId == CityId || !CityId.HasValue)
+                    .Where(y => y.DoctorId == d.IdNavigation.Id)
+                    .Select(w => new
+                    {
+                        workHoursId = w.Id,
+                        workHoursFrom = w.From,
+                        workHoursTo = w.To,
+                        localName = w.Local.Name,
+                        localStreetName = w.Local.Streetname,
+                        localStreetNumber = w.Local.Streetnumber,
+                        localBlockNumber = w.Local.Blocknumber,
+                        cityName = w.Local.City.Name
+                    })
+                }).ToListAsync();
         }
 
-        public Task<IEnumerable<View_IllnessMedDetails>> IllnessAndMedicinesDetails(decimal PatientId, decimal IllnessId)
+        public async Task<IEnumerable<object>> IllnessAndMedicinesDetails(decimal PatientId, decimal IllnessId)
         {
-            throw new NotImplementedException();
+            //return await _context.Patient.Where(p => p.Id == PatientId)
+            //    .Select(x => new
+            //    {
+            //        patientId = x.Id,
+            //        patientName = x.IdNavigation.Name,
+            //        patientLastname = x.IdNavigation.Lastname,
+
+            //        ilnesses = _context.Illnesshistory
+            //        .Where(w => w.PatientId == PatientId)
+            //        .Where(z => z.IllnessId == IllnessId)
+            //        .Select(w => new
+            //        {
+            //            reservationId = w.Visit.ReservationId,
+            //            illnessHistoryId = w.Id,
+            //            illnessName = w.Illness.Name,
+            //            illnessHistoryDiagnoseDate = w.Visit.Reservation.Starttime,
+            //            illnessHistoryCureDate = w.Curedate,
+            //        }),
+
+            //        oldIllnesses = _context.Oldillnesshistory
+            //        .Where(w => w.PatientId == PatientId)
+            //        .Where(z => z.IllnessId == IllnessId)
+            //        .Select(w => new
+            //        {
+            //            illnessId = w.IllnessId,
+            //            illnessName = w.Illness.Name,
+            //            oldIllnessHistoryDiagnoseDate = w.Date,
+            //            oldIllnessHistoryCureDate = w.Curedate
+            //        })
+            //    }).ToListAsync();
+
+            return await _context.Patient.Where(p => p.Id == PatientId)
+                .Select(x => new
+                {
+                    patientId = x.Id,
+                    patientName = x.IdNavigation.Name,
+                    patientLastname = x.IdNavigation.Lastname,
+
+                    illnesses = _context.Illnesshistory.Where(q => q.PatientId == PatientId)
+                            .Select(illnessHist => new
+                            {
+                                illnessHistoryId = illnessHist.Id,
+                                illnessName = illnessHist.Illness.Name,
+                                illnessHistoryDescription = illnessHist.Description,
+                                illnessHistoryCureDate = illnessHist.Curedate,
+
+                                Medicines = _context.Medicinehistory.Where(y => y.IllnesshistoryId == illnessHist.Id)
+                                .Select(z => new
+                                {
+                                    medicineName = z.Medicine.Name,
+                                    medicineHistoryStartDate = z.Startdate,
+                                    medicineHistoryFinishDate = z.Finishdate,
+                                    medicineHistoryDescription = z.Description
+                                })
+                            }),
+
+                    oldIllnesses = _context.Oldillnesshistory.Where(z => z.PatientId == PatientId)
+                    .Select( z => new
+                    {
+                        oldIllnessId = z.IllnessId,
+                        oldIllnessName = z.Illness.Name,
+                        oldIllnessHistoryDescription = z.Description,
+                        oldIllnessHistoryCureDate = z.Curedate,
+                    }),
+
+                    oldMedicines = _context.Oldmedicinehistory
+                    .Where(w => w.PatientId == PatientId)
+                    .Select(w => new
+                    {
+                        oldMedicineName = w.Medicine.Name,
+                        oldMedicineHistoryStartDate = w.Date,
+                        oldMedicineHistoryDescription = w.Description
+                    })
+                }).ToListAsync();
         }
 
-        public Task<IEnumerable<View_IllnessMedList>> IllnessAndMedicinesList(decimal PatientId)
+        public async Task<IEnumerable<object>> IllnessAndMedicinesList(decimal PatientId)
         {
-            throw new NotImplementedException();
+            return await _context.Patient.Where(p => p.Id == PatientId)
+                .Select(x => new
+                {
+                    patientId = x.Id,
+                    patientName = x.IdNavigation.Name,
+                    patientLastname = x.IdNavigation.Lastname,
+                    
+                    ilnesses = _context.Illnesshistory.Where(w => w.PatientId == PatientId)
+                    .Select(w => new
+                    {
+                        illnessHistoryId = w.Id,
+                        reservationId = w.Visit.ReservationId,
+                        illnessName = w.Illness.Name,
+                        illnessHistoryDiagnoseDate = w.Visit.Reservation.Starttime,
+                        illnessHistoryCureDate = w.Curedate,
+                    }),
+
+                    oldIllnesses = _context.Oldillnesshistory.Where(w => w.PatientId == PatientId)
+                    .Select(w => new
+                    {
+                        illnessId = w.IllnessId,
+                        illnessName = w.Illness.Name,
+                        oldIllnessHistoryDiagnoseDate = w.Date,
+                        oldIllnessHistoryCureDate = w.Curedate
+                    })
+                }).ToListAsync();
         }
 
-        public Task<IEnumerable<View_PatientIllnesses>> PatientIllnesses(decimal PatientId)
+        public async Task<IEnumerable<object>> PatientIllnesses(decimal PatientId)
         {
-            throw new NotImplementedException();
+            return await _context.Patient.Where(p => p.Id == PatientId)
+                .Select(x => new
+                {
+                    patientId = x.Id,
+                    patientName = x.IdNavigation.Name,
+                    patientLastname = x.IdNavigation.Lastname,
+                    
+                    ilnesses = _context.Illnesshistory.Where(w => w.PatientId == PatientId)
+                    .Select(w => new
+                    {
+                        illnessHistoryId = w.Id,
+                        illnessName = w.Illness.Name,
+                        illnessHistoryDiagnoseDate = w.Visit.Reservation.Starttime,
+                        illnessHistoryCureDate = w.Curedate
+                    }),
+
+                    oldIllnesses = _context.Oldillnesshistory.Where(w => w.PatientId == PatientId)
+                    .Select(w => new
+                    {
+                        illnessId = w.IllnessId,
+                        illnessName = w.Illness.Name,
+                        oldIllnessHistoryDiagnoseDate = w.Date,
+                        oldIllnessHistoryCureDate = w.Curedate
+                    })
+                }).ToListAsync();
         }
 
         public async Task<IEnumerable<object>> VisitDetails(decimal ReservationId)
@@ -110,9 +290,20 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 .ToListAsync();
         }
 
-        public Task<IEnumerable<View_VisitList>> VisitList(decimal PatientId)
+        public async Task<IEnumerable<object>> VisitList(decimal PatientId)
         {
-            throw new NotImplementedException();
+            return await _context.Visit.Where(visit => visit.Reservation.PatientId == PatientId)
+                .Select(visit => new
+                {
+                    patientId = visit.Reservation.Patient.IdNavigation.Id,
+                    doctorName = visit.Reservation.Doctor.IdNavigation.Name,
+                    doctorLastname = visit.Reservation.Doctor.IdNavigation.Lastname,
+                    doctorSpeciality = visit.Reservation.Doctor.Speciality.Name,
+                    reservationId = visit.Reservation.Id,
+                    reservationStartTime = visit.Reservation.Starttime,
+                    localName = visit.Reservation.Room.Local.Name,
+                })
+                .ToListAsync();
         }
     }
 }

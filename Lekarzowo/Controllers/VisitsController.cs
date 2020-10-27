@@ -108,20 +108,6 @@ namespace Lekarzowo.Controllers
             return visit;
         }
 
-        // GET: api/Visits/Details/1
-        [HttpGet("[action]/{ReservationId}")]
-        public async Task<ActionResult<IEnumerable<View_VisitDetails>>> Details(decimal ReservationId)
-        {
-            return Ok(await _repositorySQL.VisitDetails(ReservationId));
-        }
-
-        // GET: api/Visits/List/1
-        [HttpGet("[action]/{PatientId}")]
-        public async Task<ActionResult<IEnumerable<View_VisitList>>> List(decimal PatientId)
-        {
-            return Ok(await _repositorySQL.VisitList(PatientId));
-        }
-
         // to chyba można wywalić
         private bool VisitExists(decimal id)
         {
