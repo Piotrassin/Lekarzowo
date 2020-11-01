@@ -9,14 +9,16 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class SQLPerspectivesRepository : ISQLPerspectivesRepository
+    public class UserInterfaceComponentsRepository : IUserInterfaceComponentsRepository
     {
         private readonly ModelContext _context;
-        public SQLPerspectivesRepository(ModelContext context)
+        private readonly int MaxCountOfLoadedItems = 10;
+        public UserInterfaceComponentsRepository(ModelContext context)
         {
             _context = context;
         }
 
+        #region stareWidoki
         public async Task<IEnumerable<object>> AddressData(decimal RoomId)
         {
             return await _context.Room.Where(r => r.Id == RoomId)
@@ -305,5 +307,88 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 })
                 .ToListAsync();
         }
+        #endregion
+
+
+
+        public async Task<IEnumerable<object>> IllnessesHistory(decimal PatientId)
+        {
+            return await _context.Illnesshistory.Where(x => x.PatientId == PatientId)
+                .Select(x => new
+                {
+                    IllnessName = x.Illness.Name,
+                    DiagnoseDate = x.Visit.Reservation.Starttime,
+                    CureDate = x.Curedate.GetValueOrDefault(DateTime.Now.Date),
+                })
+                .OrderBy(x => x.DiagnoseDate)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<object>> PerformedTreatments(decimal VisitId)
+        {
+            return await _context.Treatmentonvisit.Where(x => x.VisitId == VisitId)
+                .Select(x => new
+                {
+                    TreatmentName = x.Treatment.Name,
+                    TreatmentDescription = x.Description
+                }).ToListAsync();
+        }
+
+        public async Task<IEnumerable<object>> PrescribedMedicines(decimal VisitId)
+        {
+            return await _context.Medicinehistory.Where(x => x.Illnesshistory.VisitId == VisitId)
+                .Select(x => new
+                {
+                    MedicineName = x.Medicine.Name,
+                    MedicineDosage = x.Description
+                }).ToListAsync();
+        }
+
+        public async Task<IEnumerable<object>> TakenMedicines(decimal PatientId)
+        {
+            return await _context.Medicinehistory.Where(x => x.Illnesshistory.PatientId == PatientId)
+                .Select(x => new
+                {
+                    MedicineName = x.Medicine.Name,
+                    MedicineDosage = x.Description
+                }).ToListAsync();
+        }
+
+        public async Task<IEnumerable<object>> RecentVisits(decimal PatientId)
+        {
+            return await _context.Reservation
+                .Where(x => x.PatientId == PatientId)
+                .Where(x => x.Starttime < DateTime.Now)
+                .Select(x => new
+                {
+                    ReservationId = x.Id,
+                    DoctorSpecialization = x.Doctor.Speciality.Name,
+                    ReservationStartTime = x.Starttime,
+                    ReservationEndTime = x.Endtime,
+                    DoctorName = x.Doctor.IdNavigation.Name,
+                    DoctorLastname = x.Doctor.IdNavigation.Lastname,
+                })
+                .Take(MaxCountOfLoadedItems)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<object>> UpcomingVisits(decimal PatientId)
+        {
+            return await _context.Reservation
+                .Where(x => x.PatientId == PatientId)
+                .Where(x => x.Starttime > DateTime.Now)
+                .Select(x => new
+                {
+                    ReservationId = x.Id,
+                    DoctorSpecialization = x.Doctor.Speciality.Name,
+                    ReservationStartTime = x.Starttime,
+                    ReservationEndTime = x.Endtime,
+                    DoctorName = x.Doctor.IdNavigation.Name,
+                    DoctorLastname = x.Doctor.IdNavigation.Lastname,
+                })
+                .Take(MaxCountOfLoadedItems)
+                .ToListAsync();
+        }
+
     }
 }

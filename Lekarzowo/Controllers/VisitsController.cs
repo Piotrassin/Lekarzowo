@@ -16,9 +16,9 @@ namespace Lekarzowo.Controllers
     public class VisitsController : ControllerBase
     {
         private readonly IVisitsRepository _repository;
-        private readonly ISQLPerspectivesRepository _repositorySQL;
+        private readonly IUserInterfaceComponentsRepository _repositorySQL;
 
-        public VisitsController(IVisitsRepository repository, ISQLPerspectivesRepository repositorySQL)
+        public VisitsController(IVisitsRepository repository, IUserInterfaceComponentsRepository repositorySQL)
         {
             _repository = repository;
             _repositorySQL = repositorySQL;
