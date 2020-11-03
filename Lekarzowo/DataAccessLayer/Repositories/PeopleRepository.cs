@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using Lekarzowo.DataAccessLayer.DTO;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,25 @@ namespace Lekarzowo.Repositories
         public Person GetByEmail(string email)
         {
             return _context.Person.FirstOrDefault(p => p.Email == email);
+        }
+
+        public void Insert(PersonDTO a)
+        {
+            _context.Person.Add(new Person
+            {
+                Name = a.Name,
+                Lastname= a.Lastname,
+                Birthdate = a.Birthdate,
+                Gender = a.Gender,
+                Email = a.Email,
+                Password = a.Password,
+                Pesel = a.Pesel
+            });
+        }
+
+        new public void Insert(Person a)
+        {
+            //celowo puste. Przysłania metodę z bazy, aby z niej nie korzystać.
         }
 
         #region Disposing

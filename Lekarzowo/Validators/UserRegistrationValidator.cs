@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Lekarzowo.DataAccessLayer.DTO;
 using Lekarzowo.Models;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.Validators
 {
-    public class UserRegistrationValidator : AbstractValidator<Person>
+    public class UserRegistrationValidator : AbstractValidator<PersonDTO>
     {
         private readonly int MaxAgeValue = 150;
         public UserRegistrationValidator()

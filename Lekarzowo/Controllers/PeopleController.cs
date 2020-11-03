@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Lekarzowo.Repositories;
 using Lekarzowo.Services;
 using System;
+using Lekarzowo.DataAccessLayer.DTO;
 
 namespace Lekarzowo.Controllers
 {
@@ -52,7 +53,7 @@ namespace Lekarzowo.Controllers
         //POST: api/People
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult RegisterUser(Person person)
+        public IActionResult RegisterUser(PersonDTO person)
         {
             person.Password = AuthService.CreateHash(person.Password);
 
