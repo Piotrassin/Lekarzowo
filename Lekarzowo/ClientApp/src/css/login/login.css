@@ -105,6 +105,15 @@ margin-bottom: 3px;
   margin-right: auto;
   margin-top: 25px;
 }
+.header-2 {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  padding-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 25px;
+}
 .header-3 {
   color: #C5C5C5;
   font-size: 15px;
@@ -112,6 +121,15 @@ margin-bottom: 3px;
   margin-right: auto;
   padding-bottom: 10px;
   margin-bottom: 20px;
+}
+.header-4 {
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  padding-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 25px;
 }
 .label-input-group {
   margin-top: 15px;

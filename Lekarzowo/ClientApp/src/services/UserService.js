@@ -4,7 +4,7 @@ const url = 'https://localhost:5001/api/';
 
 class UserService {
   getDashboardContent(){
-    return fetch(url + 'visits', {
+    return fetch(url + 'visits' , {
       headers: authHeader()
     });
   }

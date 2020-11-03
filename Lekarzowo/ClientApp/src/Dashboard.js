@@ -28,6 +28,7 @@ class Dashboard extends React.Component {
     .then(response => {
       if(response.status == 401){
         this.props.history.push('/');
+        return '';
       }
       return response.json();
     })

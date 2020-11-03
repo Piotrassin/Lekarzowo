@@ -1,5 +1,6 @@
 import React from 'react';
 import Dashboard from './Dashboard'
+import Menu from './Menu.js';
 import DateStepper from './DateStepper'
 
 class Visits extends React.Component {
@@ -9,8 +10,8 @@ class Visits extends React.Component {
 
   render() {
       return(
-        <div className="container">
-          
+        <div className = 'container'>
+        <Menu history= {this.props.history}/>
           <DateStepper
           type = "0"
           title = "Wizyty Nadchodzące"
