@@ -28,6 +28,11 @@ namespace Lekarzowo.Controllers
             return  _repository.GetAll().ToList();
         }
 
+        /// <summary>
+        /// Dodać funkcję wyszukiwania po nazwie (nawet niepełnej)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // GET: api/Cities/5
         [HttpGet("{id}")]
         public ActionResult<City> GetCity(decimal id)

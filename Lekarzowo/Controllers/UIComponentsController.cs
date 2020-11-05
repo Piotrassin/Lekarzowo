@@ -88,19 +88,27 @@ namespace Lekarzowo.Controllers
         #endregion
 
         //dashboard
-        // GET: api/UIComponents/UpcomingVisits/1
-        [HttpGet("[action]/{PatientId}")]
-        public async Task<ActionResult<IEnumerable<object>>> UpcomingVisits(decimal PatientId)
-        {
-            return Ok(await _repository.UpcomingVisits(PatientId));
-        }
+        // GET: api/UIComponents/UpcomingVisits?PatientId=1&Limit=5&Skip=2
+        //[HttpGet("[action]")]
+        //public async Task<ActionResult<IEnumerable<object>>> UpcomingVisits(decimal PatientId = 0, int Limit = 10, int Skip = 0)
+        //{
+        //    return Ok(await _repository.UpcomingVisits(PatientId, Limit, Skip));
+        //}
 
-        // GET: api/UIComponents/RecentVisits/1
-        [HttpGet("[action]/{PatientId}")]
-        public async Task<ActionResult<IEnumerable<object>>> RecentVisits(decimal PatientId)
-        {
-            return Ok(await _repository.RecentVisits(PatientId));
-        }
+
+        ///// <summary>
+        ///// TODO: Liczbę ładowanych elementów jako argument + opcjonalny ostatni IDk żeby załądować kolejną część. Tu i w upcoming.
+        ///// </summary>
+        ///// <param name="PatientId"></param>
+        ///// <param name="Limit"></param>
+        ///// <param name="Skip"></param>
+        ///// <returns></returns>
+        //// GET: api/UIComponents/RecentVisits/1
+        //[HttpGet("[action]")]
+        //public async Task<ActionResult<IEnumerable<object>>> RecentVisits(decimal PatientId = 0, int Limit = 10, int Skip = 0)
+        //{
+        //    return Ok(await _repository.RecentVisits(PatientId, Limit, Skip));
+        //}
 
         // GET: api/UIComponents/IllnessesHistory/1
         [HttpGet("[action]/{PatientId}")]

@@ -113,5 +113,19 @@ namespace Lekarzowo.Controllers
         {
             return _repository.Exists(id);
         }
+
+        // GET: api/Visits/UpcomingVisits?PatientId=1&Limit=5&Skip=2
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> UpcomingVisits(decimal PatientId = 0, int Limit = 10, int Skip = 0)
+        {
+            return Ok(await _repository.UpcomingVisits(PatientId, Limit, Skip));
+        }
+
+        // GET: api/Visits/RecentVisits?PatientId=1&Limit=5&Skip=2
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> RecentVisits(decimal PatientId = 0, int Limit = 10, int Skip = 0)
+        {
+            return Ok(await _repository.RecentVisits(PatientId, Limit, Skip));
+        }
     }
 }

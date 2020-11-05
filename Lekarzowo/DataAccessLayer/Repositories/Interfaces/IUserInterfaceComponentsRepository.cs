@@ -22,22 +22,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 
         //dashboard + ekran wizyt
 
-        /// <summary>
-        /// Upcoming visits sorted from nearest to furthest
-        /// </summary>
-        /// <param name="PatientId"></param>
-        /// <returns></returns>
-        Task<IEnumerable<object>> UpcomingVisits(decimal PatientId);
-
         //ekran wizyt
-
-        /// <summary>
-        /// List of recent visits
-        /// </summary>
-        /// <param name="PatientId"></param>
-        /// <returns></returns>
-        Task<IEnumerable<object>> RecentVisits(decimal PatientId);
-
 
         //szczegóły wizyty
 
