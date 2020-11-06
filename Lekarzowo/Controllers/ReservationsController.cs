@@ -22,6 +22,8 @@ namespace Lekarzowo.Controllers
             _repository = repository;
         }
 
+        #region CRUD
+
         // GET: api/Reservations
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetReservation()
@@ -109,6 +111,22 @@ namespace Lekarzowo.Controllers
         private bool ReservationExists(decimal id)
         {
             return _repository.Exists(id);
+        }
+
+        #endregion
+
+        // GET: api/Reservations/Upcoming?PatientId=1&Limit=5&Skip=2
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> Upcoming(decimal PatientId = 0, int Limit = 10, int Skip = 0)
+        {
+            return Ok(await _repository.UpcomingReservations(PatientId, Limit, Skip));
+        }
+
+        // GET: api/Reservations/Recent?PatientId=1&Limit=5&Skip=2
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> Recent(decimal PatientId = 0, int Limit = 10, int Skip = 0)
+        {
+            return Ok(await _repository.RecentReservations(PatientId, Limit, Skip));
         }
     }
 }
