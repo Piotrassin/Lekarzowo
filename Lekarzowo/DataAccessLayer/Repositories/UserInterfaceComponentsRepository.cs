@@ -12,7 +12,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     public class UserInterfaceComponentsRepository : IUserInterfaceComponentsRepository
     {
         private readonly ModelContext _context;
-        private readonly int MaxCountOfLoadedItems = 10;
         public UserInterfaceComponentsRepository(ModelContext context)
         {
             _context = context;
@@ -353,53 +352,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                     MedicineDosage = x.Description
                 }).ToListAsync();
         }
-
-        ///// <summary>
-        ///// TODO: Liczbę ładowanych elementów jako argument + opcjonalny ostatni IDk żeby załądować kolejną część. Tu i w upcoming.
-        ///// </summary>
-        ///// <param name="PatientId"></param>
-        ///// <returns></returns>
-        //public async Task<IEnumerable<object>> RecentVisits(decimal PatientId, int Limit, int Skip)
-        //{
-        //    var query = _context.Reservation
-        //        .Where(x => x.PatientId == PatientId)
-        //        .Where(x => x.Starttime < DateTime.Now)
-        //        .Select(x => new
-        //        {
-        //            ReservationId = x.Id,
-        //            DoctorSpecialization = x.Doctor.Speciality.Name,
-        //            ReservationStartTime = x.Starttime,
-        //            ReservationEndTime = x.Endtime,
-        //            DoctorName = x.Doctor.IdNavigation.Name,
-        //            DoctorLastname = x.Doctor.IdNavigation.Lastname,
-        //        })
-        //        .Skip(Skip)
-        //        .Take(Limit)
-        //        .ToListAsync();
-
-        //    return await query;
-        //}
-
-        //public async Task<IEnumerable<object>> UpcomingVisits(decimal PatientId, int Limit, int Skip)
-        //{
-        //    var query = _context.Reservation
-        //        .Where(x => x.PatientId == PatientId)
-        //        .Where(x => x.Starttime >= DateTime.Now)
-        //        .Select(x => new
-        //        {
-        //            ReservationId = x.Id,
-        //            DoctorSpecialization = x.Doctor.Speciality.Name,
-        //            ReservationStartTime = x.Starttime,
-        //            ReservationEndTime = x.Endtime,
-        //            DoctorName = x.Doctor.IdNavigation.Name,
-        //            DoctorLastname = x.Doctor.IdNavigation.Lastname,
-        //        })
-        //        .Skip(Skip)
-        //        .Take(Limit)
-        //        .ToListAsync();
-
-        //    return await query;
-        //}
 
     }
 }

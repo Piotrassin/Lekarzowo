@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
-using Lekarzowo.DataAccessLayer.Repositories;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 
 namespace Lekarzowo.Controllers
 {
@@ -28,11 +28,13 @@ namespace Lekarzowo.Controllers
             return  _repository.GetAll().ToList();
         }
 
-        /// <summary>
-        /// Dodać funkcję wyszukiwania po nazwie (nawet niepełnej)
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        // GET: api/Cities?Name=abc
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<City>>> ListByName(string Name)
+        {
+            return Ok(await _repository.GetAllByName(Name));
+        }
+
         // GET: api/Cities/5
         [HttpGet("{id}")]
         public ActionResult<City> GetCity(decimal id)
@@ -43,7 +45,6 @@ namespace Lekarzowo.Controllers
             {
                 return NotFound();
             }
-
             return city;
         }
 

@@ -1,4 +1,5 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.Models;
 using System;
 using System.Collections.Generic;
@@ -7,13 +8,9 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class CitiesRepository : BaseRepository<City>, ICitiesRepository
+    public class CitiesRepository : BaseNamedRepository<City>, ICitiesRepository
     {
-        //private readonly ModelContext _context;
-        public CitiesRepository(ModelContext context) : base(context)
-        {
-            //_context = context;
-        }
+        public CitiesRepository(ModelContext context) : base(context) { }
 
         public bool Exists(City city)
         {

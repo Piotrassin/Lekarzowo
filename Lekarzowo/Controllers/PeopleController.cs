@@ -33,6 +33,12 @@ namespace Lekarzowo.Controllers
             return _repository.GetAll().ToList();
         }
 
+        // GET: api/People?Name=abc
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Person>>> ListByName(string Name)
+        {
+            return Ok(await _repository.GetAllByName(Name));
+        }
 
         // GET: api/People/5
         [HttpGet("{id}")]

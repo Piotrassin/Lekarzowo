@@ -1,4 +1,4 @@
-﻿using Lekarzowo.DataAccessLayer.Repositories;
+﻿using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.Models;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.Repositories
 {
-    public interface IPeopleRepository : IBaseRepository<Person>
+    public interface IPeopleRepository : IBaseNamedEntityRepository<Person>
     {
         Person GetByEmail(string email);
         void Dispose(bool disposing);

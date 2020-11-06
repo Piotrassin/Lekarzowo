@@ -28,7 +28,7 @@ namespace Lekarzowo.Controllers
         {
             return Ok(_repository.GetAll());
         }
-
+        
         // GET: api/Reservations/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Reservation>> GetReservation(decimal id)
