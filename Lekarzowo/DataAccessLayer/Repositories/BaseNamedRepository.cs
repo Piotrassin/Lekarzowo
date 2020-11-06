@@ -19,7 +19,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
         public async Task<IEnumerable<T>> GetAllByName(string name)
         {
-            return await table.Where(x => x.Name.Contains(name)).ToListAsync();
+            return await table.Where(x => name == null || x.Name.ToLower().Contains(name.ToLower())).ToListAsync();
         }
     }
 }

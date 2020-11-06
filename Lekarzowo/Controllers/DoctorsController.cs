@@ -28,6 +28,13 @@ namespace Lekarzowo.Controllers
             return _repository.GetAll().ToList();
         }
 
+        // GET: api/Doctors/Search?name=a&lastname=b
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> Search(string name, string lastname)
+        {
+            return Ok(await _repository.SearchByName(name, lastname));
+        }
+
         // GET: api/Doctors/5
         [HttpGet("{id}")]
         public ActionResult<bool> GetDoctor(decimal id)
