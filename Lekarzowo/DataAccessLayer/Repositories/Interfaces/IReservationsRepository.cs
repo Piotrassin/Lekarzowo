@@ -27,5 +27,11 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// <param name="Skip"></param>
         /// <returns></returns>
         Task<IEnumerable<object>> RecentReservations(decimal PatientId, int Limit, int Skip);
+
+        /// <summary>
+        /// Compares doctors, workinghours and all Returns a list of all possible appointments which are split into 15 minute slots/pieces.
+        /// </summary>
+        /// <returns></returns>
+        Task<IEnumerable<object>> PossibleAppointments();
     }
 }
