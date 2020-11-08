@@ -133,6 +133,7 @@ namespace Lekarzowo.Controllers
             return Ok(await _repository.RecentReservations(PatientId, Limit, Skip));
         }
 
+        // GET: api/Reservations/PossibleAppointments
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> PossibleAppointments()
         {
