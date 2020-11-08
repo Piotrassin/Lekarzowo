@@ -28,6 +28,7 @@ class Dashboard extends React.Component {
     .then(response => {
       if(response.status == 401){
         this.props.history.push('/');
+        AuthService.logout();
         return '';
       }
       return response.json();
@@ -87,7 +88,7 @@ class Dashboard extends React.Component {
     return (
       <div className ="dashboard">
       <div className = "headline-container">
-        <b className = "headline"></b>
+        <b className = "headline">{user.firstName} {user.lastName}</b>
       </div>
       <div className = "dash-container">
         <div className = "hello-container">

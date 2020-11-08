@@ -6,6 +6,7 @@ import RegisterContainer from './RegisterContainer';
 import DetailVisit from './DetailVisit';
 import AddVisit from './AddVisit';
 import Visits from './Visits';
+import Profile from './Profile';
 import {
   Route,
   NavLink,
@@ -28,6 +29,7 @@ class App extends React.Component {
         <Route exact path="/visits" component={Visits}/>
         <Route exact path="/dashboard" component={MainContainer}/>
         <Route exact path="/addVisit" component={AddVisit}/>
+        <Route exact path="/myProfile" component={Profile}/>
         <Route path="/visit" render={(routeProps) => (
               <DetailVisit {...routeProps}/>
           )}/>

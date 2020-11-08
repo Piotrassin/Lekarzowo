@@ -18,10 +18,12 @@ namespace Lekarzowo.Controllers
     public class VisitsController : ControllerBase
     {
         private readonly IVisitsRepository _repository;
+        private readonly IUserInterfaceComponentsRepository _repositorySQL;
 
-        public VisitsController(IVisitsRepository repository)
+        public VisitsController(IVisitsRepository repository, IUserInterfaceComponentsRepository repositorySQL)
         {
             _repository = repository;
+            _repositorySQL = repositorySQL;
         }
 
         // GET: api/Visits
@@ -106,20 +108,6 @@ namespace Lekarzowo.Controllers
             _repository.Save();
 
             return visit;
-        }
-
-        // GET: api/Visits/Details/1
-        [HttpGet("[action]/{ReservationId}")]
-        public async Task<ActionResult<IEnumerable<View_VisitDetails>>> Details(decimal ReservationId)
-        {
-            return Ok(await _repository.DetailsView(ReservationId));
-        }
-
-        // GET: api/Visits/List/1
-        [HttpGet("[action]/{PatientId}")]
-        public async Task<ActionResult<IEnumerable<View_VisitList>>> List(decimal PatientId)
-        {
-            return Ok(await _repository.ListView(PatientId));
         }
 
         // to chyba można wywalić

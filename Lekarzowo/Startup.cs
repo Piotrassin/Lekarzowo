@@ -105,6 +105,7 @@ namespace Lekarzowo
             services.AddScoped<ITreatmentsRepository, TreatmentsRepository>();
             services.AddScoped<IVisitsRepository, VisitsRepository>();
             services.AddScoped<IWorkingHoursRepository, WorkingHoursRepository>();
+            services.AddScoped<IUserInterfaceComponentsRepository, UserInterfaceComponentsRepository>();
 
 
             services.AddEntityFrameworkOracle()

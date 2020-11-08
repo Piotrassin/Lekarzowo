@@ -8,6 +8,11 @@ namespace Lekarzowo.Models
 {
     public class View_IllnessMedList
     {
+        /// <summary>
+        /// Sprawdź choroby (Lekarz, Pacjent)
+        /// Patient(Person) + IllnessHistory + OldIlnessHistory + Illness + Visit + Reservation
+        /// </summary>
+        /// 
         [Column("Patient_Id")]
         public int PatientId { get; set; }
 

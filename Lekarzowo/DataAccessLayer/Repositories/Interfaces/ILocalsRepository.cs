@@ -9,5 +9,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     public interface ILocalsRepository : IBaseRepository<Local>
     {
         bool Exists(Local local);
+        //Task<IEnumerable<View_AddressData>> DetailsView(decimal RoomId);
     }
 }

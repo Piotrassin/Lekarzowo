@@ -16,12 +16,6 @@ namespace Lekarzowo.Controllers
     [ApiController]
     public class PeopleController : ControllerBase
     {
-        //private readonly ModelContext _context;
-
-        //public PeopleController(ModelContext context)
-        //{
-        //    _context = context;
-        //}
 
         private readonly IPeopleRepository _repository;
         private readonly IJWTService _jwtService;
@@ -94,9 +88,9 @@ namespace Lekarzowo.Controllers
                 return Accepted(new
                 {
                     Id = stored.Id,
-                    Username = stored.Name,
-                    FirstName = stored.Lastname,
-                    LastName = stored.Email,
+                    FirstName = stored.Name,
+                    LastName = stored.Lastname,
+                    Email = stored.Email,
                     Token = token
                 });
             }

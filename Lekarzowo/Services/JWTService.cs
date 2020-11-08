@@ -26,6 +26,7 @@ namespace Lekarzowo.Services
         {
             //TODO: Docelowo sekret do tworzenia podpisu powinien być pobierany z appsettings.json
   //          var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.Secret));
+            //var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.Secret));
 
             //Dev
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("super sekretny sekret, którego nikt nie może nigdy poznać, bo przypał"));

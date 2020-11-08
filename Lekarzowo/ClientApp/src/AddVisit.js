@@ -1,11 +1,16 @@
 import React from 'react';
 import Menu from './Menu.js';
 import ReservationItem from './components/ReservationItem.js';
+import Autocomplete from './components/Autocomplete.js';
+import UserService from './services/UserService.js';
 
 class AddVisit extends React.Component {
 constructor(props){
   super(props);
+  //this.getCities =
 }
+
+
 
 render() {
   return (
@@ -13,24 +18,23 @@ render() {
     <Menu history= {this.props.history}/>
     <div className = "sidebar-filter">
         <a className = "header-2">Wybierz kryteria</a>
-        <a className = "header-4">Miasto</a>
-        <input id = "city"
-        className = "input"
-        type = "text"
-        onChange = {this.onChangeEmail}
+        <br/>
+        <Autocomplete
+        requestCallback = {UserService.getCities}
+        title = "Miasto"
+        id = 'city-search'
         />
-        <a className = "header-4">Specjalizacja</a>
-        <input id = "city"
-        className = "input"
-        type = "text"
-        onChange = {this.onChangeEmail}
+<br/>
+        <Autocomplete
+        requestCallback = {UserService.getSpecializations}
+        title = "Specjalizacja"
         />
-        <a className = "header-4">Lekarz</a>
-        <input id = "city"
-        className = "input"
-        type = "text"
-        onChange = {this.onChangeEmail}
+        <br/>
+        <Autocomplete
+        requestCallback = {UserService.getDoctors}
+        title = "Doktor"
         />
+
         <br/>
         <button className = "login-button">Zastosuj</button>
     </div>

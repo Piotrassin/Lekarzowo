@@ -8,6 +8,11 @@ namespace Lekarzowo.Models
 {
     public class View_IllnessMedDetails
     {
+        /// <summary>
+        /// Sprawdź historię leków (Lekarz, Pacjent)
+        /// Patient(Person) + IllnessHistory + MedicineHistory + OldIllnessHistory + OldMedicineHistory + Medicine + Illness + Visit + Reservation
+        /// </summary>
+
         [Column("Patient_Id")]
         public int PatientId { get; set; }
 

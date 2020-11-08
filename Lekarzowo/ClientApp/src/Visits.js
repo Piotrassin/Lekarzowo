@@ -8,6 +8,10 @@ class Visits extends React.Component {
     super(props);
   }
 
+  componentDidMount() {
+
+  }
+
   render() {
       return(
         <div className = 'container'>
