@@ -137,114 +137,116 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> PossibleAppointments()
         {
-            //var allReservations = _repository.PossibleAppointments();
+            #region prototyp
 
-            //var workinghours = _workHoursRepository.GetAll();
+            //Workinghours wh = new Workinghours() {
+            //    DoctorId = 1,
+            //    From = new DateTime(2021, 3, 21, 8, 00, 00),
+            //    To = new DateTime(2021, 3, 21, 16, 00, 00),
+            //    LocalId = 1001
+            //};
+            //Workinghours wh1 = new Workinghours()
+            //{
+            //    DoctorId = 1,
+            //    From = new DateTime(2021, 3, 22, 9, 00, 00),
+            //    To = new DateTime(2021, 3, 22, 17, 00, 00),
+            //    LocalId = 1001
+            //};
 
-            //prototyp
+            //Room room1 = new Room()
+            //{
+            //    Id = 1000,
+            //    LocalId = 1001,
+            //    Number = 123
+            //};
+            //Room room2 = new Room()
+            //{
+            //    Id = 2000,
+            //    LocalId = 1001,
+            //    Number = 125
+            //};
 
-            Workinghours wh = new Workinghours() {
-                DoctorId = 1,
-                From = new DateTime(2021, 3, 21, 8, 00, 00),
-                To = new DateTime(2021, 3, 21, 16, 00, 00),
-                LocalId = 1001
-            };
-            Workinghours wh1 = new Workinghours()
-            {
-                DoctorId = 1,
-                From = new DateTime(2021, 3, 22, 9, 00, 00),
-                To = new DateTime(2021, 3, 22, 17, 00, 00),
-                LocalId = 1001
-            };
+            //Reservation r1 = new Reservation()
+            //{
+            //    DoctorId = 1,
+            //    Id = 1234,
+            //    PatientId = 4444,
+            //    RoomId = 1000,
+            //    Starttime = new DateTime(2021, 3, 21, 9, 00, 00),
+            //    Endtime = new DateTime(2021, 3, 21, 9, 30, 00),
+            //    Canceled = 0,
+            //    Room = room1
+            //};
+            //Reservation r2 = new Reservation()
+            //{
+            //    DoctorId = 1,
+            //    Id = 1235,
+            //    PatientId = 4445,
+            //    RoomId = 2000,
+            //    Starttime = new DateTime(2021, 3, 21, 10, 15, 00),
+            //    Endtime = new DateTime(2021, 3, 21, 11, 00, 00),
+            //    Canceled = 0,
+            //    Room = room2
+            //};
+            //Reservation r3 = new Reservation()
+            //{
+            //    DoctorId = 1,
+            //    Id = 1236,
+            //    PatientId = 4446,
+            //    RoomId = 2000,
+            //    Starttime = new DateTime(2021, 3, 21, 11, 15, 00),
+            //    Endtime = new DateTime(2021, 3, 21, 11, 45, 00),
+            //    Canceled = 0,
+            //    Room = room2
+            //};
+            //Reservation r4 = new Reservation()
+            //{
+            //    DoctorId = 1,
+            //    Id = 1237,
+            //    PatientId = 4444,
+            //    RoomId = 2000,
+            //    Starttime = new DateTime(2021, 3, 21, 15, 15, 00),
+            //    Endtime = new DateTime(2021, 3, 21, 16, 00, 00),
+            //    Canceled = 0,
+            //    Room = room2
+            //};
 
-            Room room1 = new Room()
-            {
-                Id = 1000,
-                LocalId = 1001,
-                Number = 123
-            };
-            Room room2 = new Room()
-            {
-                Id = 2000,
-                LocalId = 1001,
-                Number = 125
-            };
+            //room1.Reservation.Add(r1);
+            //room1.Reservation.Add(r2);
+            //room1.Reservation.Add(r3);
+            //room1.Reservation.Add(r4);
 
-            Reservation r1 = new Reservation()
-            {
-                DoctorId = 1,
-                Id = 1234,
-                PatientId = 4444,
-                RoomId = 1000,
-                Starttime = new DateTime(2021, 3, 21, 9, 00, 00),
-                Endtime = new DateTime(2021, 3, 21, 9, 30, 00),
-                Canceled = 0,
-                Room = room1
-            };
-            Reservation r2 = new Reservation()
-            {
-                DoctorId = 1,
-                Id = 1235,
-                PatientId = 4445,
-                RoomId = 2000,
-                Starttime = new DateTime(2021, 3, 21, 10, 15, 00),
-                Endtime = new DateTime(2021, 3, 21, 11, 00, 00),
-                Canceled = 0,
-                Room = room2
-            };
-            Reservation r3 = new Reservation()
-            {
-                DoctorId = 1,
-                Id = 1236,
-                PatientId = 4446,
-                RoomId = 2000,
-                Starttime = new DateTime(2021, 3, 21, 11, 15, 00),
-                Endtime = new DateTime(2021, 3, 21, 11, 45, 00),
-                Canceled = 0,
-                Room = room2
-            };
-            Reservation r4 = new Reservation()
-            {
-                DoctorId = 1,
-                Id = 1237,
-                PatientId = 4444,
-                RoomId = 2000,
-                Starttime = new DateTime(2021, 3, 21, 15, 15, 00),
-                Endtime = new DateTime(2021, 3, 21, 16, 00, 00),
-                Canceled = 0,
-                Room = room2
-            };
+            //var whList = new List<Workinghours> { wh, wh1 };
+            //var rList = new List<Reservation> { r1, r2, r3, r4 };
 
-            room1.Reservation.Add(r1);
-            room1.Reservation.Add(r2);
-            room1.Reservation.Add(r3);
-            room1.Reservation.Add(r4);
+            //whList = whList.OrderBy(x => x.From).ToList();
+            //rList = rList.OrderBy(x => x.Starttime).ToList();
 
-            var whList = new List<Workinghours> { wh, wh1 };
-            var rList = new List<Reservation> { r1, r2, r3, r4 };
-
-            whList = whList.OrderBy(x => x.From).ToList();
-            rList = rList.OrderBy(x => x.Starttime).ToList();
+            #endregion
 
             var outputList = new List<Slot>();
 
-                foreach (var workDay in whList)
+            var allReservations = _repository.GetAllFutureReservations();
+            var workinghours = _workHoursRepository.GetAllFutureWorkHours();
+
+            var rList = allReservations.OrderBy(x => x.Starttime).ToList();
+            var whList = workinghours.OrderBy(x => x.From).ToList();
+
+            foreach (var workDay in whList)
+            {
+                var reservationsThatDay = rList
+                    .Where(res => res.Starttime.Date == workDay.From.Date)
+                    .Where(res => res.Room.LocalId == workDay.LocalId).ToList();
+
+                var slotsThatDay = CalculatePossibleAppointments(workDay, reservationsThatDay).ToList();
+                slotsThatDay.ForEach(x =>
                 {
-                    var reservationsThatDay = rList
-                        .Where(res => res.Starttime.Date == workDay.From.Date)
-                        .Where(res => res.Room.LocalId == workDay.LocalId).ToList();
-
-                    var slotsThatDay = CalculatePossibleAppointments(workDay, reservationsThatDay).ToList();
-                    slotsThatDay.ForEach(x =>
-                    {
-                        x.DoctorId = workDay.DoctorId;
-                        x.LocalId = workDay.LocalId;
-                    });
-
-                    outputList.AddRange(slotsThatDay);
-                }
-
-            return Ok(outputList.Count);
+                    x.DoctorId = workDay.DoctorId;
+                    x.LocalId = workDay.LocalId;
+                });
+                outputList.AddRange(slotsThatDay);
+            }
+            return Ok(outputList);
         }
 
 

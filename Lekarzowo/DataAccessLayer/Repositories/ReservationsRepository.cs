@@ -15,9 +15,9 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
 
 
-        public async Task<IEnumerable<object>> PossibleAppointments()
+        public IEnumerable<Reservation> GetAllFutureReservations()
         {
-            return await _context.Reservation.Where(x => x.Starttime >= DateTime.Now).ToListAsync();
+            return _context.Reservation.Where(x => x.Starttime >= DateTime.Now).Include(x => x.Room).ToList();
         }
 
         public async Task<IEnumerable<object>> RecentReservations(decimal PatientId, int Limit, int Skip)

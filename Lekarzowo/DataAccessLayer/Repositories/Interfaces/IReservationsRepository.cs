@@ -8,6 +8,13 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
     public interface IReservationsRepository : IBaseRepository<Reservation>
     {
+
+        /// <summary>
+        /// Compares doctors, workinghours and all Returns a list of all possible appointments which are split into 15 minute slots/pieces.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<Reservation> GetAllFutureReservations();
+
         /// <summary>
         /// Upcoming visits sorted from nearest to furthest. Limit the number od loaded items. Optionally skip given number of rows for pagination.
         /// </summary>
@@ -28,10 +35,5 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// <returns></returns>
         Task<IEnumerable<object>> RecentReservations(decimal PatientId, int Limit, int Skip);
 
-        /// <summary>
-        /// Compares doctors, workinghours and all Returns a list of all possible appointments which are split into 15 minute slots/pieces.
-        /// </summary>
-        /// <returns></returns>
-        Task<IEnumerable<object>> PossibleAppointments();
     }
 }

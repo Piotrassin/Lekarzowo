@@ -10,9 +10,11 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 {
     public class WorkingHoursRepository : BaseRepository<Workinghours>, IWorkingHoursRepository
     {
-        public WorkingHoursRepository(ModelContext context) : base(context)
-        {
+        public WorkingHoursRepository(ModelContext context) : base(context) { }
 
+        public IEnumerable<Workinghours> GetAllFutureWorkHours()
+        {
+            return _context.Workinghours.Where(x => x.From >= DateTime.Now).ToList();
         }
     }
 }
