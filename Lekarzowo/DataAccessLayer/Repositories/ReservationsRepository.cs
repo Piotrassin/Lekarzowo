@@ -23,6 +23,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 .Where(x => !CityId.HasValue || x.Room.Local.CityId == CityId)
                 .Where(x => !SpecId.HasValue || x.Doctor.SpecialityId == SpecId)
                 .Where(x => !DoctorId.HasValue || x.DoctorId == DoctorId)
+                .OrderBy(x => x.Starttime)
                 .ToList();
         }
 

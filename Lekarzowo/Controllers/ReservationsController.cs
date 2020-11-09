@@ -142,9 +142,6 @@ namespace Lekarzowo.Controllers
             IEnumerable<Reservation> allReservations = _repository.GetAllFutureReservations(CityId, SpecId, DoctorId);
             IEnumerable<Workinghours> workinghours = _workHoursRepository.GetAllFutureWorkHours(CityId, SpecId, DoctorId);
 
-            allReservations = allReservations.OrderBy(x => x.Starttime).ToList();
-            workinghours = workinghours.OrderBy(x => x.From).ToList();
-
             foreach (var workDay in workinghours)
             {
                 var reservationsThatDay = allReservations
@@ -163,7 +160,7 @@ namespace Lekarzowo.Controllers
         }
 
 
-        public static IEnumerable<Slot> SplitDateRange(DateTime start, DateTime end, int minutesChunkSize)
+        private static IEnumerable<Slot> SplitDateRange(DateTime start, DateTime end, int minutesChunkSize)
         {
             DateTime chunkEnd;
             while ((chunkEnd = start.AddMinutes(minutesChunkSize)) < end)
@@ -175,7 +172,7 @@ namespace Lekarzowo.Controllers
         }
 
 
-        public static List<Slot> SplitChunkIntoSlots (DateTime start, DateTime end, int minuteChunkSize)
+        private static List<Slot> SplitChunkIntoSlots (DateTime start, DateTime end, int minuteChunkSize)
         {
             var slots = new List<Slot>();
 
@@ -190,7 +187,7 @@ namespace Lekarzowo.Controllers
         }
 
 
-        public static IEnumerable<Slot> CalculatePossibleAppointments(Workinghours wh, List<Reservation> rlist)
+        private static IEnumerable<Slot> CalculatePossibleAppointments(Workinghours wh, List<Reservation> rlist)
         {
             var slotList = new List<Slot>();
 
