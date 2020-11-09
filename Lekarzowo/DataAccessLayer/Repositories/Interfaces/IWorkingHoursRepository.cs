@@ -12,6 +12,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// Returns all working hours newer than current date.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<Workinghours> GetAllFutureWorkHours();
+        IEnumerable<Workinghours> GetAllFutureWorkHours(decimal? CityId, decimal? SpecId, decimal? DoctorId);
     }
 }
