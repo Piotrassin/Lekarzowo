@@ -11,7 +11,8 @@ namespace Lekarzowo.Repositories
     public interface IPeopleRepository : IBaseRepository<Person>
     {
         Person GetByEmail(string email);
-        void Insert(PersonDTO personDTO);
+        void Update(Person updatedPerson);
+        void Insert(UserRegistrationDTO personDTO);
         void Dispose(bool disposing);
         void Dispose();
     }

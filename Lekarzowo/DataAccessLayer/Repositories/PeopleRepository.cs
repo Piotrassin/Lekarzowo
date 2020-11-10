@@ -14,18 +14,26 @@ namespace Lekarzowo.Repositories
     public class PeopleRepository : BaseRepository<Person>, IDisposable, IPeopleRepository
     {
         private bool disposed = false;
-        private readonly ModelContext _context;
 
-        public PeopleRepository(ModelContext context) : base(context)
-        {
-            this._context = context;
-        }
+        public PeopleRepository(ModelContext context) : base(context) { }
+
+
         public Person GetByEmail(string email)
         {
             return _context.Person.FirstOrDefault(p => p.Email == email);
         }
 
-        public void Insert(PersonDTO a)
+        //public new void Update(Person newPerson)
+        //{
+        //    Person p = new Person()
+        //    {
+
+        //    }
+        //    _context.Person.Attach(newPerson);
+        //    _context.Entry(newPerson).State = EntityState.Modified;
+        //}
+
+        public void Insert(UserRegistrationDTO a)
         {
             _context.Person.Add(new Person
             {

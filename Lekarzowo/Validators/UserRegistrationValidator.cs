@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.Validators
 {
-    public class UserRegistrationValidator : AbstractValidator<PersonDTO>
+    public class UserRegistrationValidator : AbstractValidator<UserRegistrationDTO>
     {
-        private readonly int MaxAgeValue = 150;
+        public readonly int MaxAgeValue = 150;
         public UserRegistrationValidator()
         {
+
             RuleFor(x => x.Name)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("Imię")
@@ -25,7 +26,7 @@ namespace Lekarzowo.Validators
                 .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("Nazwisko")
                 .Length(2, 127).WithMessage("Długość musi wynosić od {MinLength} do {MaxLength} znaków. Wpisano {TotalLength}")
                 .Must(BeAValidWord).WithMessage("{PropertyName} zawiera niedozwolone znaki");
-           
+
             RuleFor(x => x.Email)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("Email")
@@ -54,8 +55,7 @@ namespace Lekarzowo.Validators
                 .Must(x => x.All(char.IsLetter)).WithMessage("{PropertyName} musi się składać z litery");
         }
 
-
-        protected bool BeAValidWord(string text)
+        public bool BeAValidWord(string text)
         {
             text = text.Trim();
             text = text.Replace("-", "");
@@ -65,14 +65,14 @@ namespace Lekarzowo.Validators
             return text.All(char.IsLetter);
         }
 
-        protected bool BeAValidPassword(string text)
+        public bool BeAValidPassword(string text)
         {
             Regex rx = new Regex(@"^.*(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$");
 
             return rx.IsMatch(text);
         }
 
-        protected bool BeAValidBirthday(DateTime date)
+        public bool BeAValidBirthday(DateTime date)
         {
             if(date <= DateTime.Now && date.Year >= (DateTime.Now.Year - MaxAgeValue))
             {
@@ -81,7 +81,7 @@ namespace Lekarzowo.Validators
             return false;
         }
 
-        protected bool BeAValidNumber(string text)
+        public bool BeAValidNumber(string text)
         {
             return text.All(char.IsDigit);
         }
