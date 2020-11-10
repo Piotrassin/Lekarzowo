@@ -50,7 +50,7 @@ namespace Lekarzowo.Controllers
         //POST: api/People
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult RegisterUser(UserRegistrationDTO newPerson)
+        public ActionResult RegisterUser(UserRegistrationDTO newPerson)
         {
             if (ModelState.IsValid)
             {

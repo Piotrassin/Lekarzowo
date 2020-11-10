@@ -1,6 +1,7 @@
 ﻿using Lekarzowo.DataAccessLayer.DTO;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,6 @@ namespace Lekarzowo.Repositories
     public interface IPeopleRepository : IBaseRepository<Person>
     {
         Person GetByEmail(string email);
-        void Update(Person updatedPerson);
         void Insert(UserRegistrationDTO personDTO);
         void Dispose(bool disposing);
         void Dispose();
