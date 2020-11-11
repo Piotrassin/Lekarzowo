@@ -1,6 +1,8 @@
+using FluentValidation.AspNetCore;
 using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Lekarzowo.Filters;
 using Lekarzowo.Helpers;
 using Lekarzowo.Repositories;
 using Lekarzowo.Services;
@@ -68,7 +70,15 @@ namespace Lekarzowo
             services.AddScoped<JWTService>();
             #endregion
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options =>
+                {
+                    options.Filters.Add(new ModelValidationFilter());
+                })
+                .AddFluentValidation(options =>
+                {
+                    options.RegisterValidatorsFromAssemblyContaining<Startup>();
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
