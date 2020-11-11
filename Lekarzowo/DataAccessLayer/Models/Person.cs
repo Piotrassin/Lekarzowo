@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Lekarzowo.Models
 {
-    public partial class Person : IEntity
+    public partial class Person : IEntity, INamedEntity
     {
         public decimal Id { get; set; }
         public string Name { get; set; }

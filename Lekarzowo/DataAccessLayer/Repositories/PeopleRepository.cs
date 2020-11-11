@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.Repositories
 {
-    public class PeopleRepository : BaseRepository<Person>, IDisposable, IPeopleRepository
+    public class PeopleRepository : BaseNamedRepository<Person>, IDisposable, IPeopleRepository
     {
         private bool disposed = false;
-
+        
         public PeopleRepository(ModelContext context) : base(context) { }
 
 
