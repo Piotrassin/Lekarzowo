@@ -10,15 +10,12 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.Repositories
 {
-    public class PeopleRepository : BaseRepository<Person>, IDisposable, IPeopleRepository
+    public class PeopleRepository : BaseNamedRepository<Person>, IDisposable, IPeopleRepository
     {
         private bool disposed = false;
-        private readonly ModelContext _context;
 
-        public PeopleRepository(ModelContext context) : base(context)
-        {
-            this._context = context;
-        }
+        public PeopleRepository(ModelContext context) : base(context) 
+        {}
         public Person GetByEmail(string email)
         {
             return _context.Person.FirstOrDefault(p => p.Email == email);

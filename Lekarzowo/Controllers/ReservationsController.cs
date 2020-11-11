@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Lekarzowo.DataAccessLayer;
 
 namespace Lekarzowo.Controllers
 {
@@ -16,11 +17,16 @@ namespace Lekarzowo.Controllers
     public class ReservationsController : ControllerBase
     {
         private readonly IReservationsRepository _repository;
+        private readonly IWorkingHoursRepository _workHoursRepository;
+        private static readonly int chunkSizeMinutes = 15;
 
-        public ReservationsController(IReservationsRepository repository)
+        public ReservationsController(IReservationsRepository repository, IWorkingHoursRepository whRepository)
         {
             _repository = repository;
+            _workHoursRepository = whRepository;
         }
+
+        #region CRUD
 
         // GET: api/Reservations
         [HttpGet]
@@ -28,7 +34,7 @@ namespace Lekarzowo.Controllers
         {
             return Ok(_repository.GetAll());
         }
-
+        
         // GET: api/Reservations/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Reservation>> GetReservation(decimal id)
@@ -110,5 +116,95 @@ namespace Lekarzowo.Controllers
         {
             return _repository.Exists(id);
         }
+
+        #endregion
+
+        // GET: api/Reservations/Upcoming?PatientId=1&Limit=5&Skip=2
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> Upcoming(decimal PatientId = 0, int Limit = 10, int Skip = 0)
+        {
+            return Ok(await _repository.UpcomingReservations(PatientId, Limit, Skip));
+        }
+
+        // GET: api/Reservations/Recent?PatientId=1&Limit=5&Skip=2
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> Recent(decimal PatientId = 0, int Limit = 10, int Skip = 0)
+        {
+            return Ok(await _repository.RecentReservations(PatientId, Limit, Skip));
+        }
+
+        // GET: api/reservations/possibleappointments?CityId=1&SpecId=1&DoctorId=1
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> PossibleAppointments(decimal? CityId, decimal? SpecId, decimal? DoctorId)
+        {
+            var outputList = new List<Slot>();
+
+            IEnumerable<Reservation> allReservations = _repository.GetAllFutureReservations(CityId, SpecId, DoctorId);
+            IEnumerable<Workinghours> workinghours = _workHoursRepository.GetAllFutureWorkHours(CityId, SpecId, DoctorId);
+
+            foreach (var workDay in workinghours)
+            {
+                var reservationsThatDay = allReservations
+                    .Where(res => res.Starttime.Date == workDay.From.Date)
+                    .Where(res => res.Room.LocalId == workDay.LocalId).ToList();
+
+                var slotsThatDay = CalculatePossibleAppointments(workDay, reservationsThatDay).ToList();
+                slotsThatDay.ForEach(x =>
+                {
+                    x.DoctorId = workDay.DoctorId;
+                    x.LocalId = workDay.LocalId;
+                });
+                outputList.AddRange(slotsThatDay);
+            }
+            return Ok(outputList);
+        }
+
+
+        private static IEnumerable<Slot> SplitDateRange(DateTime start, DateTime end, int minutesChunkSize)
+        {
+            DateTime chunkEnd;
+            while ((chunkEnd = start.AddMinutes(minutesChunkSize)) < end)
+            {
+                yield return new Slot(start, chunkEnd);
+                start = chunkEnd;
+            }
+            yield return new Slot(start, end);
+        }
+
+
+        private static List<Slot> SplitChunkIntoSlots (DateTime start, DateTime end, int minuteChunkSize)
+        {
+            var slots = new List<Slot>();
+
+            if ((start.AddMinutes(chunkSizeMinutes) <= end))
+            {
+                foreach (var slot in SplitDateRange(start, end, minuteChunkSize))
+                {
+                    slots.Add(slot);
+                }
+            }
+            return slots;
+        }
+
+
+        private static IEnumerable<Slot> CalculatePossibleAppointments(Workinghours wh, List<Reservation> rlist)
+        {
+            var slotList = new List<Slot>();
+
+            if(rlist.Count > 0)
+            {
+                rlist = rlist.OrderBy(x => x.Starttime).ToList();
+                slotList = SplitChunkIntoSlots(wh.From, rlist.First().Starttime, chunkSizeMinutes);
+                for (int i = 0; i < (rlist.Count - 1); i++)
+                {
+                    slotList.AddRange(SplitChunkIntoSlots(rlist.ElementAt(i).Endtime, rlist.ElementAt(i + 1).Starttime, chunkSizeMinutes));
+                }
+                slotList.AddRange(SplitChunkIntoSlots(rlist.Last().Endtime, wh.To, chunkSizeMinutes));
+            }
+            slotList.AddRange(SplitChunkIntoSlots(wh.From, wh.To, chunkSizeMinutes));
+           
+            return slotList;
+        }
+
     }
 }

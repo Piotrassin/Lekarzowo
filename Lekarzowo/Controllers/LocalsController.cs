@@ -21,14 +21,21 @@ namespace Lekarzowo.Controllers
             _repository = repository;
         }
 
-        // GET: api/Cities
+        // GET: api/Locals
         [HttpGet]
         public ActionResult<IEnumerable<Local>> GetLocals()
         {
             return _repository.GetAll().ToList();
         }
 
-        // GET: api/Cities/5
+        // GET: api/Locals?Name=abc
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Local>>> ListByName(string Name)
+        {
+            return Ok(await _repository.GetAllByName(Name));
+        }
+
+        // GET: api/Locals/5
         [HttpGet("{id}")]
         public ActionResult<Local> GetLocal(decimal id)
         {
@@ -42,7 +49,7 @@ namespace Lekarzowo.Controllers
             return local;
         }
 
-        // PUT: api/Cities/5
+        // PUT: api/Locals/5
         [HttpPut("{id}")]
         public IActionResult PutLocal(decimal id, Local local)
         {
@@ -75,7 +82,7 @@ namespace Lekarzowo.Controllers
 
             return NoContent();
         }
-        // POST: api/Cities
+        // POST: api/Locals
         [HttpPost]
         public IActionResult PostLocal(Local local)
         {
@@ -90,7 +97,7 @@ namespace Lekarzowo.Controllers
             return Created("", local);
         }
 
-        // DELETE: api/Cities/5
+        // DELETE: api/Locals/5
         [HttpDelete("{id}")]
         public ActionResult<Local> DeleteLocal(decimal id)
         {
