@@ -1,4 +1,6 @@
-﻿using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+﻿using Lekarzowo.DataAccessLayer.DTO;
+using Lekarzowo.DataAccessLayer.Repositories;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.Models;
 using System;
 using System.Collections.Generic;
@@ -10,6 +12,7 @@ namespace Lekarzowo.Repositories
     public interface IPeopleRepository : IBaseNamedEntityRepository<Person>
     {
         Person GetByEmail(string email);
+        void Insert(UserRegistrationDTO personDTO);
         void Dispose(bool disposing);
         void Dispose();
     }
