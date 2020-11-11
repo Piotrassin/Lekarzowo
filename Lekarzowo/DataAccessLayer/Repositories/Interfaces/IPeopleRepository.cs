@@ -2,6 +2,7 @@
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,6 @@ namespace Lekarzowo.Repositories
         void Insert(UserRegistrationDTO personDTO);
         void Dispose(bool disposing);
         void Dispose();
+        bool Exists(string email);
     }
 }
