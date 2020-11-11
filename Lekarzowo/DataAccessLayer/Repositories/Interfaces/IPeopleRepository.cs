@@ -13,7 +13,9 @@ namespace Lekarzowo.Repositories
     {
         Person GetByEmail(string email);
         void Insert(UserRegistrationDTO personDTO);
+        //void CascadeDelete(decimal personId);
         void Dispose(bool disposing);
         void Dispose();
+        bool Exists(string email);
     }
 }

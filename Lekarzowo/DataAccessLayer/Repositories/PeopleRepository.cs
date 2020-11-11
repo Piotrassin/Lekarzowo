@@ -20,18 +20,8 @@ namespace Lekarzowo.Repositories
 
         public Person GetByEmail(string email)
         {
-            return _context.Person.FirstOrDefault(p => p.Email == email);
+            return _context.Person.FirstOrDefault(p => p.Email.ToLower() == email.ToLower());
         }
-
-        //public new void Update(Person newPerson)
-        //{
-        //    Person p = new Person()
-        //    {
-
-        //    }
-        //    _context.Person.Attach(newPerson);
-        //    _context.Entry(newPerson).State = EntityState.Modified;
-        //}
 
         public void Insert(UserRegistrationDTO a)
         {
@@ -50,6 +40,12 @@ namespace Lekarzowo.Repositories
         new public void Insert(Person a)
         {
             //celowo puste. Przysłania metodę z bazy, aby z niej nie korzystać.
+            throw new NotSupportedException();
+        }
+
+        public bool Exists(string email)
+        {
+            return _context.Person.Any(x => x.Email.ToLower() == email.ToLower());
         }
 
         #region Disposing
@@ -70,6 +66,8 @@ namespace Lekarzowo.Repositories
             }
             this.disposed = true;
         }
+
+       
 
         //public void Dispose()
         //{

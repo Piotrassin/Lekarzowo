@@ -9,6 +9,8 @@ using Lekarzowo.Repositories;
 using Lekarzowo.Services;
 using System;
 using Lekarzowo.DataAccessLayer.DTO;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using System.Transactions;
 
 namespace Lekarzowo.Controllers
 {
@@ -19,10 +21,12 @@ namespace Lekarzowo.Controllers
     {
         private readonly IPeopleRepository _repository;
         private readonly IJWTService _jwtService;
-        public PeopleController(IPeopleRepository repository, IJWTService jwtService)
+        private readonly IPatientsRepository _patRepository;
+        public PeopleController(IPeopleRepository repository, IJWTService jwtService, IPatientsRepository patRepository)
         {
             _jwtService = jwtService;
             _repository = repository;
+            _patRepository = patRepository;
         }
 
 
@@ -43,7 +47,6 @@ namespace Lekarzowo.Controllers
             {
                 return NotFound();
             }
-
             return person;
         }
 
@@ -56,18 +59,24 @@ namespace Lekarzowo.Controllers
             {
                 newPerson.Password = AuthService.CreateHash(newPerson.Password);
 
-                //TODO: Może zmienić na metodę Exists(email)?
-                Person user = _repository.GetByEmail(newPerson.Email);
-
-                if (user != null)
+                if (_repository.Exists(newPerson.Email))
                 {
                     return Conflict("User with that email address already exists");
                     //return StatusCode(409, "User with that email address already exists");
                 }
+                using(var transaction = new TransactionScope())
+                {
+                    _repository.Insert(newPerson);
+                    _repository.Save();
 
-                _repository.Insert(newPerson);
-                _repository.Save();
+                    Person user = _repository.GetByEmail(newPerson.Email);
+                    Patient newPatient = new Patient() { Id = user.Id, IdNavigation = user };
 
+                    _patRepository.Insert(newPatient);
+                    _repository.Save();
+
+                    transaction.Complete();
+                }
                 //return CreatedAtAction("GetPerson", new { id = person.Id }, person);
                 return Created("", null);
             }
@@ -121,7 +130,7 @@ namespace Lekarzowo.Controllers
                     userToEdit.Name = edited.Name;
                     userToEdit.Lastname = edited.Lastname;
                     userToEdit.Pesel = edited.Pesel;
-                    userToEdit.Email = edited.Email;
+                    userToEdit.Email = edited.Email.ToLower();
                     userToEdit.Birthdate = edited.Birthdate;
                     userToEdit.Gender = edited.Gender;
 
@@ -149,12 +158,12 @@ namespace Lekarzowo.Controllers
             {
                 return NotFound();
             }
-
             _repository.Delete(person);
             _repository.Save();
 
             return person;
         }
+
 
     }
 }
