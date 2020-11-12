@@ -14,17 +14,30 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         public ReservationsRepository(ModelContext context) : base(context) { }
 
 
-        public IEnumerable<Reservation> GetAllFutureReservations(decimal? CityId, decimal? SpecId, decimal? DoctorId)
+        public IEnumerable<Reservation> GetAllFutureReservations(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end)
         {
-            return _context.Reservation
+            var query = _context.Reservation
                 .Include(x => x.Room).ThenInclude(x => x.Local)
                 .Include(x => x.Doctor)
-                .Where(x => x.Starttime >= DateTime.Now)
                 .Where(x => !CityId.HasValue || x.Room.Local.CityId == CityId)
                 .Where(x => !SpecId.HasValue || x.Doctor.SpecialityId == SpecId)
-                .Where(x => !DoctorId.HasValue || x.DoctorId == DoctorId)
-                .OrderBy(x => x.Starttime)
-                .ToList();
+                .Where(x => !DoctorId.HasValue || x.DoctorId == DoctorId);
+
+            if (start.HasValue && start.Value.Date > DateTime.Now.Date)
+            {
+                query = query.Where(x => x.Starttime >= start.Value.Date);
+            }
+            else
+            {
+                query = query.Where(x => x.Starttime >= DateTime.Now);
+            }
+
+            if (end.HasValue)
+            {
+                query = query.Where(x => x.Starttime <= end.Value.Date);
+            }
+
+            return query.OrderBy(x => x.Starttime).ToList();
         }
 
         public async Task<IEnumerable<object>> RecentReservations(decimal PatientId, int Limit, int Skip)

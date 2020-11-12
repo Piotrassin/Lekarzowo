@@ -13,7 +13,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// Compares doctors, workinghours and all Returns a list of all possible appointments which are split into 15 minute slots/pieces.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<Reservation> GetAllFutureReservations(decimal? CityId, decimal? SpecId, decimal? DoctorId);
+        IEnumerable<Reservation> GetAllFutureReservations(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end);
 
         /// <summary>
         /// Upcoming visits sorted from nearest to furthest. Limit the number od loaded items. Optionally skip given number of rows for pagination.
