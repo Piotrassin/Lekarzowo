@@ -64,7 +64,7 @@ namespace Lekarzowo.Controllers
         {
             if (ModelState.IsValid)
             {
-                newPerson.Password = AuthService.CreateHash(newPerson.Password);
+                newPerson.Password.Value = AuthService.CreateHash(newPerson.Password.Value);
 
                 if (_repository.Exists(newPerson.Email))
                 {
@@ -96,33 +96,46 @@ namespace Lekarzowo.Controllers
         [HttpPost("Login")]
         public ActionResult<Person> LoginUser(UserLoginDTO current)
         {
-            if (ModelState.IsValid)
+            try
             {
-                try
+                Person stored = _repository.GetByEmail(current.Email);
+                if (stored == null || !AuthService.VerifyPassword(current.Password.Value, stored.Password))
                 {
-                    Person stored = _repository.GetByEmail(current.Email);
-                    if (stored == null || !AuthService.VerifyPassword(current.Password, stored.Password))
-                    {
-                        return NotFound();
-                    }
-                    var token = _jwtService.GenerateAccessToken(stored);
+                    return NotFound();
+                }
+                var token = _jwtService.GenerateAccessToken(stored);
 
-                    return Accepted(new
-                    {
-                        Id = stored.Id,
-                        FirstName = stored.Name,
-                        LastName = stored.Lastname,
-                        Email = stored.Email,
-                        Token = token
-                    });
-                }
-                catch (Exception e)
+                return Accepted(new
                 {
-                    //throw;
-                    return Conflict(e.Message); ;
-                }
+                    Id = stored.Id,
+                    FirstName = stored.Name,
+                    LastName = stored.Lastname,
+                    Email = stored.Email,
+                    Token = token
+                });
             }
-            return Unauthorized();
+            catch (Exception e)
+            {
+                //throw;
+                return Conflict(e.Message);
+            }
+        }
+
+        [HttpPost("[action]")]
+        public ActionResult<Person> ChangePassword(UserChangePasswordDTO current)
+        {
+            current.NewPassword.Value = AuthService.CreateHash(current.NewPassword.Value);
+            var user = _repository.GetByEmail(current.Email);
+            user.Password = current.NewPassword.Value;
+            try
+            {
+                _repository.Save();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                return StatusCode(503, e.Message);
+            }
+            return Ok("Hasło zostało zmienione");
         }
 
         // PUT: api/People/5

@@ -12,7 +12,7 @@ namespace Lekarzowo.DataAccessLayer.DTO
         public string Lastname { get; set; }
         public DateTime Birthdate { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
+        public PasswordDTO Password { get; set; }
         public string Gender { get; set; }
         public string Pesel { get; set; }
     }

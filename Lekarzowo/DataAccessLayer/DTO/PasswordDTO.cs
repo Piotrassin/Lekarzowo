@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.DTO
 {
-    public class UserLoginDTO
+    public class PasswordDTO
     {
-        public string Email { get; set; }
-        public PasswordDTO Password { get; set; }
+        public string Value { get; set; }
     }
 }

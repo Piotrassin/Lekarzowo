@@ -32,7 +32,7 @@ namespace Lekarzowo.Repositories
                 Birthdate = a.Birthdate,
                 Gender = a.Gender,
                 Email = a.Email,
-                Password = a.Password,
+                Password = a.Password.Value,
                 Pesel = a.Pesel
             });
         }
@@ -47,6 +47,11 @@ namespace Lekarzowo.Repositories
         {
             return _context.Person.Any(x => x.Email.ToLower() == email.ToLower());
         }
+        public void ChangePassword(decimal id, string password)
+        {
+            //_context.Person.
+        }
+
 
         #region Disposing
         public void Dispose()
@@ -67,7 +72,7 @@ namespace Lekarzowo.Repositories
             this.disposed = true;
         }
 
-       
+
 
         //public void Dispose()
         //{

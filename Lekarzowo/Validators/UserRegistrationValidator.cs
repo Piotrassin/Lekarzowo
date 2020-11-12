@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Lekarzowo.DataAccessLayer.DTO;
 using Lekarzowo.Models;
+using Lekarzowo.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Lekarzowo.Validators
     public class UserRegistrationValidator : AbstractValidator<UserRegistrationDTO>
     {
         public readonly int MaxAgeValue = 150;
-        public UserRegistrationValidator()
+        public UserRegistrationValidator(IPeopleRepository peopleRepository)
         {
 
             RuleFor(x => x.Name)
@@ -33,10 +34,7 @@ namespace Lekarzowo.Validators
                 .EmailAddress().WithMessage("{PropertyName} jest niepoprawny");
 
             RuleFor(x => x.Password)
-                .Cascade(CascadeMode.Stop)
-                .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("Hasło")
-                .Length(11, Int16.MaxValue).WithMessage("Długość musi wynosić co najmniej {MinLength} znaków. Wpisano {TotalLength}")
-                .Must(BeAValidPassword).WithMessage("{PropertyName} musi zawierać co najmniej 1 małą literę, 1 dużą literę i 1 cyfrę");
+                .SetValidator(new PasswordValidator(peopleRepository));
 
             RuleFor(x => x.Birthdate)
                 .Cascade(CascadeMode.Stop)
@@ -63,13 +61,6 @@ namespace Lekarzowo.Validators
             text = text.Replace(",", "");
             text = text.Replace("'", "");
             return text.All(char.IsLetter);
-        }
-
-        public bool BeAValidPassword(string text)
-        {
-            Regex rx = new Regex(@"^.*(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$");
-
-            return rx.IsMatch(text);
         }
 
         public bool BeAValidBirthday(DateTime date)

@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Lekarzowo.Models;
+using Lekarzowo.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,9 @@ namespace Lekarzowo.Validators
 {
     public class PersonValidator : AbstractValidator<Person>
     {
-        public PersonValidator()
+        public PersonValidator(IPeopleRepository repo)
         {
-            var validator = new UserRegistrationValidator();
+            var validator = new UserRegistrationValidator(repo);
             
             RuleFor(x => x.Name)
                 .Cascade(CascadeMode.Stop)

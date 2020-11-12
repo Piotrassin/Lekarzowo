@@ -5,9 +5,7 @@ namespace Lekarzowo.DataAccessLayer.Models
 {
     public partial class ModelContext : DbContext
     {
-        public ModelContext(DbContextOptions<ModelContext> options)
-            : base(options)
-        { }
+        public ModelContext(DbContextOptions<ModelContext> options) : base(options) { }
 
 
         #region DbSets
