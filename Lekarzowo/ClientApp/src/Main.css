@@ -564,6 +564,15 @@ padding: 5px;
 padding-left: 15px;
 padding-right: 15px;
 }
+.btn-primary {
+  border-radius: 20px;
+  color: white;
+  background-color: #3991E1;
+border: none;
+padding: 8px;
+padding-left: 25px;
+padding-right: 25px;
+}
 .btn-success-arrow {
   border-radius: 20px;
   color: white;
@@ -811,7 +820,7 @@ border-bottom: 1px solid #D6D6D6;
 }
 .calendar-container {
   width: 35%;
-  height: 500px;
+  height: 530px;
   background-color: white;
   border-radius: 20px 0px 0px 20px;
 padding: 20px;
@@ -839,4 +848,18 @@ padding: 20px;
 }
 .space-hor {
   height: 20px;
+}
+.calendar-custom {
+  border: 0px !important;
+}
+.react-calendar__tile--now {
+  background-color: none !important;
+}
+.react-calendar__tile--active {
+  background-color: ##006edc !important;
+}
+.btn-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
