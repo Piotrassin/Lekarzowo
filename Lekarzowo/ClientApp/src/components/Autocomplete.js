@@ -96,6 +96,7 @@ export default function Asynchronous(props) {
           label={props.title}
           className={classes.input}
           variant="outlined"
+          size="small"
           InputProps={{
             ...params.InputProps,
             endAdornment: (

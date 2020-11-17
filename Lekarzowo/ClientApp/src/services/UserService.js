@@ -52,8 +52,12 @@ class UserService {
     return fetch(url + 'people/' + JSON.parse(AuthService.getLoggedUser()).id, {
       headers: authHeader()
     }).then(response => response.json());
+  }
 
-
+  getUserSicknessHistory() {
+    return fetch(url + 'uicomponents/PatientIllnesses/3', {
+      headers: authHeader()
+    }).then(response => response.json());
   }
 
 }
