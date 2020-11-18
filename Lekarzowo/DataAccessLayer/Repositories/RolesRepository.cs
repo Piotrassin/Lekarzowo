@@ -1,6 +1,5 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Lekarzowo.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +7,11 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public interface IMedicinesRepository : IBaseNamedEntityRepository<Medicine>
+    public class RolesRepository : BaseNamedRepository<Role>, IRolesRepository
     {
-        bool Exists(Medicine t);
+        public RolesRepository(ModelContext context) : base(context)
+        {
+
+        }
     }
 }

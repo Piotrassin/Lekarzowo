@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
+using Lekarzowo.DataAccessLayer.Models;
 
 namespace Lekarzowo.Controllers
 {

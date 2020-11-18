@@ -21,5 +21,10 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         {
             return await table.Where(x => name == null || x.Name.ToLower().Contains(name.ToLower())).ToListAsync();
         }
+
+        public async Task<T> GetSingleByName(string name)
+        {
+            return await table.Where(x => x.Name.ToLower() == name.ToLower()).FirstOrDefaultAsync();
+        }
     }
 }

@@ -1,14 +1,20 @@
-﻿using Lekarzowo.Models;
+﻿using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Lekarzowo.DataAccessLayer.Models
 {
     public partial class ModelContext : DbContext
     {
-        public ModelContext(DbContextOptions<ModelContext> options) : base(options) { }
+        public ModelContext()
+        {
+        }
 
+        public ModelContext(DbContextOptions<ModelContext> options)
+            : base(options)
+        {
+        }
 
-        #region DbSets
         public virtual DbSet<City> City { get; set; }
         public virtual DbSet<Doctor> Doctor { get; set; }
         public virtual DbSet<Illness> Illness { get; set; }
@@ -22,36 +28,29 @@ namespace Lekarzowo.DataAccessLayer.Models
         public virtual DbSet<Person> Person { get; set; }
         public virtual DbSet<Referral> Referral { get; set; }
         public virtual DbSet<Reservation> Reservation { get; set; }
+        public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<Room> Room { get; set; }
         public virtual DbSet<Speciality> Speciality { get; set; }
         public virtual DbSet<Treatment> Treatment { get; set; }
         public virtual DbSet<Treatmentonvisit> Treatmentonvisit { get; set; }
+        public virtual DbSet<Userroles> Userroles { get; set; }
         public virtual DbSet<Visit> Visit { get; set; }
         public virtual DbSet<Workinghours> Workinghours { get; set; }
-        #endregion
 
-
-
-        #region SQLViews
-        public virtual DbQuery<View_AddressData> View_AddressData { get; set; }
-        public virtual DbQuery<View_DocsAndSpecs> View_DocsAndSpecs { get; set; }
-        public virtual DbQuery<View_DoctorList> View_DoctorList { get; set; }
-        public virtual DbQuery<View_DoctorSchedule> View_DoctorSchedule { get; set; }
-        public virtual DbQuery<View_IllnessMedDetails> View_IllnessMedDetails { get; set; }
-        public virtual DbQuery<View_IllnessMedList> View_IllnessMedList { get; set; }
-        //public virtual DbQuery<View_PatientIllnesses> View_PatientIllnesses { get; set; }
-
-        public virtual DbQuery<View_VisitDetails> View_VisitDetails { get; set; }
-        public virtual DbQuery<View_VisitList> View_VisitList { get; set; }
-        #endregion
-
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseOracle("Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=db-oracle)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=BAZA.PJWSTK.EDU.PL)));Persist Security Info=True;User Id=S17437;Password=oracle12;");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:DefaultSchema", "S17437");
 
-            #region Entities
             modelBuilder.Entity<City>(entity =>
             {
                 entity.ToTable("CITY");
@@ -90,13 +89,13 @@ namespace Lekarzowo.DataAccessLayer.Models
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.Doctor)
                     .HasForeignKey<Doctor>(d => d.Id)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("LEKARZ_PERSON");
 
                 entity.HasOne(d => d.Speciality)
                     .WithMany(p => p.Doctor)
                     .HasForeignKey(d => d.SpecialityId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("DOCTOR_SPECIALITY");
             });
 
@@ -155,19 +154,19 @@ namespace Lekarzowo.DataAccessLayer.Models
                 entity.HasOne(d => d.Illness)
                     .WithMany(p => p.Illnesshistory)
                     .HasForeignKey(d => d.IllnessId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("ILLNESSHISTORY_ILLNESS");
 
                 entity.HasOne(d => d.Patient)
                     .WithMany(p => p.Illnesshistory)
                     .HasForeignKey(d => d.PatientId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("ILLNESSHISTORY_PATIENT");
 
                 entity.HasOne(d => d.Visit)
                     .WithMany(p => p.Illnesshistory)
                     .HasForeignKey(d => d.VisitId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("ILLNESSHISTORY_VISIT");
             });
 
@@ -214,7 +213,7 @@ namespace Lekarzowo.DataAccessLayer.Models
                 entity.HasOne(d => d.City)
                     .WithMany(p => p.Local)
                     .HasForeignKey(d => d.CityId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("ADDRESS_CITY");
             });
 
@@ -271,13 +270,13 @@ namespace Lekarzowo.DataAccessLayer.Models
                 entity.HasOne(d => d.Illnesshistory)
                     .WithMany(p => p.Medicinehistory)
                     .HasForeignKey(d => d.IllnesshistoryId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("MEDICINEHISTORY_ILLNESSHISTORY");
 
                 entity.HasOne(d => d.Medicine)
                     .WithMany(p => p.Medicinehistory)
                     .HasForeignKey(d => d.MedicineId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("MEDICINEHISTORY_MEDICINE");
             });
 
@@ -314,13 +313,13 @@ namespace Lekarzowo.DataAccessLayer.Models
                 entity.HasOne(d => d.Illness)
                     .WithMany(p => p.Oldillnesshistory)
                     .HasForeignKey(d => d.IllnessId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("TABLE_41_ILLNESS");
 
                 entity.HasOne(d => d.Patient)
                     .WithMany(p => p.Oldillnesshistory)
                     .HasForeignKey(d => d.PatientId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("TABLE_41_PATIENT");
             });
 
@@ -352,13 +351,13 @@ namespace Lekarzowo.DataAccessLayer.Models
                 entity.HasOne(d => d.Medicine)
                     .WithMany(p => p.Oldmedicinehistory)
                     .HasForeignKey(d => d.MedicineId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("TABLE_40_MEDICINE");
 
                 entity.HasOne(d => d.Patient)
                     .WithMany(p => p.Oldmedicinehistory)
                     .HasForeignKey(d => d.PatientId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("TABLE_40_PATIENT");
             });
 
@@ -377,7 +376,7 @@ namespace Lekarzowo.DataAccessLayer.Models
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.Patient)
                     .HasForeignKey<Patient>(d => d.Id)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("PATIENT_PERSON");
             });
 
@@ -465,19 +464,19 @@ namespace Lekarzowo.DataAccessLayer.Models
                 entity.HasOne(d => d.Doctor)
                     .WithMany(p => p.Referral)
                     .HasForeignKey(d => d.DoctorId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("REFERRAL_DOCTOR");
 
                 entity.HasOne(d => d.Patient)
                     .WithMany(p => p.Referral)
                     .HasForeignKey(d => d.PatientId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("REFERRAL_PATIENT");
 
                 entity.HasOne(d => d.Treatment)
                     .WithMany(p => p.Referral)
                     .HasForeignKey(d => d.TreatmentId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("REFERRAL_TREATMENT");
             });
 
@@ -521,20 +520,39 @@ namespace Lekarzowo.DataAccessLayer.Models
                 entity.HasOne(d => d.Doctor)
                     .WithMany(p => p.Reservation)
                     .HasForeignKey(d => d.DoctorId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("RESERVATION_DOCTOR");
 
                 entity.HasOne(d => d.Patient)
                     .WithMany(p => p.Reservation)
                     .HasForeignKey(d => d.PatientId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("RESERVATION_PATIENT");
 
                 entity.HasOne(d => d.Room)
                     .WithMany(p => p.Reservation)
                     .HasForeignKey(d => d.RoomId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("RESERVATION_ROOM");
+            });
+
+            modelBuilder.Entity<Role>(entity =>
+            {
+                entity.ToTable("ROLE");
+
+                entity.HasIndex(e => e.Id)
+                    .HasName("ROLE_PK")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .HasColumnType("NUMBER(38)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnName("NAME")
+                    .HasColumnType("VARCHAR2(15)");
             });
 
             modelBuilder.Entity<Room>(entity =>
@@ -559,7 +577,7 @@ namespace Lekarzowo.DataAccessLayer.Models
                 entity.HasOne(d => d.Local)
                     .WithMany(p => p.Room)
                     .HasForeignKey(d => d.LocalId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("ROOM_LOCAL");
             });
 
@@ -641,14 +659,50 @@ namespace Lekarzowo.DataAccessLayer.Models
                 entity.HasOne(d => d.Treatment)
                     .WithMany(p => p.Treatmentonvisit)
                     .HasForeignKey(d => d.TreatmentId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("TREAMENTONVISIT_TREATMENT");
 
                 entity.HasOne(d => d.Visit)
                     .WithMany(p => p.Treatmentonvisit)
                     .HasForeignKey(d => d.VisitId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("TREATMENTONVISIT_VISIT");
+            });
+
+            modelBuilder.Entity<Userroles>(entity =>
+            {
+                entity.HasKey(e => new { e.PersonId, e.RoleId, e.Dateofissue })
+                    .HasName("USERROLE_PK");
+
+                entity.ToTable("USERROLES");
+
+                entity.HasIndex(e => new { e.PersonId, e.RoleId, e.Dateofissue })
+                    .HasName("USERROLE_PK")
+                    .IsUnique();
+
+                entity.Property(e => e.PersonId)
+                    .HasColumnName("PERSON_ID")
+                    .HasColumnType("NUMBER(38)");
+
+                entity.Property(e => e.RoleId)
+                    .HasColumnName("ROLE_ID")
+                    .HasColumnType("NUMBER(38)");
+
+                entity.Property(e => e.Dateofissue)
+                    .HasColumnName("DATEOFISSUE")
+                    .HasColumnType("DATE");
+
+                entity.HasOne(d => d.Person)
+                    .WithMany(p => p.Userroles)
+                    .HasForeignKey(d => d.PersonId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("USERROLES_PERSON");
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.Userroles)
+                    .HasForeignKey(d => d.RoleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("USERROLES_ROLE");
             });
 
             modelBuilder.Entity<Visit>(entity =>
@@ -677,7 +731,7 @@ namespace Lekarzowo.DataAccessLayer.Models
                 entity.HasOne(d => d.Reservation)
                     .WithOne(p => p.Visit)
                     .HasForeignKey<Visit>(d => d.ReservationId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("VISIT_RESERVATION");
             });
 
@@ -709,59 +763,43 @@ namespace Lekarzowo.DataAccessLayer.Models
                 entity.HasOne(d => d.Doctor)
                     .WithMany(p => p.Workinghours)
                     .HasForeignKey(d => d.DoctorId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("WORKHOURS_DOCTOR");
 
                 entity.HasOne(d => d.Local)
                     .WithMany(p => p.Workinghours)
                     .HasForeignKey(d => d.LocalId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("WORKINGHOURS_LOCAL");
             });
-            #endregion  
 
+            modelBuilder.HasSequence("ISEQ$$_1132754");
 
-            #region ViewMapping
-            modelBuilder.Query<View_AddressData>().ToView("VW_ADDRESS_DATA");
-            modelBuilder.Query<View_DocsAndSpecs>().ToView("VW_DOCS_AND_SPECS");
-            modelBuilder.Query<View_DoctorList>().ToView("VW_DOCTOR_LIST");
-            modelBuilder.Query<View_DoctorSchedule>().ToView("VW_DOCTOR_SCHEDULE");
-            modelBuilder.Query<View_IllnessMedDetails>().ToView("VW_ILLNESS_MED_DETAILS");
-            modelBuilder.Query<View_IllnessMedList>().ToView("VW_ILLNESS_MED_LIST");
-            //modelBuilder.Query<View_PatientIllnesses>().ToView("VW_PATIENT_ILLNESSES");
-            modelBuilder.Query<View_VisitDetails>().ToView("VW_VISIT_DETAILS");
-            modelBuilder.Query<View_VisitList>().ToView("VW_VISIT_LIST");
-            #endregion
+            modelBuilder.HasSequence("ISEQ$$_1132759");
 
+            modelBuilder.HasSequence("ISEQ$$_1132762");
 
-            #region Sequences
-            modelBuilder.HasSequence("ISEQ$$_1132701");
+            modelBuilder.HasSequence("ISEQ$$_1132765");
 
-            modelBuilder.HasSequence("ISEQ$$_1132706");
+            modelBuilder.HasSequence("ISEQ$$_1132768");
 
-            modelBuilder.HasSequence("ISEQ$$_1132709");
+            modelBuilder.HasSequence("ISEQ$$_1132779");
 
-            modelBuilder.HasSequence("ISEQ$$_1132712");
+            modelBuilder.HasSequence("ISEQ$$_1132782");
 
-            modelBuilder.HasSequence("ISEQ$$_1132715");
+            modelBuilder.HasSequence("ISEQ$$_1132785");
 
-            modelBuilder.HasSequence("ISEQ$$_1132726");
+            modelBuilder.HasSequence("ISEQ$$_1132788");
 
-            modelBuilder.HasSequence("ISEQ$$_1132729");
+            modelBuilder.HasSequence("ISEQ$$_1132791");
 
-            modelBuilder.HasSequence("ISEQ$$_1132732");
+            modelBuilder.HasSequence("ISEQ$$_1132794");
 
-            modelBuilder.HasSequence("ISEQ$$_1132735");
+            modelBuilder.HasSequence("ISEQ$$_1132797");
 
-            modelBuilder.HasSequence("ISEQ$$_1132738");
+            modelBuilder.HasSequence("ISEQ$$_1132802");
 
-            modelBuilder.HasSequence("ISEQ$$_1132741");
-
-            modelBuilder.HasSequence("ISEQ$$_1132744");
-
-            modelBuilder.HasSequence("ISEQ$$_1132749");
-
-            #endregion
+            modelBuilder.HasSequence("ISEQ$$_1263944");
         }
     }
 }

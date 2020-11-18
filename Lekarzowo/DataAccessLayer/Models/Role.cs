@@ -3,16 +3,16 @@ using System.Collections.Generic;
 
 namespace Lekarzowo.DataAccessLayer.Models
 {
-    public partial class City : IEntity, INamedEntity
+    public partial class Role : IEntity, INamedEntity
     {
-        public City()
+        public Role()
         {
-            Local = new HashSet<Local>();
+            Userroles = new HashSet<Userroles>();
         }
 
         public decimal Id { get; set; }
         public string Name { get; set; }
 
-        public virtual ICollection<Local> Local { get; set; }
+        public virtual ICollection<Userroles> Userroles { get; set; }
     }
 }

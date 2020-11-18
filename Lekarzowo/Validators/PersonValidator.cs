@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.Models;
 using Lekarzowo.Repositories;
 using System;

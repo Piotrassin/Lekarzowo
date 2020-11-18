@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lekarzowo.Models;
 using Microsoft.AspNetCore.Authorization;
 using Lekarzowo.Repositories;
 using Lekarzowo.Services;
@@ -11,13 +10,14 @@ using System;
 using Lekarzowo.DataAccessLayer.DTO;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using System.Transactions;
+using Lekarzowo.DataAccessLayer.Models;
 
 namespace Lekarzowo.Controllers
 {
     //[Authorize] //wystarczy to odkomentować żeby na wszystkie końcówki z tego kontrolera, była potrzebna autoryzacja, chyba że końcówka jest oznaczona jako [AllowAnonymous].
     [Route("api/[controller]")]
     [ApiController]
-    public class PeopleController : ControllerBase
+    public class PeopleController : BaseController
     {
         private readonly IPeopleRepository _repository;
         private readonly IJWTService _jwtService;
@@ -31,24 +31,25 @@ namespace Lekarzowo.Controllers
 
 
         // GET: api/People
-        [HttpGet]
-        public ActionResult<IEnumerable<Person>> GetPeople()
+        [HttpGet("[action]")]
+        public ActionResult<IEnumerable<Person>> All()
         {
-            return _repository.GetAll().ToList();
+            return Ok(_repository.GetAll());
         }
 
         // GET: api/People?Name=abc
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<Person>>> ListByName(string Name)
+        public async Task<ActionResult<IEnumerable<Person>>> AllByName(string Name)
         {
             return Ok(await _repository.GetAllByName(Name));
         }
 
         // GET: api/People/5
-        [HttpGet("{id}")]
-        public ActionResult<Person> GetPerson(decimal id)
+        [HttpGet("[action]")]
+        public ActionResult<Person> Single()
         {
-            var person =  _repository.GetByID(id);
+            var userId = GetUserIdFromToken();
+            var person =  _repository.GetByID(userId);
 
             if (person == null)
             {
@@ -99,10 +100,10 @@ namespace Lekarzowo.Controllers
             try
             {
                 Person stored = _repository.GetByEmail(current.Email);
-                if (stored == null || !AuthService.VerifyPassword(current.Password.Value, stored.Password))
-                {
-                    return NotFound();
-                }
+                //if (stored == null || !AuthService.VerifyPassword(current.Password.Value, stored.Password))
+                //{
+                //    return NotFound();
+                //}
                 var token = _jwtService.GenerateAccessToken(stored);
 
                 return Accepted(new
@@ -121,6 +122,7 @@ namespace Lekarzowo.Controllers
             }
         }
 
+        //POST: api/People/ChangePassword
         [HttpPost("[action]")]
         public ActionResult<Person> ChangePassword(UserChangePasswordDTO current)
         {
@@ -129,13 +131,13 @@ namespace Lekarzowo.Controllers
             user.Password = current.NewPassword.Value;
             try
             {
-                _repository.Save();
+                _repository.Save(); 
+                return Ok("Hasło zostało zmienione");
             }
             catch (DbUpdateConcurrencyException e)
             {
                 return StatusCode(503, e.Message);
             }
-            return Ok("Hasło zostało zmienione");
         }
 
         // PUT: api/People/5

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Lekarzowo.DataAccessLayer.Models;
 
 namespace Lekarzowo.Controllers
 {
@@ -25,7 +26,7 @@ namespace Lekarzowo.Controllers
         [HttpGet]
         public  ActionResult<IEnumerable<City>> GetCities()
         {
-            return  _repository.GetAll().ToList();
+            return Ok(_repository.GetAll());
         }
 
         // GET: api/Cities?Name=abc
@@ -86,7 +87,7 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public IActionResult PostCity(City city)
         {
-            if (_repository.Exists(city))
+            if(_repository.Exists(city))
             {
                 return Conflict("City with that name already exists");
             }
@@ -100,8 +101,8 @@ namespace Lekarzowo.Controllers
         [HttpDelete("{id}")]
         public  ActionResult<City> DeleteCity(decimal id)
         {
-            var city =  _repository.GetByID(id);
-            if (city == null)
+            var city = _repository.GetByID(id);
+            if(city == null)
             {
                 return NotFound();
             }

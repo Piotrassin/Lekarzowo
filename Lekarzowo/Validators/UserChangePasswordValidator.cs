@@ -16,13 +16,10 @@ namespace Lekarzowo.Validators
             pwdValidator = new PasswordValidator(peopleRepository);
 
             RuleFor(x => x.Email)
-                .Cascade(CascadeMode.Stop)
-                .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("Email")
-                .EmailAddress().WithMessage("{PropertyName} jest niepoprawny");
+                .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("To pol");
 
             RuleFor(x => x.CurrentPassword)
-                .SetValidator(pwdValidator)
-                .Must(BeEqualToAPwdInDb);
+                .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("To pole");
 
             RuleFor(x => x.NewPassword)
                 .SetValidator(pwdValidator);
