@@ -8,20 +8,16 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class LocalsRepository : BaseRepository<Local>, ILocalsRepository
+    public class LocalsRepository : BaseNamedRepository<Local>, ILocalsRepository
     {
-        private readonly ModelContext _context;
-        public LocalsRepository(ModelContext context) : base(context)
-        {
-            this._context = context;
-        }
+        public LocalsRepository(ModelContext context) : base(context) {}
 
 
-            /// <summary>
-            /// TODO: Nie działa nie wiedzieć czemu
-            /// </summary>
-            /// <param name="local"></param>
-            /// <returns></returns>
+        /// <summary>
+        /// TODO: Nie działa nie wiedzieć czemu
+        /// </summary>
+        /// <param name="local"></param>
+        /// <returns></returns>
         public bool Exists(Local local)
         {
             return _context.Local.Any(x => x.Postcode == local.Postcode);

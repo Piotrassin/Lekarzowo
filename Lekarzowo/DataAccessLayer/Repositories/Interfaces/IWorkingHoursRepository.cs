@@ -8,5 +8,10 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
     public interface IWorkingHoursRepository : IBaseRepository<Workinghours>
     {
+        /// <summary>
+        /// Returns all working hours newer than current date.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<Workinghours> GetAllFutureWorkHours(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end);
     }
 }

@@ -8,13 +8,9 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class MedicinesRepository : BaseRepository<Medicine>, IMedicinesRepository
+    public class MedicinesRepository : BaseNamedRepository<Medicine>, IMedicinesRepository
     {
-        //private readonly ModelContext _context;
-        public MedicinesRepository(ModelContext context) : base(context)
-        {
-            //_context = context;
-        }
+        public MedicinesRepository(ModelContext context) : base(context) {}
 
         public bool Exists(Medicine t)
         {

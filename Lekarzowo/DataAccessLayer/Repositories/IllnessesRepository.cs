@@ -7,14 +7,9 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class IllnessesRepository : BaseRepository<Illness>, IIllnessesRepository
+    public class IllnessesRepository : BaseNamedRepository<Illness>, IIllnessesRepository
     {
-        private readonly ModelContext _context;
-
-        public IllnessesRepository(ModelContext context) : base(context)
-        {
-            this._context = context;
-        }
+        public IllnessesRepository(ModelContext context) : base(context) {}
 
         public bool Exists(Illness illness)
         {

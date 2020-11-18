@@ -12,7 +12,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     public class UserInterfaceComponentsRepository : IUserInterfaceComponentsRepository
     {
         private readonly ModelContext _context;
-        private readonly int MaxCountOfLoadedItems = 10;
         public UserInterfaceComponentsRepository(ModelContext context)
         {
             _context = context;
@@ -352,42 +351,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                     MedicineName = x.Medicine.Name,
                     MedicineDosage = x.Description
                 }).ToListAsync();
-        }
-
-        public async Task<IEnumerable<object>> RecentVisits(decimal PatientId)
-        {
-            return await _context.Reservation
-                .Where(x => x.PatientId == PatientId)
-                .Where(x => x.Starttime < DateTime.Now)
-                .Select(x => new
-                {
-                    ReservationId = x.Id,
-                    DoctorSpecialization = x.Doctor.Speciality.Name,
-                    ReservationStartTime = x.Starttime,
-                    ReservationEndTime = x.Endtime,
-                    DoctorName = x.Doctor.IdNavigation.Name,
-                    DoctorLastname = x.Doctor.IdNavigation.Lastname,
-                })
-                .Take(MaxCountOfLoadedItems)
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<object>> UpcomingVisits(decimal PatientId)
-        {
-            return await _context.Reservation
-                .Where(x => x.PatientId == PatientId)
-                .Where(x => x.Starttime > DateTime.Now)
-                .Select(x => new
-                {
-                    ReservationId = x.Id,
-                    DoctorSpecialization = x.Doctor.Speciality.Name,
-                    ReservationStartTime = x.Starttime,
-                    ReservationEndTime = x.Endtime,
-                    DoctorName = x.Doctor.IdNavigation.Name,
-                    DoctorLastname = x.Doctor.IdNavigation.Lastname,
-                })
-                .Take(MaxCountOfLoadedItems)
-                .ToListAsync();
         }
 
     }

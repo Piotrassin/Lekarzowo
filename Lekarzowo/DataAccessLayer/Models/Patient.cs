@@ -16,8 +16,8 @@ namespace Lekarzowo.Models
         }
         
         public decimal Id { get; set; }
-
         public virtual Person IdNavigation { get; set; }
+
         public virtual ICollection<Illnesshistory> Illnesshistory { get; set; }
         public virtual ICollection<Oldillnesshistory> Oldillnesshistory { get; set; }
         public virtual ICollection<Oldmedicinehistory> Oldmedicinehistory { get; set; }
