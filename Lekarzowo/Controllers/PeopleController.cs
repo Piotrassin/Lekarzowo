@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lekarzowo.Models;
 using Microsoft.AspNetCore.Authorization;
 using Lekarzowo.Repositories;
 using Lekarzowo.Services;
@@ -11,13 +10,14 @@ using System;
 using Lekarzowo.DataAccessLayer.DTO;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using System.Transactions;
+using Lekarzowo.DataAccessLayer.Models;
 
 namespace Lekarzowo.Controllers
 {
     //[Authorize] //wystarczy to odkomentować żeby na wszystkie końcówki z tego kontrolera, była potrzebna autoryzacja, chyba że końcówka jest oznaczona jako [AllowAnonymous].
     [Route("api/[controller]")]
     [ApiController]
-    public class PeopleController : ControllerBase
+    public class PeopleController : BaseController
     {
         private readonly IPeopleRepository _repository;
         private readonly IJWTService _jwtService;
@@ -31,23 +31,24 @@ namespace Lekarzowo.Controllers
 
 
         // GET: api/People
-        [HttpGet]
-        public ActionResult<IEnumerable<Person>> GetPeople()
+        [HttpGet("[action]")]
+        public ActionResult<IEnumerable<Person>> All()
         {
-            return _repository.GetAll().ToList();
+            return Ok(_repository.GetAll());
         }
 
-        // GET: api/People?Name=abc
+        // GET: api/People/AllByName?Name=abc&limit=0&skip=0
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<Person>>> ListByName(string Name)
+        public async Task<ActionResult<IEnumerable<Person>>> AllByName(string name, int? limit, int? skip)
         {
-            return Ok(await _repository.GetAllByName(Name));
+            return Ok(await _repository.GetAllByName(name, limit, skip));
         }
 
         // GET: api/People/5
-        [HttpGet("{id}")]
-        public ActionResult<Person> GetPerson(decimal id)
+        [HttpGet("[action]")]
+        public ActionResult<Person> Single()
         {
+            var id = GetUserIdFromToken();
             var person =  _repository.GetByID(id);
 
             if (person == null)
@@ -99,10 +100,10 @@ namespace Lekarzowo.Controllers
             try
             {
                 Person stored = _repository.GetByEmail(current.Email);
-                if (stored == null || !AuthService.VerifyPassword(current.Password.Value, stored.Password))
-                {
-                    return NotFound();
-                }
+                //if (stored == null || !AuthService.VerifyPassword(current.Password.Value, stored.Password))
+                //{
+                //    return NotFound();
+                //}
                 var token = _jwtService.GenerateAccessToken(stored);
 
                 return Accepted(new
@@ -121,21 +122,29 @@ namespace Lekarzowo.Controllers
             }
         }
 
+        //POST: api/People/ChangePassword
         [HttpPost("[action]")]
         public ActionResult<Person> ChangePassword(UserChangePasswordDTO current)
         {
+            var id = GetUserIdFromToken();
             current.NewPassword.Value = AuthService.CreateHash(current.NewPassword.Value);
-            var user = _repository.GetByEmail(current.Email);
-            user.Password = current.NewPassword.Value;
-            try
+            var userById = _repository.GetByID(id);
+            var userByEmail = _repository.GetByEmail(current.Email);
+            if (userById == userByEmail)
             {
-                _repository.Save();
+                userByEmail.Password = current.NewPassword.Value;
+                try
+                {
+                    _repository.Save();
+                    return Ok("Hasło zmienione");
+                }
+                catch (DbUpdateConcurrencyException e)
+                {
+                    return StatusCode(503, e.Message);
+                }
             }
-            catch (DbUpdateConcurrencyException e)
-            {
-                return StatusCode(503, e.Message);
-            }
-            return Ok("Hasło zostało zmienione");
+            return BadRequest();
+
         }
 
         // PUT: api/People/5

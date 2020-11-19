@@ -17,13 +17,11 @@ namespace Lekarzowo.Validators
 
             RuleFor(x => x.Email)
                .Cascade(CascadeMode.Stop)
-               .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("Email")
-               .EmailAddress().WithMessage("{PropertyName} jest niepoprawny");
+               .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("Email");
 
             RuleFor(x => x.Password.Value)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("Hasło")
-                .Length(11, Int16.MaxValue).WithMessage("Długość musi wynosić co najmniej {MinLength} znaków. Wpisano {TotalLength}")
                 .Must(BeEqualToAPwdInDB).WithMessage("{PropertyName} lub adres email są niepoprawne");
         }
 

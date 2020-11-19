@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Lekarzowo.Models
+namespace Lekarzowo.DataAccessLayer.Models
 {
     public partial class Oldmedicinehistory
     {

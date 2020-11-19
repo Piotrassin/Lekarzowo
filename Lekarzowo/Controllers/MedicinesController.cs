@@ -30,11 +30,11 @@ namespace Lekarzowo.Controllers
             //return await _repository.Medicine.ToListAsync();
         }
 
-        // GET: api/Medicines?Name=abc
+        // GET: api/Medicines/AllByName?Name=abc&limit=0&skip=0
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<Medicine>>> ListByName(string Name)
+        public async Task<ActionResult<IEnumerable<Medicine>>> AllByName(string name, int? limit, int? skip)
         {
-            return Ok(await _repository.GetAllByName(Name));
+            return Ok(await _repository.GetAllByName(name, limit, skip));
         }
 
         // GET: api/Medicines/5

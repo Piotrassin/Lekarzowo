@@ -1,5 +1,4 @@
-﻿Scaffold-DbContext -f "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=db-oracle)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=BAZA.PJWSTK.EDU.PL)));Persist Security Info=True;User Id=S17437;Password=oracle12;" Oracle.EntityFrameworkCore -OutputDir Models
-
+﻿Scaffold-DbContext -f "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=db-oracle)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=BAZA.PJWSTK.EDU.PL)));Persist Security Info=True;User Id=S17437;Password=oracle12;" Oracle.EntityFrameworkCore -OutputDir DataAccessLayer/Models
 
 
 

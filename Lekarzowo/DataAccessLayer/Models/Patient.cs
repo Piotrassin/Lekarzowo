@@ -1,8 +1,7 @@
-﻿using Lekarzowo.DataAccessLayer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Lekarzowo.Models
+namespace Lekarzowo.DataAccessLayer.Models
 {
     public partial class Patient : IEntity
     {
@@ -14,10 +13,10 @@ namespace Lekarzowo.Models
             Referral = new HashSet<Referral>();
             Reservation = new HashSet<Reservation>();
         }
-        
-        public decimal Id { get; set; }
-        public virtual Person IdNavigation { get; set; }
 
+        public decimal Id { get; set; }
+
+        public virtual Person IdNavigation { get; set; }
         public virtual ICollection<Illnesshistory> Illnesshistory { get; set; }
         public virtual ICollection<Oldillnesshistory> Oldillnesshistory { get; set; }
         public virtual ICollection<Oldmedicinehistory> Oldmedicinehistory { get; set; }

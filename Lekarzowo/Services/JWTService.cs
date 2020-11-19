@@ -1,4 +1,5 @@
-﻿using Lekarzowo.Helpers;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.Helpers;
 using Lekarzowo.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -35,8 +36,8 @@ namespace Lekarzowo.Services
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.UniqueName, person.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, person.Email)
+                new Claim("UserId", person.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, person.Email),
             };
 
             var token = new JwtSecurityToken(

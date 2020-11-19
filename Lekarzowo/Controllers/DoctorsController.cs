@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
+using Lekarzowo.DataAccessLayer.Models;
 
 namespace Lekarzowo.Controllers
 {
@@ -23,21 +24,21 @@ namespace Lekarzowo.Controllers
 
         // GET: api/Doctors
         [HttpGet]
-        public ActionResult<IEnumerable<Doctor>> GetDoctors()
+        public ActionResult<IEnumerable<Doctor>> All()
         {
             return _repository.GetAll().ToList();
         }
 
-        // GET: api/Doctors/Search?name=a&lastname=b
+        // GET: api/Doctors/AllByName?Name=abc&limit=0&skip=0
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> Search(string name, string lastname)
+        public async Task<ActionResult<IEnumerable<object>>> AllByName(string name, int? skip, int? limit)
         {
-            return Ok(await _repository.SearchByName(name, lastname));
+            return Ok(await _repository.GetAllByName(name, skip, limit));
         }
 
         // GET: api/Doctors/5
         [HttpGet("{id}")]
-        public ActionResult<bool> GetDoctor(decimal id)
+        public ActionResult<bool> Single(decimal id)
         {
             var doctor = _repository.GetByID(id);
 

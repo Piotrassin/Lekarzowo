@@ -17,7 +17,7 @@ namespace Lekarzowo.Validators
         public PasswordValidator(IPeopleRepository peopleRepository)
         {
             repo = peopleRepository;
-
+            
             RuleFor(x => x.Value)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("Hasło")

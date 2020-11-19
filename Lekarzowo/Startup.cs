@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
 namespace Lekarzowo
@@ -47,6 +48,7 @@ namespace Lekarzowo
             #endregion
 
             #region Authentication config
+
             services.AddAuthentication(s =>
             {
                 s.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -90,6 +92,8 @@ namespace Lekarzowo
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            services.AddSwaggerGen();
+
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -118,7 +122,8 @@ namespace Lekarzowo
             services.AddScoped<IVisitsRepository, VisitsRepository>();
             services.AddScoped<IWorkingHoursRepository, WorkingHoursRepository>();
             services.AddScoped<IUserInterfaceComponentsRepository, UserInterfaceComponentsRepository>();
-
+            services.AddScoped<IUserRolesRepository, UserRolesRepository>();
+            services.AddScoped<IRolesRepository, RolesRepository>();
 
             services.AddEntityFrameworkOracle()
                 .AddDbContext<ModelContext>(options =>
@@ -141,6 +146,13 @@ namespace Lekarzowo
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(x =>
+            {
+                x.SwaggerEndpoint("/swagger/v1/swagger.json", "Lekarzowo API v1");
+                x.RoutePrefix = "swagger";
+            });
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

@@ -1,4 +1,5 @@
 ﻿using Lekarzowo.DataAccessLayer.DTO;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.Models;

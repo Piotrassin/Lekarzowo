@@ -1,9 +1,7 @@
-﻿using Lekarzowo.DataAccessLayer;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Lekarzowo.Models
+namespace Lekarzowo.DataAccessLayer.Models
 {
     public partial class Doctor : IEntity
     {
@@ -14,7 +12,6 @@ namespace Lekarzowo.Models
             Workinghours = new HashSet<Workinghours>();
         }
 
-
         public decimal Id { get; set; }
         public decimal SpecialityId { get; set; }
 
@@ -23,6 +20,5 @@ namespace Lekarzowo.Models
         public virtual ICollection<Referral> Referral { get; set; }
         public virtual ICollection<Reservation> Reservation { get; set; }
         public virtual ICollection<Workinghours> Workinghours { get; set; }
-        
     }
 }

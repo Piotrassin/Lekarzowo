@@ -156,6 +156,10 @@ namespace Lekarzowo.Controllers
                 });
                 outputList.AddRange(slotsThatDay);
             }
+            if (start.HasValue && end.HasValue)
+            {
+                outputList = outputList.Where(x => x.Start >= start && x.End <= end).ToList();
+            }
             return Ok(outputList);
         }
 

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Lekarzowo.DataAccessLayer.Models;
 
 namespace Lekarzowo.Controllers
 {
@@ -25,14 +26,14 @@ namespace Lekarzowo.Controllers
         [HttpGet]
         public  ActionResult<IEnumerable<City>> GetCities()
         {
-            return  _repository.GetAll().ToList();
+            return Ok(_repository.GetAll());
         }
 
-        // GET: api/Cities?Name=abc
+        // GET: api/Cities/AllByName?Name=abc&limit=0&skip=0
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<City>>> ListByName(string Name)
+        public async Task<ActionResult<IEnumerable<City>>> AllByName(string name, int? limit, int? skip)
         {
-            return Ok(await _repository.GetAllByName(Name));
+            return Ok(await _repository.GetAllByName(name, limit, skip));
         }
 
         // GET: api/Cities/5
@@ -86,7 +87,7 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public IActionResult PostCity(City city)
         {
-            if (_repository.Exists(city))
+            if(_repository.Exists(city))
             {
                 return Conflict("City with that name already exists");
             }
@@ -100,8 +101,8 @@ namespace Lekarzowo.Controllers
         [HttpDelete("{id}")]
         public  ActionResult<City> DeleteCity(decimal id)
         {
-            var city =  _repository.GetByID(id);
-            if (city == null)
+            var city = _repository.GetByID(id);
+            if(city == null)
             {
                 return NotFound();
             }

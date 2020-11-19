@@ -1,5 +1,7 @@
 ﻿using Autofac.Extras.Moq;
 using Lekarzowo.Controllers;
+using Lekarzowo.DataAccessLayer.DTO;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.Models;
 using Lekarzowo.Repositories;
 using Lekarzowo.Services;
@@ -29,7 +31,7 @@ namespace Lekarzowo.Tests
 
                 //Act
                 PeopleController PeopleCtrl = mock.Create<PeopleController>();
-                IEnumerable<Person> actual = PeopleCtrl.GetPeople().Value;
+                IEnumerable<Person> actual = PeopleCtrl.All().Value;
 
                 //Assert
                 Assert.True(actual != null);
@@ -95,22 +97,24 @@ namespace Lekarzowo.Tests
         // <returns></returns>
         
         [Theory]
-        [InlineData(1, "test4", "testowy", "1981-1-1", "abc@mail.mail", "test4", "F", "80101012345")]
-        public void RegisterUser_Valid(int id, string name, string lastname, DateTime bday, string email, string pwd, string gender, string pesel)
+        [InlineData("test4", "testowy", "1981-1-1", "abc@mail.mail", "test4", "F", "80101012345")]
+        public void RegisterUser_Valid(string name, string lastname, DateTime bday, string email, string pwd, string gender, string pesel)
         {
             using (var mock = AutoMock.GetLoose())
             {
                 //Arrange
-                Person person = new Person  //hasło test
+                UserRegistrationDTO person = new UserRegistrationDTO  //hasło test
                 {
-                    Id = id,
                     Name = name,
                     Lastname = lastname,
                     Birthdate = bday,
                     Pesel = pesel,
                     Gender = gender,
                     Email = email,
-                    Password = pwd
+                    Password = new PasswordDTO()
+                    {
+                        Value = pwd
+                    }
                 };
 
                 mock.Mock<IPeopleRepository>()
@@ -135,22 +139,24 @@ namespace Lekarzowo.Tests
         }
 
         [Theory]
-        [InlineData(1, "test4", "testowy", "1981-1-1", "test@work.pl", "test4", "F", "80101012345")]
-        public void RegisterUser_Wrong(int id, string name, string lastname, DateTime bday, string email, string pwd, string gender, string pesel)
+        [InlineData("test4", "testowy", "1981-1-1", "test@work.pl", "test4", "F", "80101012345")]
+        public void RegisterUser_Wrong(string name, string lastname, DateTime bday, string email, string pwd, string gender, string pesel)
         {
             using (var mock = AutoMock.GetLoose())
             {
                 //Arrange
-                Person person = new Person  //hasło test
+                UserRegistrationDTO person = new UserRegistrationDTO  //hasło test
                 {
-                    Id = id,
                     Name = name,
                     Lastname = lastname,
                     Birthdate = bday,
                     Pesel = pesel,
                     Gender = gender,
                     Email = email,
-                    Password = pwd
+                    Password = new PasswordDTO()
+                    {
+                        Value = pwd
+                    }
                 };
 
                 mock.Mock<IPeopleRepository>()

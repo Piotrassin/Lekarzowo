@@ -1,8 +1,7 @@
-﻿using Lekarzowo.DataAccessLayer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Lekarzowo.Models
+namespace Lekarzowo.DataAccessLayer.Models
 {
     public partial class Treatment : IEntity, INamedEntity
     {

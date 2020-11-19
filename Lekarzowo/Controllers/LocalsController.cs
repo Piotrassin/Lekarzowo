@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
+using Lekarzowo.DataAccessLayer.Models;
 
 namespace Lekarzowo.Controllers
 {
@@ -28,11 +29,11 @@ namespace Lekarzowo.Controllers
             return _repository.GetAll().ToList();
         }
 
-        // GET: api/Locals?Name=abc
+        // GET: api/Locals/AllByName?Name=abc&limit=0&skip=0
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<Local>>> ListByName(string Name)
+        public async Task<ActionResult<IEnumerable<Local>>> AllByName(string name, int? limit, int? skip)
         {
-            return Ok(await _repository.GetAllByName(Name));
+            return Ok(await _repository.GetAllByName(name, limit, skip));
         }
 
         // GET: api/Locals/5
