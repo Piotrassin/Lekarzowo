@@ -133,15 +133,6 @@ namespace Lekarzowo.Controllers
             return Ok(await _repository.RecentReservations(PatientId, Limit, Skip));
         }
 
-        /// <summary>
-        /// dodać wszykiwanie nie tylko po dacie, ale też po godzinie
-        /// </summary>
-        /// <param name="CityId"></param>
-        /// <param name="SpecId"></param>
-        /// <param name="DoctorId"></param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <returns></returns>
         // GET: api/reservations/possibleappointments?CityId=1&SpecId=1&DoctorId=1
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> PossibleAppointments(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end)
@@ -164,6 +155,10 @@ namespace Lekarzowo.Controllers
                     x.LocalId = workDay.LocalId;
                 });
                 outputList.AddRange(slotsThatDay);
+            }
+            if (start.HasValue && end.HasValue)
+            {
+                outputList = outputList.Where(x => x.Start >= start && x.End <= end).ToList();
             }
             return Ok(outputList);
         }

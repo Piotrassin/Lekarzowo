@@ -37,19 +37,19 @@ namespace Lekarzowo.Controllers
             return Ok(_repository.GetAll());
         }
 
-        // GET: api/People?Name=abc
+        // GET: api/People/AllByName?Name=abc&limit=0&skip=0
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<Person>>> AllByName(string Name)
+        public async Task<ActionResult<IEnumerable<Person>>> AllByName(string name, int? limit, int? skip)
         {
-            return Ok(await _repository.GetAllByName(Name));
+            return Ok(await _repository.GetAllByName(name, limit, skip));
         }
 
         // GET: api/People/5
         [HttpGet("[action]")]
         public ActionResult<Person> Single()
         {
-            var userId = GetUserIdFromToken();
-            var person =  _repository.GetByID(userId);
+            var id = GetUserIdFromToken();
+            var person =  _repository.GetByID(id);
 
             if (person == null)
             {
@@ -126,18 +126,25 @@ namespace Lekarzowo.Controllers
         [HttpPost("[action]")]
         public ActionResult<Person> ChangePassword(UserChangePasswordDTO current)
         {
+            var id = GetUserIdFromToken();
             current.NewPassword.Value = AuthService.CreateHash(current.NewPassword.Value);
-            var user = _repository.GetByEmail(current.Email);
-            user.Password = current.NewPassword.Value;
-            try
+            var userById = _repository.GetByID(id);
+            var userByEmail = _repository.GetByEmail(current.Email);
+            if (userById == userByEmail)
             {
-                _repository.Save(); 
-                return Ok("Hasło zostało zmienione");
+                userByEmail.Password = current.NewPassword.Value;
+                try
+                {
+                    _repository.Save();
+                    return Ok("Hasło zmienione");
+                }
+                catch (DbUpdateConcurrencyException e)
+                {
+                    return StatusCode(503, e.Message);
+                }
             }
-            catch (DbUpdateConcurrencyException e)
-            {
-                return StatusCode(503, e.Message);
-            }
+            return BadRequest();
+
         }
 
         // PUT: api/People/5

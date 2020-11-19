@@ -29,11 +29,11 @@ namespace Lekarzowo.Controllers
             return Ok(_repository.GetAll());
         }
 
-        // GET: api/Cities?Name=abc
+        // GET: api/Cities/AllByName?Name=abc&limit=0&skip=0
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<City>>> ListByName(string Name)
+        public async Task<ActionResult<IEnumerable<City>>> AllByName(string name, int? limit, int? skip)
         {
-            return Ok(await _repository.GetAllByName(Name));
+            return Ok(await _repository.GetAllByName(name, limit, skip));
         }
 
         // GET: api/Cities/5

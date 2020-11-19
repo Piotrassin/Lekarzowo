@@ -28,11 +28,11 @@ namespace Lekarzowo.Controllers
             return Ok(_repository.GetAll());
         }
 
-        // GET: api/Roles?Name=abc
+        // GET: api/Roles/AllByName?Name=abc&limit=0&skip=0
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<Role>>> ListByName(string Name)
+        public async Task<ActionResult<IEnumerable<Role>>> AllByName(string name, int? limit, int? skip)
         {
-            return Ok(await _repository.GetAllByName(Name));
+            return Ok(await _repository.GetAllByName(name, limit, skip));
         }
 
         // GET: api/Roles/5
