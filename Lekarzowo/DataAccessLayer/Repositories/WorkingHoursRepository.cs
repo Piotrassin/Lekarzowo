@@ -18,7 +18,8 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         {
             var query = _context.Workinghours
                 .Include(x => x.Local)
-                .Include(x => x.Doctor)
+                .Include(x => x.Doctor).ThenInclude(x => x.Speciality)
+                .Include(x => x.Doctor).ThenInclude(x => x.IdNavigation)
                 .Where(x => !CityId.HasValue || x.Local.CityId == CityId)
                 .Where(x => !SpecId.HasValue || x.Doctor.SpecialityId == SpecId)
                 .Where(x => !DoctorId.HasValue || x.DoctorId == DoctorId);

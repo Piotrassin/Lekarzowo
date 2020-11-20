@@ -2,6 +2,7 @@
 using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.Models;
+using Lekarzowo.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -47,11 +48,25 @@ namespace Lekarzowo.Repositories
         {
             return _context.Person.Any(x => x.Email.ToLower() == email.ToLower());
         }
+
+        /// <summary>
+        /// TODO: DO ZROBIENIA
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="password"></param>
         public void ChangePassword(decimal id, string password)
         {
             //_context.Person.
         }
 
+        public async Task<IEnumerable<object>> GetAllByNameOrLastname(string name, int? skip, int? limit)
+        {
+            var query = _context.Person
+                .Where(x => name == null || (x.Name.ToLower().Contains(name.ToLower()) || x.Lastname.ToLower().Contains(name.ToLower())))
+                .OrderBy(x => x.Name);
+            var orderedQuery = PaginationService.SplitAndLimit(skip, limit, query);
+            return await orderedQuery.ToListAsync();
+        }
 
         #region Disposing
         public void Dispose()

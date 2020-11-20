@@ -33,7 +33,7 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> AllByName(string name, int? skip, int? limit)
         {
-            return Ok(await _repository.GetAllByName(name, skip, limit));
+            return Ok(await _repository.GetAllByNameOrLastname(name, skip, limit));
         }
 
         // GET: api/Doctors/5

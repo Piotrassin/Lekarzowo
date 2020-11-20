@@ -1,6 +1,7 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.Models;
+using Lekarzowo.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -40,7 +41,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return query.OrderBy(x => x.Starttime).ToList();
         }
 
-        public async Task<IEnumerable<object>> RecentReservations(decimal PatientId, int Limit, int Skip)
+        public async Task<IEnumerable<object>> RecentReservations(decimal PatientId, int? limit, int? skip)
         {
             var query = _context.Reservation
                 .Where(x => x.PatientId == PatientId)
@@ -53,16 +54,14 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                     ReservationEndTime = x.Endtime,
                     DoctorName = x.Doctor.IdNavigation.Name,
                     DoctorLastname = x.Doctor.IdNavigation.Lastname,
-                })
-                .OrderByDescending(x => x.ReservationStartTime)
-                .Skip(Skip)
-                .Take(Limit)
-                .ToListAsync();
+                }).OrderByDescending(x => x.ReservationStartTime);
 
-            return await query;
+            var orderedQuery = PaginationService.SplitAndLimit(skip, limit, query);
+            
+            return await orderedQuery.ToListAsync(); ;
         }
 
-        public async Task<IEnumerable<object>> UpcomingReservations(decimal PatientId, int Limit, int Skip)
+        public async Task<IEnumerable<object>> UpcomingReservations(decimal PatientId, int? limit, int? skip)
         {
             var query = _context.Reservation
                 .Where(x => x.PatientId == PatientId)
@@ -75,13 +74,11 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                     ReservationEndTime = x.Endtime,
                     DoctorName = x.Doctor.IdNavigation.Name,
                     DoctorLastname = x.Doctor.IdNavigation.Lastname,
-                })
-                .OrderBy(x => x.ReservationStartTime)
-                .Skip(Skip)
-                .Take(Limit)
-                .ToListAsync();
+                }).OrderBy(x => x.ReservationStartTime);
 
-            return await query;
+            var orderedQuery = PaginationService.SplitAndLimit(skip, limit, query);
+
+            return await orderedQuery.ToListAsync(); ;
         }
     }
 }

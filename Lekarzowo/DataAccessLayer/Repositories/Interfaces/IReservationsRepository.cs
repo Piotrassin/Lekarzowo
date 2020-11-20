@@ -23,7 +23,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// <param name="Limit"></param>
         /// <param name="Skip"></param>
         /// <returns></returns>
-        Task<IEnumerable<object>> UpcomingReservations(decimal PatientId, int Limit, int Skip);
+        Task<IEnumerable<object>> UpcomingReservations(decimal PatientId, int? Limit, int? Skip);
 
         //ekran wizyt
 
@@ -34,7 +34,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// <param name="Limit"></param>
         /// <param name="Skip"></param>
         /// <returns></returns>
-        Task<IEnumerable<object>> RecentReservations(decimal PatientId, int Limit, int Skip);
+        Task<IEnumerable<object>> RecentReservations(decimal PatientId, int? Limit, int? Skip);
 
     }
 }
