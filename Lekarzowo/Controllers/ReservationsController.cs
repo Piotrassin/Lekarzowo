@@ -20,8 +20,6 @@ namespace Lekarzowo.Controllers
         private readonly IReservationsRepository _repository;
         private readonly IWorkingHoursRepository _workHoursRepository;
         private static readonly int chunkSizeMinutes = 15;
-        private static readonly int defaultLimit = 15;
-        private static readonly int defaultSkip = 0;
 
         public ReservationsController(IReservationsRepository repository, IWorkingHoursRepository whRepository)
         {
@@ -140,6 +138,15 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> PossibleAppointments(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end, int? limit, int? skip)
         {
+            if((CityId.HasValue && !SpecId.HasValue && DoctorId.HasValue)
+                || (CityId.HasValue && !SpecId.HasValue && !DoctorId.HasValue)
+                || (!CityId.HasValue && SpecId.HasValue && DoctorId.HasValue)
+                || (!CityId.HasValue && !SpecId.HasValue && !DoctorId.HasValue))
+            {
+                return BadRequest("Niepoprawne kryteria wyszukiwania");
+            }
+
+
             IEnumerable<Reservation> allReservations = _repository.GetAllFutureReservations(CityId, SpecId, DoctorId, start, end);
             IEnumerable<Workinghours> workinghours = _workHoursRepository.GetAllFutureWorkHours(CityId, SpecId, DoctorId, start, end);
 
@@ -151,9 +158,6 @@ namespace Lekarzowo.Controllers
             }
 
             PaginationService.SplitAndLimit(skip, limit, slotList);
-
-            slotList = skip.HasValue ? slotList.Skip(skip.Value) : slotList.Skip(defaultSkip);
-            slotList = limit.HasValue ? slotList.Take(limit.Value) : slotList.Take(defaultLimit);
 
             return Ok(slotList);
         }
