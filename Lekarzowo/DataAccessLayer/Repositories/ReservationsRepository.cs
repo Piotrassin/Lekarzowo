@@ -56,7 +56,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                     DoctorLastname = x.Doctor.IdNavigation.Lastname,
                 }).OrderByDescending(x => x.ReservationStartTime);
 
-            var orderedQuery = PaginationService.SplitAndLimit(skip, limit, query);
+            var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
             
             return await orderedQuery.ToListAsync(); ;
         }
@@ -76,7 +76,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                     DoctorLastname = x.Doctor.IdNavigation.Lastname,
                 }).OrderBy(x => x.ReservationStartTime);
 
-            var orderedQuery = PaginationService.SplitAndLimit(skip, limit, query);
+            var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
 
             return await orderedQuery.ToListAsync(); ;
         }

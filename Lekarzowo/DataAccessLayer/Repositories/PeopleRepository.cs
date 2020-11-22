@@ -64,7 +64,7 @@ namespace Lekarzowo.Repositories
             var query = _context.Person
                 .Where(x => name == null || (x.Name.ToLower().Contains(name.ToLower()) || x.Lastname.ToLower().Contains(name.ToLower())))
                 .OrderBy(x => x.Name);
-            var orderedQuery = PaginationService.SplitAndLimit(skip, limit, query);
+            var orderedQuery = PaginationService<Person>.SplitAndLimitQueryable(skip, limit, query);
             return await orderedQuery.ToListAsync();
         }
 

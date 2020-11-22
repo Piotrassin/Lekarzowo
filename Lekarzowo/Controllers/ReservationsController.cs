@@ -157,7 +157,7 @@ namespace Lekarzowo.Controllers
                 slotList = slotList.Where(x => x.Start >= start && x.End <= end).ToList();
             }
 
-            PaginationService.SplitAndLimit(skip, limit, slotList);
+            slotList = PaginationService<SlotDTO>.SplitAndLimitIEnumerable(skip, limit, slotList);
 
             return Ok(slotList);
         }

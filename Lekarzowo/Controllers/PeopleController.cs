@@ -14,7 +14,7 @@ using Lekarzowo.DataAccessLayer.Models;
 
 namespace Lekarzowo.Controllers
 {
-    //[Authorize] //wystarczy to odkomentować żeby na wszystkie końcówki z tego kontrolera, była potrzebna autoryzacja, chyba że końcówka jest oznaczona jako [AllowAnonymous].
+    [Authorize] //wystarczy to odkomentować żeby na wszystkie końcówki z tego kontrolera, była potrzebna autoryzacja, chyba że końcówka jest oznaczona jako [AllowAnonymous].
     [Route("api/[controller]")]
     [ApiController]
     public class PeopleController : BaseController
