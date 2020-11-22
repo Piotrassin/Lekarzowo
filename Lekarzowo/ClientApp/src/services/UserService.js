@@ -10,8 +10,21 @@ class UserService {
     });
   }
 
-  getCities(){
-    return {
+  getCities(search, limit){
+    if (search === undefined)
+    {
+      search  = ''
+    }
+    return fetch(url + 'cities/AllByName?Name=' + search + '&limit=' + limit, {
+      headers: authHeader()
+    }).then(response => {
+      console.log(response);
+      var resp =  response.json();
+      console.log(resp[0]);
+      return resp;
+    });
+
+    /*return {
       "WAW": {"item": [{"name": "Warszawa"}]},
       "PZN": {"item": [{"name": "Poznań"}]},
       "BDG": {"item": [{"name": "Bydgoszcz"}]},
@@ -21,11 +34,32 @@ class UserService {
       "ZBK": {"item": [{"name": "Ząbki"}]},
       "GDY": {"item": [{"name": "Gdynia"}]},
       "WRC": {"item": [{"name": "Wrocław"}]}
-    };
+    };*/
+
+    /*return [
+      {
+          "id": 1,
+          "name": "Warszawa",
+          "local": []
+        }
+    ];*/
   }
 
-  getSpecializations(){
-    return {
+  getSpecializations(search, limit){
+
+    if (search === undefined)
+    {
+      search  = ''
+    }
+    return fetch(url + 'Specialities/AllByName?Name=' + search + '&limit=' + limit, {
+      headers: authHeader()
+    }).then(response => {
+      console.log(response);
+      var resp =  response.json();
+      console.log(resp[0]);
+      return resp;
+    });
+    /*return {
       "1": {"item": [{"name": "Kardiolog"}]},
       "2": {"item": [{"name": "Okulista"}]},
       "3": {"item": [{"name": "Internista"}]},
@@ -33,10 +67,22 @@ class UserService {
       "5": {"item": [{"name": "Kolanista"}]},
       "6": {"item": [{"name": "Populista"}]},
       "7": {"item": [{"name": "Pisowiec"}]}
-    };
+    };*/
   }
 
-  getDoctors() {
+  getDoctors(search, limit) {
+
+    if (search === undefined)
+    {
+      search  = ''
+    }
+    return fetch(url + 'Doctors/AllByName?Name=' + search + '&limit=' + limit, {
+      headers: authHeader()
+    }).then(response => {
+      var resp =  response.json();
+      return resp;
+    });
+    /*
     return {
       "1": {"item": [{"name": "dr. Andrzej Andrzejewski"}]},
       "2": {"item": [{"name": "dr. Anna Nowak"}]},
@@ -45,7 +91,7 @@ class UserService {
       "5": {"item": [{"name": "dr. Beata Beatynska"}]},
       "6": {"item": [{"name": "inter. Jarosław Nowak"}]},
       "7": {"item": [{"name": "dr. Justyna Kowal"}]}
-    };
+    };*/
   }
 
   getUserData(){

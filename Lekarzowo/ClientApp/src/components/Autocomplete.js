@@ -48,6 +48,26 @@ export default function Asynchronous(props) {
   const loading = open && options.length === 0;
   const classes = useStyles();
 
+  async function handleInputChange(event) {
+    console.log(event.target.value);
+    const requestOptions = (await props.requestCallback(event.target.value, 100)).reduce(function(acc, curr) {
+      if(curr.lastname){
+        curr.name = curr.name.concat(" ", curr.lastname);
+      }
+      acc[curr.id] = curr;
+      return acc;
+    }, {});
+      setOptions(Object.keys(requestOptions).map((key) => requestOptions[key]));
+
+  }
+
+  function onChangeAutoComplete(event, value) {
+    console.log("inside");
+    console.log(value);
+    props.changeCallback(value.id);
+  }
+
+
   React.useEffect(() => {
     let active = true;
 
@@ -56,10 +76,26 @@ export default function Asynchronous(props) {
     }
 
     (async () => {
-      const requestOptions = await props.requestCallback();
+      let requestOptions = (await props.requestCallback('', 2))
+      if(Object.keys(requestOptions).length === 0){
+        requestOptions = {
+          "": "Wszystkie"
+        };
+      }else {
+        requestOptions = requestOptions.reduce(function(acc, curr) {
+          if(curr.lastname){
+            curr.name = curr.name.concat(" ", curr.lastname);
+          }
+          acc[curr.id] = curr;
+          return acc;
+        }, {});
+      }
+
 
       if (active) {
-        setOptions(Object.keys(requestOptions).map((key) => requestOptions[key].item[0]));
+        //setOptions(Object.keys(requestOptions).map((key) => requestOptions[key].item[0]));
+
+        setOptions(Object.keys(requestOptions).map((key) => requestOptions[key]));
       }
     })();
 
@@ -86,6 +122,7 @@ export default function Asynchronous(props) {
       onClose={() => {
         setOpen(false);
       }}
+      onChange = {onChangeAutoComplete}
       getOptionSelected={(option, value) => option.name === value.name}
       getOptionLabel={(option) => option.name}
       options={options}
@@ -97,6 +134,7 @@ export default function Asynchronous(props) {
           className={classes.input}
           variant="outlined"
           size="small"
+          onChange={handleInputChange}
           InputProps={{
             ...params.InputProps,
             endAdornment: (

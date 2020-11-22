@@ -33,7 +33,7 @@ class Registration extends React.Component {
       this.state.pesel).then(
       response => {
         if(response.status >= 400){
-          this.snackbarRef.current.openSnackBar('Wystąpił błąd');
+          this.snackbarRef.current.openSnackBar('problems');
         }else{
           this.props.history.push('/');
           window.location.reload();

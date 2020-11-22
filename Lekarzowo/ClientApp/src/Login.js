@@ -54,7 +54,7 @@ class Login extends React.Component {
     //here set the waiitiing and loading values
     AuthService.login(this.state.email, this.state.password).then(
       response => {
-        if(response.status > 400){
+        if(response.status >= 400){
           this.snackbarRef.current.openSnackBar('Złe dane logowania');
         }else{
           this.props.history.push('/dashboard');

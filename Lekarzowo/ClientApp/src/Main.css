@@ -863,3 +863,14 @@ padding: 20px;
   align-items: center;
   justify-content: center;
 }
+.doctor-sign {
+  width: 350px;
+  margin: 150px;
+}
+.img-container {
+  
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  margin-top: 20px;
+}

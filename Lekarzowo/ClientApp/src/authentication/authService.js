@@ -11,7 +11,9 @@ class AuthService {
             },
       body: JSON.stringify({
         'email': email,
-        'password': password
+        "Password": {
+          "Value": password
+        }
       })
     }).then(response => response.json())
     .then(response => {
@@ -36,10 +38,12 @@ class AuthService {
       },
       body: JSON.stringify({
         name: name,
-        lastname: password,
+        lastname: lastname,
         email: email,
         birthdate: birthdate,
-        password: password,
+        Password: {
+          Value: password
+        },
         gender: gender,
         pesel: pesel
       })
