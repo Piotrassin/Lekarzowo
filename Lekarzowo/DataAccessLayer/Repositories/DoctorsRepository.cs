@@ -39,7 +39,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                     SpecializationName = x.Speciality.Name,
                 }).OrderBy(x => x.Name);
 
-            var orderedQuery = PaginationService.SplitAndLimit(skip, limit, query);
+            var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
 
             return await orderedQuery.ToListAsync();
         }

@@ -21,7 +21,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         {
             var query = table.Where(x => name == null || x.Name.ToLower().Contains(name.ToLower())).OrderBy(x => x.Name);
 
-            var orderedQuery = PaginationService.SplitAndLimit(skip, limit, query);
+            var orderedQuery = PaginationService<T>.SplitAndLimitQueryable(skip, limit, query);
 
             return await orderedQuery.ToListAsync();
         }
