@@ -1,5 +1,6 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.Models;
+using Lekarzowo.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,8 +12,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     public class DoctorsRepository : BaseRepository<Doctor>, IDoctorsRepository
     {
         //private readonly ModelContext _context;
-        private readonly int defaultLimit = 10;
-        private readonly int defaultSkip = 0;
         public DoctorsRepository(ModelContext context) : base(context)
         {
             //this._context = context;
@@ -28,7 +27,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return _context.Doctor.Any(x => x.IdNavigation.Id == doctor.Id && x.SpecialityId == doctor.SpecialityId);
         }
 
-        public async Task<IEnumerable<object>> GetAllByName(string name, int? skip, int? limit)
+        public async Task<IEnumerable<object>> GetAllByNameOrLastname(string name, int? skip, int? limit)
         {
             var query = _context.Doctor
                 .Where(x => name == null || (x.IdNavigation.Name.ToLower().Contains(name.ToLower()) || x.IdNavigation.Lastname.ToLower().Contains(name.ToLower())))
@@ -38,13 +37,11 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                     x.IdNavigation.Name,
                     x.IdNavigation.Lastname,
                     SpecializationName = x.Speciality.Name,
-                });
+                }).OrderBy(x => x.Name);
 
-            query = skip.HasValue ? query.Skip(skip.Value) : query.Skip(defaultSkip);
-            query = limit.HasValue ? query.Take(limit.Value) : query.Take(defaultLimit);
+            var orderedQuery = PaginationService.SplitAndLimit(skip, limit, query);
 
-            return await query.OrderBy(x => x.Name).ToListAsync();
-
+            return await orderedQuery.ToListAsync();
         }
     }
 }

@@ -53,5 +53,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         {
             return table.Any(x => x.Id == Id);
         }
+
     }
 }

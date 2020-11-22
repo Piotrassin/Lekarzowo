@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Lekarzowo.DataAccessLayer;
+using Lekarzowo.DataAccessLayer.DTO;
+using Lekarzowo.Services;
 
 namespace Lekarzowo.Controllers
 {
@@ -135,54 +136,90 @@ namespace Lekarzowo.Controllers
 
         // GET: api/reservations/possibleappointments?CityId=1&SpecId=1&DoctorId=1
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> PossibleAppointments(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end)
+        public async Task<ActionResult<IEnumerable<object>>> PossibleAppointments(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end, int? limit, int? skip)
         {
-            var outputList = new List<Slot>();
+            if((CityId.HasValue && !SpecId.HasValue && DoctorId.HasValue)
+                || (CityId.HasValue && !SpecId.HasValue && !DoctorId.HasValue)
+                || (!CityId.HasValue && SpecId.HasValue && DoctorId.HasValue)
+                || (!CityId.HasValue && !SpecId.HasValue && !DoctorId.HasValue))
+            {
+                return BadRequest("Niepoprawne kryteria wyszukiwania");
+            }
+
 
             IEnumerable<Reservation> allReservations = _repository.GetAllFutureReservations(CityId, SpecId, DoctorId, start, end);
             IEnumerable<Workinghours> workinghours = _workHoursRepository.GetAllFutureWorkHours(CityId, SpecId, DoctorId, start, end);
+
+            var slotList = CalcPossibleAppointments(allReservations, workinghours);
+
+            if (start.HasValue && end.HasValue)
+            {
+                slotList = slotList.Where(x => x.Start >= start && x.End <= end).ToList();
+            }
+
+            PaginationService.SplitAndLimit(skip, limit, slotList);
+
+            return Ok(slotList);
+        }
+
+
+        private static IEnumerable<SlotDTO> CalcPossibleAppointments(IEnumerable<Reservation> allReservations, IEnumerable<Workinghours> workinghours)
+        {
+            var outputList = new List<SlotDTO>();
 
             foreach (var workDay in workinghours)
             {
                 var reservationsThatDay = allReservations
                     .Where(res => res.Starttime.Date == workDay.From.Date)
-                    .Where(res => res.Room.LocalId == workDay.LocalId).ToList();
+                    .Where(res => res.Room.LocalId == workDay.LocalId)
+                    .Where(res => res.DoctorId == workDay.DoctorId).ToList();
 
-                var slotsThatDay = CalculatePossibleAppointments(workDay, reservationsThatDay).ToList();
+                var slotsThatDay = SplitDayIntoChunks(workDay, reservationsThatDay).ToList();
                 slotsThatDay.ForEach(x =>
                 {
                     x.DoctorId = workDay.DoctorId;
-                    x.LocalId = workDay.LocalId;
+                    x.DoctorName = workDay.Doctor.IdNavigation.Name;
+                    x.DoctorLastname = workDay.Doctor.IdNavigation.Lastname;
+                    x.DoctorSpecialization = workDay.Doctor.Speciality.Name;
+                    x.DoctorBasePrice = workDay.Doctor.Speciality.Price;
+                    x.LocalName = workDay.Local.Name;
                 });
                 outputList.AddRange(slotsThatDay);
             }
-            if (start.HasValue && end.HasValue)
-            {
-                outputList = outputList.Where(x => x.Start >= start && x.End <= end).ToList();
-            }
-            return Ok(outputList);
+
+            return outputList;
         }
 
-
-        private static IEnumerable<Slot> SplitDateRange(DateTime start, DateTime end, int minutesChunkSize)
+        private static IEnumerable<SlotDTO> SplitDayIntoChunks(Workinghours wh, List<Reservation> rlist)
         {
-            DateTime chunkEnd;
-            while ((chunkEnd = start.AddMinutes(minutesChunkSize)) < end)
+            var slotList = new List<SlotDTO>();
+
+            if (rlist.Count > 0)
             {
-                yield return new Slot(start, chunkEnd);
-                start = chunkEnd;
+                rlist = rlist.OrderBy(x => x.Starttime).ToList();
+                //podziel na sloty, okres między początkiem pracy, a pierwszą wizytą
+                slotList = SplitChunkIntoSlots(wh.From, rlist.First().Starttime, chunkSizeMinutes);
+                for (int i = 0; i < (rlist.Count - 1); i++)
+                {
+                    //podziel na sloty, okres między końcem i-tej wizyty, a początkiem (i+1)-szej wizyty
+                    slotList.AddRange(SplitChunkIntoSlots(rlist.ElementAt(i).Endtime, rlist.ElementAt(i + 1).Starttime, chunkSizeMinutes));
+                }
+                //podziel na sloty, okres między końcem ostatniej wizyty, a końcem dnia pracy
+                slotList.AddRange(SplitChunkIntoSlots(rlist.Last().Endtime, wh.To, chunkSizeMinutes));
             }
-            yield return new Slot(start, end);
+            //gdy nie ma wizyt tego dnia, podziel cały dzień na sloty
+            slotList.AddRange(SplitChunkIntoSlots(wh.From, wh.To, chunkSizeMinutes));
+
+            return slotList;
         }
 
-
-        private static List<Slot> SplitChunkIntoSlots (DateTime start, DateTime end, int minuteChunkSize)
+        private static List<SlotDTO> SplitChunkIntoSlots (DateTime start, DateTime end, int minuteChunkSize)
         {
-            var slots = new List<Slot>();
+            var slots = new List<SlotDTO>();
 
             if ((start.AddMinutes(chunkSizeMinutes) <= end))
             {
-                foreach (var slot in SplitDateRange(start, end, minuteChunkSize))
+                foreach (var slot in GenerateSlots(start, end, minuteChunkSize))
                 {
                     slots.Add(slot);
                 }
@@ -190,25 +227,17 @@ namespace Lekarzowo.Controllers
             return slots;
         }
 
-
-        private static IEnumerable<Slot> CalculatePossibleAppointments(Workinghours wh, List<Reservation> rlist)
+        private static IEnumerable<SlotDTO> GenerateSlots(DateTime start, DateTime end, int minutesChunkSize)
         {
-            var slotList = new List<Slot>();
-
-            if(rlist.Count > 0)
+            DateTime chunkEnd;
+            while ((chunkEnd = start.AddMinutes(minutesChunkSize)) < end)
             {
-                rlist = rlist.OrderBy(x => x.Starttime).ToList();
-                slotList = SplitChunkIntoSlots(wh.From, rlist.First().Starttime, chunkSizeMinutes);
-                for (int i = 0; i < (rlist.Count - 1); i++)
-                {
-                    slotList.AddRange(SplitChunkIntoSlots(rlist.ElementAt(i).Endtime, rlist.ElementAt(i + 1).Starttime, chunkSizeMinutes));
-                }
-                slotList.AddRange(SplitChunkIntoSlots(rlist.Last().Endtime, wh.To, chunkSizeMinutes));
+                yield return new SlotDTO(start, chunkEnd);
+                start = chunkEnd;
             }
-            slotList.AddRange(SplitChunkIntoSlots(wh.From, wh.To, chunkSizeMinutes));
-           
-            return slotList;
+            yield return new SlotDTO(start, end);
         }
+
 
     }
 }
