@@ -33,11 +33,12 @@ namespace Lekarzowo.Services
 
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim("UserId", person.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, person.Email),
+                new Claim(JwtRegisteredClaimNames.Email, person.Email)
             };
+            claims.AddRange(person.Userroles.Select(userRoles => new Claim(ClaimTypes.Role, userRoles.Role.Name)));
 
             var token = new JwtSecurityToken(
                 claims: claims,

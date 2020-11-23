@@ -14,7 +14,8 @@ using Lekarzowo.DataAccessLayer.Models;
 
 namespace Lekarzowo.Controllers
 {
-    [Authorize] //wystarczy to odkomentować żeby na wszystkie końcówki z tego kontrolera, była potrzebna autoryzacja, chyba że końcówka jest oznaczona jako [AllowAnonymous].
+    [Authorize] //wystarczy to odkomentować żeby na wszystkie końcówki z tego kontrolera, była potrzebna autoryzacja,
+    //chyba że końcówka jest oznaczona jako [AllowAnonymous].
     [Route("api/[controller]")]
     [ApiController]
     public class PeopleController : BaseController
@@ -22,35 +23,25 @@ namespace Lekarzowo.Controllers
         private readonly IPeopleRepository _repository;
         private readonly IJWTService _jwtService;
         private readonly IPatientsRepository _patRepository;
-        public PeopleController(IPeopleRepository repository, IJWTService jwtService, IPatientsRepository patRepository)
+        private readonly IUserRolesRepository _userRolesRepository;
+        public PeopleController(IPeopleRepository repository, IJWTService jwtService, IPatientsRepository patRepository, IUserRolesRepository urolesRepo)
         {
             _jwtService = jwtService;
             _repository = repository;
             _patRepository = patRepository;
+            _userRolesRepository = urolesRepo;
         }
 
-        /// <summary>
-        /// TODO: ta końcówka powinna być dostepna tylko dla admina
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="limit"></param>
-        /// <param name="skip"></param>
-        /// <returns></returns>
         // GET: api/People/All
+        //[Authorize(Roles = "admin")]
         [HttpGet("[action]")]
         public ActionResult<IEnumerable<Person>> All()
         {
             return Ok(_repository.GetAll());
         }
 
-        /// <summary>
-        /// TODO: ta końcówka powinna być dostepna tylko dla admina
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="limit"></param>
-        /// <param name="skip"></param>
-        /// <returns></returns>
         // GET: api/People/AllByName?Name=abc&limit=0&skip=0
+        //[Authorize(Roles = "admin")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<Person>>> AllByName(string name, int? limit, int? skip)
         {
@@ -115,7 +106,7 @@ namespace Lekarzowo.Controllers
         {
             try
             {
-                Person stored = _repository.GetByEmail(current.Email);
+                Person stored = _repository.GetByEmailWithRoles(current.Email);
                 //if (stored == null || !AuthService.VerifyPassword(current.Password.Value, stored.Password))
                 //{
                 //    return NotFound();

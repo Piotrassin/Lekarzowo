@@ -24,6 +24,12 @@ namespace Lekarzowo.Repositories
             return _context.Person.FirstOrDefault(p => p.Email.ToLower() == email.ToLower());
         }
 
+        public Person GetByEmailWithRoles(string email)
+        {
+            return _context.Person.Include(x => x.Userroles).ThenInclude(x => x.Role)
+                .FirstOrDefault(p => p.Email.ToLower() == email.ToLower());
+        }
+
         public void Insert(UserRegistrationDTO a)
         {
             _context.Person.Add(new Person

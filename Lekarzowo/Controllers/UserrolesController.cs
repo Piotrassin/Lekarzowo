@@ -93,10 +93,9 @@ namespace Lekarzowo.Controllers
                 userroles.Dateofissue = DateTime.Now;
             }
 
-            _repository.Insert(userroles);
-
             try
             {
+                _repository.Insert(userroles);
                 _repository.Save();
             }
             catch (DbUpdateException)
