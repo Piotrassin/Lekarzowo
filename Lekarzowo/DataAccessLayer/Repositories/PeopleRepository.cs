@@ -49,16 +49,6 @@ namespace Lekarzowo.Repositories
             return _context.Person.Any(x => x.Email.ToLower() == email.ToLower());
         }
 
-        /// <summary>
-        /// TODO: DO ZROBIENIA
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="password"></param>
-        public void ChangePassword(decimal id, string password)
-        {
-            //_context.Person.
-        }
-
         public async Task<IEnumerable<object>> GetAllByNameOrLastname(string name, int? skip, int? limit)
         {
             var query = _context.Person

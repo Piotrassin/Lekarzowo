@@ -15,7 +15,6 @@ namespace Lekarzowo.Repositories
     {
         Person GetByEmail(string email);
         void Insert(UserRegistrationDTO personDTO);
-        void ChangePassword(decimal id, string password);
         void Dispose(bool disposing);
         void Dispose();
         bool Exists(string email);
