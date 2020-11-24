@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.DataAccessLayer.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lekarzowo.Controllers
 {
+    //[Authorize(Roles = "admin,doctor")]
     [Route("api/[controller]")]
     [ApiController]
     public class DoctorsController : BaseController
@@ -38,9 +40,8 @@ namespace Lekarzowo.Controllers
 
         // GET: api/Doctors/5
         [HttpGet("{id}")]
-        public ActionResult<bool> Single()
+        public ActionResult<Doctor> Single(decimal id)
         {
-            var id = GetUserIdFromToken();
             var doctor = _repository.GetByID(id);
 
             if (doctor == null)
@@ -48,7 +49,7 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            return _repository.Exists(doctor);
+            return doctor;
             //return doctor;
         }
 
