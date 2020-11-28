@@ -16,7 +16,7 @@ namespace Lekarzowo.Validators
             pwdValidator = new PasswordValidator(peopleRepository);
 
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("To pol");
+                .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("To pole");
 
             RuleFor(x => x.CurrentPassword)
                 .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("To pole");
@@ -31,6 +31,7 @@ namespace Lekarzowo.Validators
                 .Equal(x => x.NewPassword.Value).WithMessage("Hasła muszą być identyczne");
         }
 
+        //TODO: Powinno dotyczyć CurrentPassword, ale trzeba zmienić hasła na hashowane tym użytkownikom, którzy mają je w plaintexcie
         bool BeEqualToAPwdInDb(UserChangePasswordDTO user, PasswordDTO pwd)
         {
             return pwdValidator.BeEqualToAPasswordInDatabase(user.Email, user.CurrentPassword.Value);

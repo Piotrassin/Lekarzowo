@@ -9,5 +9,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
     public interface IRoomsRepository : IBaseRepository<Room>
     {
+        Task<Room> GetFullAddress(decimal RoomId);
     }
 }

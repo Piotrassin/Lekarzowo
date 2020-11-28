@@ -36,5 +36,18 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// <returns></returns>
         Task<IEnumerable<object>> RecentReservations(decimal PatientId, int? Limit, int? Skip);
 
+        /// <summary>
+        /// Returns true if none of existing reservations overlap passed reservation.
+        /// </summary>
+        /// <param name="res"></param>
+        /// <returns></returns>
+        Task<bool> IsReservationPossible(Reservation res);
+
+        /// <summary>
+        /// Returmns true if a reservation with those attributes already exists in a db.
+        /// </summary>
+        /// <param name="res"></param>
+        /// <returns></returns>
+        Task<bool> Exists(Reservation res);
     }
 }

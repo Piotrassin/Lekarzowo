@@ -10,6 +10,7 @@ using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.DataAccessLayer.DTO;
 using Lekarzowo.Services;
+using Lekarzowo.DataAccessLayer.Repositories;
 
 namespace Lekarzowo.Controllers
 {
@@ -19,12 +20,16 @@ namespace Lekarzowo.Controllers
     {
         private readonly IReservationsRepository _repository;
         private readonly IWorkingHoursRepository _workHoursRepository;
+        private readonly IRoomsRepository _roomsRepository;
+
         private static readonly int chunkSizeMinutes = 15;
 
-        public ReservationsController(IReservationsRepository repository, IWorkingHoursRepository whRepository)
+        public ReservationsController(IReservationsRepository repository, 
+            IWorkingHoursRepository whRepo, IRoomsRepository roomRepo)
         {
             _repository = repository;
-            _workHoursRepository = whRepository;
+            _workHoursRepository = whRepo;
+            _roomsRepository = roomRepo;
         }
 
         #region CRUD
@@ -79,22 +84,32 @@ namespace Lekarzowo.Controllers
                     throw;
                 }
             }
-
             return NoContent();
         }
 
+        /// <summary>
+        /// PRZETESTOWAĆ
+        /// </summary>
+        /// <param name="res"></param>
+        /// <returns></returns>
         // POST: api/Reservations
         [HttpPost]
-        public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
+        public async Task<ActionResult<Reservation>> PostReservation(Reservation res)
         {
-            if (ReservationExists(reservation.Id))
+            res.Room = _roomsRepository.GetByID(res.RoomId);
+            if (await IsReservationOnAWorkDay(res) 
+                && await _repository.IsReservationPossible(res) 
+                && IsReservationOfAProperDuration(res))
             {
+                if (!await ReservationExists(res))
+                {
+                    _repository.Insert(res);
+                    _repository.Save();
+                    return Created("", res);
+                }
                 return Conflict("That reservation already exists");
             }
-            _repository.Insert(reservation);
-            _repository.Save();
-
-            return Created("", reservation);
+            return BadRequest();
         }
 
         // DELETE: api/Reservations/5
@@ -111,11 +126,6 @@ namespace Lekarzowo.Controllers
             _repository.Save();
 
             return reservation;
-        }
-
-        private bool ReservationExists(decimal id)
-        {
-            return _repository.Exists(id);
         }
 
         #endregion
@@ -145,7 +155,6 @@ namespace Lekarzowo.Controllers
             {
                 return BadRequest("Niepoprawne kryteria wyszukiwania");
             }
-
 
             IEnumerable<Reservation> allReservations = _repository.GetAllFutureReservations(CityId, SpecId, DoctorId, start, end);
             IEnumerable<Workinghours> workinghours = _workHoursRepository.GetAllFutureWorkHours(CityId, SpecId, DoctorId, start, end);
@@ -238,6 +247,28 @@ namespace Lekarzowo.Controllers
             yield return new SlotDTO(start, end);
         }
 
+        private bool ReservationExists(decimal id)
+        {
+            return _repository.Exists(id);
+        }
+
+        private async Task<bool> ReservationExists(Reservation res)
+        {
+            return await _repository.Exists(res);
+        }
+
+        private async Task<bool> IsReservationOnAWorkDay(Reservation res)
+        {
+            //var roomData = _roomsRepository.GetByID(res.RoomId);
+            Workinghours wh = await _workHoursRepository.GetByDetails(res.DoctorId, res.Room.LocalId, res.Starttime.Date);
+            return wh.From <= res.Starttime && wh.To >= res.Endtime;
+        }
+
+        private bool IsReservationOfAProperDuration(Reservation res)
+        {
+            var duration = res.Endtime - res.Starttime;
+            return duration.TotalMinutes % chunkSizeMinutes == 0;
+        }
 
     }
 }

@@ -10,6 +10,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 {
     public interface IDoctorsRepository : IBaseRepository<Doctor>
     {
+        Task<Doctor> GetDoctorWithSpecialization(decimal doctorId);
         Task<IEnumerable<object>> GetAllByNameOrLastname(string name, int? skip, int? limit);
         bool Exists(Doctor doctor);
     }

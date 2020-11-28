@@ -80,9 +80,9 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public async Task<ActionResult<Workinghours>> PostWorkinghours(Workinghours workinghours)
         {
-            if (WorkinghoursExists(workinghours.Id))
+            if (await WorkinghoursExists(workinghours))
             {
-                return Conflict("These workinghours already exists");
+                return Conflict("These workinghours already exist");
             }
             _repository.Insert(workinghours);
             _repository.Save();
@@ -109,6 +109,11 @@ namespace Lekarzowo.Controllers
         private bool WorkinghoursExists(decimal id)
         {
             return _repository.Exists(id);
+        }
+
+        private async Task<bool> WorkinghoursExists(Workinghours wh)
+        {
+            return await _repository.Exists(wh);
         }
     }
 }

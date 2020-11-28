@@ -14,7 +14,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     {
         public ReservationsRepository(ModelContext context) : base(context) { }
 
-
         public IEnumerable<Reservation> GetAllFutureReservations(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end)
         {
             var query = _context.Reservation
@@ -41,6 +40,13 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return query.OrderBy(x => x.Starttime).ToList();
         }
 
+        /// <summary>
+        /// TODO: POŁĄCZYĆ TW DWIE METODY W JEDNĄ I W JAKIŚ SPOSÓB ZMIENIAĆ ZNAK "<" NA ">=" W ZALEŻNOSCI OD ZAPYTANIA
+        /// </summary>
+        /// <param name="PatientId"></param>
+        /// <param name="limit"></param>
+        /// <param name="skip"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<object>> RecentReservations(decimal PatientId, int? limit, int? skip)
         {
             var query = _context.Reservation
@@ -79,6 +85,26 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
 
             return await orderedQuery.ToListAsync(); ;
+        }
+
+        public async Task<bool> IsReservationPossible(Reservation res)
+        {
+            var query = _context.Reservation
+                .Where(x => x.Room.LocalId == res.Room.LocalId)
+                .Where(x => x.DoctorId == res.DoctorId)
+                .Where(x => x.Starttime.Date == res.Starttime.Date)
+                .AllAsync(x => (res.Starttime < x.Starttime && res.Endtime <= x.Starttime) || (res.Starttime >= x.Endtime));
+
+            return await query;
+        }
+
+        public async Task<bool> Exists(Reservation res)
+        {
+            return await _context.Reservation.AnyAsync(
+                x => x.Room.LocalId == res.Room.LocalId
+                && x.Starttime == res.Starttime
+                && x.Endtime == res.Endtime
+                && x.DoctorId == res.DoctorId);
         }
     }
 }
