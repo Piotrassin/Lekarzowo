@@ -9,6 +9,11 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
     public interface IRoomsRepository : IBaseRepository<Room>
     {
-        Task<Room> GetFullAddress(decimal RoomId);
+        /// <summary>
+        /// Returns all rooms with a given LocalId.
+        /// </summary>
+        /// <param name="LocalId"></param>
+        /// <returns></returns>
+        Task<IEnumerable<Room>> GetAllByLocalId(decimal LocalId);
     }
 }

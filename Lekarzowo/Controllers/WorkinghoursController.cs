@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Lekarzowo.DataAccessLayer.DTO;
 
 namespace Lekarzowo.Controllers
 {
@@ -78,16 +79,32 @@ namespace Lekarzowo.Controllers
 
         // POST: api/Workinghours
         [HttpPost]
-        public async Task<ActionResult<Workinghours>> PostWorkinghours(Workinghours workinghours)
+        public async Task<ActionResult<Workinghours>> PostWorkinghours(WorkingHoursDTO input)
         {
-            if (await WorkinghoursExists(workinghours))
+            var workinghours = new Workinghours()
             {
-                return Conflict("These workinghours already exist");
-            }
-            _repository.Insert(workinghours);
-            _repository.Save();
+                DoctorId = input.DoctorId,
+                LocalId = input.LocalId,
+                From = input.From,
+                To = input.To
+            };
 
-            return Created("", workinghours);
+            if (await _repository.IsWorkingHourOverlapping(workinghours))
+            {
+                return BadRequest("These work hours overlap with existing ones.");
+            }
+            try
+            {
+                _repository.Insert(workinghours);
+                _repository.Save();
+
+                return Created("", workinghours);
+            }
+            catch (DbUpdateException)
+            {
+                return StatusCode(503);
+            }
+           
         }
 
         // DELETE: api/Workinghours/5

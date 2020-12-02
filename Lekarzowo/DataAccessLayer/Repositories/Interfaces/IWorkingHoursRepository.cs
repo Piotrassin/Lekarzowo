@@ -35,6 +35,13 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// </summary>
         /// <param name="workHours"></param>
         /// <returns></returns>
-        Task<bool> Exists(Workinghours workHours); 
+        Task<bool> Exists(Workinghours workHours);
+
+        /// <summary>
+        /// Returns true if passed Workinghours object overlaps with existing workinghours of a given doctor.
+        /// </summary>
+        /// <param name="wh"></param>
+        /// <returns></returns>
+        Task<bool> IsWorkingHourOverlapping(Workinghours wh);
     }
 }

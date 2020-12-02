@@ -7,7 +7,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
     public interface IBaseNamedEntityRepository<T> : IBaseRepository<T> where T : class
     {
-        Task<IEnumerable<object>> GetAllByName1(string name, int? limit, int? skip);
+        Task<IEnumerable<object>> GetAllByName(string name, int? limit, int? skip);
         Task<T> GetSingleByName(string name);
     }
 }

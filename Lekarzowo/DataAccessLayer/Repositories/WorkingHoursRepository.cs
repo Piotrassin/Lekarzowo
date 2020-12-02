@@ -15,10 +15,9 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         
         public async Task<Workinghours> GetByDetails(decimal DocId, decimal LocId, DateTime date)
         {
-            return await _context.Workinghours.FirstOrDefaultAsync(
+            return await _context.Workinghours.Where(x => x.From.Date == date || x.To.Date == date).FirstOrDefaultAsync(
                 x => x.DoctorId == DocId
-                && x.LocalId == LocId
-                && x.From.Date == date);
+                && x.LocalId == LocId);
         }
 
         public IEnumerable<Workinghours> GetAllFutureWorkHours(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end)
@@ -48,15 +47,17 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return query.OrderBy(x => x.From).ToList();
         }
 
-        /// <summary>
-        /// TODO: Powinno dać się pracować w różnych miejscach tego samego dnia.
-        /// 3 przypadki (
-        /// (A kończy się po ropzpoczęciu B), 
-        /// (A zaczyna się przed końcem B), 
-        /// (A zaczyna się przed końcem B i  kończy się po ropzpoczęciu B))
-        /// </summary>
-        /// <param name="wh"></param>
-        /// <returns></returns>
+        public async Task<bool> IsWorkingHourOverlapping(Workinghours wh)
+        {
+            var query = _context.Workinghours
+                .Where(x => x.LocalId == wh.LocalId)
+                .Where(x => x.DoctorId == wh.DoctorId)
+                .Where(x => x.From.Date == wh.From.Date || x.To.Date == wh.To.Date)
+                .AnyAsync(x => (x.To > wh.From && x.To <= wh.To) || (x.From >= wh.From && x.From < wh.To) || (x.From < wh.From && x.To > wh.To));
+
+            return await query;
+        }
+
         public async Task<bool> Exists(Workinghours wh)
         {
             return await _context.Workinghours.AnyAsync(

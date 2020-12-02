@@ -13,6 +13,11 @@ namespace Lekarzowo.Validators
     public class UserRegistrationValidator : AbstractValidator<UserRegistrationDTO>
     {
         public readonly int MaxAgeValue = 150;
+
+        /// <summary>
+        /// TODO: Używając https://docs.fluentvalidation.net/en/latest/including-rules.html, pozbyć się powtórzeń w tym walidatorze oraz w PersonValidator
+        /// </summary>
+        /// <param name="peopleRepository"></param>
         public UserRegistrationValidator(IPeopleRepository peopleRepository)
         {
 

@@ -11,14 +11,12 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 {
     public class RoomsRepository : BaseRepository<Room>, IRoomsRepository
     {
-        public RoomsRepository(ModelContext context) : base(context)
-        {
+        public RoomsRepository(ModelContext context) : base(context) { }
 
-        }
 
-        public async Task<Room> GetFullAddress(decimal RoomId)
+        public async Task<IEnumerable<Room>> GetAllByLocalId(decimal LocalId)
         {
-            return await _context.Room.FirstOrDefaultAsync(r => r.Id == RoomId);
+            return await _context.Room.Where(r => r.LocalId == LocalId).ToListAsync();
         }
     }
 }

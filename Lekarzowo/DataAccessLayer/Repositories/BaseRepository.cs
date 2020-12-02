@@ -26,7 +26,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
         public IEnumerable<T> GetAll()
         {
-            return table.ToList();
+            return table.ToList().OrderBy(x => x.Id);
         }
 
         public T GetByID(decimal id)
