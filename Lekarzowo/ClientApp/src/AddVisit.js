@@ -3,11 +3,14 @@ import Menu from './Menu.js';
 import ReservationItem from './components/ReservationItem.js';
 import Autocomplete from './components/Autocomplete.js';
 import UserService from './services/UserService.js';
+import ReservationService from './services/ReservationService.js';
+import { Dialog } from './components/Dialog.js';
 import doctorComputer from './images/DoctorComputer.svg';
 import Calendar from 'react-calendar'
 import oneSign from './images/1Sign.svg'
 import twoSign from './images/2Sign.svg'
 import threeSign from './images/3Sign.svg'
+import smallDoctor from './images/SmallDoctor.svg'
 import './Main.css';
 import './css/helpers/Calendar.css';
 import {
@@ -44,19 +47,25 @@ constructor(props){
   this.onClickSpeciality = this.onClickSpeciality.bind(this);
   this.onClickDoctor = this.onClickDoctor.bind(this);
   this.onHourChange = this.onHourChange.bind(this);
+  this.onSubmitBtnClick = this.onSubmitBtnClick.bind(this);
+  this.onReservationClick = this.onReservationClick.bind(this);
+  var defaultStartDate = new Date();
+  var defaultEndDate = new Date();
+  defaultStartDate.setHours(7,30);
+  defaultEndDate.setHours(22,0);
   this.state = {
     cityId: "",
     specialityId: "",
     doctorId: "",
-    startDate: new Date(),
-    endDate: new Date(),
+    startDate: defaultStartDate,
+    endDate: defaultEndDate,
     startHour: "07:30",
     endHour: "22:00",
-    btnTouched: false
+    btnTouched: false,
+    reservationsArray: [],
+    selectedReservation: {}
   }
 }
-
-
 
 onClickDate(value) {
   this.setState({
@@ -91,16 +100,45 @@ onClickDoctor(valueId){
   });
 }
 
+onReservationClick(selectedReservationItem,event) {
+  this.setState({
+    selectedReservation: selectedReservationItem
+  });
+  if(!(Object.keys(this.state.selectedReservation).length === 0)){
+    console.log(this.state.selectedReservation);
+    Dialog.open("reservation-dialog")(event);
+  }
+}
 
 onHourChange(event) {
   event.persist();
   this.setState({ [event.target.name]: event.target.value });
   console.log(event.target.name);
   console.log(event.target.value);
+  var splittedHours = event.target.value.split(":");
+  if(event.target.name == "startHour"){
+    this.state.startDate.setHours(splittedHours[0], splittedHours[1]);
+  }else {
+    this.state.endDate.setHours(splittedHours[0], splittedHours[1]);
+  }
 }
 
+async onSubmitBtnClick(event){
+  console.log("DoctorId " + this.state.doctorId);
+  console.log("SpecId " + this.state.specialityId);
+  console.log("CityId " + this.state.cityId);
+  console.log("DateStarrt " + this.state.startDate);
+  console.log("DateEnd " + this.state.endDate);
+  await ReservationService.getPossibleAppointments(this.state.cityId, this.state.specialityId, this.state.doctorId,
+  this.state.startDate, this.state.endDate, 6).then(resp => {
+    this.setState({
+      reservationsArray: resp,
+      btnTouched: true
+    });
+  })
 
 
+}
 
 render() {
   return (
@@ -144,7 +182,16 @@ render() {
             </div>
             <div className = "res-item-container">
             {this.state.btnTouched
-              ? <div></div>
+              ? this.state.reservationsArray.map((item, i) =>
+                <ReservationItem key={i}
+                  date={item.start.split("T")[0]}
+                  hours={item.start.split("T")[1].substr(0,5).concat(" - ", item.end.split("T")[1].substr(0,5))}
+                  place={item.localName}
+                  doctorName = {item.doctorName}
+                  doctorSurname = {item.doctorLastname}
+                  onClickHandler = {this.onReservationClick}
+                />
+              )
               : <div className = "flex-column img-container"><img src = {doctorComputer} className = "doctor-sign" /></div>
             }
             </div>
@@ -187,11 +234,43 @@ render() {
               </div>
               <br/>
               <div className = "btn-container">
-                <button className = "btn-primary">Szukaj</button>
+                <button className = "btn-primary" onClick={this.onSubmitBtnClick}>Szukaj</button>
               </div>
             </div>
         </div>
       </div>
+      <Dialog id = "reservation-dialog">
+        <div className = "header-dialog">Potwierdź Rezerwację</div>
+        <hr />
+        <div className = "dialog-doctor">
+          <div className = "dialog-doctor-img">
+          <img src = {smallDoctor} style = {{width: 140, marginRight: "10px"}} />
+          </div>
+          <div className = "dialog-doctor-content">
+            <a className = "dialog-text">Dr. Tomasz Godziński</a>
+            <a className = "dialog-subtext">Home Park Targówek</a>
+            <a className = "dialog-subtext">ul. Grójecka 26, 00-043</a>
+            <a className = "dialog-subtext">Warszawa</a>
+          </div>
+        </div>
+        <hr/>
+        <div className = "dialog-doctor">
+          <div className = "dialog-doctor-img">
+            <div className = "calendar-paper-back">
+              <a className = "calendar-paper-day">11</a>
+              <hr style={{width: "100%"}}/>
+              <a className = "calendar-paper-month">Październik</a>
+            </div>
+          </div>
+          <div className = "dialog-doctor-content">
+            <a className = "dialog-text">20 Październik 2020</a>
+            <a className = "dialog-subtext">10:00 - 10:30</a>
+          </div>
+        </div>
+        <div className = "dialog-btn-holder">
+          <button>Click</button>
+        </div>
+      </Dialog>
     </div>
 
 

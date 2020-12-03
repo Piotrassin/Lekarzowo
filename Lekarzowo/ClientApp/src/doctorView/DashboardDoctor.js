@@ -22,9 +22,9 @@ class Dashboard extends React.Component {
     this.getVisits = this.getVisits.bind(this);
   }
 
-  async componentWillMount() {
-    //console.log("User " + AuthService.getLoggedUser());
-    await UserService.getDashboardContent()
+  componentDidMount() {
+    console.log("User " + AuthService.getLoggedUser());
+    UserService.getDashboardContent()
     .then(response => {
       if(response.status == 401){
         AuthService.logout();
@@ -88,7 +88,7 @@ class Dashboard extends React.Component {
     return (
       <div className ="dashboard">
       <div className = "headline-container">
-        <b className = "headline">{user.firstName} {user.lastName}</b>
+        <b className = "headline">DOCTORSITE</b>
       </div>
       <div className = "dash-container">
         <div className = "hello-container">

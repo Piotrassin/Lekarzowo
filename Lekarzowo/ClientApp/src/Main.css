@@ -97,22 +97,26 @@ overflow: scroll;
   height: 100vh;
   display: flex;
   flex-direction: row;
+  background-color: #EEEEEE;
 }
 .visit-summary {
   width: 76%;
   height: 100vh;
-  background-color: #E9F4FF;
+  background-color: #EEEEEE;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
 }
 .visit-member {
   width: 24%;
-  height: 100vh;
-  background-color: #0075DE;
+  height: 96vh;
+  margin-top: 2vh;
+  margin-right: 2vw;
+  background-color: #1859A6;
   display: flex;
   flex-direction: column;
   align-items: center;
+  border-radius: 20px;
 }
 .standard-dashed {
   margin-top: 20px;
@@ -129,6 +133,11 @@ overflow: scroll;
   font-size: 18px;
   color: #3A5166;
 }
+.smaller-dashed {
+  margin-top: 20px;
+  font-size: 15px;
+  color: #E4E4E4;
+}
 .small-white {
 
   font-size: 18px;
@@ -142,8 +151,8 @@ overflow: scroll;
 .standard-black {
   font-size: 20px;
   color: #000000;
-  margin-top: 60px;
-  margin-left: 20px;
+
+
 }
 .standard-blue {
   margin-top: 20px;
@@ -220,29 +229,48 @@ overflow: scroll;
   margin-top: 15px;
 }
 .headline {
-  font-size: 36px;
+  font-size: 30px;
   color: #000000;
+
 }
 .subheadline {
-  font-size: 24px;
+  font-size: 20px;
   color: #5F5F5F;
 }
 .headline-container {
-  padding: 20px;
+  margin-left: 30px;
   display: flex;
   flex-direction: column;
 }
 .row-container {
-  width: 100%;
-  height: 40vh;
+  width: 95%;
+  height: 50vh;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
+  margin-left: 30px;
 }
 .active-treatments {
   margin-left: 30px;
-  width: 95%;
-  height: 40vh;
+  width: 92%;
+  height: 25vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 
+}
+.btn-end-visit {
+  margin-left: 30px;
+  width: 95%;
+  background-color: #1859A6;
+  border: none;
+  color: white;
+  padding: 15px;
+  border-radius: 30px;
+  font-weight: bold;
+  font-size: 16px;
+}
+.column-container {
+  width: 48%;
 }
 .actions-container {
   width: 45%;
@@ -253,12 +281,20 @@ overflow: scroll;
 }
 .active-medicine {
   width: 45%;
-  height: 40vh;
+
+}
+.basic-container-small {
+  width: 100%;
+  height: 42%;
+}
+.justify-content-space {
+  justify-content: space-between;
 }
 .basic-container {
   background-color: white;
   border-radius: 20px;
-
+  padding: 15px;
+  overflow-y: auto;
 }
 .add-medicine {
   height: 20%;
@@ -403,6 +439,19 @@ border-radius: 20px;
   z-index: 1000;
 
 }
+.button-gold {
+  padding: 5px 30px;
+border-radius: 5px;
+background-color: #C1A305;
+display: block;
+float: right;
+color: white;
+font-size: 15px;
+border: none;
+cursor: pointer;
+z-index: 1000;
+
+}
 .button-green {
     padding: 5px 30px;
   border-radius: 5px;
@@ -509,7 +558,7 @@ a:active {
   color: #C5C5C5;
 }
 .res-item-part-1 {
-  width: 10%;
+  width: 20%;
   height: 100%;
 display: flex;
 justify-content: center;
@@ -525,7 +574,7 @@ flex-direction: column;
   flex-direction: column;
 }
 .res-item-part-3 {
-  width: 25%;
+  width: 30%;
   height: 100%;
   display: flex;
   justify-content: center;
@@ -599,7 +648,7 @@ padding-right: 15px;
   width: 21vw;
   margin-left: 15px;
   margin-top: auto;
-z-index: 3;
+  z-index: 3;
   border-radius: 20px 20px 0px 0px;
   display: flex;
   flex-direction: column;
@@ -726,6 +775,11 @@ z-index: 3;
   font-size: 24px;
   font-weight: bold;
 }
+.subheader-content-white {
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+}
 .edit-user-form {
   width: 100%;
   margin-top: 20px;
@@ -748,6 +802,7 @@ z-index: 3;
   font-weight: bold;
   font-size: 18px;
 }
+
 .rodo {
   text-align: center;
   font-size: 13px;
@@ -868,9 +923,142 @@ padding: 20px;
   margin: 150px;
 }
 .img-container {
-  
+
   justify-content: center;
   align-items: center;
   border-radius: 20px;
   margin-top: 20px;
+}
+.dialog-style {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    overflow: auto;
+
+}
+.dialog-body {
+
+    background: #fff;
+    width: 600px;
+    height: 390px;
+    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 15px;
+
+}
+.dialog-background {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #000;
+    opacity: 0.75;
+    z-index: 900;
+}
+
+body.dialog-open {
+    /* body overflow is hidden to hide main scrollbar when modal window is open */
+    overflow: hidden;
+}
+.header-dialog {
+  width: 100%;
+  padding: 5px;
+  color: #1859A6;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  font-size: 20px;
+  padding-top: 10px;
+}
+.dialog-doctor {
+  display: flex;
+align-items: center;
+}
+.dialog-doctor-img {
+  padding: 10px;
+  margin-right: 20px;
+  width: 170px;
+
+}
+.dialog-doctor-content {
+  display: flex;
+  flex-direction: column;
+
+}
+.dialog-text {
+  color: #353D47;
+  font-size: 20px;
+  font-weight: bold;
+}
+.dialog-subtext {
+  color: #969696;
+  font-size: 16px;
+  margin-top: 5px;
+}
+.calendar-paper-back {
+  background-color: #1859A6;
+  padding-top: 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 90px;
+  width: 100px;
+  margin-right: auto;
+  margin-left: auto;
+}
+.calendar-paper-day {
+  margin-left: auto;
+  margin-right: auto;
+  color: white;
+  font-size: 35px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.calendar-paper-month {
+
+  color: white;
+}
+.dialog-btn-holder {
+  background-color: #F2F2F2;
+  margin-top: 10px;
+  width: 100%;
+  height: 50px;
+  border-radius: 0px 0px 15px 15px;
+}
+.visits-content-holder {
+  height: 93vh;
+  background-color: white;
+  width: 70%;
+  margin-top: 3vh;
+  border-radius: 15px 15px 0 0 ;
+  padding: 2vh;
+
+}
+.visits-page-container {
+  width: 100vw;
+  height: 100vh;
+  margin-left: 18px;
+  display: flex;
+  flex-direction: row;
+}
+.filter-pane {
+  background-color: #1859A6;
+  width: 22%;
+  height: 50vh;
+  margin-top: 3vh;
+  border-radius: 15px 15px 15px 15px ;
+  margin-left: 20px;
+  padding: 2vh;
+  color: white;
+}
+
+.textField {
+  width: 100%;
 }

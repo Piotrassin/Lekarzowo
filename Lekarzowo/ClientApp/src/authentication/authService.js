@@ -1,6 +1,9 @@
 const url = 'https://localhost:5001/api/';
 
+
 class AuthService {
+
+
 
   login(email, password) {
     return fetch(url + 'People/Login', {
@@ -53,6 +56,12 @@ class AuthService {
   getLoggedUser(){
     return localStorage.getItem("userData");
   }
+
+  getUserCurrentRole() {
+    return JSON.parse(localStorage.getItem("userData")).id;
+  }
+
+  
 
 }
 export default new AuthService();

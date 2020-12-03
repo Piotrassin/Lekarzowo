@@ -4,6 +4,7 @@ import arrowSign from '../images/ArrowSign.svg'
 class ReservationItem extends React.Component {
 constructor(props){
   super(props);
+  this.onClickReservationBtn=this.onClickReservationBtn.bind(this);
   this.state = {
     date: this.props.date,
     hours: this.props.hours,
@@ -12,6 +13,12 @@ constructor(props){
     doctorSurname: this.props.doctorSurname,
     price: this.props.price
   }
+}
+
+onClickReservationBtn(event){
+  event.preventDefault();
+  this.props.onClickHandler(this.state, event);
+
 }
 
 
@@ -36,12 +43,9 @@ render(){
       <a>{this.state.doctorName} {this.state.doctorSurname}</a>
       <a className = "smaller-font">Lekarz</a>
       </div>
-      <div className = "res-item-part-5">
-      <a>{this.state.price}</a>
-      <a className = "smaller-font">Cena</a>
-      </div>
+
       <div className = "res-item-part-buttons">
-      <button className = "btn-success-arrow">
+      <button className = "btn-success-arrow" onClick={this.onClickReservationBtn}>
         <img src = {arrowSign} className = "addSign" style = {{width: 15}} />
       </button>
       </div>

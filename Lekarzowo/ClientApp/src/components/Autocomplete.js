@@ -64,7 +64,9 @@ export default function Asynchronous(props) {
   function onChangeAutoComplete(event, value) {
     console.log("inside");
     console.log(value);
-    props.changeCallback(value.id);
+    if(value != null){
+      props.changeCallback(value.id);
+    }
   }
 
 

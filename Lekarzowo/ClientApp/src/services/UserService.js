@@ -95,13 +95,16 @@ class UserService {
   }
 
   getUserData(){
-    return fetch(url + 'people/' + JSON.parse(AuthService.getLoggedUser()).id, {
+    return fetch(url + 'people/single', {
       headers: authHeader()
     }).then(response => response.json());
   }
 
-  getUserSicknessHistory() {
-    return fetch(url + 'uicomponents/PatientIllnesses/3', {
+  getUserSicknessHistory(id) {
+    if(id ===  undefined){
+      id = 3
+    }
+    return fetch(url + 'uicomponents/PatientIllnesses/' + id, {
       headers: authHeader()
     }).then(response => response.json());
   }

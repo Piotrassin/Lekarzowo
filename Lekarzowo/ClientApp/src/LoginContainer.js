@@ -17,7 +17,7 @@ class LoginContainer extends React.Component {
     super(props);
     if(AuthService.getLoggedUser() != null){
       console.log("Already authenticated");
-      this.props.history.push('/dashboard');
+      this.props.history.push('/');
     }
   }
 

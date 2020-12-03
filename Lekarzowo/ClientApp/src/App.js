@@ -3,10 +3,13 @@ import Dashboard from './Dashboard';
 import MainContainer from './MainContainer';
 import LoginContainer from './LoginContainer';
 import RegisterContainer from './RegisterContainer';
-import DetailVisit from './DetailVisit';
+import VisitDetails from './VisitDetails.js';
 import AddVisit from './AddVisit';
 import Visits from './Visits';
 import Profile from './Profile';
+import AuthorizedRoute from './AuthorizedRoute.js';
+
+
 import {
   Route,
   NavLink,
@@ -24,14 +27,14 @@ class App extends React.Component {
       return(
         <HashRouter>
         <div>
-        <Route exact path="/" component={LoginContainer}/>
+        <Route exact path="/login" component={LoginContainer}/>
         <Route exact path="/signup" component={RegisterContainer}/>
         <Route exact path="/visits" component={Visits}/>
-        <Route exact path="/dashboard" component={MainContainer}/>
+        <Route exact path="/" component={MainContainer}/>
         <Route exact path="/addVisit" component={AddVisit}/>
         <Route exact path="/myProfile" component={Profile}/>
         <Route path="/visit" render={(routeProps) => (
-              <DetailVisit {...routeProps}/>
+              <VisitDetails {...routeProps}/>
           )}/>
         </div>
         </HashRouter>
