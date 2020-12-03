@@ -317,7 +317,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 {
                     IllnessName = x.Illness.Name,
                     DiagnoseDate = x.Visit.Reservation.Starttime,
-                    CureDate = x.Curedate.GetValueOrDefault(DateTime.Now.Date),
+                    CureDate = x.Curedate
                 })
                 .OrderBy(x => x.DiagnoseDate)
                 .ToListAsync();

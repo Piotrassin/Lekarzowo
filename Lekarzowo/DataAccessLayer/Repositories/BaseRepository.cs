@@ -26,7 +26,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
         public IEnumerable<T> GetAll()
         {
-            return table.ToList();
+            return table.ToList().OrderBy(x => x.Id);
         }
 
         public T GetByID(decimal id)
@@ -46,8 +46,10 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
         public void Update(T t)
         {
-            table.Attach(t);
-            _context.Entry(t).State = EntityState.Modified;
+            var entry = table.First(e => e.Id == t.Id);
+            _context.Entry(entry).CurrentValues.SetValues(t);
+            //table.Attach(t);
+            //_context.Entry(t).State = EntityState.Modified;
         }
         public bool Exists(decimal Id)
         {

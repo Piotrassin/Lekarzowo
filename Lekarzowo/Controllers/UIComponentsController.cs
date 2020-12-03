@@ -103,14 +103,14 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/UIComponents/PerformedTreatments/1
-        [HttpGet("[action]/{PatientId}")]
+        [HttpGet("[action]/{VisitId}")]
         public async Task<ActionResult<IEnumerable<object>>> PerformedTreatments(decimal VisitId)
         {
             return Ok(await _repository.PerformedTreatments(VisitId));
         }
 
         // GET: api/UIComponents/PrescribedMedicines/1
-        [HttpGet("[action]/{PatientId}")]
+        [HttpGet("[action]/{VisitId}")]
         public async Task<ActionResult<IEnumerable<object>>> PrescribedMedicines(decimal VisitId)
         {
             return Ok(await _repository.PrescribedMedicines(VisitId));

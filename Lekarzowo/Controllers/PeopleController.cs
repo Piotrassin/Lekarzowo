@@ -14,7 +14,8 @@ using Lekarzowo.DataAccessLayer.Models;
 
 namespace Lekarzowo.Controllers
 {
-    [Authorize] //wystarczy to odkomentować żeby na wszystkie końcówki z tego kontrolera, była potrzebna autoryzacja, chyba że końcówka jest oznaczona jako [AllowAnonymous].
+    [Authorize] //wystarczy to odkomentować żeby na wszystkie końcówki z tego kontrolera, była potrzebna autoryzacja,
+    //chyba że końcówka jest oznaczona jako [AllowAnonymous].
     [Route("api/[controller]")]
     [ApiController]
     public class PeopleController : BaseController
@@ -22,15 +23,17 @@ namespace Lekarzowo.Controllers
         private readonly IPeopleRepository _repository;
         private readonly IJWTService _jwtService;
         private readonly IPatientsRepository _patRepository;
-        public PeopleController(IPeopleRepository repository, IJWTService jwtService, IPatientsRepository patRepository)
+        private readonly IUserRolesRepository _userRolesRepository;
+        public PeopleController(IPeopleRepository repository, IJWTService jwtService, IPatientsRepository patRepository, IUserRolesRepository urolesRepo)
         {
             _jwtService = jwtService;
             _repository = repository;
             _patRepository = patRepository;
+            _userRolesRepository = urolesRepo;
         }
 
-
-        // GET: api/People
+        // GET: api/People/All
+        //[Authorize(Roles = "admin")]
         [HttpGet("[action]")]
         public ActionResult<IEnumerable<Person>> All()
         {
@@ -38,13 +41,14 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/People/AllByName?Name=abc&limit=0&skip=0
+        //[Authorize(Roles = "admin")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<Person>>> AllByName(string name, int? limit, int? skip)
         {
             return Ok(await _repository.GetAllByNameOrLastname(name, limit, skip));
         }
 
-        // GET: api/People/5
+        // GET: api/People/Single
         [HttpGet("[action]")]
         public ActionResult<Person> Single()
         {
@@ -72,8 +76,11 @@ namespace Lekarzowo.Controllers
                     return Conflict("User with that email address already exists");
                     //return StatusCode(409, "User with that email address already exists");
                 }
+
                 using(var transaction = new TransactionScope())
                 {
+                    newPerson.Email = newPerson.Email.ToLower();
+
                     _repository.Insert(newPerson);
                     _repository.Save();
 
@@ -99,7 +106,7 @@ namespace Lekarzowo.Controllers
         {
             try
             {
-                Person stored = _repository.GetByEmail(current.Email);
+                Person stored = _repository.GetByEmailWithRoles(current.Email);
                 //if (stored == null || !AuthService.VerifyPassword(current.Password.Value, stored.Password))
                 //{
                 //    return NotFound();
@@ -127,12 +134,12 @@ namespace Lekarzowo.Controllers
         public ActionResult<Person> ChangePassword(UserChangePasswordDTO current)
         {
             var id = GetUserIdFromToken();
-            current.NewPassword.Value = AuthService.CreateHash(current.NewPassword.Value);
             var userById = _repository.GetByID(id);
             var userByEmail = _repository.GetByEmail(current.Email);
+
             if (userById == userByEmail)
             {
-                userByEmail.Password = current.NewPassword.Value;
+                userByEmail.Password = AuthService.CreateHash(current.NewPassword.Value);
                 try
                 {
                     _repository.Save();
@@ -144,18 +151,18 @@ namespace Lekarzowo.Controllers
                 }
             }
             return BadRequest();
-
         }
 
-        // PUT: api/People/5
-        [HttpPut("{id}")]
-        public ActionResult PutPerson(decimal id, Person edited)
+        // PUT: api/People
+        [HttpPut]
+        public ActionResult Edit(Person edited)
         {
+            var id = GetUserIdFromToken();
             if (ModelState.IsValid)
             {
-                if (id == edited.Id && _repository.Exists(edited.Id))
+                if (id == edited.Id && _repository.Exists(id))
                 {
-                    var userToEdit = _repository.GetByID(edited.Id);
+                    var userToEdit = _repository.GetByID(id);
                     userToEdit.Name = edited.Name;
                     userToEdit.Lastname = edited.Lastname;
                     userToEdit.Pesel = edited.Pesel;
@@ -178,10 +185,11 @@ namespace Lekarzowo.Controllers
             return BadRequest();
         }
 
-        // DELETE: api/People/5
-        [HttpDelete("{id}")]
-        public  ActionResult<Person> DeletePerson(decimal id)
+        // DELETE: api/People
+        [HttpDelete]
+        public  ActionResult<Person> Delete()
         {
+            var id = GetUserIdFromToken();
             var person = _repository.GetByID(id);
             if (person == null)
             {

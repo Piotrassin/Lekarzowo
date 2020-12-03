@@ -8,12 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.DataAccessLayer.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lekarzowo.Controllers
 {
+    //[Authorize(Roles = "admin,doctor")]
     [Route("api/[controller]")]
     [ApiController]
-    public class DoctorsController : ControllerBase
+    public class DoctorsController : BaseController
     {
         private readonly IDoctorsRepository _repository;
 
@@ -23,7 +25,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Doctors
-        [HttpGet]
+        [HttpGet("[action]")]
         public ActionResult<IEnumerable<Doctor>> All()
         {
             return _repository.GetAll().ToList();
@@ -38,7 +40,7 @@ namespace Lekarzowo.Controllers
 
         // GET: api/Doctors/5
         [HttpGet("{id}")]
-        public ActionResult<bool> Single(decimal id)
+        public ActionResult<Doctor> Single(decimal id)
         {
             var doctor = _repository.GetByID(id);
 
@@ -47,14 +49,15 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            return _repository.Exists(doctor);
+            return doctor;
             //return doctor;
         }
 
         // PUT: api/Doctors/5
-        [HttpPut("{id}")]
-        public IActionResult PutDoctor(decimal id, Doctor doctor)
+        [HttpPut]
+        public IActionResult PutDoctor(Doctor doctor)
         {
+            var id = GetUserIdFromToken();
             if (id != doctor.Id)
             {
                 return BadRequest();
@@ -119,9 +122,10 @@ namespace Lekarzowo.Controllers
         }
 
         // DELETE: api/Doctors/5
-        [HttpDelete("{id}")]
-        public ActionResult<Doctor> DeleteDoctor(decimal id)
+        [HttpDelete]
+        public ActionResult<Doctor> DeleteDoctor()
         {
+            var id = GetUserIdFromToken();
             var doctor = _repository.GetByID(id);
             if (doctor == null)
             {

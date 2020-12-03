@@ -24,6 +24,12 @@ namespace Lekarzowo.Repositories
             return _context.Person.FirstOrDefault(p => p.Email.ToLower() == email.ToLower());
         }
 
+        public Person GetByEmailWithRoles(string email)
+        {
+            return _context.Person.Include(x => x.Userroles).ThenInclude(x => x.Role)
+                .FirstOrDefault(p => p.Email.ToLower() == email.ToLower());
+        }
+
         public void Insert(UserRegistrationDTO a)
         {
             _context.Person.Add(new Person
@@ -47,16 +53,6 @@ namespace Lekarzowo.Repositories
         public bool Exists(string email)
         {
             return _context.Person.Any(x => x.Email.ToLower() == email.ToLower());
-        }
-
-        /// <summary>
-        /// TODO: DO ZROBIENIA
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="password"></param>
-        public void ChangePassword(decimal id, string password)
-        {
-            //_context.Person.
         }
 
         public async Task<IEnumerable<object>> GetAllByNameOrLastname(string name, int? skip, int? limit)

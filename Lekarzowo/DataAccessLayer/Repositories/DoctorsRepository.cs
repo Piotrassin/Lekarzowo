@@ -17,6 +17,11 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             //this._context = context;
         }
 
+        public async Task<Doctor> GetDoctorWithSpecialization(decimal doctorId)
+        {
+            return await _context.Doctor.Include(x => x.Speciality).FirstOrDefaultAsync(doctor => doctor.Id == doctorId);
+        }
+
         /// <summary>
         /// TODO: Czy istnieje już taki doktor? = czy istnieje już przypisanie Doctor - Osoba do Osoby o Id = doctor.IdNavigation?
         /// </summary>

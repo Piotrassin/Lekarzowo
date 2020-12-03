@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using Lekarzowo.DataAccessLayer.DTO;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.Models;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,19 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
     {
 
         /// <summary>
-        /// Compares doctors, workinghours and all Returns a list of all possible appointments which are split into 15 minute slots/pieces.
+        /// Returns all reservations in db meeting given criteria. All criteria are optional.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<Reservation> GetAllFutureReservations(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end);
+        IEnumerable<Reservation> AllByOptionalCriteria(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end);
+
+        /// <summary>
+        /// Returns all reservations in a given LOCAL that are in-progress in a time frame given between dates START and END.
+        /// </summary>
+        /// <param name="LocalId"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        Task<IEnumerable<Reservation>> AllInProgressByLocal(decimal LocalId, DateTime start, DateTime end);
 
         /// <summary>
         /// Upcoming visits sorted from nearest to furthest. Limit the number od loaded items. Optionally skip given number of rows for pagination.
@@ -36,5 +46,18 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// <returns></returns>
         Task<IEnumerable<object>> RecentReservations(decimal PatientId, int? Limit, int? Skip);
 
+        /// <summary>
+        /// Returns true if none of existing reservations in a given local and with a given doctor overlap passed reservation.
+        /// </summary>
+        /// <param name="res"></param>
+        /// <returns></returns>
+        Task<IEnumerable<Reservation>> IsReservationOverlappingWithAnother(decimal localId, decimal doctorId, DateTime start, DateTime end);
+
+        /// <summary>
+        /// Returmns true if a reservation with those attributes already exists in a db.
+        /// </summary>
+        /// <param name="res"></param>
+        /// <returns></returns>
+        Task<bool> Exists(Reservation res);
     }
 }

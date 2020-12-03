@@ -1,15 +1,14 @@
-﻿using System;
+﻿using Lekarzowo.DataAccessLayer.DTO;
+using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Lekarzowo.Helpers.Exceptions;
+using Lekarzowo.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.Models;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Lekarzowo.DataAccessLayer.DTO;
-using Lekarzowo.Services;
 
 namespace Lekarzowo.Controllers
 {
@@ -19,12 +18,16 @@ namespace Lekarzowo.Controllers
     {
         private readonly IReservationsRepository _repository;
         private readonly IWorkingHoursRepository _workHoursRepository;
-        private static readonly int chunkSizeMinutes = 15;
+        private readonly IRoomsRepository _roomsRepository;
 
-        public ReservationsController(IReservationsRepository repository, IWorkingHoursRepository whRepository)
+        public static readonly int chunkSizeMinutes = 15;
+
+        public ReservationsController(IReservationsRepository repository, 
+            IWorkingHoursRepository whRepo, IRoomsRepository roomRepo)
         {
             _repository = repository;
-            _workHoursRepository = whRepository;
+            _workHoursRepository = whRepo;
+            _roomsRepository = roomRepo;
         }
 
         #region CRUD
@@ -50,6 +53,13 @@ namespace Lekarzowo.Controllers
             return reservation;
         }
 
+
+        /// <summary>
+        /// TODO: ZROBIĆ WALIDACJĘ
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="reservation"></param>
+        /// <returns></returns>
         // PUT: api/Reservations/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutReservation(decimal id, Reservation reservation)
@@ -59,13 +69,9 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            if (_repository.GetByID(reservation.Id) != null)
-            {
-                _repository.Update(reservation);
-            }
-
             try
             {
+                _repository.Update(reservation);
                 _repository.Save();
             }
             catch (DbUpdateConcurrencyException)
@@ -74,27 +80,67 @@ namespace Lekarzowo.Controllers
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
-
             return NoContent();
         }
 
         // POST: api/Reservations
         [HttpPost]
-        public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
+        public async Task<ActionResult<Reservation>> PostReservation(ReservationDTO input)
         {
-            if (ReservationExists(reservation.Id))
-            {
-                return Conflict("That reservation already exists");
-            }
-            _repository.Insert(reservation);
-            _repository.Save();
+            #region alternatywa
+            //if (await _repository.IsReservationNotOverlappingWithAnother(input))
+            //{
+            //    Room room = await FindAvailableRoom(input);
+            //    if (room != null)
+            //    {
+            //        try
+            //        {
+            //            var reservationToInsert = new Reservation
+            //            {
+            //                DoctorId = input.DoctorId,
+            //                PatientId = input.PatientId,
+            //                Starttime = input.Starttime,
+            //                Endtime = input.Endtime,
+            //                RoomId = room.Id
+            //            };
+            //            _repository.Insert(reservationToInsert);
+            //            _repository.Save();
+            //            return Created("", reservationToInsert);
+            //        }
+            //        catch (Exception e)
+            //        {
+            //            return BadRequest(e.Message);
+            //        }
+            //    }
+            //}
+            //return BadRequest();
+            #endregion
 
-            return Created("", reservation);
+            try
+            {
+                Room room = await FindAvailableRoom(input);
+                if (room == null)
+                {
+                    return BadRequest("Brak dostępnych pokoi w lokalu.");
+                }
+                var reservationToInsert = new Reservation
+                {
+                    DoctorId = input.DoctorId,
+                    PatientId = input.PatientId,
+                    Starttime = input.Starttime,
+                    Endtime = input.Endtime,
+                    RoomId = room.Id
+                };
+                _repository.Insert(reservationToInsert);
+                _repository.Save();
+                return Created("", reservationToInsert);
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                return StatusCode(503, e.Message);
+            }
         }
 
         // DELETE: api/Reservations/5
@@ -111,11 +157,6 @@ namespace Lekarzowo.Controllers
             _repository.Save();
 
             return reservation;
-        }
-
-        private bool ReservationExists(decimal id)
-        {
-            return _repository.Exists(id);
         }
 
         #endregion
@@ -136,19 +177,18 @@ namespace Lekarzowo.Controllers
 
         // GET: api/reservations/possibleappointments?CityId=1&SpecId=1&DoctorId=1
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> PossibleAppointments(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end, int? limit, int? skip)
+        public async Task<ActionResult<IEnumerable<object>>> PossibleAppointments(decimal? cityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end, int? limit, int? skip)
         {
-            if((CityId.HasValue && !SpecId.HasValue && DoctorId.HasValue)
-                || (CityId.HasValue && !SpecId.HasValue && !DoctorId.HasValue)
-                || (!CityId.HasValue && SpecId.HasValue && DoctorId.HasValue)
-                || (!CityId.HasValue && !SpecId.HasValue && !DoctorId.HasValue))
+            if((cityId.HasValue && !SpecId.HasValue && DoctorId.HasValue)
+                || (cityId.HasValue && !SpecId.HasValue && !DoctorId.HasValue)
+                || (!cityId.HasValue && SpecId.HasValue && DoctorId.HasValue)
+                || (!cityId.HasValue && !SpecId.HasValue && !DoctorId.HasValue))
             {
                 return BadRequest("Niepoprawne kryteria wyszukiwania");
             }
 
-
-            IEnumerable<Reservation> allReservations = _repository.GetAllFutureReservations(CityId, SpecId, DoctorId, start, end);
-            IEnumerable<Workinghours> workinghours = _workHoursRepository.GetAllFutureWorkHours(CityId, SpecId, DoctorId, start, end);
+            IEnumerable<Reservation> allReservations = _repository.AllByOptionalCriteria(cityId, SpecId, DoctorId, start, end);
+            IEnumerable<Workinghours> workinghours = _workHoursRepository.GetAllFutureWorkHours(cityId, SpecId, DoctorId, start, end);
 
             var slotList = CalcPossibleAppointments(allReservations, workinghours);
 
@@ -162,7 +202,7 @@ namespace Lekarzowo.Controllers
             return Ok(slotList);
         }
 
-
+        #region Slots
         private static IEnumerable<SlotDTO> CalcPossibleAppointments(IEnumerable<Reservation> allReservations, IEnumerable<Workinghours> workinghours)
         {
             var outputList = new List<SlotDTO>();
@@ -237,7 +277,28 @@ namespace Lekarzowo.Controllers
             }
             yield return new SlotDTO(start, end);
         }
+        #endregion
 
+        private bool ReservationExists(decimal id)
+        {
+            return _repository.Exists(id);
+        }
+
+        private async Task<bool> ReservationExists(Reservation res)
+        {
+            return await _repository.Exists(res);
+        }
+
+        private async Task<Room> FindAvailableRoom(ReservationDTO res)
+        {
+            IEnumerable<Reservation> reservationsInProgress = await _repository.AllInProgressByLocal(res.LocalId, res.Starttime, res.Endtime);
+            IEnumerable<Room> allRoomsInALocal = await _roomsRepository.GetAllByLocalId(res.LocalId);
+
+            List<decimal> takenRoomIdsUnique = reservationsInProgress.Select(x => x.RoomId).Distinct().ToList();
+            List<decimal> availableRoomIds = allRoomsInALocal.Select(x => x.Id).Except(takenRoomIdsUnique).ToList();
+
+            return _roomsRepository.GetByID(availableRoomIds.FirstOrDefault());
+        }
 
     }
 }

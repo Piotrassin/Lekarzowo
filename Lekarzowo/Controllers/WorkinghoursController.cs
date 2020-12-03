@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Lekarzowo.DataAccessLayer.DTO;
 
 namespace Lekarzowo.Controllers
 {
@@ -52,13 +53,10 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            if (_repository.GetByID(workinghours.Id) != null)
-            {
-                _repository.Update(workinghours);
-            }
-
             try
             {
+
+                _repository.Update(workinghours);
                 _repository.Save();
             }
             catch (DbUpdateConcurrencyException)
@@ -67,10 +65,7 @@ namespace Lekarzowo.Controllers
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return NoContent();
@@ -80,14 +75,17 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public async Task<ActionResult<Workinghours>> PostWorkinghours(Workinghours workinghours)
         {
-            if (WorkinghoursExists(workinghours.Id))
+            try
             {
-                return Conflict("These workinghours already exists");
-            }
-            _repository.Insert(workinghours);
-            _repository.Save();
+                _repository.Insert(workinghours);
+                _repository.Save();
 
-            return Created("", workinghours);
+                return Created("", workinghours);
+            }
+            catch (DbUpdateException)
+            {
+                return StatusCode(503);
+            }
         }
 
         // DELETE: api/Workinghours/5
@@ -109,6 +107,11 @@ namespace Lekarzowo.Controllers
         private bool WorkinghoursExists(decimal id)
         {
             return _repository.Exists(id);
+        }
+
+        private async Task<bool> WorkinghoursExists(Workinghours wh)
+        {
+            return await _repository.Exists(wh);
         }
     }
 }

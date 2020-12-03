@@ -17,7 +17,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             table = _context.Set<T>();
         }
 
-        public async Task<IEnumerable<object>> GetAllByName1(string name, int? limit, int? skip)
+        public async Task<IEnumerable<object>> GetAllByName(string name, int? limit, int? skip)
         {
             var query = table.Where(x => name == null || x.Name.ToLower().Contains(name.ToLower())).OrderBy(x => x.Name);
 
