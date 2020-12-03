@@ -47,15 +47,15 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return query.OrderBy(x => x.From).ToList();
         }
 
-        public async Task<bool> IsWorkingHourOverlapping(Workinghours wh)
+        public async Task<IEnumerable<Workinghours>> IsWorkingHourOverlapping(Workinghours wh)
         {
             var query = _context.Workinghours
                 .Where(x => x.LocalId == wh.LocalId)
                 .Where(x => x.DoctorId == wh.DoctorId)
                 .Where(x => x.From.Date == wh.From.Date || x.To.Date == wh.To.Date)
-                .AnyAsync(x => (x.To > wh.From && x.To <= wh.To) || (x.From >= wh.From && x.From < wh.To) || (x.From < wh.From && x.To > wh.To));
+                .Where(x => (x.To > wh.From && x.To <= wh.To) || (x.From >= wh.From && x.From < wh.To) || (x.From < wh.From && x.To > wh.To));
 
-            return await query;
+            return await query.ToListAsync();
         }
 
         public async Task<bool> Exists(Workinghours wh)

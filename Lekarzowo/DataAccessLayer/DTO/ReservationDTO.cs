@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.DTO
 {
-    public class ReservationDTO
+    public class ReservationDTO : IReservation
     {
         public decimal Id { get; set; }
         public decimal DoctorId { get; set; }

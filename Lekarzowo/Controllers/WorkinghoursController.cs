@@ -53,13 +53,10 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            if (_repository.GetByID(workinghours.Id) != null)
-            {
-                _repository.Update(workinghours);
-            }
-
             try
             {
+
+                _repository.Update(workinghours);
                 _repository.Save();
             }
             catch (DbUpdateConcurrencyException)
@@ -68,10 +65,7 @@ namespace Lekarzowo.Controllers
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return NoContent();
@@ -79,20 +73,8 @@ namespace Lekarzowo.Controllers
 
         // POST: api/Workinghours
         [HttpPost]
-        public async Task<ActionResult<Workinghours>> PostWorkinghours(WorkingHoursDTO input)
+        public async Task<ActionResult<Workinghours>> PostWorkinghours(Workinghours workinghours)
         {
-            var workinghours = new Workinghours()
-            {
-                DoctorId = input.DoctorId,
-                LocalId = input.LocalId,
-                From = input.From,
-                To = input.To
-            };
-
-            if (await _repository.IsWorkingHourOverlapping(workinghours))
-            {
-                return BadRequest("These work hours overlap with existing ones.");
-            }
             try
             {
                 _repository.Insert(workinghours);
@@ -104,7 +86,6 @@ namespace Lekarzowo.Controllers
             {
                 return StatusCode(503);
             }
-           
         }
 
         // DELETE: api/Workinghours/5

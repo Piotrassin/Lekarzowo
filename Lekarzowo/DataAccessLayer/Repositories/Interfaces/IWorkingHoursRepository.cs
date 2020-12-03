@@ -42,6 +42,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// </summary>
         /// <param name="wh"></param>
         /// <returns></returns>
-        Task<bool> IsWorkingHourOverlapping(Workinghours wh);
+        Task<IEnumerable<Workinghours>> IsWorkingHourOverlapping(Workinghours wh);
     }
 }

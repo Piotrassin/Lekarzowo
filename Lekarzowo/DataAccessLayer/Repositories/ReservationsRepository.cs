@@ -99,15 +99,15 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return await orderedQuery.ToListAsync(); ;
         }
 
-        public async Task<bool> IsReservationOverlappingWithAnother(ReservationDTO res)
+        public async Task<IEnumerable<Reservation>> IsReservationOverlappingWithAnother(decimal localId, decimal doctorId, DateTime start, DateTime end)
         {
             var query = _context.Reservation
-                .Where(x => x.Room.LocalId == res.LocalId)
-                .Where(x => x.DoctorId == res.DoctorId)
-                .Where(x => x.Starttime.Date == res.Starttime.Date)
-                .AllAsync(x => (x.Starttime < res.Starttime && x.Endtime <= res.Starttime) || (x.Starttime >= res.Endtime));
+                .Where(x => x.Room.LocalId == localId)
+                .Where(x => x.DoctorId == doctorId)
+                .Where(x => x.Starttime.Date == start.Date)
+                .Where(x => (x.Starttime < start && x.Endtime <= start) || (x.Starttime >= end));
 
-            return ! await query;
+            return await query.ToListAsync();
         }
 
         public async Task<bool> Exists(Reservation res)

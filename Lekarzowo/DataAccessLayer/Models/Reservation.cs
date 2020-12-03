@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Lekarzowo.DataAccessLayer.DTO;
 
 namespace Lekarzowo.DataAccessLayer.Models
 {
-    public partial class Reservation : IEntity
+    public partial class Reservation : IEntity, IReservation
     {
         public decimal Id { get; set; }
         public decimal DoctorId { get; set; }

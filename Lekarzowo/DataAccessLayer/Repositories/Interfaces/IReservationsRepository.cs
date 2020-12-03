@@ -51,7 +51,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// </summary>
         /// <param name="res"></param>
         /// <returns></returns>
-        Task<bool> IsReservationOverlappingWithAnother(ReservationDTO res);
+        Task<IEnumerable<Reservation>> IsReservationOverlappingWithAnother(decimal localId, decimal doctorId, DateTime start, DateTime end);
 
         /// <summary>
         /// Returmns true if a reservation with those attributes already exists in a db.

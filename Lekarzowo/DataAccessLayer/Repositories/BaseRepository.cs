@@ -46,8 +46,10 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
         public void Update(T t)
         {
-            table.Attach(t);
-            _context.Entry(t).State = EntityState.Modified;
+            var entry = table.First(e => e.Id == t.Id);
+            _context.Entry(entry).CurrentValues.SetValues(t);
+            //table.Attach(t);
+            //_context.Entry(t).State = EntityState.Modified;
         }
         public bool Exists(decimal Id)
         {
