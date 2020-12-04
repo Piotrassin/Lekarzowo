@@ -10,20 +10,22 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 
 namespace Lekarzowo.Services
 {
     public class JWTService : IJWTService
     {
         private readonly SecretSettings _settings;
+        private readonly IUserRolesRepository _userRoles;
 
-
-        public JWTService(IOptions<SecretSettings> secretSettings)
+        public JWTService(IOptions<SecretSettings> secretSettings, IUserRolesRepository roles)
         {
             _settings = secretSettings.Value;
+            _userRoles = roles;
         }
 
-        public string GenerateAccessToken(Person person)
+        public string GenerateAccessToken(Person person, Role activeRole)
         {
             //TODO: Docelowo sekret do tworzenia podpisu powinien być pobierany z appsettings.json
             //var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.Secret));
@@ -33,12 +35,9 @@ namespace Lekarzowo.Services
 
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
 
-            var claims = new List<Claim>
-            {
-                new Claim("UserId", person.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, person.Email)
-            };
-            claims.AddRange(person.Userroles.Select(userRoles => new Claim(ClaimTypes.Role, userRoles.Role.Name)));
+            var claims = new List<Claim>();
+            claims.Add(new Claim("UserId", person.Id.ToString()));
+            claims.Add(new Claim(ClaimTypes.Role, activeRole.Name));
 
             var token = new JwtSecurityToken(
                 claims: claims,

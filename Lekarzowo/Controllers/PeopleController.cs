@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Lekarzowo.Repositories;
 using Lekarzowo.Services;
 using System;
+using System.Data;
+using System.Diagnostics;
 using Lekarzowo.DataAccessLayer.DTO;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using System.Transactions;
@@ -86,7 +88,7 @@ namespace Lekarzowo.Controllers
 
                     Person user = _repository.GetByEmail(newPerson.Email);
                     Patient newPatient = new Patient() { Id = user.Id, IdNavigation = user };
-
+                    //TODO: dodać dodawanie roli
                     _patRepository.Insert(newPatient);
                     _repository.Save();
 
@@ -104,32 +106,67 @@ namespace Lekarzowo.Controllers
         [HttpPost("Login")]
         public ActionResult<Person> LoginUser(UserLoginDTO current)
         {
+            Person storedPerson = _repository.GetByEmail(current.Email);
             try
             {
-                Person stored = _repository.GetByEmailWithRoles(current.Email);
+                
+
+                var storedUserRoles = _userRolesRepository.GetAll(storedPerson.Id);
+                var shortRoleData = new List<object>();
+                if (storedUserRoles != null)
+                {
+                    foreach (var uRole in storedUserRoles)
+                    {
+                        shortRoleData.Add(new
+                        {
+                            RoleId = uRole.RoleId,
+                            RoleName = uRole.Role.Name
+                        });
+                    }
+                }
+                else
+                {
+                    //TODO: Opisać w dokumentacji, że im niższy id roli, tym niższy przydział
+                    //TODO: Role lekarz i pacjent autoryzować na podstawie rekordów w tabelach Patient i Doctor, a nie roli. Dopiero role admin, etc. na podstawie UserRoles
+                    var leastImportantRole = _userRolesRepository.GetAll().First();
+                    _userRolesRepository.Insert(new Userroles()
+                    {
+                        RoleId = leastImportantRole.RoleId,
+                        PersonId = storedPerson.Id,
+                        Dateofissue = DateTime.Now
+                    }); 
+                    shortRoleData.Add(new
+                    {
+                        RoleId = leastImportantRole.RoleId,
+                        RoleName = leastImportantRole.Role.Name
+                    });
+                }
+
                 //if (stored == null || !AuthService.VerifyPassword(current.Password.Value, stored.Password))
                 //{
                 //    return NotFound();
                 //}
-                var token = _jwtService.GenerateAccessToken(stored);
+
+                var token = _jwtService.GenerateAccessToken(storedPerson, storedUserRoles.First().Role);
 
                 return Accepted(new
                 {
-                    Id = stored.Id,
-                    FirstName = stored.Name,
-                    LastName = stored.Lastname,
-                    Email = stored.Email,
+                    Id = storedPerson.Id,
+                    FirstName = storedPerson.Name,
+                    LastName = storedPerson.Lastname,
+                    Email = storedPerson.Email,
+                    Roles = shortRoleData,
                     Token = token
                 });
             }
-            catch (Exception e)
+            catch (DBConcurrencyException e)
             {
                 //throw;
                 return Conflict(e.Message);
             }
         }
 
-        //POST: api/People/ChangePassword
+        //POST: /api/people/changeactiverole?roleToActivateId=1
         [HttpPost("[action]")]
         public ActionResult<Person> ChangePassword(UserChangePasswordDTO current)
         {
@@ -153,34 +190,48 @@ namespace Lekarzowo.Controllers
             return BadRequest();
         }
 
+        //POST: api/People/ChangeActiveRole
+        [HttpPost("[action]")]
+        public ActionResult<Person> ChangeActiveRole(decimal roleToActivateId)
+        {
+            var personId = GetUserIdFromToken();
+            var newRole = _userRolesRepository.GetByID(personId, roleToActivateId);
+
+            if (newRole != null)
+            {
+                Person storedPerson = _repository.GetByID(personId);
+                var newToken = _jwtService.GenerateAccessToken(storedPerson, newRole.Role);
+                return Ok(new {Token = newToken});
+            }
+            return BadRequest();
+        }
+
+
         // PUT: api/People
         [HttpPut]
         public ActionResult Edit(Person edited)
         {
             var id = GetUserIdFromToken();
-            if (ModelState.IsValid)
+            if (id == edited.Id && _repository.Exists(id))
             {
-                if (id == edited.Id && _repository.Exists(id))
-                {
-                    var userToEdit = _repository.GetByID(id);
-                    userToEdit.Name = edited.Name;
-                    userToEdit.Lastname = edited.Lastname;
-                    userToEdit.Pesel = edited.Pesel;
-                    userToEdit.Email = edited.Email.ToLower();
-                    userToEdit.Birthdate = edited.Birthdate;
-                    userToEdit.Gender = edited.Gender;
+                var userToEdit = _repository.GetByID(id);
+                userToEdit.Name = edited.Name;
+                userToEdit.Lastname = edited.Lastname;
+                userToEdit.Pesel = edited.Pesel;
+                userToEdit.Email = edited.Email.ToLower();
+                userToEdit.Birthdate = edited.Birthdate;
+                userToEdit.Gender = edited.Gender;
 
+                try
+                {
                     _repository.Update(userToEdit);
-                    try
-                    {
-                        _repository.Save();
-                    }
-                    catch (DbUpdateConcurrencyException e)
-                    {
-                        return StatusCode(503, e.Message);
-                    }
-                    return Ok();
+                    _repository.Save();
                 }
+                catch (DbUpdateConcurrencyException e)
+                {
+                    return StatusCode(503, e.Message);
+                }
+                return Ok();
             }
             return BadRequest();
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Lekarzowo.DataAccessLayer.Models
 {
@@ -15,6 +16,7 @@ namespace Lekarzowo.DataAccessLayer.Models
         public string Lastname { get; set; }
         public DateTime Birthdate { get; set; }
         public string Email { get; set; }
+        [JsonIgnore]
         public string Password { get; set; }
         public string Gender { get; set; }
         public string Pesel { get; set; }
