@@ -28,17 +28,17 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
         public IEnumerable<Userroles> GetAll()
         {
-            return _context.Userroles.ToList();
+            return _context.Userroles.OrderBy(x => x.RoleId).ToList();
         }
 
         public IEnumerable<Userroles> GetAll(decimal PersonId)
         {
-            return _context.Userroles.Where(x => x.PersonId == PersonId).ToList();
+            return _context.Userroles.Include(x => x.Role).Where(x => x.PersonId == PersonId).OrderBy(x => x.RoleId).ToList();
         }
 
         public Userroles GetByID(decimal PersonId, decimal RoleId)
         {
-            return _context.Userroles.FirstOrDefault(x => x.PersonId == PersonId && x.RoleId == RoleId);
+            return _context.Userroles.Include(x => x.Role).FirstOrDefault(x => x.PersonId == PersonId && x.RoleId == RoleId);
         }
 
         public void Insert(Userroles role)

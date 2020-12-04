@@ -4,6 +4,7 @@ import sicknessSign from './images/SicknessSign.svg';
 import doctorDraw from './images/DoctorDraw.svg';
 import ProfileUserEdit from './ProfileUserEdit.js';
 import ProfileSickness from './ProfileSickness.js';
+import ProfileMedicine from './ProfileMedicine.js';
 import UserService from './services/UserService.js';
 
 class Profile extends React.Component {
@@ -11,9 +12,11 @@ constructor(props){
   super(props);
   this.onClickEditUser = this.onClickEditUser.bind(this);
   this.onClickSickShow = this.onClickSickShow.bind(this);
+  this.onClickMedShow = this.onClickMedShow.bind(this);
   this.state = {
     isEditUser: true,
     isSickShow: false,
+    isMedShow: false,
     user: {
       name: "",
       lastname: "",
@@ -27,7 +30,8 @@ onClickEditUser(event) {
   event.preventDefault();
   this.setState({
     isEditUser: true,
-    isSickShow: false
+    isSickShow: false,
+    isMedShow: false
   });
   console.log("klik");
 }
@@ -36,7 +40,17 @@ onClickSickShow(event) {
   event.preventDefault();
   this.setState({
     isEditUser: false,
-    isSickShow: true
+    isSickShow: true,
+    isMedShow: false
+  });
+}
+
+onClickMedShow(event) {
+  event.preventDefault();
+  this.setState({
+    isEditUser: false,
+    isSickShow: false,
+    isMedShow: true
   });
 }
 
@@ -118,10 +132,11 @@ componentDidMount(){
       <div className = 'pofile-menu'>
         <a className = {"profile-menu-part " + (this.state.isEditUser ? 'menu-show' : '')} onClick = {this.onClickEditUser}>Dane Osobowe</a>
         <a className = {"profile-menu-part " + (this.state.isSickShow ? 'menu-show' : '')} onClick = {this.onClickSickShow}>Przebyte Choroby</a>
-        <a className = 'profile-menu-part'>Przyjmowane Leki</a>
+        <a className = {"profile-menu-part " + (this.state.isMedShow ? 'menu-show' : '')} onClick = {this.onClickMedShow}>Przyjmowane Leki</a>
       </div>
       {this.state.isEditUser && <ProfileUserEdit />}
       {this.state.isSickShow && <ProfileSickness />}
+      {this.state.isMedShow && <ProfileMedicine />}
       </div>
       </div>
 

@@ -57,7 +57,7 @@ class Login extends React.Component {
         if(response.status >= 400){
           this.snackbarRef.current.openSnackBar('Złe dane logowania');
         }else{
-          this.props.history.push('/dashboard');
+          this.props.history.push('/');
           window.location.reload();
         }
       }

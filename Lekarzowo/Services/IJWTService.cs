@@ -9,7 +9,7 @@ namespace Lekarzowo.Services
 {
     public interface IJWTService
     {
-        string GenerateAccessToken(Person person);
+        string GenerateAccessToken(Person person, Role activeRole);
         string GenerateRefreshToken(string currentToken);
     }
 }

@@ -131,6 +131,13 @@ namespace Lekarzowo
                     options.UseOracle(Configuration.GetConnectionString("DefaultConnection"));
                 });
 
+<<<<<<< HEAD
+=======
+            services.AddMvc()
+                .AddJsonOptions(
+                    options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
+>>>>>>> 433790ac43ffe62913d9ac5ca5da11cf56c75b78
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -109,6 +109,16 @@ class UserService {
     }).then(response => response.json());
   }
 
+  getUserMedicineHistory(id) {
+    if(id === undefined){
+      id = 141
+    }
+    return fetch(url + 'UIComponents/TakenMedicines/' + id, {
+      headers: authHeader()
+    }).then(response => response.json());
+
+  }
+
 }
 
 export default new UserService();
