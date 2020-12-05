@@ -23,7 +23,7 @@ namespace Lekarzowo.Controllers
         }
 
         /// <summary>
-        /// TODO: GetAll powinna zwracać wszystkie historie przyjmowanego leku przez danego pacjenta. Wszystkie leki gdzie Idpacjenta = IllnessHistory.PatientId mniej więcej.
+        /// TODO: GetAllAdditional powinna zwracać wszystkie historie przyjmowanego leku przez danego pacjenta. Wszystkie leki gdzie Idpacjenta = IllnessHistory.PatientId mniej więcej.
         /// </summary>
         /// <param name="IllnessHistoryId"></param>
         /// <returns></returns>

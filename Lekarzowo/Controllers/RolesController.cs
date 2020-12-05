@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 
 namespace Lekarzowo.Controllers
@@ -34,6 +35,7 @@ namespace Lekarzowo.Controllers
         {
             return Ok(await _repository.GetAllByName(name, limit, skip));
         }
+
 
         // GET: api/Roles/5
         [HttpGet("{id}")]
