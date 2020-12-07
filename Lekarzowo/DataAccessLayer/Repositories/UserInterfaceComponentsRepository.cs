@@ -1,11 +1,10 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Lekarzowo.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lekarzowo.Services;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
@@ -98,7 +97,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
         public async Task<IEnumerable<object>> IllnessAndMedicinesDetails(decimal PatientId, decimal IllnessId)
         {
-            //return await _context.Patient.Where(p => p.Id == PatientId)
+            //return await _context.Patient.Where(p => p.Id == patientId)
             //    .Select(x => new
             //    {
             //        patientId = x.Id,
@@ -106,7 +105,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             //        patientLastname = x.IdNavigation.Lastname,
 
             //        ilnesses = _context.Illnesshistory
-            //        .Where(w => w.PatientId == PatientId)
+            //        .Where(w => w.patientId == patientId)
             //        .Where(z => z.IllnessId == IllnessId)
             //        .Select(w => new
             //        {
@@ -118,7 +117,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             //        }),
 
             //        oldIllnesses = _context.Oldillnesshistory
-            //        .Where(w => w.PatientId == PatientId)
+            //        .Where(w => w.patientId == patientId)
             //        .Where(z => z.IllnessId == IllnessId)
             //        .Select(w => new
             //        {
@@ -309,48 +308,63 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         #endregion
 
 
-
-        public async Task<IEnumerable<object>> IllnessesHistory(decimal PatientId)
+        //TODO: Przenieść do odpowiednich kontrolerów.
+        public async Task<IEnumerable<object>> IllnessesHistory(decimal patientId, int? limit, int? skip)
         {
-            return await _context.Illnesshistory.Where(x => x.PatientId == PatientId)
+            var query = _context.Illnesshistory.Where(x => x.PatientId == patientId)
                 .Select(x => new
                 {
                     IllnessName = x.Illness.Name,
                     DiagnoseDate = x.Visit.Reservation.Starttime,
                     CureDate = x.Curedate
                 })
-                .OrderBy(x => x.DiagnoseDate)
-                .ToListAsync();
+                .OrderBy(x => x.DiagnoseDate);
+
+            var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
+
+            return await orderedQuery.ToListAsync();
         }
 
-        public async Task<IEnumerable<object>> PerformedTreatments(decimal VisitId)
+        public async Task<IEnumerable<object>> PerformedTreatments(decimal visitId, int? limit, int? skip)
         {
-            return await _context.Treatmentonvisit.Where(x => x.VisitId == VisitId)
+            var query = _context.Treatmentonvisit.Where(x => x.VisitId == visitId)
                 .Select(x => new
                 {
                     TreatmentName = x.Treatment.Name,
                     TreatmentDescription = x.Description
-                }).ToListAsync();
+                }).OrderBy(x => x.TreatmentName);
+
+            var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
+
+            return await orderedQuery.ToListAsync();
         }
 
-        public async Task<IEnumerable<object>> PrescribedMedicines(decimal VisitId)
+        public async Task<IEnumerable<object>> PrescribedMedicines(decimal visitId, int? limit, int? skip)
         {
-            return await _context.Medicinehistory.Where(x => x.Illnesshistory.VisitId == VisitId)
+            var query = _context.Medicinehistory.Where(x => x.Illnesshistory.VisitId == visitId)
                 .Select(x => new
                 {
                     MedicineName = x.Medicine.Name,
                     MedicineDosage = x.Description
-                }).ToListAsync();
+                }).OrderBy(x => x.MedicineName).ThenBy(x => x.MedicineDosage);
+
+            var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
+
+            return await orderedQuery.ToListAsync();
         }
 
-        public async Task<IEnumerable<object>> TakenMedicines(decimal PatientId)
+        public async Task<IEnumerable<object>> TakenMedicines(decimal patientId, int? limit, int? skip)
         {
-            return await _context.Medicinehistory.Where(x => x.Illnesshistory.PatientId == PatientId)
+            var query = _context.Medicinehistory.Where(x => x.Illnesshistory.PatientId == patientId)
                 .Select(x => new
                 {
                     MedicineName = x.Medicine.Name,
                     MedicineDosage = x.Description
-                }).ToListAsync();
+                }).OrderBy(x => x.MedicineName).ThenBy(x => x.MedicineDosage);
+
+            var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
+
+            return await orderedQuery.ToListAsync();
         }
 
     }

@@ -52,52 +52,49 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// TODO: POŁĄCZYĆ TW DWIE METODY W JEDNĄ I W JAKIŚ SPOSÓB ZMIENIAĆ ZNAK "<" NA ">=" W ZALEŻNOSCI OD ZAPYTANIA
-        /// </summary>
-        /// <param name="PatientId"></param>
-        /// <param name="limit"></param>
-        /// <param name="skip"></param>
-        /// <returns></returns>
-        public async Task<IEnumerable<object>> RecentReservations(decimal PatientId, int? limit, int? skip)
+        public async Task<IEnumerable<object>> RecentReservations(decimal PatientId, bool showUpcomingInstead, int? limit, int? skip)
         {
-            var query = _context.Reservation
-                .Where(x => x.PatientId == PatientId)
-                .Where(x => x.Starttime < DateTime.Now)
-                .Select(x => new
-                {
-                    ReservationId = x.Id,
-                    DoctorSpecialization = x.Doctor.Speciality.Name,
-                    ReservationStartTime = x.Starttime,
-                    ReservationEndTime = x.Endtime,
-                    DoctorName = x.Doctor.IdNavigation.Name,
-                    DoctorLastname = x.Doctor.IdNavigation.Lastname,
-                }).OrderByDescending(x => x.ReservationStartTime);
+            var reservationTypeQuery = _context.Reservation
+                .Where(x => x.PatientId == PatientId);
 
-            var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
+            var anonymousTypeQuery = reservationTypeQuery.Select(x => new
+            {
+                ReservationId = x.Id,
+                DoctorSpecialization = x.Doctor.Speciality.Name,
+                ReservationStartTime = x.Starttime,
+                ReservationEndTime = x.Endtime,
+                DoctorName = x.Doctor.IdNavigation.Name,
+                DoctorLastname = x.Doctor.IdNavigation.Lastname,
+            });
+
+            IOrderedQueryable<object> orderedQuery = showUpcomingInstead 
+                ? anonymousTypeQuery.Where(x => x.ReservationStartTime >= DateTime.Now).OrderBy(x => x.ReservationStartTime) 
+                : anonymousTypeQuery.Where(x => x.ReservationStartTime < DateTime.Now).OrderByDescending(x => x.ReservationStartTime);
+
+            var trimmedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, orderedQuery);
             
-            return await orderedQuery.ToListAsync(); ;
+            return await trimmedQuery.ToListAsync(); ;
         }
 
-        public async Task<IEnumerable<object>> UpcomingReservations(decimal PatientId, int? limit, int? skip)
-        {
-            var query = _context.Reservation
-                .Where(x => x.PatientId == PatientId)
-                .Where(x => x.Starttime >= DateTime.Now)
-                .Select(x => new
-                {
-                    ReservationId = x.Id,
-                    DoctorSpecialization = x.Doctor.Speciality.Name,
-                    ReservationStartTime = x.Starttime,
-                    ReservationEndTime = x.Endtime,
-                    DoctorName = x.Doctor.IdNavigation.Name,
-                    DoctorLastname = x.Doctor.IdNavigation.Lastname,
-                }).OrderBy(x => x.ReservationStartTime);
+        //public async Task<IEnumerable<object>> UpcomingReservations(decimal PatientId, int? limit, int? skip)
+        //{
+        //    var query = _context.Reservation
+        //        .Where(x => x.PatientId == PatientId)
+        //        .Where(x => x.Starttime >= DateTime.Now)
+        //        .Select(x => new
+        //        {
+        //            ReservationId = x.Id,
+        //            DoctorSpecialization = x.Doctor.Speciality.Name,
+        //            ReservationStartTime = x.Starttime,
+        //            ReservationEndTime = x.Endtime,
+        //            DoctorName = x.Doctor.IdNavigation.Name,
+        //            DoctorLastname = x.Doctor.IdNavigation.Lastname,
+        //        }).OrderBy(x => x.ReservationStartTime);
 
-            var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
+        //    var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
 
-            return await orderedQuery.ToListAsync(); ;
-        }
+        //    return await orderedQuery.ToListAsync(); ;
+        //}
 
         public async Task<IEnumerable<Reservation>> IsReservationOverlappingWithAnother(decimal localId, decimal doctorId, DateTime start, DateTime end)
         {

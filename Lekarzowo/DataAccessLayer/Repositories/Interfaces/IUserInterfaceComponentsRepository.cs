@@ -20,38 +20,34 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         Task<IEnumerable<object>> VisitList(decimal PatientId);
         #endregion
 
-        //dashboard + ekran wizyt
-
-        //ekran wizyt
-
-        //szczegóły wizyty
-
-        /// <summary>
-        /// All medicines taken by the patient.
-        /// </summary>
-        /// <param name="PatientId"></param>
-        /// <returns></returns>
-        Task<IEnumerable<object>> TakenMedicines(decimal PatientId);
-
-        /// <summary>
-        /// Medicines prescribed during current visit
-        /// </summary>
-        /// <param name="VisitId"></param>
-        /// <returns></returns>
-        Task<IEnumerable<object>> PrescribedMedicines(decimal VisitId);
-
-        /// <summary>
-        /// Treatments performed during current visit
-        /// </summary>
-        /// <param name="VisitId"></param>
-        /// <returns></returns>
-        Task<IEnumerable<object>> PerformedTreatments(decimal VisitId);
 
         /// <summary>
         /// Most recent illnesses of a given patient.
         /// </summary>
-        /// <param name="PatientId"></param>
+        /// <param name="patientId"></param>
+        
         /// <returns></returns>
-        Task<IEnumerable<object>> IllnessesHistory(decimal PatientId);
+        Task<IEnumerable<object>> IllnessesHistory(decimal patientId, int? limit, int? skip);
+
+        /// <summary>
+        /// Medicines prescribed during current visit
+        /// </summary>
+        /// <param name="visitId"></param>
+        /// <returns></returns>
+        Task<IEnumerable<object>> PrescribedMedicines(decimal visitId, int? limit, int? skip);
+
+        /// <summary>
+        /// Treatments performed during current visit
+        /// </summary>
+        /// <param name="visitId"></param>
+        /// <returns></returns>
+        Task<IEnumerable<object>> PerformedTreatments(decimal visitId, int? limit, int? skip);
+
+        /// <summary>
+        /// All medicines taken by the patient.
+        /// </summary>
+        /// <param name="patientId"></param>
+        /// <returns></returns>
+        Task<IEnumerable<object>> TakenMedicines(decimal patientId, int? limit, int? skip);
     }
 }

@@ -33,18 +33,21 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// <param name="Limit"></param>
         /// <param name="Skip"></param>
         /// <returns></returns>
-        Task<IEnumerable<object>> UpcomingReservations(decimal PatientId, int? Limit, int? Skip);
+        //Task<IEnumerable<object>> UpcomingReservations(decimal PatientId, int? Limit, int? Skip);
 
         //ekran wizyt
 
         /// <summary>
-        /// List of recent visits sorted from most recent. Limit the number od loaded items. Optionally skip given number of rows for pagination.
+        /// Returns IEnumerable<object> of recent visits sorted from most recent.
+        /// If bool argument is true, method will instead return upcoming reservations sorted from the nearest to furthest in date.
+        /// Limit the number od loaded items. Optionally skip given number of rows for pagination.
         /// </summary>
         /// <param name="PatientId"></param>
+        /// <param name="showUpcomingInstead"></param>
         /// <param name="Limit"></param>
         /// <param name="Skip"></param>
         /// <returns></returns>
-        Task<IEnumerable<object>> RecentReservations(decimal PatientId, int? Limit, int? Skip);
+        Task<IEnumerable<object>> RecentReservations(decimal PatientId, bool showUpcomingInstead, int? Limit, int? Skip);
 
         /// <summary>
         /// Returns true if none of existing reservations in a given local and with a given doctor overlap passed reservation.
