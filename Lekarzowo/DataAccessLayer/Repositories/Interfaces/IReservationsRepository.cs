@@ -12,7 +12,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
     {
 
         /// <summary>
-        /// Returns all reservations in db meeting given criteria. All criteria are optional.
+        /// Returns all reservations in db meeting given criteria. AllByPatientId criteria are optional.
         /// </summary>
         /// <returns></returns>
         IEnumerable<Reservation> AllByOptionalCriteria(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end);

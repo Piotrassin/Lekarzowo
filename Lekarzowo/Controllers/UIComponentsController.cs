@@ -87,34 +87,5 @@ namespace Lekarzowo.Controllers
 
         #endregion
 
-
-        // GET: api/UIComponents/IllnessesHistory/1
-        [HttpGet("[action]/{PatientId}")]
-        public async Task<ActionResult<IEnumerable<object>>> IllnessesHistory(decimal patientId, int? limit, int? skip)
-        {
-            return Ok(await _repository.IllnessesHistory(patientId, limit, skip));
-        }
-
-        // GET: api/UIComponents/TakenMedicines/1
-        [HttpGet("[action]/{PatientId}")]
-        public async Task<ActionResult<IEnumerable<object>>> TakenMedicines(decimal patientId, int? limit, int? skip)
-        {
-            return Ok(await _repository.TakenMedicines(patientId, limit, skip));
-        }
-
-        // GET: api/UIComponents/PerformedTreatments/1
-        [HttpGet("[action]/{VisitId}")]
-        public async Task<ActionResult<IEnumerable<object>>> PerformedTreatments(decimal visitId, int? limit, int? skip)
-        {
-            return Ok(await _repository.PerformedTreatments(visitId, limit, skip));
-        }
-
-        // GET: api/UIComponents/PrescribedMedicines/1
-        [HttpGet("[action]/{VisitId}")]
-        public async Task<ActionResult<IEnumerable<object>>> PrescribedMedicines(decimal visitId, int? limit, int? skip)
-        {
-            return Ok(await _repository.PrescribedMedicines(visitId, limit, skip));
-        }
-
     }
 }

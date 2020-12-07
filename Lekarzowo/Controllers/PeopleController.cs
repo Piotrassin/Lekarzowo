@@ -36,7 +36,7 @@ namespace Lekarzowo.Controllers
             _customUserRolesService = urolesService;
         }
 
-        // GET: api/People/All
+        // GET: api/People/AllByPatientId
         [Authorize(Roles = "admin")]
         [HttpGet("[action]")]
         public ActionResult<IEnumerable<Person>> All()

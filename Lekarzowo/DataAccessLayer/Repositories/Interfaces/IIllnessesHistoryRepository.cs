@@ -12,5 +12,14 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     {
         IEnumerable<Illnesshistory> GetAll(decimal PatientId);
         bool Exists(Illnesshistory illnesshistory);
+
+        /// <summary>
+        /// Most recent diagnosed illnesses of a given patient.
+        /// </summary>
+        /// <param name="patientId"></param>
+        /// <param name="limit"></param>
+        /// <param name="skip"></param>
+        /// <returns></returns>
+        Task<IEnumerable<object>> IllnessesHistory(decimal patientId, int? limit, int? skip);
     }
 }

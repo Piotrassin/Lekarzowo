@@ -9,5 +9,13 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
     public interface ITreatmentsOnVisitRepository : IBaseRepository<Treatmentonvisit>
     {
+        /// <summary>
+        /// Treatments performed during current visit
+        /// </summary>
+        /// <param name="visitId"></param>
+        /// <param name="limit"></param>
+        /// <param name="skip"></param>
+        /// <returns></returns>
+        Task<IEnumerable<object>> PerformedTreatments(decimal visitId, int? limit, int? skip);
     }
 }

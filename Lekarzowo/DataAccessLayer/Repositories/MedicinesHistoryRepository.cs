@@ -6,9 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lekarzowo.Services;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
+    /// <summary>
+    /// TODO: Zmienić na dziedziczenie po BaseRepository żeby nie poweielać CRUDa
+    /// </summary>
     public class MedicinesHistoryRepository : IMedicinesHistoryRepository
     {
         private readonly ModelContext _context;
@@ -56,6 +60,35 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         {
             _context.Medicinehistory.Attach(t);
             _context.Entry(t).State = EntityState.Modified;
+        }
+
+        public async Task<IEnumerable<object>> TakenMedicines(decimal patientId, int? limit, int? skip)
+        {
+            var query = _context.Medicinehistory.Where(x => x.Illnesshistory.PatientId == patientId)
+                .Where(x => x.Finishdate == null)
+                .Select(x => new
+                {
+                    MedicineName = x.Medicine.Name,
+                    MedicineDosage = x.Description
+                }).OrderBy(x => x.MedicineName).ThenBy(x => x.MedicineDosage);
+
+            var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
+
+            return await orderedQuery.ToListAsync();
+        }
+
+        public async Task<IEnumerable<object>> PrescribedMedicines(decimal visitId, int? limit, int? skip)
+        {
+            var query = _context.Medicinehistory.Where(x => x.Illnesshistory.VisitId == visitId)
+                .Select(x => new
+                {
+                    MedicineName = x.Medicine.Name,
+                    MedicineDosage = x.Description
+                }).OrderBy(x => x.MedicineName).ThenBy(x => x.MedicineDosage);
+
+            var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
+
+            return await orderedQuery.ToListAsync();
         }
     }
 }

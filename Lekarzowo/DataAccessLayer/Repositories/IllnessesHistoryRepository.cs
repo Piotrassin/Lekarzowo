@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lekarzowo.Services;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
@@ -28,6 +29,22 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 x.PatientId == illnesshistory.PatientId &&
                 x.IllnessId == illnesshistory.IllnessId &&
                 x.VisitId == illnesshistory.VisitId);
+        }
+
+        public async Task<IEnumerable<object>> IllnessesHistory(decimal patientId, int? limit, int? skip)
+        {
+            var query = _context.Illnesshistory.Where(x => x.PatientId == patientId)
+                .Select(x => new
+                {
+                    IllnessName = x.Illness.Name,
+                    DiagnoseDate = x.Visit.Reservation.Starttime,
+                    CureDate = x.Curedate
+                })
+                .OrderBy(x => x.DiagnoseDate);
+
+            var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
+
+            return await orderedQuery.ToListAsync();
         }
     }
 }

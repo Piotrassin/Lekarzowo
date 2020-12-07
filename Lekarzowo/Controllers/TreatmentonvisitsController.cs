@@ -43,6 +43,13 @@ namespace Lekarzowo.Controllers
             return treatmentonvisit;
         }
 
+        // GET: api/Treatmentonvisits/PerformedTreatments?visitId=1&limit=10&skip=1
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> PerformedTreatments(decimal visitId, int? limit, int? skip)
+        {
+            return Ok(await _repository.PerformedTreatments(visitId, limit, skip));
+        }
+
         // PUT: api/Treatmentonvisits/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTreatmentonvisit(decimal id, Treatmentonvisit treatmentonvisit)
