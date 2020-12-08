@@ -57,8 +57,17 @@ class Login extends React.Component {
         if(response.status >= 400){
           this.snackbarRef.current.openSnackBar('Złe dane logowania');
         }else{
-          this.props.history.push('/');
-          window.location.reload();
+          console.log(response.currentRole.roleName);
+          if(response.currentRole.roleName == 'doctor'){
+              this.props.history.push('/dashboardDoctor');
+              console.log("doctor");
+          }
+          else{
+              this.props.history.push('/');
+              console.log("not doctor");
+          }
+          console.log("Wyszlo Login");
+          //window.location.reload();
         }
       }
     );
@@ -111,11 +120,12 @@ class Login extends React.Component {
             />
             <br/>
             <button disabled={isEnabled} className = "login-button">Zaloguj</button>
+            <a
+            onClick = {this.onRegisterRequest}
+            class = 'white-link'
+            >Nie masz konta?
+            </a>
           </form>
-          <button
-          onClick = {this.onRegisterRequest}
-          >Nie masz konta?
-          </button>
         </div>
         <Snackbar ref = {this.snackbarRef} />
       </div>

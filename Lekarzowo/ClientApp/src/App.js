@@ -7,7 +7,8 @@ import VisitDetails from './VisitDetails.js';
 import AddVisit from './AddVisit';
 import Visits from './Visits';
 import Profile from './Profile';
-import AuthorizedRoute from './AuthorizedRoute.js';
+import DashboardDoctor from './doctorView/DashboardDoctor.js';
+import  { AuthorizedRoute } from './AuthorizedRoute.js';
 
 
 import {
@@ -31,8 +32,9 @@ class App extends React.Component {
         <Route exact path="/signup" component={RegisterContainer}/>
         <Route exact path="/visits" component={Visits}/>
         <Route exact path="/" component={MainContainer}/>
-        <Route exact path="/addVisit" component={AddVisit}/>
+        <AuthorizedRoute exact path="/addVisit" component={AddVisit} roles={'user'} />
         <Route exact path="/myProfile" component={Profile}/>
+        <AuthorizedRoute path="/dashboardDoctor" component={DashboardDoctor} roles={'doctor'} />
         <Route path="/visit" render={(routeProps) => (
               <VisitDetails {...routeProps}/>
           )}/>

@@ -3,7 +3,8 @@ import med from './images/medicine_img.png';
 import writer from './images/Writer.png';
 import bottle from './images/Bottle.png';
 import UserService from './services/UserService.js'
-import AuthService from './authentication/AuthService.js'
+import AuthService from './authentication/AuthService.js';
+import DownArrow from './images/DownArrow.svg';
 import './Main.css';
 import {
   Route,
@@ -11,13 +12,15 @@ import {
   HashRouter,
   Redirect
 } from "react-router-dom";
+import RoleButton from './components/RoleButton.js';
+
 
 
 class Dashboard extends React.Component {
   constructor(props){
       super(props);
       this.state = {
-        visit_arr: []
+        visit_arr: [],
       };
     this.getVisits = this.getVisits.bind(this);
   }
@@ -89,6 +92,7 @@ class Dashboard extends React.Component {
       <div className ="dashboard">
       <div className = "headline-container">
         <b className = "headline">{user.firstName} {user.lastName}</b>
+        <RoleButton history= {this.props.history}/>
       </div>
       <div className = "dash-container">
         <div className = "hello-container">

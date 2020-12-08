@@ -1,16 +1,18 @@
 import React from "react"
-import med from './images/medicine_img.png';
-import writer from './images/Writer.png';
-import bottle from './images/Bottle.png';
-import UserService from './services/UserService.js'
-import AuthService from './authentication/AuthService.js'
-import './Main.css';
+import med from '../images/medicine_img.png';
+import writer from '../images/Writer.png';
+import bottle from '../images/Bottle.png';
+import UserService from '../services/UserService.js'
+import Menu from '../Menu.js';
+import AuthService from '../authentication/AuthService.js'
+import '../Main.css';
 import {
   Route,
   NavLink,
   HashRouter,
   Redirect
 } from "react-router-dom";
+import RoleButton from '../components/RoleButton.js';
 
 
 class Dashboard extends React.Component {
@@ -86,9 +88,12 @@ class Dashboard extends React.Component {
     var visits = this.getVisits();
     const user = JSON.parse(localStorage.getItem("userData"));
     return (
+      <div className = 'container'>
+      <Menu history= {this.props.history}/>
       <div className ="dashboard">
       <div className = "headline-container">
         <b className = "headline">DOCTORSITE</b>
+        <RoleButton history= {this.props.history}/>
       </div>
       <div className = "dash-container">
         <div className = "hello-container">
@@ -137,7 +142,7 @@ class Dashboard extends React.Component {
         </div>
       </div>
       </div>
-
+</div>
     );
   }
 }

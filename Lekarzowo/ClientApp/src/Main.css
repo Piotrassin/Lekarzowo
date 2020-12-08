@@ -240,7 +240,10 @@ overflow: scroll;
 .headline-container {
   margin-left: 30px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 .row-container {
   width: 95%;
@@ -309,7 +312,7 @@ overflow: scroll;
   background-color: #9E3030;
 }
 .dashboard {
-
+z-index: 3;
 }
 .dash-container {
   display: grid;
@@ -1064,4 +1067,14 @@ align-items: center;
 
 .textField {
   width: 100%;
+}
+.btn-roles {
+
+}
+.white-link {
+  color: white;
+  text-decoration: underline;
+}
+.white-link:hover {
+  cursor: pointer;
 }
