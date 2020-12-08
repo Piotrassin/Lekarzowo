@@ -27,6 +27,17 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         Task<IEnumerable<Reservation>> AllInProgressByLocal(decimal LocalId, DateTime start, DateTime end);
 
         /// <summary>
+        /// Returns a list of reservations for a given doctor in a given local happening between start and end dates.
+        /// If no boundary dates were given, reservations happening on upcoming week starting from current date are returned.
+        /// </summary>
+        /// <param name="doctorId"></param>
+        /// <param name="localId"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        Task<IEnumerable<object>> DoctorScheduleList(decimal doctorId, decimal localId, DateTime? start, DateTime? end);
+
+        /// <summary>
         /// Upcoming visits sorted from nearest to furthest. Limit the number od loaded items. Optionally skip given number of rows for pagination.
         /// </summary>
         /// <param name="PatientId"></param>
@@ -35,7 +46,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// <returns></returns>
         //Task<IEnumerable<object>> UpcomingReservations(decimal PatientId, int? Limit, int? Skip);
 
-        //ekran wizyt
 
         /// <summary>
         /// Returns IEnumerable<object> of recent visits sorted from most recent.

@@ -21,9 +21,15 @@ namespace Lekarzowo.Validators
 
             RuleFor(x => x.LocalId).SetValidator(new BaseIdValidator<Local>(locRepo, "Niepoprawne dane lokalu."));
 
-            RuleFor(x => x.From).SetValidator(new DateTimeValidator());
+            RuleFor(x => x.From)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty().WithMessage("Pole nie może być puste.")
+                .Must(DateTimeValidator.BeInTheFuture);
 
-            RuleFor(x => x.To).SetValidator(new DateTimeValidator());
+            RuleFor(x => x.To)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty().WithMessage("Pole nie może być puste.")
+                .Must(DateTimeValidator.BeInTheFuture);
 
             RuleFor(x => x)
                 .Cascade(CascadeMode.Stop)
