@@ -20,6 +20,17 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         /// <param name="limit"></param>
         /// <param name="skip"></param>
         /// <returns></returns>
-        Task<IEnumerable<object>> IllnessesHistory(decimal patientId, int? limit, int? skip);
+        Task<IEnumerable<object>> AllByPatientId(decimal patientId, int? limit, int? skip);
+
+        /// <summary>
+        /// Illnesses diagnosed on a given visit, ordered alphabetically.
+        /// </summary>
+        /// <param name="visitId"></param>
+        /// <param name="limit"></param>
+        /// <param name="skip"></param>
+        /// <returns></returns>
+        Task<IEnumerable<object>> AllByVisitId(decimal visitId, int? limit, int? skip);
+
+
     }
 }

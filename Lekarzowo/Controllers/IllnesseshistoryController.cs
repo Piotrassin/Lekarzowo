@@ -57,11 +57,25 @@ namespace Lekarzowo.Controllers
             return illnesshistory.ToList();
         }
 
+        // GET: api/Illnesseshistory/AllByVisitId?visitId=1&limit=10&skip=1
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> AllByVisitId(decimal visitId, int? limit, int? skip)
+        {
+            var illnesshistory = await _repository.AllByVisitId(visitId, limit, skip);
+
+            if (illnesshistory == null)
+            {
+                return NotFound();
+            }
+
+            return  illnesshistory.ToList();
+        }
+
         // GET: api/Illnesseshistory/PatientHistory?patientId=1&limit=10&skip=2
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> PatientHistory(decimal patientId, int? limit, int? skip)
         {
-            return Ok(await _repository.IllnessesHistory(patientId, limit, skip));
+            return Ok(await _repository.AllByPatientId(patientId, limit, skip));
         }
 
         // PUT: api/Illnesseshistory/5
