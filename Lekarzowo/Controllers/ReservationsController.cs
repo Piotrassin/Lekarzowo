@@ -161,6 +161,13 @@ namespace Lekarzowo.Controllers
 
         #endregion
 
+        // GET: api/Reservations/DoctorScheduleList?doctorId=1&localId=1&start=2020-05-10&end=2026-05-20
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> DoctorScheduleList(decimal doctorId, decimal localId, DateTime? start, DateTime? end)
+        {
+            return Ok(await _repository.DoctorScheduleList(doctorId, localId, start, end));
+        }
+
         // GET: api/Reservations/Upcoming?PatientId=1&Limit=5&Skip=2
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> Upcoming(decimal patientId, int? limit, int? skip)

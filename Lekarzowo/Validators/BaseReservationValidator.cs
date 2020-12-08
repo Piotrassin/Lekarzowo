@@ -32,10 +32,14 @@ namespace Lekarzowo.Validators
                 .Must(x => x.Value == 0).WithMessage("Niepoprawny stan wizyty (odwołana).");
 
             RuleFor(x => x.Starttime)
-                .SetValidator(dateTimeValidator);
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty().WithMessage("Pole nie może być puste.")
+                .Must(DateTimeValidator.BeInTheFuture);
 
             RuleFor(x => x.Endtime)
-                .SetValidator(dateTimeValidator);
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty().WithMessage("Pole nie może być puste.")
+                .Must(DateTimeValidator.BeInTheFuture);
 
             RuleFor(x => x)
                 .Cascade(CascadeMode.Stop)

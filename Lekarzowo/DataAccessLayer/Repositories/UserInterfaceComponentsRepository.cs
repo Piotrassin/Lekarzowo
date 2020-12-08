@@ -45,26 +45,26 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 }).ToListAsync();
         }
 
-        public async Task<IEnumerable<object>> DoctorSchedule(decimal DoctorId, decimal LocalId)
-        {
-            return await _context.Reservation.Where(d => d.DoctorId == DoctorId && d.Room.LocalId == LocalId)
-                .Select(s => new
-                {
-                    reservationId = s.Id,
-                    reservationStartTime = s.Starttime,
-                    reservationEndTime = s.Endtime,
-                    reservationIsCanceled = s.Canceled,
-                    patientId = s.Patient.Id,
-                    patientName = s.Patient.IdNavigation.Name,
-                    patientLastname = s.Patient.IdNavigation.Lastname,
-                    roomNumber = s.Room.Number,
-                    localName = s.Room.Local.Name,
-                    localStreetName = s.Room.Local.Streetname,
-                    localStreetNumber = s.Room.Local.Streetnumber,
-                    localBlockNumber = s.Room.Local.Blocknumber,
-                    cityName = s.Room.Local.City.Name
-                }).ToListAsync();
-        }
+        //public async Task<IEnumerable<object>> DoctorSchedule(decimal DoctorId, decimal LocalId)
+        //{
+        //    return await _context.Reservation.Where(d => d.DoctorId == DoctorId && d.Room.LocalId == LocalId)
+        //        .Select(s => new
+        //        {
+        //            reservationId = s.Id,
+        //            reservationStartTime = s.Starttime,
+        //            reservationEndTime = s.Endtime,
+        //            reservationIsCanceled = s.Canceled,
+        //            patientId = s.Patient.Id,
+        //            patientName = s.Patient.IdNavigation.Name,
+        //            patientLastname = s.Patient.IdNavigation.Lastname,
+        //            roomNumber = s.Room.Number,
+        //            localName = s.Room.Local.Name,
+        //            localStreetName = s.Room.Local.Streetname,
+        //            localStreetNumber = s.Room.Local.Streetnumber,
+        //            localBlockNumber = s.Room.Local.Blocknumber,
+        //            cityName = s.Room.Local.City.Name
+        //        }).ToListAsync();
+        //}
 
         public async Task<IEnumerable<object>> DoctorsList(decimal? SpecializationId, decimal? CityId)
         {           
