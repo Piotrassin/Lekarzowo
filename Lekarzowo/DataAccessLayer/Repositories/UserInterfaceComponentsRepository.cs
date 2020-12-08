@@ -1,11 +1,10 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Lekarzowo.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lekarzowo.Services;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
@@ -98,7 +97,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
         public async Task<IEnumerable<object>> IllnessAndMedicinesDetails(decimal PatientId, decimal IllnessId)
         {
-            //return await _context.Patient.Where(p => p.Id == PatientId)
+            //return await _context.Patient.Where(p => p.Id == patientId)
             //    .Select(x => new
             //    {
             //        patientId = x.Id,
@@ -106,7 +105,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             //        patientLastname = x.IdNavigation.Lastname,
 
             //        ilnesses = _context.Illnesshistory
-            //        .Where(w => w.PatientId == PatientId)
+            //        .Where(w => w.patientId == patientId)
             //        .Where(z => z.IllnessId == IllnessId)
             //        .Select(w => new
             //        {
@@ -118,7 +117,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             //        }),
 
             //        oldIllnesses = _context.Oldillnesshistory
-            //        .Where(w => w.PatientId == PatientId)
+            //        .Where(w => w.patientId == patientId)
             //        .Where(z => z.IllnessId == IllnessId)
             //        .Select(w => new
             //        {
@@ -307,51 +306,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 .ToListAsync();
         }
         #endregion
-
-
-
-        public async Task<IEnumerable<object>> IllnessesHistory(decimal PatientId)
-        {
-            return await _context.Illnesshistory.Where(x => x.PatientId == PatientId)
-                .Select(x => new
-                {
-                    IllnessName = x.Illness.Name,
-                    DiagnoseDate = x.Visit.Reservation.Starttime,
-                    CureDate = x.Curedate
-                })
-                .OrderBy(x => x.DiagnoseDate)
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<object>> PerformedTreatments(decimal VisitId)
-        {
-            return await _context.Treatmentonvisit.Where(x => x.VisitId == VisitId)
-                .Select(x => new
-                {
-                    TreatmentName = x.Treatment.Name,
-                    TreatmentDescription = x.Description
-                }).ToListAsync();
-        }
-
-        public async Task<IEnumerable<object>> PrescribedMedicines(decimal VisitId)
-        {
-            return await _context.Medicinehistory.Where(x => x.Illnesshistory.VisitId == VisitId)
-                .Select(x => new
-                {
-                    MedicineName = x.Medicine.Name,
-                    MedicineDosage = x.Description
-                }).ToListAsync();
-        }
-
-        public async Task<IEnumerable<object>> TakenMedicines(decimal PatientId)
-        {
-            return await _context.Medicinehistory.Where(x => x.Illnesshistory.PatientId == PatientId)
-                .Select(x => new
-                {
-                    MedicineName = x.Medicine.Name,
-                    MedicineDosage = x.Description
-                }).ToListAsync();
-        }
 
     }
 }

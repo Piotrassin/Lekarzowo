@@ -122,8 +122,10 @@ namespace Lekarzowo
             services.AddScoped<IVisitsRepository, VisitsRepository>();
             services.AddScoped<IWorkingHoursRepository, WorkingHoursRepository>();
             services.AddScoped<IUserInterfaceComponentsRepository, UserInterfaceComponentsRepository>();
-            services.AddScoped<IUserRolesRepository, UserRolesRepository>();
+            services.AddScoped<IStandardUserRolesRepository, StandardUserRolesRepository>();
             services.AddScoped<IRolesRepository, RolesRepository>();
+
+            services.AddScoped<ICustomUserRolesService, CustomUserRolesService>();
 
             services.AddEntityFrameworkOracle()
                 .AddDbContext<ModelContext>(options =>

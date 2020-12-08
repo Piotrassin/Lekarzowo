@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Lekarzowo.Services;
 
 namespace Lekarzowo.Controllers
 {
@@ -14,29 +16,40 @@ namespace Lekarzowo.Controllers
     [ApiController]
     public class UserrolesController : ControllerBase
     {
-        private readonly IUserRolesRepository _repository;
-        public UserrolesController(IUserRolesRepository repository)
+        private readonly IStandardUserRolesRepository _repository;
+        private readonly ICustomUserRolesService _rolesService;
+
+        public UserrolesController(IStandardUserRolesRepository repository, ICustomUserRolesService roleService)
         {
             _repository = repository;
+            _rolesService = roleService;
+        }
+
+
+        // GET: api/Userroles/GetNonStandard/1
+        [HttpGet("[action]/{PersonId}")]
+        public async Task<ActionResult<IEnumerable<String>>> GetNonStandard(decimal PersonId)
+        {
+            return Ok(_rolesService.GatherAllUserRoles(PersonId));
         }
 
         // GET: api/Userroles
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Userroles>>> GetUserroles()
+        public async Task<ActionResult<IEnumerable<Userroles>>> GetAllUserroles()
         {
             return Ok(_repository.GetAll());
         }
 
         // GET: api/Userroles/1
         [HttpGet("{PersonId}")]
-        public async Task<ActionResult<IEnumerable<Userroles>>> GetUserroles(decimal PersonId)
+        public async Task<ActionResult<IEnumerable<Userroles>>> GetAllUserroles(decimal PersonId)
         {
             return Ok(_repository.GetAll(PersonId));
         }
 
         // GET: api/Userroles/5/1
         [HttpGet("{PersonId}/{RoleId}")]
-        public async Task<ActionResult<Userroles>> GetUserroles(decimal PersonId, decimal RoleId)
+        public async Task<ActionResult<Userroles>> GetAllUserroles(decimal PersonId, decimal RoleId)
         {
             var userroles = _repository.GetByID(PersonId, RoleId);
 
@@ -47,6 +60,7 @@ namespace Lekarzowo.Controllers
 
             return userroles;
         }
+
 
         /// <summary>
         /// Edytowanie przypisanych ról do użytkownika w sumie nie ma sensu, bo i tak nie powinno się zmieniać dat,
@@ -110,7 +124,7 @@ namespace Lekarzowo.Controllers
                 }
             }
 
-            return CreatedAtAction("GetUserroles", new { id = userroles.PersonId }, userroles);
+            return CreatedAtAction("GetNonStandard", new { id = userroles.PersonId }, userroles);
         }
 
         // DELETE: api/Userroles/5
@@ -133,5 +147,7 @@ namespace Lekarzowo.Controllers
         {
             return _repository.Exists(PersonId, RoleId);
         }
+
+
     }
 }

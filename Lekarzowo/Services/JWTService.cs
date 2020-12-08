@@ -17,14 +17,15 @@ namespace Lekarzowo.Services
     public class JWTService : IJWTService
     {
         private readonly SecretSettings _settings;
-        private readonly IUserRolesRepository _userRoles;
+        private readonly IStandardUserRolesRepository _standardUserRoles;
 
-        public JWTService(IOptions<SecretSettings> secretSettings, IUserRolesRepository roles)
+        public JWTService(IOptions<SecretSettings> secretSettings, IStandardUserRolesRepository roles)
         {
             _settings = secretSettings.Value;
-            _userRoles = roles;
+            _standardUserRoles = roles;
         }
 
+        //TODO: Prawdopodobnie do usunięcia
         public string GenerateAccessToken(Person person, Role activeRole)
         {
             //TODO: Docelowo sekret do tworzenia podpisu powinien być pobierany z appsettings.json
@@ -47,6 +48,29 @@ namespace Lekarzowo.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        public string GenerateAccessToken(Person person, string activeRole)
+        {
+            //TODO: Docelowo sekret do tworzenia podpisu powinien być pobierany z appsettings.json
+            //var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.Secret));
+
+            //Dev
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("super sekretny sekret, którego nikt nie może nigdy poznać, bo przypał"));
+
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
+
+            var claims = new List<Claim>();
+            claims.Add(new Claim("UserId", person.Id.ToString()));
+            claims.Add(new Claim(ClaimTypes.Role, activeRole));
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(30),
+                signingCredentials: credentials);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
 
         public string GenerateRefreshToken(string currentToken)
         {

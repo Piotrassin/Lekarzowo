@@ -20,38 +20,5 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         Task<IEnumerable<object>> VisitList(decimal PatientId);
         #endregion
 
-        //dashboard + ekran wizyt
-
-        //ekran wizyt
-
-        //szczegóły wizyty
-
-        /// <summary>
-        /// All medicines taken by the patient.
-        /// </summary>
-        /// <param name="PatientId"></param>
-        /// <returns></returns>
-        Task<IEnumerable<object>> TakenMedicines(decimal PatientId);
-
-        /// <summary>
-        /// Medicines prescribed during current visit
-        /// </summary>
-        /// <param name="VisitId"></param>
-        /// <returns></returns>
-        Task<IEnumerable<object>> PrescribedMedicines(decimal VisitId);
-
-        /// <summary>
-        /// Treatments performed during current visit
-        /// </summary>
-        /// <param name="VisitId"></param>
-        /// <returns></returns>
-        Task<IEnumerable<object>> PerformedTreatments(decimal VisitId);
-
-        /// <summary>
-        /// Most recent illnesses of a given patient.
-        /// </summary>
-        /// <param name="PatientId"></param>
-        /// <returns></returns>
-        Task<IEnumerable<object>> IllnessesHistory(decimal PatientId);
     }
 }

@@ -24,16 +24,16 @@ namespace Lekarzowo.Controllers
 
         // GET: api/Illnesseshistory
         [HttpGet]
-        public ActionResult<IEnumerable<Illnesshistory>> GetIllnesshistories(decimal id)
+        public ActionResult<IEnumerable<Illnesshistory>> GetIllnesshistories()
         {
             return _repository.GetAll().ToList();
         }
 
-        // GET: api/Illnesseshistory/5
-        [HttpGet("{id}")]
-        public ActionResult<Illnesshistory> GetIllnesshistory(decimal id)
+        // GET: api/Illnesseshistory/Single/5
+        [HttpGet("[action]/{illnessId}")]
+        public ActionResult<Illnesshistory> Single(decimal illnessId)
         {
-            var illnesshistory = _repository.GetByID(id);
+            var illnesshistory = _repository.GetByID(illnessId);
 
             if(illnesshistory == null)
             {
@@ -43,9 +43,9 @@ namespace Lekarzowo.Controllers
             return illnesshistory;
         }
 
-        // GET: api/Illnesseshistory/5
-        [HttpGet("patient/{patientId}")]
-        public ActionResult<IEnumerable<Illnesshistory>> GetIllnesshistoryForPatient(decimal patientId)
+        // GET: api/Illnesseshistory/AllByPatientId/5
+        [HttpGet("[action]/{patientId}")]
+        public ActionResult<IEnumerable<Illnesshistory>> AllByPatientId(decimal patientId)
         {
             var illnesshistory = _repository.GetAll(patientId);
 
@@ -57,8 +57,29 @@ namespace Lekarzowo.Controllers
             return illnesshistory.ToList();
         }
 
+        // GET: api/Illnesseshistory/AllByVisitId?visitId=1&limit=10&skip=1
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> AllByVisitId(decimal visitId, int? limit, int? skip)
+        {
+            var illnesshistory = await _repository.AllByVisitId(visitId, limit, skip);
+
+            if (illnesshistory == null)
+            {
+                return NotFound();
+            }
+
+            return  illnesshistory.ToList();
+        }
+
+        // GET: api/Illnesseshistory/PatientHistory?patientId=1&limit=10&skip=2
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> PatientHistory(decimal patientId, int? limit, int? skip)
+        {
+            return Ok(await _repository.AllByPatientId(patientId, limit, skip));
+        }
+
         // PUT: api/Illnesseshistory/5
-        [HttpPut("{id}")]
+        [HttpPut("{illnessId}")]
         public IActionResult PutIllnesshistory(decimal id, Illnesshistory illnesshistory)
         {
             if (id != illnesshistory.Id)
@@ -106,7 +127,7 @@ namespace Lekarzowo.Controllers
         }
 
         // DELETE: api/Illnesseshistory/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{illnessId}")]
         public ActionResult<Illnesshistory> DeleteIllnesshistory(decimal id)
         {
             var illnesshistory = _repository.GetByID(id);

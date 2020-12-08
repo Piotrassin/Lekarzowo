@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class UserRolesRepository : IUserRolesRepository
+    public class StandardUserRolesRepository : IStandardUserRolesRepository
     {
         private readonly ModelContext _context;
-        public UserRolesRepository(ModelContext context)
+        public StandardUserRolesRepository(ModelContext context)
         {
             _context = context;
         }

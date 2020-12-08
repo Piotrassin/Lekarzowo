@@ -17,5 +17,23 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         void Update(Medicinehistory t);
         bool Exists(decimal IllnessHistoryId, decimal MedicineId);
         void Save();
+
+        /// <summary>
+        /// AllByPatientId medicines taken by the patient.
+        /// </summary>
+        /// <param name="patientId"></param>
+        /// <param name="limit"></param>
+        /// <param name="skip"></param>
+        /// <returns></returns>
+        Task<IEnumerable<object>> TakenMedicines(decimal patientId, int? limit, int? skip);
+
+        /// <summary>
+        /// Medicines prescribed during current visit
+        /// </summary>
+        /// <param name="visitId"></param>
+        /// <param name="limit"></param>
+        /// <param name="skip"></param>
+        /// <returns></returns>
+        Task<IEnumerable<object>> PrescribedMedicines(decimal visitId, int? limit, int? skip);
     }
 }

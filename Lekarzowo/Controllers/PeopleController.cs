@@ -13,6 +13,7 @@ using Lekarzowo.DataAccessLayer.DTO;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using System.Transactions;
 using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories;
 
 namespace Lekarzowo.Controllers
 {
@@ -22,20 +23,21 @@ namespace Lekarzowo.Controllers
     [ApiController]
     public class PeopleController : BaseController
     {
-        private readonly IPeopleRepository _repository;
         private readonly IJWTService _jwtService;
-        private readonly IPatientsRepository _patRepository;
-        private readonly IUserRolesRepository _userRolesRepository;
-        public PeopleController(IPeopleRepository repository, IJWTService jwtService, IPatientsRepository patRepository, IUserRolesRepository urolesRepo)
+        private readonly ICustomUserRolesService _customUserRolesService;
+
+        private readonly IPeopleRepository _repository;
+        private readonly IPatientsRepository _patientsRepository;
+        public PeopleController(IPeopleRepository repository, IJWTService jwtService, IPatientsRepository patientsRepository, ICustomUserRolesService urolesService)
         {
             _jwtService = jwtService;
             _repository = repository;
-            _patRepository = patRepository;
-            _userRolesRepository = urolesRepo;
+            _patientsRepository = patientsRepository;
+            _customUserRolesService = urolesService;
         }
 
-        // GET: api/People/All
-        //[Authorize(Roles = "admin")]
+        // GET: api/People/AllByPatientId
+        [Authorize(Roles = "admin")]
         [HttpGet("[action]")]
         public ActionResult<IEnumerable<Person>> All()
         {
@@ -76,7 +78,6 @@ namespace Lekarzowo.Controllers
                 if (_repository.Exists(newPerson.Email))
                 {
                     return Conflict("User with that email address already exists");
-                    //return StatusCode(409, "User with that email address already exists");
                 }
 
                 using(var transaction = new TransactionScope())
@@ -88,66 +89,115 @@ namespace Lekarzowo.Controllers
 
                     Person user = _repository.GetByEmail(newPerson.Email);
                     Patient newPatient = new Patient() { Id = user.Id, IdNavigation = user };
-                    //TODO: dodać dodawanie roli
-                    _patRepository.Insert(newPatient);
+
+                    _patientsRepository.Insert(newPatient);
                     _repository.Save();
 
                     transaction.Complete();
                 }
-                //return CreatedAtAction("GetPerson", new { id = person.Id }, person);
+                //return CreatedAtAction("GetPerson", new { personId = personId.Id }, personId);
                 return Created("", null);
             }
             return BadRequest();
             
         }
 
+
+        #region role1(rozwiązanie z redundancją)
+        ////POST: api/People/Login
+        //[AllowAnonymous]
+        //[HttpPost("Login")]
+        //public ActionResult<Person> LoginUser(UserLoginDTO current)
+        //{
+        //    Person storedPerson = _repository.GetByEmail(current.Email);
+        //    try
+        //    {
+        //        var storedUserRoles = _customUserRolesService.GetAll(storedPerson.Id);
+        //        var shortRoleData = new List<object>();
+        //        if (storedUserRoles != null)
+        //        {
+        //            foreach (var uRole in storedUserRoles)
+        //            {
+        //                shortRoleData.Add(new { RoleId = uRole.RoleId, RoleName = uRole.Role.Name });
+        //            }
+        //        }
+        //        else
+        //        {
+        //            //TODO: Opisać w dokumentacji, że im niższy personId roli, tym niższy przydział
+        //            //TODO: Role lekarz i pacjent autoryzować na podstawie rekordów w tabelach Patient i Doctor, a nie roli. Dopiero role admin, etc. na podstawie UserRoles
+        //            //TODO: Dodać kontrolę redundancji w CRUDzie doktora i pacjenta
+        //            var leastImportantRole = _customUserRolesService.GetAll().First();
+        //            _customUserRolesService.Insert(new Userroles()
+        //            {
+        //                RoleId = leastImportantRole.RoleId,
+        //                PersonId = storedPerson.Id,
+        //                Dateofissue = DateTime.Now
+        //            }); 
+        //            shortRoleData.Add(new
+        //            {
+        //                RoleId = leastImportantRole.RoleId,
+        //                RoleName = leastImportantRole.Role.Name
+        //            });
+        //        }
+        //        //if (stored == null || !AuthService.VerifyPassword(current.Password.Value, stored.Password))
+        //        //{
+        //        //    return NotFound();
+        //        //}
+
+        //        var token = _jwtService.GenerateAccessToken(storedPerson, storedUserRoles.First().Role);
+
+        //        return Accepted(new
+        //        {
+        //            Id = storedPerson.Id,
+        //            FirstName = storedPerson.Name,
+        //            LastName = storedPerson.Lastname,
+        //            Email = storedPerson.Email,
+        //            Roles = shortRoleData,
+        //            Token = token
+        //        });
+        //    }
+        //    catch (DBConcurrencyException e)
+        //    {
+        //        //throw;
+        //        return Conflict(e.Message);
+        //    }
+        //}
+
+        ////POST: api/People/ChangeActiveRole
+        //[HttpPost("[action]")]
+        //public ActionResult<Person> ChangeActiveRole(decimal roleToActivateId)
+        //{
+        //    var personId = GetUserIdFromToken();
+        //    var newRole = _customUserRolesService.GetByID(personId, roleToActivateId);
+
+        //    if (newRole != null)
+        //    {
+        //        Person storedPerson = _repository.GetByID(personId);
+        //        var newToken = _jwtService.GenerateAccessToken(storedPerson, newRole.Role);
+        //        return Ok(new { Token = newToken });
+        //    }
+        //    return BadRequest();
+        //}
+        #endregion
+
+
+        #region role2(rozwiazanie hybrydowe)
         //POST: api/People/Login
         [AllowAnonymous]
         [HttpPost("Login")]
-        public ActionResult<Person> LoginUser(UserLoginDTO current)
+        public async Task<ActionResult<Person>> LoginUser(UserLoginDTO current)
         {
             Person storedPerson = _repository.GetByEmail(current.Email);
             try
             {
-                
-
-                var storedUserRoles = _userRolesRepository.GetAll(storedPerson.Id);
-                var shortRoleData = new List<object>();
-                if (storedUserRoles != null)
+                var storedUserRoles = await _customUserRolesService.GatherAllUserRoles(storedPerson.Id);
+                if (storedUserRoles.Count < 1)
                 {
-                    foreach (var uRole in storedUserRoles)
-                    {
-                        shortRoleData.Add(new
-                        {
-                            RoleId = uRole.RoleId,
-                            RoleName = uRole.Role.Name
-                        });
-                    }
-                }
-                else
-                {
-                    //TODO: Opisać w dokumentacji, że im niższy id roli, tym niższy przydział
-                    //TODO: Role lekarz i pacjent autoryzować na podstawie rekordów w tabelach Patient i Doctor, a nie roli. Dopiero role admin, etc. na podstawie UserRoles
-                    var leastImportantRole = _userRolesRepository.GetAll().First();
-                    _userRolesRepository.Insert(new Userroles()
-                    {
-                        RoleId = leastImportantRole.RoleId,
-                        PersonId = storedPerson.Id,
-                        Dateofissue = DateTime.Now
-                    }); 
-                    shortRoleData.Add(new
-                    {
-                        RoleId = leastImportantRole.RoleId,
-                        RoleName = leastImportantRole.Role.Name
-                    });
+                    //TODO: Każdy użytkownik musi mieć rolę. Jak nie ma to trzeba ręcznie dodać np. przez API, albo przez bazę.
+                    return UnprocessableEntity("User has no roles.");
                 }
 
-                //if (stored == null || !AuthService.VerifyPassword(current.Password.Value, stored.Password))
-                //{
-                //    return NotFound();
-                //}
-
-                var token = _jwtService.GenerateAccessToken(storedPerson, storedUserRoles.First().Role);
+                var token = _jwtService.GenerateAccessToken(storedPerson, storedUserRoles.First());
 
                 return Accepted(new
                 {
@@ -155,7 +205,7 @@ namespace Lekarzowo.Controllers
                     FirstName = storedPerson.Name,
                     LastName = storedPerson.Lastname,
                     Email = storedPerson.Email,
-                    Roles = shortRoleData,
+                    Roles = storedUserRoles,
                     Token = token
                 });
             }
@@ -166,7 +216,25 @@ namespace Lekarzowo.Controllers
             }
         }
 
-        //POST: /api/people/changeactiverole?roleToActivateId=1
+        //POST: api/People/ChangeActiveRole
+        [HttpPost("[action]")]
+        public async Task<ActionResult<Person>> ChangeActiveRole(string roleToActivateName)
+        {
+            var personId = GetUserIdFromToken();
+            var uRoles = await _customUserRolesService.GatherAllUserRoles(personId);
+
+            if (uRoles.Count > 0 && uRoles.Contains(roleToActivateName))
+            {
+                Person storedPerson = _repository.GetByID(personId);
+                var newToken = _jwtService.GenerateAccessToken(storedPerson, roleToActivateName);
+                return Ok(new { Token = newToken });
+            }
+            return BadRequest();
+        }
+        #endregion
+
+
+        //POST: /api/people/changeactiverole?roleToActivateName=1
         [HttpPost("[action]")]
         public ActionResult<Person> ChangePassword(UserChangePasswordDTO current)
         {
@@ -189,23 +257,6 @@ namespace Lekarzowo.Controllers
             }
             return BadRequest();
         }
-
-        //POST: api/People/ChangeActiveRole
-        [HttpPost("[action]")]
-        public ActionResult<Person> ChangeActiveRole(decimal roleToActivateId)
-        {
-            var personId = GetUserIdFromToken();
-            var newRole = _userRolesRepository.GetByID(personId, roleToActivateId);
-
-            if (newRole != null)
-            {
-                Person storedPerson = _repository.GetByID(personId);
-                var newToken = _jwtService.GenerateAccessToken(storedPerson, newRole.Role);
-                return Ok(new {Token = newToken});
-            }
-            return BadRequest();
-        }
-
 
         // PUT: api/People
         [HttpPut]
@@ -252,6 +303,6 @@ namespace Lekarzowo.Controllers
             return person;
         }
 
-
+       
     }
 }

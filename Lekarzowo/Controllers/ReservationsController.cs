@@ -163,32 +163,32 @@ namespace Lekarzowo.Controllers
 
         // GET: api/Reservations/Upcoming?PatientId=1&Limit=5&Skip=2
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> Upcoming(decimal PatientId = 0, int Limit = 10, int Skip = 0)
+        public async Task<ActionResult<IEnumerable<object>>> Upcoming(decimal patientId, int? limit, int? skip)
         {
-            return Ok(await _repository.UpcomingReservations(PatientId, Limit, Skip));
+            return Ok(await _repository.RecentReservations(patientId, true, limit, skip));
         }
 
         // GET: api/Reservations/Recent?PatientId=1&Limit=5&Skip=2
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> Recent(decimal PatientId = 0, int Limit = 10, int Skip = 0)
+        public async Task<ActionResult<IEnumerable<object>>> Recent(decimal patientId, int? limit, int? skip)
         {
-            return Ok(await _repository.RecentReservations(PatientId, Limit, Skip));
+            return Ok(await _repository.RecentReservations(patientId, false, limit, skip));
         }
 
         // GET: api/reservations/possibleappointments?CityId=1&SpecId=1&DoctorId=1
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> PossibleAppointments(decimal? cityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end, int? limit, int? skip)
+        public async Task<ActionResult<IEnumerable<object>>> PossibleAppointments(decimal? cityId, decimal? specId, decimal? doctorId, DateTime? start, DateTime? end, int? limit, int? skip)
         {
-            if((cityId.HasValue && !SpecId.HasValue && DoctorId.HasValue)
-                || (cityId.HasValue && !SpecId.HasValue && !DoctorId.HasValue)
-                || (!cityId.HasValue && SpecId.HasValue && DoctorId.HasValue)
-                || (!cityId.HasValue && !SpecId.HasValue && !DoctorId.HasValue))
+            if((cityId.HasValue && !specId.HasValue && doctorId.HasValue)
+                || (cityId.HasValue && !specId.HasValue && !doctorId.HasValue)
+                || (!cityId.HasValue && specId.HasValue && doctorId.HasValue)
+                || (!cityId.HasValue && !specId.HasValue && !doctorId.HasValue))
             {
                 return BadRequest("Niepoprawne kryteria wyszukiwania");
             }
 
-            IEnumerable<Reservation> allReservations = _repository.AllByOptionalCriteria(cityId, SpecId, DoctorId, start, end);
-            IEnumerable<Workinghours> workinghours = _workHoursRepository.GetAllFutureWorkHours(cityId, SpecId, DoctorId, start, end);
+            IEnumerable<Reservation> allReservations = _repository.AllByOptionalCriteria(cityId, specId, doctorId, start, end);
+            IEnumerable<Workinghours> workinghours = _workHoursRepository.GetAllFutureWorkHours(cityId, specId, doctorId, start, end);
 
             var slotList = CalcPossibleAppointments(allReservations, workinghours);
 

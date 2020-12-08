@@ -23,7 +23,7 @@ namespace Lekarzowo.Controllers
         }
 
         /// <summary>
-        /// TODO: GetAll powinna zwracać wszystkie historie przyjmowanego leku przez danego pacjenta. Wszystkie leki gdzie Idpacjenta = IllnessHistory.PatientId mniej więcej.
+        /// TODO: GetAllAdditional powinna zwracać wszystkie historie przyjmowanego leku przez danego pacjenta. Wszystkie leki gdzie Idpacjenta = IllnessHistory.PatientId mniej więcej.
         /// </summary>
         /// <param name="IllnessHistoryId"></param>
         /// <returns></returns>
@@ -57,6 +57,20 @@ namespace Lekarzowo.Controllers
             }
 
             return medicinehistory;
+        }
+
+        // GET: api/Medicinehistories/TakenMedicines?patientId=1&limit=10&skip=2
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> TakenMedicines(decimal patientId, int? limit, int? skip)
+        {
+            return Ok(await _repository.TakenMedicines(patientId, limit, skip));
+        }
+
+        // GET: api/Medicinehistories/PrescribedMedicines?visitId=1&limit=10&skip=1
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> PrescribedMedicines(decimal visitId, int? limit, int? skip)
+        {
+            return Ok(await _repository.PrescribedMedicines(visitId, limit, skip));
         }
 
         // PUT: api/Medicinehistories/5
