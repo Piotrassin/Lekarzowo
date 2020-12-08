@@ -21,7 +21,7 @@ handleRedirect(){
   var role = AuthService.getUserCurrentRole();
   var redirectPath = "/";
   switch(role){
-    case 'user': redirectPath = "/"; break;
+    case 'patient': redirectPath = "/"; break;
     case 'doctor': redirectPath = '/dashboardDoctor'; break;
     case 'admin': redirectPath = '/'; break;
   }
@@ -38,11 +38,9 @@ onchangeUserRole(event){
 
 handleCloseRoleBtn(event) {
   event.preventDefault();
-  this.setState({
-    value: null
-  });
 
-  AuthService.changeRole(event.currentTarget.id)
+
+ AuthService.changeRole(event.currentTarget.id)
   .then(response => {
       console.log(response.state);
       if(response.state == 0){
@@ -52,6 +50,9 @@ handleCloseRoleBtn(event) {
         console.log("Nie udało się");
       }
   })
+  this.setState({
+    value: null
+  });
 }
 
 render() {
@@ -75,11 +76,13 @@ render() {
       open={Boolean(this.state.value)}
       onClose={this.handleCloseRoleBtn}
       >
-        {AuthService.getUserRoles().map(el =>
+        {AuthService.getUserRoles().map((el,id) =>
           <MenuItem
           onClick={this.handleCloseRoleBtn}
-          id = {el.roleId}>
-            {el.roleName}
+          id = {el}
+          >
+            {el}
+
           </MenuItem>
         )}
     </Menu>

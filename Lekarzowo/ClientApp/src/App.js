@@ -32,7 +32,7 @@ class App extends React.Component {
         <Route exact path="/signup" component={RegisterContainer}/>
         <Route exact path="/visits" component={Visits}/>
         <Route exact path="/" component={MainContainer}/>
-        <AuthorizedRoute exact path="/addVisit" component={AddVisit} roles={'user'} />
+        <AuthorizedRoute exact path="/addVisit" component={AddVisit} roles={'patient'} />
         <Route exact path="/myProfile" component={Profile}/>
         <AuthorizedRoute path="/dashboardDoctor" component={DashboardDoctor} roles={'doctor'} />
         <Route path="/visit" render={(routeProps) => (

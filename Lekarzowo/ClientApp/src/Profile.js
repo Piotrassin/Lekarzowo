@@ -6,6 +6,7 @@ import ProfileUserEdit from './ProfileUserEdit.js';
 import ProfileSickness from './ProfileSickness.js';
 import ProfileMedicine from './ProfileMedicine.js';
 import UserService from './services/UserService.js';
+import AuthService from './authentication/AuthService.js';
 
 class Profile extends React.Component {
 constructor(props){
@@ -77,9 +78,11 @@ componentDidMount(){
       <div  className = 'sidebar-profile'>
         <a className = 'header-profile'>{this.state.user.name} {this.state.user.lastname}
         </a>
+
         <div className = 'status-info status-info-green'>
-          <a>Pacjent</a>
+          <a>{AuthService.getUserCurrentRole()}</a>
         </div>
+
         <div className = 'subheader-profile'>
         <a>Dane Osobiste</a>
         <hr/>

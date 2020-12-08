@@ -57,13 +57,13 @@ class AuthService {
     return JSON.parse(localStorage.getItem("userData"));
   }
 
-  async changeRole(roleId){
-    if(this.getUser().roles.length <= 1 || !this.getUser().roles.find(el => el.roleId == roleId)){
+  changeRole(roleName){
+    if(this.getUser().roles.length <= 1 || !this.getUser().roles.find(el => el == roleName)){
       return {"state": 1, "message": 'Nie masz przypisanych więcej ról!'}
     }
     console.log("Weszlo change role");
 
-    return await fetch(url + 'people/changeactiverole?roleToActivateId=' + roleId, {
+    return fetch(url + 'people/changeactiverole?roleToActivateName=' + roleName, {
       method: 'POST',
       headers: {
                 'Accept': 'application/json',
@@ -81,7 +81,7 @@ class AuthService {
       console.log(response);
       var userData  = this.getUser();
       userData.token = response.token;
-      userData.currentRole = userData.roles.find(el => el.roleId == roleId);
+      userData.currentRole = userData.roles.find(el => el == roleName);
       localStorage.setItem("userData", JSON.stringify(userData));
       return {"state": 0, "message": 'Zmieniono rolę'};
     })
@@ -98,7 +98,7 @@ class AuthService {
 
 
   getUserCurrentRole() {
-    return JSON.parse(localStorage.getItem("userData")).currentRole.roleName;
+    return JSON.parse(localStorage.getItem("userData")).currentRole;
   }
 
   getUserRoles(){

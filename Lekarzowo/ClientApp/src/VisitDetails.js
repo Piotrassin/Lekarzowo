@@ -13,6 +13,8 @@ import UserService from './services/UserService.js';
 import ReservationService from './services/ReservationService.js';
 import AuthService from './authentication/AuthService';
 
+const currentUserRole = AuthService.getUserCurrentRole();
+
 class VisitDetails extends React.Component {
   constructor(props){
     super(props);
@@ -121,6 +123,8 @@ this.getVisit();
           <div className = "active-treatments basic-container">
 
             <b className = "standard-black">Notatki lekarza (wywiad, badanie, diagnoza, zalecenia)</b>
+            <br/>
+            {currentUserRole == 'doctor' ?
             <TextField
             id="doctor-notes-input"
             label="Notatki"
@@ -128,7 +132,10 @@ this.getVisit();
             className = "textField"
             multiline
             />
-            <br/>
+
+            :
+            <div/>
+            }
             <a>{this.state.description}</a>
 
           </div>

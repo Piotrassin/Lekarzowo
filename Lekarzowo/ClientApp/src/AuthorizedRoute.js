@@ -12,8 +12,16 @@ export const AuthorizedRoute = ({ component: Component, roles, ...rest }) => (
         }
 
         // check if route is restricted by role
-        if (roles && roles.indexOf(currentUser.currentRole.roleName) === -1) {
+        if (roles && roles.indexOf(currentUser.currentRole) === -1) {
             // role not authorised so redirect to home page
+            switch(currentUser.currentRole){
+              case 'patient':
+                return <Redirect to={{ pathname: '/'}} />
+                break;
+              case 'doctor':
+                return <Redirect to={{ pathname: '/dashboardDoctor'}} />
+                break;
+            }
             return <Redirect to={{ pathname: '/'}} />
         }
 
