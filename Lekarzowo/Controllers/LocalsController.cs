@@ -29,11 +29,18 @@ namespace Lekarzowo.Controllers
             return _repository.GetAll().ToList();
         }
 
-        // GET: api/Locals/AllByName?Name=abc&limit=0&skip=0
+        // GET: api/Locals/AllByName?Name=abc&limit=10&skip=0
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<Local>>> AllByName(string name, int? limit, int? skip)
         {
             return Ok(await _repository.GetAllByName(name, limit, skip));
+        }
+
+        // GET: api/Locals/DoctorsWorkplaces?doctorId=1&limit=20&skip=0
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Local>>> DoctorsWorkplaces(decimal doctorId, int? limit, int? skip)
+        {
+            return Ok(await _repository.DoctorsWorkplaces(doctorId, limit, skip));
         }
 
         // GET: api/Locals/5
@@ -49,6 +56,8 @@ namespace Lekarzowo.Controllers
 
             return local;
         }
+
+
 
         // PUT: api/Locals/5
         [HttpPut("{id}")]
