@@ -57,27 +57,27 @@ namespace Lekarzowo.Controllers
             {
                 return BadRequest();
             }
-
-            if (_repository.GetByID(city.Id) != null)
-            {
-                _repository.Update(city);
-            }
-
             try
             {
-                _repository.Save();
+                if (_repository.Exists(city.Name))
+                {
+                    return Conflict("City with that name already exists");
+                }
+                if (_repository.Exists(city.Id))
+                {
+                    _repository.Update(city);
+                    _repository.Save();
+                    return Ok();
+                }
             }
             catch (DbUpdateConcurrencyException e)
             {
-                if (!CityExists(city.Id))
+                if (!_repository.Exists(city.Id))
                 {
                     return NotFound();
                 }
-                else
-                {
-                    //throw;
-                    return StatusCode(503, e.Message);
-                }
+                //throw;
+                return StatusCode(500, e.Message);
             }
 
             return NoContent();
@@ -87,7 +87,7 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public IActionResult PostCity(City city)
         {
-            if(_repository.Exists(city))
+            if(_repository.Exists(city.Name))
             {
                 return Conflict("City with that name already exists");
             }
@@ -111,11 +111,6 @@ namespace Lekarzowo.Controllers
              _repository.Save();
 
             return city;
-        }
-
-        private bool CityExists(decimal id)
-        {
-            return _repository.Exists(id);
         }
     }
 }

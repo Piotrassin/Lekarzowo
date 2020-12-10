@@ -12,9 +12,5 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     {
         public CitiesRepository(ModelContext context) : base(context) { }
 
-        public bool Exists(City city)
-        {
-            return _context.City.Any(x => x.Name == city.Name);
-        }
     }
 }
