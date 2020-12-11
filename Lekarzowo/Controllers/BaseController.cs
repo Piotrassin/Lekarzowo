@@ -23,5 +23,20 @@ namespace Lekarzowo.Controllers
         {
             return User.Claims.First(x => x.Type == ClaimTypes.Role).Value;
         }
+
+        protected bool IsAdmin()
+        {
+            return GetActiveRoleFromToken() == "admin";
+        }
+
+        protected bool IsDoctor()
+        {
+            return GetActiveRoleFromToken() == CustomUserRolesService.DoctorRoleName;
+        }
+
+        protected bool IsPatient()
+        {
+            return GetActiveRoleFromToken() == CustomUserRolesService.PatientRoleName;
+        }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.Repositories;
 using Microsoft.AspNetCore.Authorization;
 
@@ -19,12 +20,10 @@ namespace Lekarzowo.Controllers
     public class DoctorsController : BaseController
     {
         private readonly IDoctorsRepository _repository;
-        private readonly IPeopleRepository _peopleRepository;
 
-        public DoctorsController(IDoctorsRepository repository, IPeopleRepository pepRepo)
+        public DoctorsController(IDoctorsRepository repository)
         {
             _repository = repository;
-            _peopleRepository = pepRepo;
         }
 
         // GET: api/Doctors
@@ -57,9 +56,13 @@ namespace Lekarzowo.Controllers
         }
 
         // PUT: api/Doctors/5
-        [HttpPut]
-        public IActionResult PutDoctor(Doctor doctor)
+        [HttpPut("{id}")]
+        public IActionResult PutDoctor(decimal id, Doctor doctor)
         {
+            if (id != doctor.Id)
+            {
+                return BadRequest();
+            }
             try
             {
                 if (_repository.Exists(doctor.Id))
@@ -82,17 +85,14 @@ namespace Lekarzowo.Controllers
         {
             try
             {
-                if (!_peopleRepository.Exists(doctor.Id)) return BadRequest("Person doesn't exist");
-                if (_repository.Exists(doctor.Id)) return BadRequest(("That doctor already exists"));
-
                 _repository.Insert(doctor);
                 _repository.Save();
-                return Created("", doctor);
             }
             catch (DbUpdateException e)
             {
                 return StatusCode(500, e.Message);
             }
+            return Created("", doctor);
         }
 
         // DELETE: api/Doctors/5

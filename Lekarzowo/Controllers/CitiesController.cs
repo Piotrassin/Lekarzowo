@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.DataAccessLayer.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lekarzowo.Controllers
 {
+    [Authorize(Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class CitiesController : ControllerBase
@@ -23,6 +25,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Cities
+        [Authorize(Roles = "patient,doctor,admin")]
         [HttpGet]
         public  ActionResult<IEnumerable<City>> GetCities()
         {
@@ -30,6 +33,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Cities/AllByName?Name=abc&limit=0&skip=0
+        [Authorize(Roles = "patient,doctor,admin")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<City>>> AllByName(string name, int? limit, int? skip)
         {
@@ -37,6 +41,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Cities/5
+        [Authorize(Roles = "patient,doctor,admin")]
         [HttpGet("{id}")]
         public ActionResult<City> GetCity(decimal id)
         {
@@ -57,30 +62,25 @@ namespace Lekarzowo.Controllers
             {
                 return BadRequest();
             }
+            if (_repository.Exists(city.Name))
+            {
+                return Conflict("City with that name already exists");
+            }
+
             try
             {
-                if (_repository.Exists(city.Name))
-                {
-                    return Conflict("City with that name already exists");
-                }
                 if (_repository.Exists(city.Id))
                 {
                     _repository.Update(city);
                     _repository.Save();
                     return Ok();
                 }
+                return NotFound();
             }
             catch (DbUpdateConcurrencyException e)
             {
-                if (!_repository.Exists(city.Id))
-                {
-                    return NotFound();
-                }
-                //throw;
                 return StatusCode(500, e.Message);
             }
-
-            return NoContent();
         }
 
         // POST: api/Cities
@@ -91,8 +91,16 @@ namespace Lekarzowo.Controllers
             {
                 return Conflict("City with that name already exists");
             }
-            _repository.Insert(city);
-            _repository.Save();
+
+            try
+            {
+                _repository.Insert(city);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, e.Message);
+            }
 
             return Created("", city);
         }
@@ -108,7 +116,7 @@ namespace Lekarzowo.Controllers
             }
 
             _repository.Delete(city);
-             _repository.Save();
+            _repository.Save();
 
             return city;
         }

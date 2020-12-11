@@ -8,12 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.DataAccessLayer.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lekarzowo.Controllers
 {
+    [Authorize(Roles = "patient,doctor,admin")]
     [Route("api/[controller]")]
     [ApiController]
-    public class IllnesseshistoryController : ControllerBase
+    public class IllnesseshistoryController : BaseController
     {
         private readonly IIllnessesHistoryRepository _repository;
 
@@ -23,6 +25,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Illnesseshistory
+        [Authorize(Roles = "doctor,admin")]
         [HttpGet]
         public ActionResult<IEnumerable<Illnesshistory>> GetIllnesshistories()
         {
@@ -30,11 +33,15 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Illnesseshistory/Single/5
-        [HttpGet("[action]/{illnessId}")]
-        public ActionResult<Illnesshistory> Single(decimal illnessId)
+        [HttpGet("[action]/{illnessHistoryId}")]
+        public ActionResult<Illnesshistory> Single(decimal illnessHistoryId)
         {
-            var illnesshistory = _repository.GetByID(illnessId);
+            if (IsPatient() && _repository.GetAll(GetUserIdFromToken()).All(x => x.Id != illnessHistoryId))
+            {
+                return BadRequest();
+            }
 
+            var illnesshistory = _repository.GetByID(illnessHistoryId);
             if(illnesshistory == null)
             {
                 return NotFound();
@@ -47,13 +54,14 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]/{patientId}")]
         public ActionResult<IEnumerable<Illnesshistory>> AllByPatientId(decimal patientId)
         {
+            if (IsPatientAskingForElsesData(patientId)) return BadRequest();
+
             var illnesshistory = _repository.GetAll(patientId);
 
             if (illnesshistory == null)
             {
                 return NotFound();
             }
-
             return illnesshistory.ToList();
         }
 
@@ -61,6 +69,11 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> AllByVisitId(decimal visitId, int? limit, int? skip)
         {
+            if (IsPatient() && _repository.GetAll(GetUserIdFromToken()).All(x => x.VisitId != visitId))
+            {
+                return BadRequest();
+            }
+
             var illnesshistory = await _repository.AllByVisitId(visitId, limit, skip);
 
             if (illnesshistory == null)
@@ -75,44 +88,37 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> PatientHistory(decimal patientId, int? limit, int? skip)
         {
+            if (IsPatientAskingForElsesData(patientId)) return BadRequest();
+
             return Ok(await _repository.AllByPatientId(patientId, limit, skip));
         }
 
         // PUT: api/Illnesseshistory/5
-        [HttpPut("{illnessId}")]
-        public IActionResult PutIllnesshistory(decimal id, Illnesshistory illnesshistory)
+        [Authorize(Roles = "doctor,admin")]
+        [HttpPut("{illnessHistoryId}")]
+        public IActionResult PutIllnesshistory(decimal illnessHistoryId, Illnesshistory illnesshistory)
         {
-            if (id != illnesshistory.Id)
+            if (illnessHistoryId != illnesshistory.Id)
             {
                 return BadRequest();
             }
 
-            if (_repository.GetByID(illnesshistory.Id) != null)
-            {
-                _repository.Update(illnesshistory);
-            }
-
             try
             {
-                _repository.Save();
+                if (!IllnesshistoryExists(illnesshistory.Id)) return NotFound();
+
+                _repository.Update(illnesshistory);
+                _repository.Save(); 
+                return NoContent();
             }
             catch (DbUpdateConcurrencyException e)
             {
-                if (!IllnesshistoryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    //throw;
-                    return StatusCode(503, e.Message);
-                }
+                return StatusCode(500, e.Message);
             }
-
-            return NoContent();
         }
 
         // POST: api/Illnesseshistory
+        [Authorize(Roles = "doctor,admin")]
         [HttpPost]
         public ActionResult<Illnesshistory> PostIllnesshistory(Illnesshistory illnesshistory)
         {
@@ -120,17 +126,24 @@ namespace Lekarzowo.Controllers
             {
                 return Conflict("That illness history already exists");
             }
-            _repository.Insert(illnesshistory);
-            _repository.Save();
-
+            try
+            {
+                _repository.Insert(illnesshistory);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, e.Message);
+            }
             return Created("", illnesshistory);
         }
 
         // DELETE: api/Illnesseshistory/5
-        [HttpDelete("{illnessId}")]
-        public ActionResult<Illnesshistory> DeleteIllnesshistory(decimal id)
+        [Authorize(Roles = "doctor,admin")]
+        [HttpDelete("{illnessHistoryId}")]
+        public ActionResult<Illnesshistory> DeleteIllnesshistory(decimal illnessHistoryId)
         {
-            var illnesshistory = _repository.GetByID(id);
+            var illnesshistory = _repository.GetByID(illnessHistoryId);
             if (illnesshistory == null)
             {
                 return NotFound();
@@ -146,5 +159,11 @@ namespace Lekarzowo.Controllers
         {
             return _repository.Exists(id);
         }
+
+        private bool IsPatientAskingForElsesData(decimal patientId)
+        {
+            return IsPatient() && patientId != GetUserIdFromToken();
+        }
+
     }
 }

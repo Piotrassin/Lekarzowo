@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.DataAccessLayer.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lekarzowo.Controllers
 {
+    [Authorize(Roles = "patient,doctor,admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class LocalsController : ControllerBase
@@ -58,7 +60,7 @@ namespace Lekarzowo.Controllers
         }
 
 
-
+        [Authorize(Roles = "admin")]
         // PUT: api/Locals/5
         [HttpPut("{id}")]
         public IActionResult PutLocal(decimal id, Local local)
@@ -68,31 +70,22 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            if (_repository.GetByID(local.Id) != null)
-            {
-                _repository.Update(local);
-            }
-
             try
             {
-                _repository.Save();
+                if (!_repository.Exists(local.Id)) return NotFound();
+
+                _repository.Update(local);
+                _repository.Save(); 
+                return NoContent();
             }
             catch (DbUpdateConcurrencyException e)
             {
-                if (!LocalExists(local.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    //throw;
-                    return StatusCode(503, e.Message);
-                }
+                return StatusCode(500, e.Message);
             }
-
-            return NoContent();
         }
+
         // POST: api/Locals
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public IActionResult PostLocal(Local local)
         {
@@ -101,13 +94,21 @@ namespace Lekarzowo.Controllers
             {
                 return Conflict("That local already exists");
             }
-            _repository.Insert(local);
-            _repository.Save();
 
+            try
+            {
+                _repository.Insert(local);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, e.Message);
+            }
             return Created("", local);
         }
 
         // DELETE: api/Locals/5
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public ActionResult<Local> DeleteLocal(decimal id)
         {
