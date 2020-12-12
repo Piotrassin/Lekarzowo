@@ -74,10 +74,8 @@ namespace Lekarzowo.Controllers
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+
+                throw;
             }
 
             return NoContent();
@@ -87,13 +85,20 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public async Task<ActionResult<Treatmentonvisit>> PostTreatmentonvisit(Treatmentonvisit treatmentonvisit)
         {
-            if (TreatmentonvisitExists(treatmentonvisit.Id))
+            //TODO: poprawić sprawdzanie po zawartości, albo wcale.
+            //if (TreatmentonvisitExists(treatmentonvisit.Id))
+            //{
+            //    return Conflict("That treatment on visit already exists");
+            //} 
+            try
             {
-                return Conflict("That treatment on visit already exists");
+                _repository.Insert(treatmentonvisit);
+                _repository.Save();
             }
-            _repository.Insert(treatmentonvisit);
-            _repository.Save();
-
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, e.Message);
+            }
             return Created("", treatmentonvisit);
         }
 

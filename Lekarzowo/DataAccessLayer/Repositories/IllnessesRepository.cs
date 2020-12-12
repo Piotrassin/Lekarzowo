@@ -11,9 +11,9 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     {
         public IllnessesRepository(ModelContext context) : base(context) {}
 
-        public bool Exists(Illness illness)
-        {
-            return _context.Illness.Any(x => x.Name == illness.Name);
-        }
+        //public bool Exists(Illness illness)
+        //{
+        //    return _context.Illness.Any(x => x.Name == illness.Name);
+        //}
     }
 }

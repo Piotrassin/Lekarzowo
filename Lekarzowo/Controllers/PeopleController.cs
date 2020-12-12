@@ -236,9 +236,14 @@ namespace Lekarzowo.Controllers
 
         //POST: /api/people/changeactiverole?roleToActivateName=1
         [HttpPost("[action]")]
-        public ActionResult<Person> ChangePassword(UserChangePasswordDTO current)
+        public ActionResult<Person> ChangePassword(UserChangePasswordDTO current, decimal? userId)
         {
-            var id = GetUserIdFromToken();
+            var id = GetIdFromProperSource(userId);
+            if (id <= 1)
+            {
+                return BadRequest();
+            }
+
             var userById = _repository.GetByID(id);
             var userByEmail = _repository.GetByEmail(current.Email);
 
@@ -260,10 +265,15 @@ namespace Lekarzowo.Controllers
 
         // PUT: api/People
         [HttpPut]
-        public ActionResult Edit(Person edited)
+        public ActionResult Edit(Person edited, decimal? userId)
         {
-            var id = GetUserIdFromToken();
-            if (id == edited.Id && _repository.Exists(id))
+            var id = GetIdFromProperSource(userId);
+            if (id <= 1)
+            {
+                return BadRequest();
+            }
+
+            if (_repository.Exists(id))
             {
                 var userToEdit = _repository.GetByID(id);
                 userToEdit.Name = edited.Name;
@@ -277,21 +287,27 @@ namespace Lekarzowo.Controllers
                 {
                     _repository.Update(userToEdit);
                     _repository.Save();
+                    return Ok();
                 }
                 catch (DbUpdateConcurrencyException e)
                 {
-                    return StatusCode(503, e.Message);
+                    return StatusCode(500, e.Message);
                 }
-                return Ok();
             }
+
             return BadRequest();
         }
 
         // DELETE: api/People
         [HttpDelete]
-        public  ActionResult<Person> Delete()
+        public  ActionResult<Person> Delete(decimal? userId)
         {
-            var id = GetUserIdFromToken();
+            var id = GetIdFromProperSource(userId);
+            if (id <= 1)
+            {
+                return BadRequest();
+            }
+
             var person = _repository.GetByID(id);
             if (person == null)
             {
@@ -303,6 +319,16 @@ namespace Lekarzowo.Controllers
             return person;
         }
 
+        private decimal GetIdFromProperSource(decimal? userId)
+        {
+            if (!IsAdmin())
+            {
+                return GetUserIdFromToken();
+            }
+
+            return userId ?? 0;
+        }
        
+
     }
 }

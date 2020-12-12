@@ -90,10 +90,10 @@ namespace Lekarzowo.Controllers
         public IActionResult PostLocal(Local local)
         {
             
-            if (LocalExists(local.Id))
-            {
-                return Conflict("That local already exists");
-            }
+            //if (LocalExists(local.Id))
+            //{
+            //    return Conflict("That local already exists");
+            //}
 
             try
             {

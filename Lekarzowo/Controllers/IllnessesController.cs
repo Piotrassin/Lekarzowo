@@ -109,7 +109,7 @@ namespace Lekarzowo.Controllers
             //return CreatedAtAction("GetDoctor", new { id = doctor.Id }, doctor);
             #endregion
 
-            if (_repository.Exists(illness))
+            if (_repository.Exists(illness.Name))
             {
                 return Conflict("That illness already exists");
             }
