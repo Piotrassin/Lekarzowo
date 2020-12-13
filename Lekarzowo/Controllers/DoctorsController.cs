@@ -8,11 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Lekarzowo.Repositories;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Lekarzowo.Controllers
 {
-    //[Authorize(Roles = "admin,doctor")]
+    [Authorize(Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class DoctorsController : BaseController
@@ -32,6 +34,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Doctors/AllByName?Name=abc&limit=0&skip=0
+        [AllowAnonymous]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> AllByName(string name, int? skip, int? limit)
         {
@@ -50,83 +53,53 @@ namespace Lekarzowo.Controllers
             }
 
             return doctor;
-            //return doctor;
         }
 
         // PUT: api/Doctors/5
-        [HttpPut]
-        public IActionResult PutDoctor(Doctor doctor)
+        [HttpPut("{id}")]
+        public IActionResult PutDoctor(decimal id, Doctor doctor)
         {
-            var id = GetUserIdFromToken();
             if (id != doctor.Id)
             {
                 return BadRequest();
             }
-
-            if (_repository.GetByID(doctor.Id) != null)
-            {
-                _repository.Update(doctor);
-            }
-
             try
             {
-                _repository.Save();
+                if (_repository.Exists(doctor.Id))
+                {
+                    _repository.Update(doctor); 
+                    _repository.Save();
+                    return Ok();
+                }
+                return NotFound();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
-                if (!DoctorExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, e.Message);
             }
-
-            return NoContent();
         }
 
         // POST: api/Doctors
         [HttpPost]
         public ActionResult<Doctor> PostDoctor(Doctor doctor)
         {
-            //_context.Doctor.Add(doctor);
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (DbUpdateException)
-            //{
-            //    if (DoctorExists(doctor.Id))
-            //    {
-            //        return Conflict();
-            //    }
-            //    else
-            //    {
-            //        throw;
-            //    }
-            //}
-
-            //return CreatedAtAction("GetDoctor", new { id = doctor.Id }, doctor);
-
-            
-            if (_repository.Exists(doctor))
+            try
             {
-                return Conflict("That doctor already exists");
+                _repository.Insert(doctor);
+                _repository.Save();
             }
-            _repository.Insert(doctor);
-            _repository.Save();
-
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, e.Message);
+            }
             return Created("", doctor);
         }
 
         // DELETE: api/Doctors/5
-        [HttpDelete]
-        public ActionResult<Doctor> DeleteDoctor()
+        [HttpDelete("{doctorId}")]
+        public ActionResult<Doctor> DeleteDoctor(decimal doctorId)
         {
-            var id = GetUserIdFromToken();
-            var doctor = _repository.GetByID(id);
+            var doctor = _repository.GetByID(doctorId);
             if (doctor == null)
             {
                 return NotFound();
@@ -136,11 +109,6 @@ namespace Lekarzowo.Controllers
             _repository.Save();
 
             return doctor;
-        }
-
-        private bool DoctorExists(decimal id)
-        {
-            return _repository.Exists(id);
         }
     }
 }

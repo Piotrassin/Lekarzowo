@@ -30,5 +30,10 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         {
             return await table.Where(x => x.Name.ToLower() == name.ToLower()).FirstOrDefaultAsync();
         }
+
+        public bool Exists(string name)
+        {
+            return table.Any(x => x.Name.ToLower() == name.ToLower());
+        }
     }
 }

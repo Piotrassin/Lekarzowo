@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
-using Lekarzowo.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lekarzowo.Controllers
 {
+    [Authorize(Roles = "doctor,admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class IllnessesController : ControllerBase
@@ -51,6 +51,7 @@ namespace Lekarzowo.Controllers
         }
 
         // PUT: api/Illnesses/5
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public IActionResult PutIllness(decimal id, Illness illness)
         {
@@ -83,6 +84,7 @@ namespace Lekarzowo.Controllers
         }
 
         // POST: api/Illnesses
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public ActionResult<Doctor> PostIllness(Illness illness)
         {
@@ -107,17 +109,26 @@ namespace Lekarzowo.Controllers
             //return CreatedAtAction("GetDoctor", new { id = doctor.Id }, doctor);
             #endregion
 
-            if (_repository.Exists(illness))
+            if (_repository.Exists(illness.Name))
             {
                 return Conflict("That illness already exists");
             }
-            _repository.Insert(illness);
-            _repository.Save();
+
+            try
+            {
+                _repository.Insert(illness);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, e.Message);
+            }
 
             return Created("", illness);
         }
 
         // DELETE: api/Illnesses/5
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public ActionResult<Illness> DeleteIllness(decimal id)
         {

@@ -12,6 +12,5 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     {
         Task<Doctor> GetDoctorWithSpecialization(decimal doctorId);
         Task<IEnumerable<object>> GetAllByNameOrLastname(string name, int? skip, int? limit);
-        bool Exists(Doctor doctor);
     }
 }

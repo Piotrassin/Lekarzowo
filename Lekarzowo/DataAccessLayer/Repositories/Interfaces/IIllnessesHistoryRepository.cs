@@ -10,11 +10,22 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 {
     public interface IIllnessesHistoryRepository : IBaseRepository<Illnesshistory>
     {
+        /// <summary>
+        /// Returns a list of full IllnessHistory objects belonging to a given patient.
+        /// </summary>
+        /// <param name="PatientId"></param>
+        /// <returns></returns>
         IEnumerable<Illnesshistory> GetAll(decimal PatientId);
+
+        /// <summary>
+        /// Checks if an object already exists by comparing all attributes rather than Id.
+        /// </summary>
+        /// <param name="illnesshistory"></param>
+        /// <returns></returns>
         bool Exists(Illnesshistory illnesshistory);
 
         /// <summary>
-        /// Most recent diagnosed illnesses of a given patient.
+        /// Returns shortened versions of objects of most recent diagnosed illnesses of a given patient.
         /// </summary>
         /// <param name="patientId"></param>
         /// <param name="limit"></param>

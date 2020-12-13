@@ -10,6 +10,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 {
     public interface IIllnessesRepository : IBaseNamedEntityRepository<Illness>
     {
-        bool Exists(Illness illness);
+        //bool Exists(Illness illness);
     }
 }

@@ -12,8 +12,8 @@ namespace Lekarzowo.Services
         private readonly IStandardUserRolesRepository _repository;
         private readonly IDoctorsRepository _doctorsRepository;
         private readonly IPatientsRepository _patientsRepository;
-        public readonly string PatientRoleName = "patient";
-        public readonly string DoctorRoleName = "doctor";
+        public static readonly string PatientRoleName = "patient";
+        public static readonly string DoctorRoleName = "doctor";
 
         public CustomUserRolesService(IStandardUserRolesRepository repository, IDoctorsRepository doctorsRepository, IPatientsRepository patRepo)
         {

@@ -9,6 +9,5 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
     public interface ICitiesRepository : IBaseNamedEntityRepository<City>
     {
-        bool Exists(City city);
     }
 }

@@ -24,5 +24,10 @@ namespace Lekarzowo.Validators
             decimal value = (decimal) context.PropertyValue;
             return _repository.Exists(value);
         }
+
+        public bool NotExist(decimal id)
+        {
+            return !_repository.Exists(id);
+        }
     }
 }

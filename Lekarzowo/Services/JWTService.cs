@@ -43,7 +43,7 @@ namespace Lekarzowo.Services
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.Now.AddMinutes(90),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
