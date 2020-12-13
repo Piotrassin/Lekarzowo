@@ -1,19 +1,18 @@
-﻿using System;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.Models;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lekarzowo.Controllers
 {
+    [Authorize(Roles = "patient,doctor,admin")]
     [Route("api/[controller]")]
     [ApiController]
-    public class MedicinehistoriesController : ControllerBase
+    public class MedicinehistoriesController : BaseController
     {
         private readonly IMedicinesHistoryRepository _repository;
 
@@ -28,6 +27,7 @@ namespace Lekarzowo.Controllers
         /// <param name="IllnessHistoryId"></param>
         /// <returns></returns>
         // GET: api/Medicinehistories/1
+
         [HttpGet("{IllnessHistoryId}")]
         public ActionResult<IEnumerable<Medicinehistory>> GetMedicinehistory(decimal IllnessHistoryId)
         {
@@ -39,17 +39,11 @@ namespace Lekarzowo.Controllers
             return list;
         }
 
-
-        /// <summary>
-        /// TODO: Parametry powinny być przekazywane wewnątrz ciała, a nie w URI?
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         // GET: api/Medicinehistories/1/1
         [HttpGet("{IllnessHistoryId}/{MedicineId}")]
         public ActionResult<Medicinehistory> GetMedicinehistory(decimal IllnessHistoryId, decimal MedicineId)
         {
-            var medicinehistory = _repository.GetByID(IllnessHistoryId, MedicineId);
+            var medicinehistory = _repository.GetById(IllnessHistoryId, MedicineId);
 
             if (medicinehistory == null)
             {
@@ -74,6 +68,7 @@ namespace Lekarzowo.Controllers
         }
 
         // PUT: api/Medicinehistories/5
+        [Authorize(Roles = "admin,doctor")]
         [HttpPut("{IllnessHistoryId}/{MedicineId}")]
         public IActionResult PutMedicinehistory(decimal IllnessHistoryId, decimal MedicineId, Medicinehistory medicinehistory)
         {
@@ -107,6 +102,7 @@ namespace Lekarzowo.Controllers
         }
 
         // POST: api/Medicinehistories
+        [Authorize(Roles = "admin,doctor")]
         [HttpPost]
         public ActionResult<Medicinehistory> PostMedicinehistory(Medicinehistory medicinehistory)
         {
@@ -136,10 +132,11 @@ namespace Lekarzowo.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         // DELETE: api/Medicinehistories/5
+        [Authorize(Roles = "admin,doctor")]
         [HttpDelete("{IllnessHistoryId}/{MedicineId}")]
         public ActionResult<Medicinehistory> DeleteMedicinehistory(decimal IllnessHistoryId, decimal MedicineId)
         {
-            var medicinehistory = _repository.GetByID(IllnessHistoryId, MedicineId);
+            var medicinehistory = _repository.GetById(IllnessHistoryId, MedicineId);
             if (medicinehistory == null)
             {
                 return NotFound();

@@ -12,9 +12,9 @@ namespace Lekarzowo.Validators
 {
     public class BaseIdValidator<T> : PropertyValidator where T : class, IEntity
     {
-        private readonly IBaseRepository<T> _repository;
+        private readonly IBaseIdRepository<T> _repository;
 
-        public BaseIdValidator(IBaseRepository<T> repo, string errorMessage) : base(errorMessage)
+        public BaseIdValidator(IBaseIdRepository<T> repo, string errorMessage) : base(errorMessage)
         {
             _repository = repo;
         }

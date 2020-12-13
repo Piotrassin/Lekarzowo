@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
-    public interface IBaseNamedEntityRepository<T> : IBaseRepository<T> where T : class
+    public interface IBaseNameRepository<T> : IBaseIdRepository<T> where T : class
     {
         /// <summary>
         /// Returns a list of objects which name attributes contain given name string.

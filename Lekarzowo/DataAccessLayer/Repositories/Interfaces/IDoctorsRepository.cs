@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public interface IDoctorsRepository : IBaseRepository<Doctor>
+    public interface IDoctorsRepository : IBaseIdRepository<Doctor>
     {
         Task<Doctor> GetDoctorWithSpecialization(decimal doctorId);
         Task<IEnumerable<object>> GetAllByNameOrLastname(string name, int? skip, int? limit);

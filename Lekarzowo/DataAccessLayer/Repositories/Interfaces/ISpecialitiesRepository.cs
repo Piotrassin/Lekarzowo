@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
-    public interface ISpecialitiesRepository : IBaseNamedEntityRepository<Speciality>
+    public interface ISpecialitiesRepository : IBaseNameRepository<Speciality>
     {
     }
 }

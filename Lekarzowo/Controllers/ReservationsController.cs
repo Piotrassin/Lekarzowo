@@ -183,6 +183,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/reservations/possibleappointments?CityId=1&SpecId=1&DoctorId=1
+        //TODO:Ma zwracać też id lokalu
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> PossibleAppointments(decimal? cityId, decimal? specId, decimal? doctorId, DateTime? start, DateTime? end, int? limit, int? skip)
         {

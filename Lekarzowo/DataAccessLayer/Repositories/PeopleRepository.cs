@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.Repositories
 {
-    public class PeopleRepository : BaseNamedRepository<Person>, IDisposable, IPeopleRepository
+    public class PeopleRepository : BaseNameRepository<Person>, IDisposable, IPeopleRepository
     {
         private bool disposed = false;
         

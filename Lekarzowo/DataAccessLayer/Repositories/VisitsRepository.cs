@@ -1,35 +1,22 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Lekarzowo.Models;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class VisitsRepository : IVisitsRepository
+    public class VisitsRepository : BaseCRUDRepository<Visit>, IVisitsRepository
     {
-        private readonly ModelContext _context;
-        public VisitsRepository(ModelContext context)
-        {
-            _context = context;
-        }
-
-        public void Delete(Visit t)
-        {
-            _context.Visit.Remove(t);
-        }
+        public VisitsRepository(ModelContext context) : base(context) { }
 
         public bool Exists(decimal Id)
         {
             return _context.Visit.Any(x => x.ReservationId == Id);
         }
 
-        public IEnumerable<Visit> GetAll()
+        public new IEnumerable<Visit> GetAll()
         {
-            return _context.Visit.ToList();
+            return _context.Visit.ToList().OrderBy(x => x.ReservationId);
         }
 
         public Visit GetByID(decimal id)
@@ -37,20 +24,11 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return _context.Visit.Find(id);
         }
 
-        public void Insert(Visit t)
-        {
-            _context.Visit.Add(t);
-        }
-
-        public void Save()
-        {
-            _context.SaveChanges();
-        }
-
         public void Update(Visit t)
         {
-            _context.Visit.Attach(t);
-            _context.Entry(t).State = EntityState.Modified;
+            //_context.Visit.Attach(t);
+            var entry = _table.First(e => e.ReservationId == t.ReservationId);
+            Update(t, entry);
         }
 
     }

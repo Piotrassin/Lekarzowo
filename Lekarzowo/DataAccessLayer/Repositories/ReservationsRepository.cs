@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class ReservationsRepository : BaseRepository<Reservation>, IReservationsRepository
+    public class ReservationsRepository : BaseIdRepository<Reservation>, IReservationsRepository
     {
         public ReservationsRepository(ModelContext context) : base(context) { }
 

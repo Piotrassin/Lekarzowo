@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
-    public interface ITreatmentsOnVisitRepository : IBaseRepository<Treatmentonvisit>
+    public interface ITreatmentsOnVisitRepository : IBaseIdRepository<Treatmentonvisit>
     {
         /// <summary>
         /// Treatments performed during current visit

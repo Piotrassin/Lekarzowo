@@ -9,7 +9,7 @@ using Lekarzowo.Services;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class IllnessesHistoryRepository : BaseRepository<Illnesshistory>, IIllnessesHistoryRepository
+    public class IllnessesHistoryRepository : BaseIdRepository<Illnesshistory>, IIllnessesHistoryRepository
     {
         public IllnessesHistoryRepository(ModelContext context) : base(context) {}
 

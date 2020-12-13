@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public interface IIllnessesHistoryRepository : IBaseRepository<Illnesshistory>
+    public interface IIllnessesHistoryRepository : IBaseIdRepository<Illnesshistory>
     {
         /// <summary>
         /// Returns a list of full IllnessHistory objects belonging to a given patient.

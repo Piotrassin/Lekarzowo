@@ -92,8 +92,8 @@ namespace Lekarzowo
                 configuration.RootPath = "ClientApp/build";
             });
 
-            services.AddScoped(typeof(IBaseNamedEntityRepository<>), typeof(BaseNamedRepository<>));
-            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddScoped(typeof(IBaseNameRepository<>), typeof(BaseNameRepository<>));
+            services.AddScoped(typeof(IBaseIdRepository<>), typeof(BaseIdRepository<>));
             services.AddScoped<ICitiesRepository, CitiesRepository>();
             services.AddScoped<IDoctorsRepository, DoctorsRepository>();
             services.AddScoped<IIllnessesRepository, IllnessesRepository>();

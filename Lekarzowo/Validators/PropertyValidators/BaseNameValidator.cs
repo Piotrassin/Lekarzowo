@@ -11,9 +11,9 @@ namespace Lekarzowo.Validators.PropertyValidators
 {
     public class BaseNameValidator<T> : PropertyValidator where T : class, INamedEntity
     {
-        private readonly IBaseNamedEntityRepository<T> _repository;
+        private readonly IBaseNameRepository<T> _repository;
 
-        public BaseNameValidator(IBaseNamedEntityRepository<T> repo, string errorMessage) : base(errorMessage)
+        public BaseNameValidator(IBaseNameRepository<T> repo, string errorMessage) : base(errorMessage)
         {
             _repository = repo;
         }

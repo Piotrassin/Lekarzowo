@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public interface ILocalsRepository : IBaseNamedEntityRepository<Local>
+    public interface ILocalsRepository : IBaseNameRepository<Local>
     {
         bool Exists(Local local);
         //Task<IEnumerable<View_AddressData>> DetailsView(decimal RoomId);
