@@ -20,6 +20,30 @@ import { Dialog } from './components/Dialog.js';
 
 
 const currentUserRole = AuthService.getUserCurrentRole();
+const WhiteTextField = withStyles({
+  root: {
+    '& label.Mui-focused': {
+      color: 'white',
+    },
+    '& label': {
+      color: 'white',
+    },
+    '& .MuiOutlinedInput-input': {
+      color: 'white',
+    },
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: 'white',
+      },
+      '&:hover fieldset': {
+        borderColor: 'white',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: 'white',
+      },
+    },
+  },
+})(TextField);
 
 class VisitDetails extends React.Component {
   constructor(props){
@@ -48,6 +72,7 @@ class VisitDetails extends React.Component {
       description: "",
       clicked: {
         medicine: null,
+        descriptionMedicine: "",
         treatment: null,
         sickness: null
       }
@@ -65,6 +90,7 @@ class VisitDetails extends React.Component {
     this.handleClickAddMedicineDialogBtn = this.handleClickAddMedicineDialogBtn.bind(this);
     this.handleClickAddTreatmentDialogBtn = this.handleClickAddTreatmentDialogBtn.bind(this);
     this.handleClickAddSicknessDialogBtn = this.handleClickAddSicknessDialogBtn.bind(this);
+    this.handleChangeMedicineDescription = this.handleChangeMedicineDescription.bind(this);
   }
 
   componentDidMount() {
@@ -72,29 +98,20 @@ class VisitDetails extends React.Component {
 this.getSicknessHistory();
 this.getActiveMedicine();
 this.getVisit();
-      /*fetch('https://localhost:44360/api/visits/details/' + this.props.id)
-        .then(response => response.json())
-        .then(dataMine =>
-          this.setState({ medicineHistory: dataMine.map(item => {
-            var med_arr = item.medicineName.split(" ");
-            return {name: med_arr[0], dose: med_arr[1], medicineHistoryDescription: item.medicineHistoryDescription};
-          }),
-        sicknessHistory:  dataMine.map(item => {
 
-          return {name: item.illnessName, startDate: item.medicineHistoryStartDate, endDate:  item.medicineHistoryEndDate};
-        }),
-        treatmentHistory:  dataMine.map(item => {
 
-          return {treatmentName: item.treatmentName, treatmentOnVisitDescription: item.treatmentOnVisitDescription};
-        }),
-        name: dataMine[0].patientName,
-        surname: dataMine[0].patientLastname,
-        reservationId: dataMine[0].reservationId
-       })
-          //console.log(dataMine)
-        )
-        .catch(err => console.log(err));*/
+  }
 
+
+  handleChangeMedicineDescription(event) {
+    console.log(event.target.value);
+    var newValue = event.target.value;
+    this.setState(prevState => ({
+        clicked: {
+          ...prevState.clicked,
+          descriptionMedicine: newValue
+        }
+    }));
   }
 
   getVisit(){
@@ -177,31 +194,34 @@ this.getVisit();
   onClickAddMedicine(medicine) {
     console.log("outside");
     console.log(medicine);
-    this.setState({
+    this.setState(prevState => ({
       clicked:{
+        ...prevState.clicked,
         medicine: medicine
       }
-    });
+    }));
   }
 
   onClickAddTreatment(treatment) {
     console.log("outside");
     console.log(treatment);
-    this.setState({
+    this.setState(prevState => ({
       clicked:{
+        ...prevState.clicked,
         treatment: treatment
       }
-    });
+    }));
   }
 
   onClickAddSickness(sickness) {
     console.log("outside");
     console.log(sickness);
-    this.setState({
+    this.setState(prevState => ({
       clicked:{
+        ...prevState.clicked,
         sickness: sickness
       }
-    });
+    }));
   }
 
 
@@ -361,6 +381,15 @@ this.getVisit();
         className = 'dialog-margin'
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
+        <br/>
+        <WhiteTextField id="descriptionMedicine" name="descriptionMedicine"
+        label="Opis"
+        value = {this.state.clicked.descriptionMedicine}
+        onChange = {this.handleChangeMedicineDescription}
+        variant = 'outlined'
+        rowsMax = {2}
+        style = {{marginLeft: '20px', width: '94%'}}
+        size="small" fullWidth />
         <br/>
         <div className = 'dialog-btn-hold'>
           <a className = 'btn-dialog-cancel'>Anuluj</a>

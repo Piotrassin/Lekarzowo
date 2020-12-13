@@ -65,19 +65,22 @@ class UserService {
   }
 
   getUserSicknessHistory(id) {
-    if(id ===  undefined){
-      id = 3
-    }
-    return fetch(url + 'uicomponents/PatientIllnesses/' + id, {
+    var patientId = JSON.parse(AuthService.getLoggedUser()).id;
+    return fetch(url + 'Illnesseshistory/AllByPatientId/' + patientId, {
       headers: authHeader()
     }).then(response => response.json());
   }
 
-  getUserMedicineHistory(id) {
-    if(id === undefined){
-      id = 141
+  getUserMedicineHistory(limit, skip) {
+    if(limit == undefined){
+      limit = '';
     }
-    return fetch(url + 'UIComponents/TakenMedicines/' + id, {
+    if(skip == undefined){
+      skip = '';
+    }
+    var patientId = JSON.parse(AuthService.getLoggedUser()).id;
+    return fetch(url + 'Medicinehistories/TakenMedicines?patientId=' + patientId
+    + '&limit=' + limit + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => response.json());
 
@@ -105,9 +108,30 @@ class UserService {
   });
   }
 
-changePassword(passwordObject){
-  
-}
+  changePassword(passwordObject){
+    var email = JSON.parse(AuthService.getLoggedUser()).email;
+    return fetch(url + 'People/ChangePassword', {
+      method: 'POST',
+      headers: authHeader({'Content-Type': 'application/json'}),
+      body: JSON.stringify({
+        "Email": email,
+        "CurrentPassword": {
+          "Value": passwordObject.currentPassword
+        },
+        "NewPassword": {
+          "Value": passwordObject.newPassword
+        },
+        "ConfirmPassword": {
+          "Value": passwordObject.confirmPassword
+        }
+      })
+    }).then(response => {
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+      return response;
+    });
+  }
 
 }
 

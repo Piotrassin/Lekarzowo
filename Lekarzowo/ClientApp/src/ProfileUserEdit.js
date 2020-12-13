@@ -10,6 +10,7 @@ constructor(props){
   super(props);
   this.handleChange = this.handleChange.bind(this);
   this.handleClickUserChange = this.handleClickUserChange.bind(this);
+  this.handleClickPasswordChange = this.handleClickPasswordChange.bind(this);
   this.state = {
       email: "",
       name: "",
@@ -33,17 +34,19 @@ handleChange(event) {
       [event.target.name]: event.target.value
   });
   if(event.target.name == "password"){
-    this.setState({
+    this.setState(prevState => ({
       touched: {
+        ...prevState.touched,
         password: true
       }
-    });
+    }));
   }else {
-    this.setState({
+    this.setState(prevState => ({
       touched: {
+        ...prevState.touched,
         user: true
       }
-    });
+    }));
   }
 }
 
@@ -60,10 +63,32 @@ handleClickUserChange(event){
     UserService.postUserChangeDetails(userObject)
     .then(response => {
       console.log(response);
-      this.snackbarRef.current.openSnackBar('Zaktualizowano', 'green-snackbar');
+      this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
     })
     .catch(err => console.log(err));
   }
+}
+
+handleClickPasswordChange(event){
+
+  if(this.state.touched.password){
+    if(this.state.password == this.state.passwordValid){
+      var passwordObject = {
+        currentPassword: this.state.oldPassword,
+        newPassword: this.state.password,
+        confirmPassword: this.state.passwordValid
+      }
+      UserService.changePassword(passwordObject)
+      .then(response => {
+        console.log(response);
+        this.snackbarRef.current.openSnackBar('Zaktualizowano Hasło', 'green-snackbar');
+      })
+      .catch(err => console.log(err));
+    }
+    this.snackbarRef.current.openSnackBar('Wpisane hasła są różne', 'red-snackbar');
+  }
+  this.snackbarRef.current.openSnackBar('Niepełne dane', 'red-snackbar');
+
 }
 
 componentDidMount(){
@@ -165,7 +190,7 @@ render() {
             size="small" fullWidth />
             <br/><br/>
             <div>
-            <a className = 'button-red'>Zmień</a>
+            <a className = 'button-red' onClick = {this.handleClickPasswordChange}>Zmień</a>
             </div>
           </div>
         </form>

@@ -20,11 +20,9 @@ componentDidMount() {
   });
   UserService.getUserSicknessHistory()
   .then(response => {
-    console.log('response: ');
-    console.log(response[0]);
     this.setState({
-    illnesses: response[0].ilnesses,
-    oldIllnesses: response[0].oldIllnesses
+    illnesses: response.filter(responseObject => responseObject.curedate == null),
+    oldIllnesses: response.filter(responseObject => responseObject.curedate != null)
     });
     this.setState({
       loading: false
