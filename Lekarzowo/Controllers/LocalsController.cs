@@ -60,8 +60,9 @@ namespace Lekarzowo.Controllers
         }
 
 
-        [Authorize(Roles = "admin")]
+
         // PUT: api/Locals/5
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public IActionResult PutLocal(decimal id, Local local)
         {

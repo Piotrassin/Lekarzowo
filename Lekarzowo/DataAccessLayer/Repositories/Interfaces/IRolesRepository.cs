@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
-    public interface IRolesRepository : IBaseNamedEntityRepository<Role>
+    public interface IRolesRepository : IBaseNameRepository<Role>
     {
     }
 }

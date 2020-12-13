@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class SpecialitiesRepository : BaseNamedRepository<Speciality>, ISpecialitiesRepository
+    public class SpecialitiesRepository : BaseNameRepository<Speciality>, ISpecialitiesRepository
     {
         public SpecialitiesRepository(ModelContext context) : base(context) {}
     }

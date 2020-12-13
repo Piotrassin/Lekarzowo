@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.Repositories
 {
-    public interface IPeopleRepository : IBaseNamedEntityRepository<Person>
+    public interface IPeopleRepository : IBaseNameRepository<Person>
     {
         Person GetByEmail(string email);
         Person GetByEmailWithRoles(string email);

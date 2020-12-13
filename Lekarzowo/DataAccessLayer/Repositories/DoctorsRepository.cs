@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class DoctorsRepository : BaseRepository<Doctor>, IDoctorsRepository
+    public class DoctorsRepository : BaseIdRepository<Doctor>, IDoctorsRepository
     {
         public DoctorsRepository(ModelContext context) : base(context) {}
 

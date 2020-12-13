@@ -5,14 +5,12 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
-    public interface IBaseRepository<T> where T : class
+    public interface IBaseCRUDRepository<T> where T : class
     {
         IEnumerable<T> GetAll();
-        T GetByID(decimal id);
         void Insert(T t);
         void Delete(T t);
-        void Update(T t);
-        bool Exists(decimal Id);
+        void Update(T t, T entry);
         void Save();
     }
 }

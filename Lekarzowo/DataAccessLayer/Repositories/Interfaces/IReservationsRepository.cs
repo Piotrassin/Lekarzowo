@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
-    public interface IReservationsRepository : IBaseRepository<Reservation>
+    public interface IReservationsRepository : IBaseIdRepository<Reservation>
     {
 
         /// <summary>

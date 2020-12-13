@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class ReferralsRepository : BaseRepository<Referral>, IReferralsRepository
+    public class ReferralsRepository : BaseIdRepository<Referral>, IReferralsRepository
     {
         //private readonly ModelContext _context;
 

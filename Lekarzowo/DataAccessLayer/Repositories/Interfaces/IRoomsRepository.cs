@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
-    public interface IRoomsRepository : IBaseRepository<Room>
+    public interface IRoomsRepository : IBaseIdRepository<Room>
     {
         /// <summary>
         /// Returns all rooms with a given LocalId.

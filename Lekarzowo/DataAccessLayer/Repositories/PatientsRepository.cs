@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class PatientsRepository : BaseRepository<Patient>, IPatientsRepository
+    public class PatientsRepository : BaseIdRepository<Patient>, IPatientsRepository
     {
         private readonly ModelContext _context;
 

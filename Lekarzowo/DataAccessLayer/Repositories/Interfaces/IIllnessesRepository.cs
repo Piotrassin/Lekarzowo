@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public interface IIllnessesRepository : IBaseNamedEntityRepository<Illness>
+    public interface IIllnessesRepository : IBaseNameRepository<Illness>
     {
         //bool Exists(Illness illness);
     }

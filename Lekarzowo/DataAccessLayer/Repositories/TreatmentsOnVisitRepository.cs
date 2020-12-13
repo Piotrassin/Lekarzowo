@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
-    public class TreatmentsOnVisitRepository : BaseRepository<Treatmentonvisit>, ITreatmentsOnVisitRepository
+    public class TreatmentsOnVisitRepository : BaseIdRepository<Treatmentonvisit>, ITreatmentsOnVisitRepository
     {
         public TreatmentsOnVisitRepository(ModelContext context) : base(context) { }
 
