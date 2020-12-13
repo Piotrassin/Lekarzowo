@@ -1,18 +1,14 @@
-﻿using System;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Lekarzowo.Models;
-using Lekarzowo.DataAccessLayer.Repositories;
-using Lekarzowo.DataAccessLayer.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Lekarzowo.Controllers
 {
-    [Authorize(Roles = "patient,doctor,admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class IllnesseshistoryController : BaseController
@@ -33,6 +29,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Illnesseshistory/Single/5
+        [Authorize(Roles = "patient,doctor,admin")]
         [HttpGet("[action]/{illnessHistoryId}")]
         public ActionResult<Illnesshistory> Single(decimal illnessHistoryId)
         {
@@ -51,6 +48,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Illnesseshistory/AllByPatientId/5
+        [Authorize(Roles = "patient,doctor,admin")]
         [HttpGet("[action]/{patientId}")]
         public ActionResult<IEnumerable<Illnesshistory>> AllByPatientId(decimal patientId)
         {
@@ -66,6 +64,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Illnesseshistory/AllByVisitId?visitId=1&limit=10&skip=1
+        [Authorize(Roles = "patient,doctor,admin")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> AllByVisitId(decimal visitId, int? limit, int? skip)
         {
@@ -85,6 +84,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Illnesseshistory/PatientHistory?patientId=1&limit=10&skip=2
+        [Authorize(Roles = "patient,doctor,admin")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> PatientHistory(decimal patientId, int? limit, int? skip)
         {

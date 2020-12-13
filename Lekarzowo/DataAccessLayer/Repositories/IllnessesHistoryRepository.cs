@@ -15,7 +15,20 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
         public IEnumerable<Illnesshistory> GetAll(decimal PatientId)
         {
-            return _context.Illnesshistory.Where(x => x.PatientId == PatientId).ToList();
+            return _context.Illnesshistory.Where(x => x.PatientId == PatientId)
+                .Select(x => new Illnesshistory
+                {
+                    Id = x.Id,
+                    PatientId = x.PatientId,
+                    VisitId = x.VisitId,
+                    Curedate = x.Curedate,
+                    Description = x.Description,
+                    Illness = new Illness
+                    {
+                        Id = x.Illness.Id,
+                        Name = x.Illness.Name
+                    }
+                }).ToList();
         }
 
         public bool Exists(Illnesshistory illnesshistory)

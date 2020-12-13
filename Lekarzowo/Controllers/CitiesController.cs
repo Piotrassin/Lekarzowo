@@ -1,18 +1,14 @@
-﻿using System;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Lekarzowo.Models;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Lekarzowo.DataAccessLayer.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Lekarzowo.Controllers
 {
-    [Authorize(Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class CitiesController : ControllerBase
@@ -55,6 +51,7 @@ namespace Lekarzowo.Controllers
         }
 
         // PUT: api/Cities/5
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public IActionResult PutCity(decimal id, City city)
         {
@@ -84,6 +81,7 @@ namespace Lekarzowo.Controllers
         }
 
         // POST: api/Cities
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public IActionResult PostCity(City city)
         {
@@ -106,6 +104,7 @@ namespace Lekarzowo.Controllers
         }
 
         // DELETE: api/Cities/5
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public  ActionResult<City> DeleteCity(decimal id)
         {

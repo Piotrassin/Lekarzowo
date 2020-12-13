@@ -45,7 +45,11 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 .Select(x => new
                 {
                     MedicineName = x.Medicine.Name,
-                    MedicineDosage = x.Description
+                    MedicineDosage = x.Description,
+                    IllnesshistoryId = x.IllnesshistoryId,
+                    MedicineId = x.MedicineId,
+                    Startdate = x.Startdate,
+                    Finishdate = x.Finishdate
                 }).OrderBy(x => x.MedicineName).ThenBy(x => x.MedicineDosage);
 
             var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
