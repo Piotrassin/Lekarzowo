@@ -23,10 +23,10 @@ render() {
         {this.props.visit.reservationEndTime.split('T')[1]}</a>
       </div>
       <div className = 'sickness-item-part part-3'>
-        <a>{this.props.visit.doctorSpecialization}</a>
+        <a>{this.props.role == 'doctor' ? this.props.visit.localName : this.props.visit.doctorSpecialization}</a>
       </div>
       <div className = 'sickness-item-part part-4'>
-        <a>{this.props.visit.doctorName} {this.props.visit.doctorLastname}</a>
+        <a>{this.props.role == 'doctor' ? this.props.visit.patientName : this.props.visit.doctorName} {this.props.role == 'doctor' ? this.props.visit.patientLastname : this.props.visit.doctorLastname}</a>
       </div>
       <div className = 'sickness-item-part part-5'>
         <a className = 'button-gold' onClick = {this.onClickVisitDetails}>Zobacz</a>

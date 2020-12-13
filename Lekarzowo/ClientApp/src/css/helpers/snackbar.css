@@ -2,7 +2,6 @@
   visibility: hidden;
   min-width: 250px;
   margin-left: -125px;
-  background-color: #962A2A;
   color: #fff;
   text-align: center;
   border-radius: 2px;
@@ -12,6 +11,13 @@
   left: 50%;
   bottom: 30px;
   font-size: 1rem;
+}
+.green-snackbar {
+  background-color: green;
+}
+
+.red-snackbar {
+  background-color: #962A2A;
 }
 
 .snackbar.show {

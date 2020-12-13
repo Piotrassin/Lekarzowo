@@ -10,6 +10,7 @@ class Dialog extends React.Component {
 
     static open = (id) => (e) => {
         e.preventDefault();
+        e.persist();
         let dialog = Dialog.dialogs.find(x => x.props.id === id);
         dialog.setState({ isOpen: true });
         document.body.classList.add('dialog-open');
@@ -17,6 +18,7 @@ class Dialog extends React.Component {
 
     static close = (id) => (e) => {
         e.preventDefault();
+        e.persist();
         let dialog = Dialog.dialogs.find(x => x.props.id === id);
         dialog.setState({ isOpen: false });
         document.body.classList.remove('dialog-open');
@@ -48,7 +50,7 @@ class Dialog extends React.Component {
         return (
             <div style={{display: + this.state.isOpen ? '' : 'none'}} onClick={this.handleClick} ref={el => this.element = el}>
                 <div className="dialog-style">
-                    <div className="dialog-body">
+                    <div className="dialog-body" id = {this.props.id}>
                         {this.props.children}
                     </div>
                 </div>

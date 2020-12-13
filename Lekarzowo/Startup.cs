@@ -78,7 +78,8 @@ namespace Lekarzowo
                                   builder =>
                                   {
                                       builder.WithOrigins("http://localhost:3000"
-                                                          ).AllowAnyHeader();
+                                                          ).AllowAnyHeader()
+                                                           .AllowAnyMethod();
                                   });
             });
 

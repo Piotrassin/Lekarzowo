@@ -40,7 +40,8 @@ class ReservationService {
 
   getTakenMedicine(limit) {
     var patientId = JSON.parse(AuthService.getLoggedUser()).id;
-    return fetch(url + 'UIComponents/TakenMedicines/' + patientId, {
+    return fetch(url + 'Medicinehistories/TakenMedicines?patientId=' + patientId
+    + '&limit=' + limit, {
       headers: authHeader()
     }).then(response => response.json());
   }
@@ -49,6 +50,33 @@ class ReservationService {
     return fetch(url + 'Visits/' + visitId, {
       headers: authHeader()
     }).then(response => response.json());
+  }
+
+  getPastIllnesses(limit){
+    var patientId = JSON.parse(AuthService.getLoggedUser()).id;
+    return fetch(url + 'Illnesseshistory/PatientHistory?patientId=' + patientId
+    + '&limit=' + limit, {
+      headers: authHeader()
+    }).then(response => response.json());
+  }
+
+  postReservation(reservation){
+    var patientId = JSON.parse(AuthService.getLoggedUser()).id;
+    return fetch(url + 'Reservations', {
+    method: 'POST',
+    headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+          },
+    body: JSON.stringify({
+      "DoctorId": reservation.doctorId,
+      "PatientId": patientId,
+      "Starttime": reservation.startTime,
+      "Endtime": reservation.endtime,
+      "Canceled": 0,
+      "LocalId": reservation.localId
+    })
+    })
   }
 
 

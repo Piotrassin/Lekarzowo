@@ -107,6 +107,9 @@ overflow: scroll;
   flex-direction: column;
   justify-content: space-around;
 }
+.summary-long {
+  width: 100%;
+}
 .visit-member {
   width: 24%;
   height: 96vh;
@@ -130,7 +133,7 @@ overflow: scroll;
 }
 .small-dark {
   margin-top: 20px;
-  font-size: 18px;
+  font-size: 15px;
   color: #3A5166;
 }
 .smaller-dashed {
@@ -156,7 +159,7 @@ overflow: scroll;
 }
 .standard-blue {
   margin-top: 20px;
-  font-size: 20px;
+  font-size: 18px;
   color: #073662;
 }
 .big-white {
@@ -208,6 +211,9 @@ overflow: scroll;
 .margin-top-small {
   margin-top: 2px;
 }
+.margin-top-medium {
+  margin-top: 10px;
+}
 .sickness-holder {
   background-color: white;
   border-radius: 20px;
@@ -238,12 +244,16 @@ overflow: scroll;
   color: #5F5F5F;
 }
 .headline-container {
-  margin-left: 30px;
+  margin-left: 33px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   padding-top: 10px;
-  padding-bottom: 10px;
+  padding-right: 13px;
+
+}
+.subheadline-container{
+  margin-left: 33px;
 }
 .row-container {
   width: 95%;
@@ -251,15 +261,20 @@ overflow: scroll;
   display: flex;
   justify-content: space-between;
   margin-left: 30px;
+
+}
+.row-container-small {
+  height: 30vh;
+}
+.row-container-biig {
+
 }
 .active-treatments {
-  margin-left: 30px;
-  width: 92%;
-  height: 25vh;
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-
+  width: 100%;
 }
 .btn-end-visit {
   margin-left: 30px;
@@ -271,6 +286,8 @@ overflow: scroll;
   border-radius: 30px;
   font-weight: bold;
   font-size: 16px;
+  cursor: pointer;
+  z-index: 3;
 }
 .column-container {
   width: 48%;
@@ -283,12 +300,12 @@ overflow: scroll;
   justify-content: space-between;
 }
 .active-medicine {
-  width: 45%;
+  height: 100%;
 
 }
 .basic-container-small {
   width: 100%;
-  height: 42%;
+  height: 41%;
 }
 .justify-content-space {
   justify-content: space-between;
@@ -298,6 +315,7 @@ overflow: scroll;
   border-radius: 20px;
   padding: 15px;
   overflow-y: auto;
+  position: relative;
 }
 .add-medicine {
   height: 20%;
@@ -644,6 +662,7 @@ padding-right: 15px;
 }
 #async-cities {
   color: white;
+  width: 160px;
 }
 .sidebar-profile {
   background-color: #1859A6;
@@ -799,6 +818,11 @@ padding-right: 15px;
   display: flex;
   flex-direction: row;
 }
+.flex-row-space-around {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
 .subheading-content-profile {
   margin-top: 20px;
   color: #585858;
@@ -947,14 +971,14 @@ padding: 20px;
 }
 .dialog-body {
 
-    background: #fff;
+    background-color: #16365B;
     width: 600px;
     height: 390px;
     margin-top: 100px;
     margin-left: auto;
     margin-right: auto;
     border-radius: 15px;
-
+    position: relative;
 }
 .dialog-background {
     position: fixed;
@@ -973,14 +997,16 @@ body.dialog-open {
 }
 .header-dialog {
   width: 100%;
-  padding: 5px;
-  color: #1859A6;
-  font-weight: bold;
+  height: 8%;
+  color: #16365B;
+  font-weight: 500;
   display: flex;
   justify-content: center;
   margin: 0;
   font-size: 20px;
   padding-top: 10px;
+  background-color: #F0F0F0;
+  border-radius: 15px 15px 0 0;
 }
 .dialog-doctor {
   display: flex;
@@ -1033,10 +1059,15 @@ align-items: center;
 }
 .dialog-btn-holder {
   background-color: #F2F2F2;
-  margin-top: 10px;
   width: 100%;
   height: 50px;
   border-radius: 0px 0px 15px 15px;
+  position: absolute;
+  bottom: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color:
 }
 .visits-content-holder {
   height: 93vh;
@@ -1077,4 +1108,82 @@ align-items: center;
 }
 .white-link:hover {
   cursor: pointer;
+}
+.plusSign {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+}
+.visit-alert {
+  width: 300px;
+  height: 40px;
+  background-color: #CAAA3A;
+  position: absolute;
+  right: 0px;
+  bottom: 15px;
+  padding: 12px;
+  border-radius: 10px 0 0 10px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 500;
+}
+.flash-text {
+  animation: blinker 2s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+.visible-none {
+  display: none;
+}
+.dialog-margin {
+  margin-left: 20px;
+  margin-top: 10px;
+}
+.dialog-text {
+  font-weight: 500;
+  font-size: 18px;
+  color: white;
+}
+#medicine-search {
+  color: white;
+}
+#medicine-search-label {
+  color: white;
+}
+.dialog-btn-hold {
+  display: flex;
+  justify-content: flex-end;
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+}
+.btn-dialog-primary {
+  padding: 10px 10px;
+  background-color: white;
+  margin-right: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.btn-dialog-cancel {
+  padding: 10px 10px;
+  color: white;
+  margin-right: 20px;
+  border-radius: 5px;
+}
+#reservation-dialog {
+  background-color: white;
+}
+.dialog-title {
+  font-size: large;
+  font-weight: bold;
+}
+.green-snackbar {
+  background-color: green;
 }

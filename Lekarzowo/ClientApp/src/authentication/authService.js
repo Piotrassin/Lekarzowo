@@ -31,6 +31,7 @@ class AuthService {
 
   logout(){
     localStorage.removeItem("userData");
+    localStorage.removeItem('activeVisit');
   }
 
   register(name, lastname, email, birthdate, password, gender, pesel){
@@ -98,6 +99,9 @@ class AuthService {
 
 
   getUserCurrentRole() {
+    if(localStorage.getItem("userData") == null){
+      return {};
+    }
     return JSON.parse(localStorage.getItem("userData")).currentRole;
   }
 

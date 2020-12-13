@@ -32,6 +32,7 @@ class Dashboard extends React.Component {
       if(response.status == 401){
         AuthService.logout();
         this.props.history.push('/login');
+        window.location.reload();
         return '';
       }
       return response.json();

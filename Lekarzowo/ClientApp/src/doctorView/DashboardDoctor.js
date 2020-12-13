@@ -4,7 +4,8 @@ import writer from '../images/Writer.png';
 import bottle from '../images/Bottle.png';
 import UserService from '../services/UserService.js'
 import Menu from '../Menu.js';
-import AuthService from '../authentication/AuthService.js'
+import AuthService from '../authentication/AuthService.js';
+import VisitAlert from '../components/VisitAlert.js';
 import '../Main.css';
 import {
   Route,
@@ -142,6 +143,7 @@ class Dashboard extends React.Component {
         </div>
       </div>
       </div>
+      <VisitAlert history= {this.props.history}/>
 </div>
     );
   }

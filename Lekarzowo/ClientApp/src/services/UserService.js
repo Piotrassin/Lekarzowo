@@ -24,25 +24,6 @@ class UserService {
       return resp;
     });
 
-    /*return {
-      "WAW": {"item": [{"name": "Warszawa"}]},
-      "PZN": {"item": [{"name": "Poznań"}]},
-      "BDG": {"item": [{"name": "Bydgoszcz"}]},
-      "JAB": {"item": [{"name": "Jabłonna"}]},
-      "GDA": {"item": [{"name": "Gdańsk"}]},
-      "LGW": {"item": [{"name": "Legionowo"}]},
-      "ZBK": {"item": [{"name": "Ząbki"}]},
-      "GDY": {"item": [{"name": "Gdynia"}]},
-      "WRC": {"item": [{"name": "Wrocław"}]}
-    };*/
-
-    /*return [
-      {
-          "id": 1,
-          "name": "Warszawa",
-          "local": []
-        }
-    ];*/
   }
 
   getSpecializations(search, limit){
@@ -59,15 +40,7 @@ class UserService {
       console.log(resp[0]);
       return resp;
     });
-    /*return {
-      "1": {"item": [{"name": "Kardiolog"}]},
-      "2": {"item": [{"name": "Okulista"}]},
-      "3": {"item": [{"name": "Internista"}]},
-      "4": {"item": [{"name": "Pediatra"}]},
-      "5": {"item": [{"name": "Kolanista"}]},
-      "6": {"item": [{"name": "Populista"}]},
-      "7": {"item": [{"name": "Pisowiec"}]}
-    };*/
+
   }
 
   getDoctors(search, limit) {
@@ -82,16 +55,7 @@ class UserService {
       var resp =  response.json();
       return resp;
     });
-    /*
-    return {
-      "1": {"item": [{"name": "dr. Andrzej Andrzejewski"}]},
-      "2": {"item": [{"name": "dr. Anna Nowak"}]},
-      "3": {"item": [{"name": "dr. Karol Kowalski"}]},
-      "4": {"item": [{"name": "dr. med. Katarzyna Kat"}]},
-      "5": {"item": [{"name": "dr. Beata Beatynska"}]},
-      "6": {"item": [{"name": "inter. Jarosław Nowak"}]},
-      "7": {"item": [{"name": "dr. Justyna Kowal"}]}
-    };*/
+
   }
 
   getUserData(){
@@ -118,6 +82,32 @@ class UserService {
     }).then(response => response.json());
 
   }
+
+  postUserChangeDetails(user){
+    var patientId = JSON.parse(AuthService.getLoggedUser()).id;
+    return fetch(url + 'People', {
+    method: 'PUT',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "Id": patientId,
+      "Name": user.name,
+      "Lastname": user.lastname,
+      "Pesel": user.pesel,
+      "Email": user.email,
+      "Birthdate": user.birthdate,
+      "Gender": user.gender
+    })
+  }).then(response => {
+    if (!response.ok) {
+      throw Error(response.statusText);
+    }
+    return response;
+  });
+  }
+
+changePassword(passwordObject){
+  
+}
 
 }
 

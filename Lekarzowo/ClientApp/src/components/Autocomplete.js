@@ -1,4 +1,5 @@
 import React from 'react';
+import Main from '../Main.css'
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -65,7 +66,7 @@ export default function Asynchronous(props) {
     console.log("inside");
     console.log(value);
     if(value != null){
-      props.changeCallback(value.id);
+      props.changeCallback(value);
     }
   }
 
@@ -114,8 +115,8 @@ export default function Asynchronous(props) {
 
   return (
     <Autocomplete
-      id="async-cities"
-      style={{ width: "80%", color: "white !" }}
+      id={props.cssId}
+      style={props.styles}
       open={open}
       className={classes.inputHolder}
       onOpen={() => {

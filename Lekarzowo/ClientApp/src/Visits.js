@@ -6,6 +6,9 @@ import DateStepper from './DateStepper'
 import VisitItem from './components/VisitItem.js';
 import Switch from '@material-ui/core/Switch';
 import ReservationService from './services/ReservationService.js';
+import VisitService from './services/VisitService.js';
+import AuthService from './authentication/AuthService';
+import VisitAlert from './components/VisitAlert.js';
 const PurpleSwitch = withStyles({
   switchBase: {
     color: '#DBD887',
@@ -19,6 +22,9 @@ const PurpleSwitch = withStyles({
   checked: {},
   track: {},
 })(Switch);
+
+const currentRole = AuthService.getUserCurrentRole();
+
 class Visits extends React.Component {
   constructor(props){
     super(props);
@@ -31,30 +37,51 @@ class Visits extends React.Component {
   }
 
   async componentDidMount() {
-    await ReservationService.getUpcomingReservations(10,0)
-    .then(response => {
-      this.setState({
-        upcomingVisits: response
-      });
-    });
+    this.getUppcomingVisit();
   }
 
   async getPreviousVisit() {
-    await ReservationService.getRecentReservations(10, 0)
-    .then(response => {
-      this.setState({
-        recentVisits: response
+    if(currentRole == 'doctor'){
+      var daysBefore = new Date(new Date());
+      daysBefore.setDate(daysBefore.getDate() - 7);
+      return await VisitService.getDoctorVisit(1, daysBefore , new Date())
+      .then(response => {
+        this.setState({
+          recentVisits: response
+        });
       });
-    });
+    }
+    else if (currentRole == 'patient'){
+      return await ReservationService.getRecentReservations(10, 0)
+      .then(response => {
+        this.setState({
+          recentVisits: response
+        });
+      });
+    }
+
   }
 
   async getUppcomingVisit() {
-    await ReservationService.getUpcomingReservations(10, 0)
-    .then(response => {
-      this.setState({
-        upcomingVisits: response
+    if(currentRole == 'doctor' ){
+      var tommorrow = new Date(new Date());
+      tommorrow.setDate(tommorrow.getDate() + 20);
+      return await VisitService.getDoctorVisit(1, new Date(), tommorrow)
+      .then(response => {
+        this.setState({
+          upcomingVisits: response
+        });
       });
-    });
+    }
+    else if(currentRole == 'patient') {
+      await ReservationService.getUpcomingReservations(10, 0)
+      .then(response => {
+        this.setState({
+          upcomingVisits: response
+        });
+      });
+    }
+
   }
 
 
@@ -96,7 +123,7 @@ class Visits extends React.Component {
                   <a className = 'table-header'>Miejsce</a>
                 </div>
                 <div className = 'sickness-item-part part-4'>
-                  <a className = 'table-header'>Lekarz</a>
+                  <a className = 'table-header'>{currentRole == 'doctor' ? 'Pacjent' : 'Lekarz'}</a>
                 </div>
                 <div className = 'sickness-item-part part-5'>
                 </div>
@@ -104,12 +131,14 @@ class Visits extends React.Component {
               {this.state.checkedVisit && this.state.upcomingVisits.map((visit, index ) => (
                   <VisitItem
                   visit={visit}
+                  role={currentRole}
                   history= {this.props.history}
                   />
                 ))}
                 {(!this.state.checkedVisit) && this.state.recentVisits.map((visit, index ) => (
                     <VisitItem
                     visit={visit}
+                    role={currentRole}
                     history= {this.props.history}
                     />
                   ))}
@@ -134,6 +163,7 @@ class Visits extends React.Component {
 
           </div>
           </div>
+          <VisitAlert history= {this.props.history}/>
         </div>
       );
   }

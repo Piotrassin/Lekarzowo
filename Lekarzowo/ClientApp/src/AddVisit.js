@@ -76,38 +76,41 @@ onClickDate(value) {
   console.log(value[1]);
 }
 
-onClickCity(valueId){
+onClickCity(value){
   console.log("outside");
-  console.log(valueId);
+  console.log(value);
   this.setState({
-    cityId: valueId
+    cityId: value.id
   });
 }
 
-onClickSpeciality(valueId){
+onClickSpeciality(value){
   console.log("outside");
-  console.log(valueId);
+  console.log(value);
   this.setState({
-    specialityId: valueId
+    specialityId: value.id
   });
 }
 
-onClickDoctor(valueId){
+onClickDoctor(value){
   console.log("outside");
-  console.log(valueId);
+  console.log(value);
   this.setState({
-    doctorId: valueId
+    doctorId: value.id
   });
 }
 
 onReservationClick(selectedReservationItem,event) {
+  console.log(selectedReservationItem);
   this.setState({
     selectedReservation: selectedReservationItem
+  }, () => {
+    if(!(Object.keys(this.state.selectedReservation).length === 0)){
+      console.log(this.state.selectedReservation);
+      Dialog.open("reservation-dialog")(event);
+    }
   });
-  if(!(Object.keys(this.state.selectedReservation).length === 0)){
-    console.log(this.state.selectedReservation);
-    Dialog.open("reservation-dialog")(event);
-  }
+
 }
 
 onHourChange(event) {
@@ -136,7 +139,9 @@ async onSubmitBtnClick(event){
       btnTouched: true
     });
   })
+}
 
+onClickConfimReservation(event){
 
 }
 
@@ -165,19 +170,21 @@ render() {
             changeCallback = {this.onClickCity}
             title = "Miasto"
             id = 'city-search'
-
+            cssId = 'async-cities'
             />
             <div className = 'space'/>
             <Autocomplete
             requestCallback = {UserService.getSpecializations}
             title = "Specjalizacja"
             changeCallback = {this.onClickSpeciality}
+            cssId = 'async-cities'
             />
             <div className = 'space'/>
             <Autocomplete
             requestCallback = {UserService.getDoctors}
             title = "Doktor"
             changeCallback = {this.onClickDoctor}
+            cssId = 'async-cities'
             />
             </div>
             <div className = "res-item-container">
@@ -241,34 +248,26 @@ render() {
       </div>
       <Dialog id = "reservation-dialog">
         <div className = "header-dialog">Potwierdź Rezerwację</div>
-        <hr />
-        <div className = "dialog-doctor">
-          <div className = "dialog-doctor-img">
-          <img src = {smallDoctor} style = {{width: 140, marginRight: "10px"}} />
-          </div>
-          <div className = "dialog-doctor-content">
-            <a className = "dialog-text">Dr. Tomasz Godziński</a>
-            <a className = "dialog-subtext">Home Park Targówek</a>
-            <a className = "dialog-subtext">ul. Grójecka 26, 00-043</a>
-            <a className = "dialog-subtext">Warszawa</a>
-          </div>
+        <div className = 'flex-columm'>
+        <div className = 'flex-row-space-around margin-top-medium' style = {{marginTop: '20px'}}>
+          <a className = 'dialog-title'>Lekarz: </a>
+          <a>{this.state.selectedReservation.doctorName} {this.state.selectedReservation.doctorSurname}</a>
         </div>
-        <hr/>
-        <div className = "dialog-doctor">
-          <div className = "dialog-doctor-img">
-            <div className = "calendar-paper-back">
-              <a className = "calendar-paper-day">11</a>
-              <hr style={{width: "100%"}}/>
-              <a className = "calendar-paper-month">Październik</a>
-            </div>
-          </div>
-          <div className = "dialog-doctor-content">
-            <a className = "dialog-text">20 Październik 2020</a>
-            <a className = "dialog-subtext">10:00 - 10:30</a>
-          </div>
+        <div className = 'flex-row-space-around margin-top-medium'>
+          <a className = 'dialog-title' >Data: </a>
+          <a>{this.state.selectedReservation.date}</a>
         </div>
-        <div className = "dialog-btn-holder">
-          <button>Click</button>
+        <div className = 'flex-row-space-around margin-top-medium'>
+          <a className = 'dialog-title' >Godziny: </a>
+          <a>{this.state.selectedReservation.hours}</a>
+        </div>
+        <div className = 'flex-row-space-around margin-top-medium'>
+          <a className = 'dialog-title' >Wybrana placówka: </a>
+          <a>{this.state.selectedReservation.place}</a>
+        </div>
+        </div>
+        <div className = "dialog-btn-hold">
+          <button className = "btn-primary" style = {{marginRight: '20px'}}>Potwierdź</button>
         </div>
       </Dialog>
     </div>
