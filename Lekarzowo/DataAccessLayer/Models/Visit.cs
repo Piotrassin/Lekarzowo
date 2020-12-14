@@ -14,6 +14,7 @@ namespace Lekarzowo.DataAccessLayer.Models
         public decimal ReservationId { get; set; }
         public decimal Price { get; set; }
         public string Description { get; set; }
+        public decimal OnGoing { get; set; }
 
         public virtual Reservation Reservation { get; set; }
         public virtual ICollection<Illnesshistory> Illnesshistory { get; set; }
