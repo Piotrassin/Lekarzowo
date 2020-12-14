@@ -9,6 +9,7 @@ using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.DataAccessLayer.DTO;
+using Lekarzowo.DataAccessLayer.Repositories;
 
 namespace Lekarzowo.Controllers
 {
@@ -17,10 +18,12 @@ namespace Lekarzowo.Controllers
     public class WorkinghoursController : ControllerBase
     {
         private readonly IWorkingHoursRepository _repository;
+        private readonly ILocalsRepository _localRepository;
 
-        public WorkinghoursController(IWorkingHoursRepository repository)
+        public WorkinghoursController(IWorkingHoursRepository repository, ILocalsRepository locRepo)
         {
             _repository = repository;
+            _localRepository = locRepo;
         }
 
         // GET: api/Workinghours
@@ -42,6 +45,24 @@ namespace Lekarzowo.Controllers
             }
 
             return workinghours;
+        }
+
+        // GET: api/workinghours/DoctorsUpcomingSchedule?doctorId=1&days=2000
+        [HttpGet("[action]")]
+        public async Task<ActionResult<object>> DoctorsUpcomingSchedule(decimal doctorId, int days)
+        {
+            var workplaces = await _localRepository.DoctorsWorkplaces(doctorId, days, null, null); 
+
+            if (workplaces == null || !workplaces.Any())
+            {
+                return NotFound();
+            }
+            foreach (var workplace in workplaces)
+            {
+                workplace.Workinghours = (ICollection<Workinghours>) await _repository.DoctorsWorkplaces(doctorId, workplace.Id, days);
+            }
+
+            return Ok(workplaces);
         }
 
         // PUT: api/Workinghours/5

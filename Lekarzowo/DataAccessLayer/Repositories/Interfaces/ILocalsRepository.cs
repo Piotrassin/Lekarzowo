@@ -10,16 +10,14 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 {
     public interface ILocalsRepository : IBaseNameRepository<Local>
     {
-        bool Exists(Local local);
-        //Task<IEnumerable<View_AddressData>> DetailsView(decimal RoomId);
-
         /// <summary>
-        /// Returns a list of locals in which a given doctor has working hours in db.
+        /// Returns a list of locals in which a given doctor has working hours in upcoming days
         /// </summary>
         /// <param name="doctorId"></param>
+        /// <param name="days"></param>
         /// <param name="limit"></param>
         /// <param name="skip"></param>
         /// <returns></returns>
-        Task<IEnumerable<Local>> DoctorsWorkplaces(decimal doctorId, int? limit, int? skip);
+        Task<IEnumerable<Local>> DoctorsWorkplaces(decimal doctorId, int days, int? limit, int? skip);
     }
 }

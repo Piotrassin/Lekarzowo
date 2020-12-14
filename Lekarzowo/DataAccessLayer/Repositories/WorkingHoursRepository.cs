@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lekarzowo.Services;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
@@ -18,6 +19,26 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return await _context.Workinghours.Where(x => x.From.Date == date || x.To.Date == date).FirstOrDefaultAsync(
                 x => x.DoctorId == DocId
                 && x.LocalId == LocId);
+        }
+
+        public async Task<IEnumerable<Workinghours>> DoctorsWorkplaces(decimal doctorId, decimal localId, int days)
+        {
+            var query = _context.Workinghours
+                .Where(x => x.DoctorId == doctorId)
+                .Where(x => x.LocalId == localId)
+                .Where(x => x.From.Date >= DateTime.Now.Date && x.From <= DateTime.Now.Date.AddDays(days))
+                .Select(x => new Workinghours
+                {
+                    Id = x.Id,
+                    From = x.From,
+                    To = x.To,
+                    DoctorId = x.DoctorId,
+                    LocalId = x.LocalId
+                })
+                .OrderBy(x => x.From);
+
+
+            return await query.ToListAsync();
         }
 
         public IEnumerable<Workinghours> GetAllFutureWorkHours(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end)

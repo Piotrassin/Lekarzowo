@@ -14,21 +14,11 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         public LocalsRepository(ModelContext context) : base(context) {}
 
 
-        /// <summary>
-        /// TODO: Nie działa nie wiedzieć czemu
-        /// </summary>
-        /// <param name="local"></param>
-        /// <returns></returns>
-        public bool Exists(Local local)
-        {
-            return _context.Local.Any(x => x.Postcode == local.Postcode);
-            //return _context.Local.Any(x => x.Postcode == "00-902");
-        }
-
-        public async Task<IEnumerable<Local>> DoctorsWorkplaces(decimal doctorId, int? limit, int? skip)
+        public async Task<IEnumerable<Local>> DoctorsWorkplaces(decimal doctorId, int days, int? limit, int? skip)
         {
             var query = _context.Workinghours
                 .Where(x => x.DoctorId == doctorId)
+                .Where(x => x.From.Date >= DateTime.Now.Date && x.From <= DateTime.Now.Date.AddDays(days))
                 .Select(x => x.Local).Include(x => x.City)
                 .Distinct()
                 .OrderBy(x => x.City.Name)
