@@ -20,6 +20,15 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         Task<Workinghours> GetByDetails(decimal DocId, decimal LocId, DateTime date);
 
         /// <summary>
+        /// List of all working hours in a given local in the next given amount of days.
+        /// </summary>
+        /// <param name="doctorId"></param>
+        /// <param name="localId"></param>
+        /// <param name="days"></param>
+        /// <returns></returns>
+        Task<IEnumerable<Workinghours>> DoctorsWorkplaces(decimal doctorId, decimal localId, int days);
+
+        /// <summary>
         /// Returns all working hours newer than current date.
         /// </summary>
         /// <param name="CityId"></param>

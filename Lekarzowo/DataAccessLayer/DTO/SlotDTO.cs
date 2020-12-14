@@ -15,6 +15,7 @@ namespace Lekarzowo.DataAccessLayer.DTO
         public decimal DoctorBasePrice { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
+        public decimal LocalId { get; set; }
         public string LocalName { get; set; }
 
 
@@ -25,7 +26,7 @@ namespace Lekarzowo.DataAccessLayer.DTO
         }
 
         public SlotDTO(int docId, string docName, string docLname, string docSpec,
-            decimal docPrice, DateTime start, DateTime end, string locName)
+            decimal docPrice, DateTime start, DateTime end, decimal locId, string locName)
         {
             DoctorId = docId;
             DoctorName = docName;
@@ -34,6 +35,7 @@ namespace Lekarzowo.DataAccessLayer.DTO
             DoctorBasePrice = docPrice;
             Start = start;
             End = end;
+            LocalId = locId;
             LocalName = locName;
         }
 

@@ -225,12 +225,13 @@ namespace Lekarzowo.Controllers
                 var slotsThatDay = SplitDayIntoChunks(workDay, reservationsThatDay).ToList();
                 slotsThatDay.ForEach(x =>
                 {
+                    x.LocalId = workDay.LocalId;
+                    x.LocalName = workDay.Local.Name;
                     x.DoctorId = workDay.DoctorId;
                     x.DoctorName = workDay.Doctor.IdNavigation.Name;
                     x.DoctorLastname = workDay.Doctor.IdNavigation.Lastname;
                     x.DoctorSpecialization = workDay.Doctor.Speciality.Name;
                     x.DoctorBasePrice = workDay.Doctor.Speciality.Price;
-                    x.LocalName = workDay.Local.Name;
                 });
                 outputList.AddRange(slotsThatDay);
             }
