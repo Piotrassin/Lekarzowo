@@ -19,6 +19,7 @@ class Menu extends React.Component {
     this.onAddClick = this.onAddClick.bind(this);
     this.onVisitsClick = this.onVisitsClick.bind(this);
     this.onProfileClick = this.onProfileClick.bind(this);
+    this.onDoctorClick = this.onDoctorClick.bind(this);
   //this.test = this.test.bind(this)
   }
   state = {
@@ -47,6 +48,10 @@ class Menu extends React.Component {
     this.props.history.push('/myProfile');
   }
 
+  onDoctorClick(event) {
+    this.props.history.push('/findDoctor');
+  }
+
 
 
   render() {
@@ -68,7 +73,7 @@ class Menu extends React.Component {
               <img src = {zapisy} className = "addSign" style = {{width: 25}} />
               <a>Wizyty</a>
             </div>
-            <div className = "menu-element">
+            <div className = "menu-element" onClick={this.onDoctorClick}>
               <img src = {lekarzSign} className = "addSign" style = {{width: 25}} />
               <a>Lekarze</a>
             </div>
@@ -98,16 +103,7 @@ class Menu extends React.Component {
       >
       </Sidebar>
 </div>
-/*
-<div className = "side-menu">
-<img src = {logo} className = "imge"/>
-<div className = "icons">
-<img src = {addSign} className = "addSign" style = {{width: 25}} />
 
-</div>
-
-</div>
-*/
     );
   }
 

@@ -91,11 +91,7 @@ margin-bottom: 3px;
   display: flex;
   flex-direction: column;
 }
-.flex-row {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
+
 .header-1 {
   color: white;
   font-size: 30px;

@@ -19,7 +19,7 @@ const PurpleSwitch = withStyles({
       backgroundColor: '#C1A305',
     },
   },
-  checked: {},
+  checked: true,
   track: {},
 })(Switch);
 
@@ -87,14 +87,16 @@ class Visits extends React.Component {
 
 
   onCheckVisitType(event) {
+    console.log(event.target.checked);
     this.setState({
       checkedVisit: event.target.checked
+    }, () => {
+      if(this.state.checkedVisit){
+        this.getUppcomingVisit();
+      }else {
+        this.getPreviousVisit();
+      }
     });
-    if(this.state.checkedVisit){
-      this.getUppcomingVisit();
-    }else {
-      this.getPreviousVisit();
-    }
   }
 
   render() {

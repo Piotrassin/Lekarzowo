@@ -49,11 +49,13 @@ constructor(props){
   this.onHourChange = this.onHourChange.bind(this);
   this.onSubmitBtnClick = this.onSubmitBtnClick.bind(this);
   this.onReservationClick = this.onReservationClick.bind(this);
+  this.onClickLoadMore = this.onClickLoadMore.bind(this);
   var defaultStartDate = new Date();
   var defaultEndDate = new Date();
   defaultStartDate.setHours(7,30);
   defaultEndDate.setHours(22,0);
   this.state = {
+    skipCount: 0,
     cityId: "",
     specialityId: "",
     doctorId: "",
@@ -132,17 +134,40 @@ async onSubmitBtnClick(event){
   console.log("CityId " + this.state.cityId);
   console.log("DateStarrt " + this.state.startDate);
   console.log("DateEnd " + this.state.endDate);
+  var reservationRequestObject = {
+    doctorId: this.state.doctorId,
+    specialityId: this.state.specialityId,
+    cityId: this.state.cityId,
+    startDate: this.state.startDate,
+    endDate: this.state.endDate
+  };
   await ReservationService.getPossibleAppointments(this.state.cityId, this.state.specialityId, this.state.doctorId,
   this.state.startDate, this.state.endDate, 6).then(resp => {
     this.setState({
       reservationsArray: resp,
-      btnTouched: true
+      btnTouched: true,
+      skipCount: 6
     });
   })
 }
 
 onClickConfimReservation(event){
 
+}
+
+onClickLoadMore(event){
+  console.log('before');
+  ReservationService.getPossibleAppointments(this.state.cityId, this.state.specialityId, this.state.doctorId,
+  this.state.startDate, this.state.endDate, 10, this.state.skipCount).then(resp => {
+    console.log('setting state');
+
+    this.setState({
+      reservationsArray: (this.state.reservationsArray).concat(resp),
+      btnTouched: true,
+      skipCount: this.state.skipCount + 10
+    });
+    console.log(this.state.reservationsArray);
+  })
 }
 
 render() {
@@ -202,6 +227,12 @@ render() {
               : <div className = "flex-column img-container"><img src = {doctorComputer} className = "doctor-sign" /></div>
             }
             </div>
+            {this.state.btnTouched
+              ?
+            <div className = 'flex-row justify-center' style={{marginTop: '20px'}}>
+              <button className = "btn-success-arrow" onClick = {this.onClickLoadMore}>Załaduj więcej</button>
+            </div>
+            : <div/>}
             </div>
           </div>
           <div className = 'calendar-container flex-column'>

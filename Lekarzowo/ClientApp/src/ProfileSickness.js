@@ -42,11 +42,8 @@ render() {
         <div className = 'sickness-item-part part-2'>
           <a className = 'table-header'>Choroba</a>
         </div>
-        <div className = 'sickness-item-part part-3'>
-          <a className = 'table-header'>Zdiagnozowano</a>
-        </div>
-        <div className = 'sickness-item-part part-4'>
-          <a className = 'table-header'>Wyleczono</a>
+        <div className = 'sickness-item-part part-3-4'>
+          <a className = 'table-header'>Opis</a>
         </div>
         <div className = 'sickness-item-part part-5'>
           <a className = 'table-header'>Akcje</a>
@@ -67,11 +64,8 @@ render() {
         <div className = 'sickness-item-part part-2'>
           <a className = 'table-header'>Choroba</a>
         </div>
-        <div className = 'sickness-item-part part-3'>
-          <a className = 'table-header'>Zdiagnozowano</a>
-        </div>
-        <div className = 'sickness-item-part part-4'>
-          <a className = 'table-header'>Wyleczono</a>
+        <div className = 'sickness-item-part part-3-4'>
+          <a className = 'table-header'>Opis</a>
         </div>
         <div className = 'sickness-item-part part-5'>
           <a className = 'table-header'>Akcje</a>

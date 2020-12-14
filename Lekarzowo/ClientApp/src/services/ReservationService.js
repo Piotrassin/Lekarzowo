@@ -6,8 +6,8 @@ const url = 'https://localhost:5001/api/';
 class ReservationService {
 
   getPossibleAppointments(cityId, specId, doctorId, startDate, endDate, limit, skip){
-    var possibleStartDate = startDate.toISOString();
-    var possibleEndDate = endDate.toISOString();
+    var possibleStartDate = startDate.toISOString().split('Z')[0];
+    var possibleEndDate = endDate.toISOString().split('Z')[0];
     if(!skip){
       skip = "";
     }
