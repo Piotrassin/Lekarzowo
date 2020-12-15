@@ -93,6 +93,24 @@ class VisitService {
     }).then(response => response.json());
   }
 
+  postSicknessOnVisit(sickness){
+    var patientId = JSON.parse(AuthService.getLoggedUser()).id;
+    return fetch(url + 'Illnesseshistory', {
+    method: 'POST',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "IllnessId": sickness.id,
+      "PatientId": patientId,
+      "VisitId": sickness.visitId,
+      "Description": sickness.description
+    })
+    })
+  }
+
+  openVisit(reservation){
+    
+  }
+
 }
 
 export default new VisitService();

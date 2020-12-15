@@ -49,7 +49,17 @@ class ReservationService {
   getVisitDetails(visitId){
     return fetch(url + 'Visits/' + visitId, {
       headers: authHeader()
-    }).then(response => response.json());
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw Error({
+          statusCode: response.statusCode,
+          statusText: response.statusText
+        });
+      }
+      return response;
+    })
+    .then(response => response.json());
   }
 
   getPastIllnesses(limit){
@@ -64,19 +74,32 @@ class ReservationService {
     var patientId = JSON.parse(AuthService.getLoggedUser()).id;
     return fetch(url + 'Reservations', {
     method: 'POST',
-    headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-          },
+    headers: authHeader({'Content-Type': 'application/json'}),
     body: JSON.stringify({
       "DoctorId": reservation.doctorId,
       "PatientId": patientId,
-      "Starttime": reservation.startTime,
-      "Endtime": reservation.endtime,
+      "Starttime": reservation.start,
+      "Endtime": reservation.end,
       "Canceled": 0,
       "LocalId": reservation.localId
     })
     })
+  }
+
+  cancelReservation(reservationId){
+    return fetch(url + 'Reservations/' + reservationId, {
+      method: 'PUT',
+      headers: authHeader({'Content-Type': 'application/json'}),
+      body: JSON.stringify({
+        "Id": reservationId,
+        "Canceled": 1
+      })
+    }).then(response => {
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+      return response;
+    });
   }
 
 

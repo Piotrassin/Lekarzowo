@@ -50,6 +50,9 @@ constructor(props){
   this.onSubmitBtnClick = this.onSubmitBtnClick.bind(this);
   this.onReservationClick = this.onReservationClick.bind(this);
   this.onClickLoadMore = this.onClickLoadMore.bind(this);
+  this.onClickConfimReservation = this.onClickConfimReservation.bind(this);
+  this.formatHour = this.formatHour.bind(this);
+  this.formatDate = this.formatDate.bind(this);
   var defaultStartDate = new Date();
   var defaultEndDate = new Date();
   defaultStartDate.setHours(7,30);
@@ -152,7 +155,10 @@ async onSubmitBtnClick(event){
 }
 
 onClickConfimReservation(event){
-
+  ReservationService.postReservation(this.state.selectedReservation)
+  .then(response => {
+    console.log(response);
+  });
 }
 
 onClickLoadMore(event){
@@ -168,6 +174,20 @@ onClickLoadMore(event){
     });
     console.log(this.state.reservationsArray);
   })
+}
+
+formatDate(date) {
+  if(date != undefined) {
+    return date.split('T')[0];
+  }
+  return '';
+}
+
+formatHour(date) {
+  if(date != undefined){
+    return date.split('T')[1].slice(0, -3);
+  }
+  return '';
 }
 
 render() {
@@ -216,11 +236,7 @@ render() {
             {this.state.btnTouched
               ? this.state.reservationsArray.map((item, i) =>
                 <ReservationItem key={i}
-                  date={item.start.split("T")[0]}
-                  hours={item.start.split("T")[1].substr(0,5).concat(" - ", item.end.split("T")[1].substr(0,5))}
-                  place={item.localName}
-                  doctorName = {item.doctorName}
-                  doctorSurname = {item.doctorLastname}
+                  reservation = {item}
                   onClickHandler = {this.onReservationClick}
                 />
               )
@@ -282,23 +298,24 @@ render() {
         <div className = 'flex-columm'>
         <div className = 'flex-row-space-around margin-top-medium' style = {{marginTop: '20px'}}>
           <a className = 'dialog-title'>Lekarz: </a>
-          <a>{this.state.selectedReservation.doctorName} {this.state.selectedReservation.doctorSurname}</a>
+          <a>{this.state.selectedReservation.doctorName} {this.state.selectedReservation.doctorLastname}</a>
         </div>
         <div className = 'flex-row-space-around margin-top-medium'>
           <a className = 'dialog-title' >Data: </a>
-          <a>{this.state.selectedReservation.date}</a>
+          <a>{this.formatDate(this.state.selectedReservation.start)}</a>
         </div>
         <div className = 'flex-row-space-around margin-top-medium'>
           <a className = 'dialog-title' >Godziny: </a>
-          <a>{this.state.selectedReservation.hours}</a>
+          <a>{this.formatHour(this.state.selectedReservation.start)} -
+          {this.formatHour(this.state.selectedReservation.end)}</a>
         </div>
         <div className = 'flex-row-space-around margin-top-medium'>
           <a className = 'dialog-title' >Wybrana placówka: </a>
-          <a>{this.state.selectedReservation.place}</a>
+          <a>{this.state.selectedReservation.localName}</a>
         </div>
         </div>
         <div className = "dialog-btn-hold">
-          <button className = "btn-primary" style = {{marginRight: '20px'}}>Potwierdź</button>
+          <button className = "btn-primary" style = {{marginRight: '20px'}} onClick = {this.onClickConfimReservation}>Potwierdź</button>
         </div>
       </Dialog>
     </div>

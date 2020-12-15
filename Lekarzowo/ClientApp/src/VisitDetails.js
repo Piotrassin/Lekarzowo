@@ -74,6 +74,7 @@ class VisitDetails extends React.Component {
         medicine: null,
         descriptionMedicine: "",
         treatment: null,
+        descriptionSickness: "",
         sickness: null
       }
     }
@@ -91,6 +92,7 @@ class VisitDetails extends React.Component {
     this.handleClickAddTreatmentDialogBtn = this.handleClickAddTreatmentDialogBtn.bind(this);
     this.handleClickAddSicknessDialogBtn = this.handleClickAddSicknessDialogBtn.bind(this);
     this.handleChangeMedicineDescription = this.handleChangeMedicineDescription.bind(this);
+    this.handleChangeSicknessDescription = this.handleChangeSicknessDescription.bind(this);
   }
 
   componentDidMount() {
@@ -114,14 +116,31 @@ this.getVisit();
     }));
   }
 
+  handleChangeSicknessDescription(event) {
+    console.log(event.target.value);
+    var newValue = event.target.value;
+    this.setState(prevState => ({
+        clicked: {
+          ...prevState.clicked,
+          descriptionSickness: newValue
+        }
+    }));
+  }
+
   getVisit(){
     ReservationService.getVisitDetails(this.state.id)
     .then(response => {
       this.setState({
         description: response.description,
-
       })
     })
+    .catch(err => {
+      console.log('Error');
+      console.log(err);
+      if(err.statusCode == 404){
+        
+      }
+    });
   }
 
   getMedicineHistory() {
@@ -248,13 +267,24 @@ this.getVisit();
   }
 
   handleClickAddSicknessDialogBtn(event){
+    var sicknessVisitObject = {
+      id : this.state.clicked.sickness.id,
+      description: this.state.descriptionSickness,
+      visitId: this.state.id
+    }
+    VisitService.postSicknessOnVisit(sicknessVisitObject)
+    .then(response => {
+      console.log(response);
+    });
     this.state.visitSickness.push(this.state.clicked.sickness);
     console.log(this.state.visitSickness);
-    this.setState({
+    this.setState(prevState => ({
       clicked: {
-        sickness: null
+        ...prevState.clicked,
+        sickness: null,
+        description: ''
       }
-    });
+    }));
     Dialog.close("sickness-dialog")(event);
   }
 
@@ -427,11 +457,20 @@ this.getVisit();
         <Autocomplete
         requestCallback = {VisitService.getAvailableSicknesses}
         changeCallback = {this.onClickAddSickness}
-        title = "Zabieg"
+        title = "Choroba"
         cssId = 'medicine-search'
         className = 'dialog-margin'
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
+        <br/>
+        <WhiteTextField id="descriptionSickness" name="descriptionSickness"
+        label="Opis"
+        value = {this.state.clicked.descriptionSickness}
+        onChange = {this.handleChangeSicknessDescription}
+        variant = 'outlined'
+        rowsMax = {2}
+        style = {{marginLeft: '20px', width: '94%'}}
+        size="small" fullWidth />
         <br/>
         <div className = 'dialog-btn-hold'>
           <a className = 'btn-dialog-cancel' onClick={this.handleClick} >Anuluj</a>

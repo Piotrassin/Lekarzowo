@@ -998,7 +998,7 @@ padding: 20px;
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: 1000;
+    z-index: 1001;
     overflow: auto;
 
 }
@@ -1021,7 +1021,7 @@ padding: 20px;
     left: 0;
     background-color: #000;
     opacity: 0.75;
-    z-index: 900;
+    z-index: 1000;
 }
 
 body.dialog-open {
@@ -1234,6 +1234,8 @@ align-items: center;
   padding: 15px 8px;
   margin-left: 18px;
   width: 100vw;
+  z-index: 3;
+  background-color: #EBEBEB;
 }
 .doctor-item {
   background-color: white;
@@ -1258,4 +1260,7 @@ align-items: center;
   width: 99%;
   margin-top: 20px;
   justify-content: space-between;
+}
+.padding-small {
+  padding: 10px 20px;
 }

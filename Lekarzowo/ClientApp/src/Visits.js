@@ -2,6 +2,7 @@ import React from 'react';
 import Dashboard from './Dashboard'
 import Menu from './Menu.js';
 import { withStyles } from '@material-ui/core/styles';
+import { Dialog } from './components/Dialog.js';
 import DateStepper from './DateStepper'
 import VisitItem from './components/VisitItem.js';
 import Switch from '@material-ui/core/Switch';
@@ -29,10 +30,13 @@ class Visits extends React.Component {
   constructor(props){
     super(props);
     this.onCheckVisitType = this.onCheckVisitType.bind(this);
+    this.openConfirmCancelReservationDialog = this.openConfirmCancelReservationDialog.bind(this);
+    this.cancelVisit = this.cancelVisit.bind(this);
     this.state = {
       checkedVisit: true,
       upcomingVisits: [],
-      recentVisits: []
+      recentVisits: [],
+      visitToCancel: {}
     };
   }
 
@@ -99,6 +103,31 @@ class Visits extends React.Component {
     });
   }
 
+  openConfirmCancelReservationDialog(visitItem, event){
+
+    console.log(visitItem);
+    this.setState({
+      visitToCancel: visitItem
+    }, () => {
+      if(!(Object.keys(this.state.visitToCancel).length === 0)){
+        console.log(this.state.visitToCancel);
+        Dialog.open("visit-cancel-dialog")(event);
+      }
+    });
+  }
+
+  cancelVisit(event) {
+    if(!(Object.keys(this.state.visitToCancel).length === 0)){
+      console.log('helo');
+      ReservationService.cancelReservation(this.state.visitToCancel.reservationId)
+      .then(response => {
+        this.setState({
+          visitToCancel: {}
+        })
+      });
+    }
+  }
+
   render() {
       return(
         <div className = 'container'>
@@ -135,6 +164,7 @@ class Visits extends React.Component {
                   visit={visit}
                   role={currentRole}
                   history= {this.props.history}
+                  dialogCallback = {this.openConfirmCancelReservationDialog}
                   />
                 ))}
                 {(!this.state.checkedVisit) && this.state.recentVisits.map((visit, index ) => (
@@ -166,6 +196,32 @@ class Visits extends React.Component {
           </div>
           </div>
           <VisitAlert history= {this.props.history}/>
+          {this.state.visitToCancel ?
+          <Dialog id = "visit-cancel-dialog">
+            <div className = "header-dialog">Odwołaj Rezerwację</div>
+            <div className = 'padding-small'>
+            <div className = 'subheader-profile'>
+            <a>Wizyta</a>
+            <hr/>
+            </div>
+            <div className = 'profile-data-slot'>
+            <a className = 'profile-data-slot-header'>Lekarz</a><a>{this.state.visitToCancel.doctorName} {this.state.visitToCancel.doctorLastname}</a>
+            </div>
+            <div className = 'profile-data-slot'>
+            <a className = 'profile-data-slot-header'>Data</a><a>{this.state.visitToCancel.reservationStartTime}</a>
+            </div>
+            <div className = 'profile-data-slot'>
+            <a className = 'profile-data-slot-header'>Godziny</a><a>{this.state.visitToCancel.reservationStartTime} -
+            {this.state.visitToCancel.reservationEndTime}</a>
+            </div>
+            </div>
+            <div className = "dialog-btn-hold">
+              <button className = "btn-primary" style = {{marginRight: '20px'}} onClick = {this.cancelVisit}>Potwierdź</button>
+            </div>
+          </Dialog>
+          :
+          <div/>
+        }
         </div>
       );
   }

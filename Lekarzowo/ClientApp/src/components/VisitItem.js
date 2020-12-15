@@ -5,6 +5,7 @@ class VisitItem extends React.Component {
 constructor(props) {
   super(props);
   this.onClickVisitDetails = this.onClickVisitDetails.bind(this);
+  this.onClickVisitCancel = this.onClickVisitCancel.bind(this);
 }
 
 onClickVisitDetails(event) {
@@ -12,9 +13,13 @@ onClickVisitDetails(event) {
   //window.location.reload();
 }
 
+onClickVisitCancel(event) {
+  this.props.dialogCallback(this.props.visit, event);
+}
+
 render() {
   return(
-    <div className = 'sickness-item'>
+    <div className = 'sickness-item' style = {{height: '70px'}}>
       <div className = 'sickness-item-part part-1'>
         <a>{this.props.visit.reservationStartTime.split('T')[0]}</a>
       </div>
@@ -28,8 +33,9 @@ render() {
       <div className = 'sickness-item-part part-4'>
         <a>{this.props.role == 'doctor' ? this.props.visit.patientName : this.props.visit.doctorName} {this.props.role == 'doctor' ? this.props.visit.patientLastname : this.props.visit.doctorLastname}</a>
       </div>
-      <div className = 'sickness-item-part part-5'>
-        <a className = 'button-gold' onClick = {this.onClickVisitDetails}>Zobacz</a>
+      <div className = 'sickness-item-part part-5 flex-column'>
+        <a className = 'button-primary' onClick = {this.onClickVisitDetails} style = {{marginBottom: '5px'}}>Zobacz</a>
+        <a className = 'button-gold' onClick = {this.onClickVisitCancel}>Odwołaj</a>
       </div>
     </div>
 

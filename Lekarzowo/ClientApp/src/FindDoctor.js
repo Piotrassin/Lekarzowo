@@ -20,13 +20,30 @@ class FindDoctor extends React.Component {
 
     this.state = {
       doctorSearch: "",
-      doctorsArray: []
+      doctorsArray: [],
+      doctorWorkingHoursArray: []
     };
     this.onChangeDoctorSearch = this.onChangeDoctorSearch.bind(this);
+    this.onClickDoctor = this.onClickDoctor.bind(this);
+    this.getDayofWeek = this.getDayofWeek.bind(this);
   }
 
   componentDidMount() {
 
+  }
+
+  getDayofWeek(dateToChange){
+    var d = new Date(dateToChange);
+    var weekday = new Array(7);
+    weekday[0] = "Niedziela";
+    weekday[1] = "Poniedziałek";
+    weekday[2] = "Wtorek";
+    weekday[3] = "Środa";
+    weekday[4] = "Czwartek";
+    weekday[5] = "Piątek";
+    weekday[6] = "Sobota";
+
+    return weekday[d.getDay()];
   }
 
   onChangeDoctorSearch(event){
@@ -39,6 +56,21 @@ class FindDoctor extends React.Component {
         this.setState({
           doctorsArray: response
         });
+        if(this.state.doctorWorkingHoursArray.length > 0){
+          this.setState({
+            doctorWorkingHoursArray: []
+          });
+        }
+      });
+    });
+  }
+
+  onClickDoctor(id) {
+    console.log(id);
+    DoctorService.getDoctorWorkingHours(id, 7)
+    .then(response => {
+      this.setState({
+        doctorWorkingHoursArray: response
       });
     });
   }
@@ -63,11 +95,14 @@ class FindDoctor extends React.Component {
             {this.state.doctorsArray && this.state.doctorsArray.map((doctor, index ) => (
                 <DoctorItem
                 id = {doctor.id}
+                key = {doctor.id}
                 name = {doctor.name.concat(' ' + doctor.lastname)}
+                clickCallback = {this.onClickDoctor}
                 />
               ))}
 
             </div>
+            {this.state.doctorWorkingHoursArray.length > 0 ?
             <div className = 'flex-row doctor-details-container'>
             <div  className = 'doctor-sidebar-profile '>
               <a className = 'subheader-profile-doctor'>Andrzej
@@ -95,9 +130,25 @@ class FindDoctor extends React.Component {
               </div>
             </div>
             <div  className = 'doctor-sidebar-details-profile'>
-              <a className = 'subheader-content-profile'>Lokale i godzin pracy lekarza</a>
+              <a className = 'subheader-content-profile'>Lokale i godziny pracy lekarza</a>
+              <br/>
+              {this.state.doctorWorkingHoursArray && this.state.doctorWorkingHoursArray.map((local, index ) => (
+              <div>
+                <a className = 'subheading-content-profile'>{local.name} ({local.streetname} {local.streetnumber})</a>
+                <hr style = {{width: '100%'}}/>
+                {local.workinghours.map((workinghours, index) =>
+                <div className = 'profile-data-slot' style = {{width: '300px', color: 'black'}}>
+                  <a className = 'profile-data-slot-header' style = {{color: 'black'}}>{this.getDayofWeek(workinghours.from)}</a><a>{workinghours.from.split('T')[1]} -
+                  {workinghours.to.split('T')[1]}</a>
+                </div>
+                )}
+              </div>
+              ))}
             </div>
             </div>
+            :
+            <div/>
+          }
           </div>
           <VisitAlert history= {this.props.history}/>
         </div>
