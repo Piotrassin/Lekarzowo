@@ -38,13 +38,6 @@ namespace Lekarzowo.Controllers
             return Ok(await _repository.GetAllByName(name, limit, skip));
         }
 
-        // GET: api/Locals/DoctorsWorkplaces?doctorId=1&days=100&limit=20&skip=0
-        [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<Local>>> DoctorsWorkplaces(decimal doctorId, int days, int? limit, int? skip)
-        {
-            return Ok(await _repository.DoctorsWorkplaces(doctorId, days, limit, skip));
-        }
-
         // GET: api/Locals/5
         [HttpGet("{id}")]
         public ActionResult<Local> GetLocal(decimal id)
@@ -58,8 +51,6 @@ namespace Lekarzowo.Controllers
 
             return local;
         }
-
-
 
         // PUT: api/Locals/5
         [Authorize(Roles = "admin")]

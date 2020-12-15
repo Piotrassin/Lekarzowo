@@ -728,6 +728,10 @@ namespace Lekarzowo.DataAccessLayer.Models
                     .HasColumnName("PRICE")
                     .HasColumnType("NUMBER(38)");
 
+                entity.Property(e => e.OnGoing)
+                    .HasColumnName("ONGOING")
+                    .HasColumnType("NUMBER(1)");
+
                 entity.HasOne(d => d.Reservation)
                     .WithOne(p => p.Visit)
                     .HasForeignKey<Visit>(d => d.ReservationId)

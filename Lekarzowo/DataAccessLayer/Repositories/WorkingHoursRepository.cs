@@ -21,12 +21,25 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 && x.LocalId == LocId);
         }
 
-        public async Task<IEnumerable<Workinghours>> DoctorsWorkplaces(decimal doctorId, decimal localId, int days)
+        public async Task<IEnumerable<Local>> DoctorsWorkplaces(decimal doctorId)
+        {
+            var query = _context.Workinghours
+                .Where(x => x.DoctorId == doctorId)
+                .Where(x => x.From.Date >= DateTime.Now.Date)
+                .Select(x => x.Local).Include(x => x.City)
+                .Distinct()
+                .OrderBy(x => x.City.Name)
+                .ThenBy(x => x.Name);
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Workinghours>> DoctorUpcomingWorkingHours(decimal doctorId, decimal localId, int days)
         {
             var query = _context.Workinghours
                 .Where(x => x.DoctorId == doctorId)
                 .Where(x => x.LocalId == localId)
-                .Where(x => x.From.Date >= DateTime.Now.Date && x.From <= DateTime.Now.Date.AddDays(days))
+                .Where(x => x.From.Date >= DateTime.Now.Date)
                 .Select(x => new Workinghours
                 {
                     Id = x.Id,
@@ -35,8 +48,8 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                     DoctorId = x.DoctorId,
                     LocalId = x.LocalId
                 })
-                .OrderBy(x => x.From);
-
+                .OrderBy(x => x.From)
+                .Take(days);
 
             return await query.ToListAsync();
         }

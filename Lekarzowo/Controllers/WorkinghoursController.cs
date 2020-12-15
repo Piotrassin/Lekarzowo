@@ -51,7 +51,7 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<object>> DoctorsUpcomingSchedule(decimal doctorId, int days)
         {
-            var workplaces = await _localRepository.DoctorsWorkplaces(doctorId, days, null, null); 
+            var workplaces = await _repository.DoctorsWorkplaces(doctorId); 
 
             if (workplaces == null || !workplaces.Any())
             {
@@ -59,7 +59,7 @@ namespace Lekarzowo.Controllers
             }
             foreach (var workplace in workplaces)
             {
-                workplace.Workinghours = (ICollection<Workinghours>) await _repository.DoctorsWorkplaces(doctorId, workplace.Id, days);
+                workplace.Workinghours = (ICollection<Workinghours>) await _repository.DoctorUpcomingWorkingHours(doctorId, workplace.Id, days);
             }
 
             return Ok(workplaces);
