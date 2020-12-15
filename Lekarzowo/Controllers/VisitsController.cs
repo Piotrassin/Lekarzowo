@@ -1,30 +1,28 @@
-﻿using System;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Lekarzowo.Models;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 
 namespace Lekarzowo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class VisitsController : ControllerBase
+    public class VisitsController : BaseController
     {
         private readonly IVisitsRepository _repository;
-        private readonly IUserInterfaceComponentsRepository _repositorySQL;
 
-        public VisitsController(IVisitsRepository repository, IUserInterfaceComponentsRepository repositorySQL)
+        public VisitsController(IVisitsRepository repository)
         {
             _repository = repository;
-            _repositorySQL = repositorySQL;
         }
 
         // GET: api/Visits
+        [Authorize(Roles = "doctor,admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Visit>>> GetVisit()
         {
@@ -32,9 +30,11 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Visits/5
+        [Authorize(Roles = "patient,doctor,admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Visit>> GetVisit(decimal id)
         {
+            
             var visit = _repository.GetByID(id);
 
             if (visit == null)
@@ -46,6 +46,7 @@ namespace Lekarzowo.Controllers
         }
 
         // PUT: api/Visits/5
+        [Authorize(Roles = "doctor,admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutVisit(decimal id, Visit visit)
         {
@@ -71,6 +72,7 @@ namespace Lekarzowo.Controllers
         }
 
         // POST: api/Visits
+        [Authorize(Roles = "doctor,admin")]
         [HttpPost]
         public async Task<ActionResult<Visit>> PostVisit(Visit visit)
         {
@@ -93,6 +95,7 @@ namespace Lekarzowo.Controllers
         }
 
         // DELETE: api/Visits/5
+        [Authorize(Roles = "doctor,admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Visit>> DeleteVisit(decimal id)
         {
@@ -109,6 +112,7 @@ namespace Lekarzowo.Controllers
         }
 
         // PUT: api/Visits/ChangeStatus?visitId=5&isOnGoing=true
+        [Authorize(Roles = "doctor,admin")]
         [HttpPut("[action]")]
         public async Task<IActionResult> ChangeStatus(decimal visitId, bool isOnGoing)
         {
@@ -117,9 +121,15 @@ namespace Lekarzowo.Controllers
             {
                 return NotFound();
             }
+            var onGoingVisits = await _repository.OnGoingVisits(visit.Reservation.DoctorId);
 
-            if (visit.Reservation.Starttime > DateTime.Now.AddMinutes(30) || 
+            if (visit.Reservation.Starttime > DateTime.Now.AddMinutes(30) ||
                 visit.Reservation.Endtime < DateTime.Now.AddMinutes(-30))
+            {
+                return BadRequest();
+            }
+
+            if (onGoingVisits.Any() && !onGoingVisits.Contains(visit))
             {
                 return BadRequest();
             }

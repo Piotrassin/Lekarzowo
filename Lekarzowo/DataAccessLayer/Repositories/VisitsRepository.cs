@@ -2,6 +2,7 @@
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
@@ -32,6 +33,11 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             //_context.Visit.Attach(t);
             var entry = _table.First(e => e.ReservationId == t.ReservationId);
             Update(t, entry);
+        }
+
+        public async Task<IEnumerable<Visit>> OnGoingVisits(decimal doctorId)
+        {
+            return await _context.Visit.Where(x => x.Reservation.DoctorId == doctorId && x.OnGoing).ToListAsync();
         }
     }
 }
