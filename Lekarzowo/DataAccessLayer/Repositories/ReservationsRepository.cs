@@ -128,7 +128,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         //    return await orderedQuery.ToListAsync(); ;
         //}
 
-        public async Task<IEnumerable<Reservation>> IsReservationOverlappingWithAnother(decimal localId, decimal doctorId, DateTime start, DateTime end)
+        public async Task<IEnumerable<Reservation>> OverlappingReservations(decimal localId, decimal doctorId, DateTime start, DateTime end)
         {
             var query = _context.Reservation
                 .Where(x => x.Room.LocalId == localId)
@@ -137,6 +137,17 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 .Where(x => (x.Starttime < start && x.Endtime <= start) || (x.Starttime >= end));
 
             return await query.ToListAsync();
+        }
+
+        public async Task<bool> IsReservationOverlappingWithAnother(decimal localId, decimal doctorId, DateTime start, DateTime end)
+        {
+            var query = _context.Reservation
+                .Where(x => x.Room.LocalId == localId)
+                .Where(x => x.DoctorId == doctorId)
+                .Where(x => x.Starttime.Date == start.Date)
+                .AllAsync(x => (x.Starttime < start && x.Endtime <= start) || (x.Starttime >= end));
+
+            return ! await query;
         }
 
         public async Task<bool> Exists(Reservation res)

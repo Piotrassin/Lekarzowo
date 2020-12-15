@@ -53,26 +53,18 @@ namespace Lekarzowo.Controllers
             {
                 return BadRequest();
             }
-
-            if (_repository.GetByID(visit.ReservationId) != null)
+            if (!VisitExists(id))
             {
-                _repository.Update(visit);
+                return NotFound();
             }
-
             try
             {
+                _repository.Update(visit);
                 _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
-                if (!VisitExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, e.Message);
             }
 
             return NoContent();
@@ -86,8 +78,16 @@ namespace Lekarzowo.Controllers
             {
                 return Conflict("That visit already exists");
             }
-            _repository.Insert(visit);
-            _repository.Save();
+
+            try
+            {
+                _repository.Insert(visit);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, e.Message);
+            }
 
             return Created("", visit);
         }
@@ -108,7 +108,26 @@ namespace Lekarzowo.Controllers
             return visit;
         }
 
-        // to chyba można wywalić
+        // PUT: api/Visits/ChangeStatus?visitId=5&isOnGoing=true
+        [HttpPut("[action]")]
+        public async Task<IActionResult> ChangeStatus(decimal visitId, bool isOnGoing)
+        {
+            var visit = _repository.GetByID(visitId);
+            if (visit == null)
+            {
+                return NotFound();
+            }
+
+            if (visit.Reservation.Starttime > DateTime.Now.AddMinutes(30) || 
+                visit.Reservation.Endtime < DateTime.Now.AddMinutes(-30))
+            {
+                return BadRequest();
+            }
+
+            visit.OnGoing = isOnGoing;
+            return await PutVisit(visitId, visit);
+        }
+
         private bool VisitExists(decimal id)
         {
             return _repository.Exists(id);

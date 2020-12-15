@@ -63,14 +63,13 @@ namespace Lekarzowo.Validators
 
         public async Task<bool> NotOverlapWithAnother(decimal localId, decimal doctorId, DateTime start, DateTime end)
         {
-            var overlappedReservations = await _reservationsRepository.IsReservationOverlappingWithAnother(localId, doctorId, start, end);
-            return overlappedReservations.Count() == 0;
+            return ! await _reservationsRepository.IsReservationOverlappingWithAnother(localId, doctorId, start, end);
         }
 
         public async Task<bool> NotOverlapWithAnother(IRoomsRepository roomRepo, decimal reservationId, decimal roomId, decimal doctorId, DateTime start, DateTime end)
         {
             Room room = roomRepo.GetByID(roomId);
-            var overlappedReservations = await _reservationsRepository.IsReservationOverlappingWithAnother(room.LocalId, doctorId, start, end);
+            var overlappedReservations = await _reservationsRepository.OverlappingReservations(room.LocalId, doctorId, start, end);
             if (overlappedReservations.Count() == 1 && overlappedReservations.First().Id == reservationId)
             {
                 return true;
