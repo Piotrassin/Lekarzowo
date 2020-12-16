@@ -13,9 +13,15 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     {
         public DoctorsRepository(ModelContext context) : base(context) {}
 
-        public async Task<Doctor> GetDoctorWithSpecialization(decimal doctorId)
+        public object DoctorsContactData(decimal doctorId)
         {
-            return await _context.Doctor.Include(x => x.Speciality).FirstOrDefaultAsync(doctor => doctor.Id == doctorId);
+            return _context.Person.Where(x => x.Doctor.Id == doctorId)
+                .Select(x => new
+                {
+                    Name = x.Name,
+                    Lastname = x.Lastname,
+                    Email = x.Email
+                });
         }
 
 

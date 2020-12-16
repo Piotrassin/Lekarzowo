@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace Lekarzowo.Controllers
 {
-    [Authorize(Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class DoctorsController : BaseController
@@ -22,6 +21,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Doctors
+        [Authorize(Roles = "admin")]
         [HttpGet("[action]")]
         public ActionResult<IEnumerable<Doctor>> All()
         {
@@ -37,6 +37,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Doctors/5
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public ActionResult<Doctor> Single(decimal id)
         {
@@ -50,7 +51,23 @@ namespace Lekarzowo.Controllers
             return doctor;
         }
 
+        // GET: api/Doctors/ContactData/5
+        [AllowAnonymous]
+        [HttpGet("[action]/{id}")]
+        public async Task<ActionResult<object>> ContactData(decimal id)
+        {
+            var doctor = _repository.DoctorsContactData(id);
+
+            if (doctor == null)
+            {
+                return NotFound();
+            }
+
+            return doctor;
+        }
+
         // PUT: api/Doctors/5
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public IActionResult PutDoctor(decimal id, Doctor doctor)
         {
@@ -75,6 +92,7 @@ namespace Lekarzowo.Controllers
         }
 
         // POST: api/Doctors
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public ActionResult<Doctor> PostDoctor(Doctor doctor)
         {
@@ -91,6 +109,7 @@ namespace Lekarzowo.Controllers
         }
 
         // DELETE: api/Doctors/5
+        [Authorize(Roles = "admin")]
         [HttpDelete("{doctorId}")]
         public ActionResult<Doctor> DeleteDoctor(decimal doctorId)
         {

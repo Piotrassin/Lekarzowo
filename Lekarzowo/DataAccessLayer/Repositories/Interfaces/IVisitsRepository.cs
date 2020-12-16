@@ -11,6 +11,13 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// </summary>
         /// <param name="doctorId"></param>
         /// <returns></returns>
-        Task<IEnumerable<Visit>> OnGoingVisits(decimal doctorId);
+        Task<IEnumerable<Visit>> OnGoingVisitsToday(decimal doctorId);
+
+        /// <summary>
+        /// Returns details of an ongoin visit if the is any.
+        /// </summary>
+        /// <param name="doctorId"></param>
+        /// <returns></returns>
+        Task<Visit> OnGoingVisit(decimal doctorId);
     }
 }
