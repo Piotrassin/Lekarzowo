@@ -1,7 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.DTO;
-using Lekarzowo.DataAccessLayer.Models;
+﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Lekarzowo.Models;
 using Lekarzowo.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
