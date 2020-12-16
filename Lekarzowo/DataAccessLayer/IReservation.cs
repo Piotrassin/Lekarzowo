@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.DTO
 {
@@ -12,6 +9,6 @@ namespace Lekarzowo.DataAccessLayer.DTO
     decimal PatientId { get; set; }
     DateTime Starttime { get; set; }
     DateTime Endtime { get; set; }
-    decimal? Canceled { get; set; }
+    bool Canceled { get; set; }
     }
 }

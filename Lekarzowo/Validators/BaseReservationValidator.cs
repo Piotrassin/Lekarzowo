@@ -28,8 +28,8 @@ namespace Lekarzowo.Validators
 
             RuleFor(x => x.Canceled)
                 .Cascade(CascadeMode.Stop)
-                .NotEmpty().WithMessage("Pole nie może być puste.")
-                .Must(x => x.Value == 0).WithMessage("Niepoprawny stan wizyty (odwołana).");
+                .NotNull().WithMessage("Pole nie może być puste.")
+                .Must(x => x == false).WithMessage("Niepoprawny stan wizyty (odwołana).");
 
             RuleFor(x => x.Starttime)
                 .Cascade(CascadeMode.Stop)

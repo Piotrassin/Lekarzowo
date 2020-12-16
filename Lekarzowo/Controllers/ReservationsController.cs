@@ -1,7 +1,6 @@
 ﻿using Lekarzowo.DataAccessLayer.DTO;
 using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Lekarzowo.Helpers.Exceptions;
 using Lekarzowo.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,12 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lekarzowo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ReservationsController : ControllerBase
+    public class ReservationsController : BaseController
     {
         private readonly IReservationsRepository _repository;
         private readonly IWorkingHoursRepository _workHoursRepository;
@@ -131,6 +131,7 @@ namespace Lekarzowo.Controllers
                     PatientId = input.PatientId,
                     Starttime = input.Starttime,
                     Endtime = input.Endtime,
+                    Canceled = input.Canceled,
                     RoomId = room.Id
                 };
                 _repository.Insert(reservationToInsert);
@@ -172,14 +173,14 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> Upcoming(decimal patientId, int? limit, int? skip)
         {
-            return Ok(await _repository.RecentReservations(patientId, true, limit, skip));
+            return Ok(await _repository.RecentOrUpcomingReservations(patientId, true, limit, skip));
         }
 
         // GET: api/Reservations/Recent?PatientId=1&Limit=5&Skip=2
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> Recent(decimal patientId, int? limit, int? skip)
         {
-            return Ok(await _repository.RecentReservations(patientId, false, limit, skip));
+            return Ok(await _repository.RecentOrUpcomingReservations(patientId, false, limit, skip));
         }
 
         // GET: api/reservations/possibleappointments?CityId=1&SpecId=1&DoctorId=1
@@ -307,6 +308,26 @@ namespace Lekarzowo.Controllers
             List<decimal> availableRoomIds = allRoomsInALocal.Select(x => x.Id).Except(takenRoomIdsUnique).ToList();
 
             return _roomsRepository.GetByID(availableRoomIds.FirstOrDefault());
+        }
+
+        // GET: api/Reservations/Cancel/5
+        [Authorize(Roles = "patient,doctor,admin")]
+        [HttpGet("[action]/{reservationId}")]
+        public async Task<IActionResult> Cancel(decimal reservationId)
+        {
+            if (IsPatient() && ! await _repository.IsOwnedByPatient(GetUserIdFromToken(), reservationId))
+            {
+                return Unauthorized();
+            }
+
+            var result = await GetReservation(reservationId);
+            if (result.Value == null)
+            {
+                return NotFound();
+            }
+            var reservation = result.Value;
+            reservation.Canceled = true;
+            return await PutReservation(reservationId, reservation);
         }
 
     }

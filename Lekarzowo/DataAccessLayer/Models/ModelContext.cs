@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Lekarzowo.DataAccessLayer.Models
 {
@@ -495,7 +493,7 @@ namespace Lekarzowo.DataAccessLayer.Models
 
                 entity.Property(e => e.Canceled)
                     .HasColumnName("CANCELED")
-                    .HasColumnType("NUMBER(38)");
+                    .HasColumnType("NUMBER(1)");
 
                 entity.Property(e => e.DoctorId)
                     .HasColumnName("DOCTOR_ID")
