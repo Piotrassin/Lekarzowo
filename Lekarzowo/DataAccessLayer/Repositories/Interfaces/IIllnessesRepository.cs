@@ -10,6 +10,14 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 {
     public interface IIllnessesRepository : IBaseNameRepository<Illness>
     {
-        //bool Exists(Illness illness);
+        /// <summary>
+        /// Dynamically searches illnesses by their name but only among those diagnosed on a given visit.
+        /// </summary>
+        /// <param name="visitId"></param>
+        /// <param name="name"></param>
+        /// <param name="limit"></param>
+        /// <param name="skip"></param>
+        /// <returns></returns>
+        Task<IEnumerable<Illness>> AllByNameOnVisit(decimal visitId, string name, int? limit, int? skip);
     }
 }

@@ -1,7 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.DTO;
-using Lekarzowo.DataAccessLayer.Models;
+﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Lekarzowo.Models;
 using Lekarzowo.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -84,7 +82,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return output;
         }
 
-        public async Task<IEnumerable<object>> RecentReservations(decimal patientId, bool showUpcomingInstead, int? limit, int? skip)
+        public async Task<IEnumerable<object>> RecentOrUpcomingReservations(decimal patientId, bool showUpcomingInstead, int? limit, int? skip)
         {
             var reservationTypeQuery = _context.Reservation
                 .Where(x => x.PatientId == patientId);
@@ -108,33 +106,16 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return await trimmedQuery.ToListAsync(); ;
         }
 
-        //public async Task<IEnumerable<object>> UpcomingReservations(decimal PatientId, int? limit, int? skip)
-        //{
-        //    var query = _context.Reservation
-        //        .Where(x => x.PatientId == PatientId)
-        //        .Where(x => x.Starttime >= DateTime.Now)
-        //        .Select(x => new
-        //        {
-        //            ReservationId = x.Id,
-        //            DoctorSpecialization = x.Doctor.Speciality.Name,
-        //            ReservationStartTime = x.Starttime,
-        //            ReservationEndTime = x.Endtime,
-        //            DoctorName = x.Doctor.IdNavigation.Name,
-        //            DoctorLastname = x.Doctor.IdNavigation.Lastname,
-        //        }).OrderBy(x => x.ReservationStartTime);
-
-        //    var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
-
-        //    return await orderedQuery.ToListAsync(); ;
-        //}
-
         public async Task<IEnumerable<Reservation>> OverlappingReservations(decimal localId, decimal doctorId, DateTime start, DateTime end)
         {
             var query = _context.Reservation
                 .Where(x => x.Room.LocalId == localId)
                 .Where(x => x.DoctorId == doctorId)
                 .Where(x => x.Starttime.Date == start.Date)
-                .Where(x => (x.Starttime < start && x.Endtime <= start) || (x.Starttime >= end));
+                .Where(x => start <= x.Starttime && end > x.Starttime || 
+                            start >= x.Starttime && end <= x.Endtime || 
+                            start <= x.Starttime && end >= x.Endtime ||
+                            start < x.Endtime && end >= x.Endtime);
 
             return await query.ToListAsync();
         }
@@ -159,5 +140,9 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 && x.DoctorId == res.DoctorId);
         }
 
+        public async Task<bool> IsOwnedByPatient(decimal patientId, decimal reservationId)
+        {
+            return await _context.Reservation.AnyAsync(x => x.PatientId == patientId && x.Id == reservationId);
+        }
     }
 }

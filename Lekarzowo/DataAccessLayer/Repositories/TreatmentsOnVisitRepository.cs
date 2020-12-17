@@ -19,6 +19,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             var query = _context.Treatmentonvisit.Where(x => x.VisitId == visitId)
                 .Select(x => new
                 {
+                    Id = x.Id, 
                     TreatmentName = x.Treatment.Name,
                     TreatmentDescription = x.Description
                 }).OrderBy(x => x.TreatmentName);

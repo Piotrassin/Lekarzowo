@@ -11,7 +11,7 @@ namespace Lekarzowo.DataAccessLayer.Models
         public decimal PatientId { get; set; }
         public DateTime Starttime { get; set; }
         public DateTime Endtime { get; set; }
-        public decimal? Canceled { get; set; }
+        public bool Canceled { get; set; }
         public decimal RoomId { get; set; }
 
         public virtual Doctor Doctor { get; set; }

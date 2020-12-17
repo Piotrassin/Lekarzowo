@@ -1,15 +1,18 @@
-﻿using Lekarzowo.DataAccessLayer.DTO;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.Models;
+﻿using Lekarzowo.DataAccessLayer.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 {
     public interface IReservationsRepository : IBaseIdRepository<Reservation>
     {
+        /// <summary>
+        /// Checks if given reservations is owned by given patient.
+        /// </summary>
+        /// <param name="patientId"></param>
+        /// <returns></returns>
+        Task<bool> IsOwnedByPatient(decimal patientId, decimal reservationId);
 
         /// <summary>
         /// Returns all reservations in db meeting given criteria. AllByPatientId criteria are optional.
@@ -38,16 +41,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         Task<IEnumerable<object>> DoctorScheduleList(decimal doctorId, decimal localId, DateTime? start, DateTime? end);
 
         /// <summary>
-        /// Upcoming visits sorted from nearest to furthest. Limit the number od loaded items. Optionally skip given number of rows for pagination.
-        /// </summary>
-        /// <param name="PatientId"></param>
-        /// <param name="Limit"></param>
-        /// <param name="Skip"></param>
-        /// <returns></returns>
-        //Task<IEnumerable<object>> UpcomingReservations(decimal PatientId, int? Limit, int? Skip);
-
-
-        /// <summary>
         /// Returns IEnumerable<object> of recent visits sorted from most recent.
         /// If bool argument is true, method will instead return upcoming reservations sorted from the nearest to furthest in date.
         /// Limit the number od loaded items. Optionally skip given number of rows for pagination.
@@ -57,7 +50,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// <param name="Limit"></param>
         /// <param name="Skip"></param>
         /// <returns></returns>
-        Task<IEnumerable<object>> RecentReservations(decimal PatientId, bool showUpcomingInstead, int? Limit, int? Skip);
+        Task<IEnumerable<object>> RecentOrUpcomingReservations(decimal PatientId, bool showUpcomingInstead, int? Limit, int? Skip);
 
         /// <summary>
         /// Returns true if none of existing reservations in a given local and with a given doctor overlap passed reservation.
@@ -82,5 +75,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// <param name="res"></param>
         /// <returns></returns>
         Task<bool> Exists(Reservation res);
+
     }
 }

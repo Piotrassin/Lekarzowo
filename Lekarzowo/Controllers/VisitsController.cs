@@ -130,7 +130,7 @@ namespace Lekarzowo.Controllers
             {
                 return NotFound();
             }
-            var onGoingVisits = await _repository.OnGoingVisits(visit.Reservation.DoctorId);
+            var onGoingVisits = await _repository.OnGoingVisitsToday(visit.Reservation.DoctorId);
 
             if (visit.Reservation.Starttime > DateTime.Now.AddMinutes(30) ||
                 visit.Reservation.Endtime < DateTime.Now.AddMinutes(-30))
@@ -145,6 +145,19 @@ namespace Lekarzowo.Controllers
 
             visit.OnGoing = isOnGoing;
             return await PutVisit(visitId, visit);
+        }
+
+        // GET: api/Visits/OnGoing/5
+        [Authorize(Roles = "doctor,admin")]
+        [HttpGet("[action]/{doctorId}")]
+        public async Task<IActionResult> OnGoing(decimal doctorId)
+        {
+            var visit = await _repository.OnGoingVisit(doctorId);
+            if (visit == null)
+            {
+                return NotFound();
+            }
+            return Ok(visit);
         }
 
         private bool VisitExists(decimal id)
