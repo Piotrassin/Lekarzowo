@@ -35,7 +35,7 @@ class Dashboard extends React.Component {
         window.location.reload();
         return '';
       }
-      return response.json();
+      return response;
     })
 .then(response => console.log(response));
   /*  fetch('https://localhost:5001/api/Visits/List')

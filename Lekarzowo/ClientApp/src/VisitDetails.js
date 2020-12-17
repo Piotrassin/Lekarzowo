@@ -70,18 +70,23 @@ class VisitDetails extends React.Component {
       surname: "",
       reservationId: "",
       description: "",
+      addedDescription: "",
+      showVisitStateBtn: false,
       clicked: {
         medicine: null,
         descriptionMedicine: "",
         treatment: null,
         descriptionSickness: "",
-        sickness: null
+        sickness: null,
+        descriptionTreatment: ""
       }
     }
     this.getMedicineHistory = this.getMedicineHistory.bind(this);
     this.getSicknessHistory = this.getSicknessHistory.bind(this);
     this.getTreatmentHistory = this.getTreatmentHistory.bind(this);
     this.getActiveMedicine = this.getActiveMedicine.bind(this);
+    this.getSicknessOnVisit = this.getSicknessOnVisit.bind(this);
+    this.getTreatmentOnVisit = this.getTreatmentOnVisit.bind(this);
     this.getVisit = this.getVisit.bind(this);
     this.handleClickBtnVisit = this.handleClickBtnVisit.bind(this);
     this.handleClickAddMedicine = this.handleClickAddMedicine.bind(this);
@@ -93,6 +98,8 @@ class VisitDetails extends React.Component {
     this.handleClickAddSicknessDialogBtn = this.handleClickAddSicknessDialogBtn.bind(this);
     this.handleChangeMedicineDescription = this.handleChangeMedicineDescription.bind(this);
     this.handleChangeSicknessDescription = this.handleChangeSicknessDescription.bind(this);
+    this.handleChangeTreatmentDescription = this.handleChangeTreatmentDescription.bind(this);
+    this.handleChangeDescription = this.handleChangeDescription.bind(this);
   }
 
   componentDidMount() {
@@ -100,9 +107,11 @@ class VisitDetails extends React.Component {
 this.getSicknessHistory();
 this.getActiveMedicine();
 this.getVisit();
-
+this.getSicknessOnVisit();
+this.getTreatmentOnVisit();
 
   }
+
 
 
   handleChangeMedicineDescription(event) {
@@ -112,6 +121,17 @@ this.getVisit();
         clicked: {
           ...prevState.clicked,
           descriptionMedicine: newValue
+        }
+    }));
+  }
+
+  handleChangeTreatmentDescription(event) {
+    console.log(event.target.value);
+    var newValue = event.target.value;
+    this.setState(prevState => ({
+        clicked: {
+          ...prevState.clicked,
+          descriptionTreatment: newValue
         }
     }));
   }
@@ -132,16 +152,52 @@ this.getVisit();
     .then(response => {
       this.setState({
         description: response.description,
-      })
+      });
+      if(this.state.openedVisit){
+        console.log('Visit Exist and opened');
+        this.setState({
+          showVisitStateBtn: true
+        });
+      }else {
+        console.log('Visit exist and not opened');
+        this.setState({
+          showVisitStateBtn: false
+        });
+      }
+
     })
     .catch(err => {
       console.log('Error');
-      console.log(err);
-      if(err.statusCode == 404){
-        
+    console.log(err);
+      if(err.message == 404){
+        console.log('Visit does not exist');
+        this.setState({
+          showVisitStateBtn: true
+        });
       }
     });
   }
+
+  getSicknessOnVisit(){
+    VisitService.getSicknessOnVisit(this.state.id, 10, 0)
+    .then(response => {
+      this.setState({
+        visitSickness: response
+      });
+      console.log(this.state.visitSickness);
+    });
+  }
+
+  getTreatmentOnVisit(){
+    VisitService.getTreatmentOnVisit(this.state.id, 10, 0)
+    .then(response => {
+      this.setState({
+        visitTreatment: response
+      });
+      console.log(this.state.visitTreatment);
+    });
+  }
+
 
   getMedicineHistory() {
 
@@ -171,20 +227,44 @@ this.getVisit();
     return this.state.treatmentHistory.filter((v,i,a)=>a.findIndex(t=>(t.treatmentName === v.treatmentName && t.treatmentOnVisitDescription===v.treatmentOnVisitDescription))===i);
   }
 
+  handleChangeDescription(event){
+    this.setState({
+      description: event.target.value
+    });
+  }
+
   handleClickBtnVisit(event) {
     console.log('Hello');
     if(VisitService.getOpenedVisit() == false){
+
       var state = VisitService.startVisit(this.state.id);
-      this.setState({
-        openedVisit: state
-      });
+      if(state){
+        VisitService.postVisit(this.state.id)
+        .then(response => {
+          this.setState({
+            openedVisit: state
+          });
+        })
+        .catch(err => {
+          console.log('Error');
+          console.log(err);
+        })
+
+
+      }
+
     }else {
       console.log('Masz aktywną wizytę');
       if(VisitService.getOpenedVisit().id == this.state.id){
-        VisitService.endVisit();
-        this.setState({
-          openedVisit: false
+        VisitService.putDescriptionOnVisit(this.state.id, this.state.description)
+        .then(response => {
+          VisitService.endVisit();
+          this.setState({
+            openedVisit: false
+          });
+          window.location.reload();
         });
+
       }else {
         console.log('Nie mozesz zakonczyc tej wiizty');
       }
@@ -255,8 +335,25 @@ this.getVisit();
     Dialog.close("medicine-dialog")(event);
   }
 
+  handleClickAddDescriptionBtn(event) {
+
+  }
+
   handleClickAddTreatmentDialogBtn(event){
-    this.state.visitTreatment.push(this.state.clicked.treatment);
+    var treatmentVisitObject = {
+      id : this.state.clicked.treatment.id,
+      description: this.state.descriptionTreatment,
+      visitId: this.state.id
+    }
+    VisitService.postTreatmentOnVisit(treatmentVisitObject)
+    .then(response => {
+      console.log(response);
+    });
+
+    this.state.visitTreatment.push({
+      treatmentName: this.state.clicked.treatment.name,
+      treatmentDescription: this.state.clicked.descriptionTreatment
+    });
     console.log(this.state.visitTreatment);
     this.setState({
       clicked: {
@@ -276,7 +373,11 @@ this.getVisit();
     .then(response => {
       console.log(response);
     });
-    this.state.visitSickness.push(this.state.clicked.sickness);
+
+    this.state.visitSickness.push({
+      illnessName: this.state.clicked.sickness.name,
+      illnessHistoryId: this.state.clicked.sickness.id
+    });
     console.log(this.state.visitSickness);
     this.setState(prevState => ({
       clicked: {
@@ -310,12 +411,15 @@ this.getVisit();
 
             <b className = "standard-black">Notatki lekarza (wywiad, badanie, diagnoza, zalecenia)</b>
 
-            {currentUserRole == 'doctor' ?
+            {(currentUserRole == 'doctor' && this.state.openedVisit) ?
+
             <TextField
             id="doctor-notes-input"
             label="Notatki"
             placeholder="Zacznij pisać..."
             className = "textField"
+            value = {this.state.description}
+            onChange = {this.handleChangeDescription}
             multiline
             />
 
@@ -331,11 +435,14 @@ this.getVisit();
           <div className = "flex-column justify-content-space column-container">
             <div className = "basic-container-small basic-container">
               <b className = "standard-black">Zdiagnozowane choroby</b>
-              {this.state.visitSickness && this.state.visitSickness.map((sickness, index) => (
-                <div><a id = {sickness.id}>{sickness.name}</a></div>
+              {this.state.visitSickness.length > 0 && this.state.visitSickness.map((sickness, index) => (
+                <div><a id = {sickness.illnessHistoryId}>{sickness.illnessName}</a></div>
               ))}
+              {(currentUserRole == 'doctor' && this.state.openedVisit) ?
               <img src={plusSign}  style = {{width: "40px", cursor: "pointer"}} onClick = {this.handleClickAddSickness} className = 'plusSign'/>
-
+              :
+              <div/>
+              }
             </div>
             <div className = "basic-container-small basic-container">
 
@@ -343,16 +450,24 @@ this.getVisit();
               {this.state.visitMedicine && this.state.visitMedicine.map((medicine, index) => (
                 <div><a id = {medicine.id}>{medicine.name}</a></div>
               ))}
+              {(currentUserRole == 'doctor' && this.state.openedVisit) ?
               <img src={plusSign}  style = {{width: "40px", cursor: "pointer"}} onClick = {this.handleClickAddMedicine} className = 'plusSign'/>
+              :
+              <div/>
+              }
             </div>
           </div>
           <div className = "flex-column justify-content-space column-container">
             <div className = "active-medicine basic-container">
 
               <b className = "standard-black">Wykonane zabiegi</b>
+              {(currentUserRole == 'doctor' && this.state.openedVisit) ?
               <img src={plusSign}  style = {{width: "40px", cursor: "pointer"}} className = 'plusSign' onClick = {this.handleClickAddTreatment}/>
+              :
+              <div/>
+              }
               {this.state.visitTreatment && this.state.visitTreatment.map((treatment, index) => (
-                <div><a id = {treatment.id}>{treatment.name}</a></div>
+                <div><a id = {index}>{treatment.treatmentName}</a></div>
               ))}
 
             </div>
@@ -360,7 +475,7 @@ this.getVisit();
 
 
           </div>
-          {currentUserRole == 'doctor' ?
+          {(currentUserRole == 'doctor' && this.state.showVisitStateBtn )?
           <button className = "btn-end-visit" onClick = {this.handleClickBtnVisit}>{this.state.openedVisit ? 'Zakończ wizytę' : 'Rozpocznij wizytę'}</button>
           :
           <div />
@@ -404,6 +519,15 @@ this.getVisit();
         <a className = 'dialog-margin dialog-text' >Dodawanie leku</a>
         <br/>
         <Autocomplete
+        requestCallback = {VisitService.getSicknessOnVisit}
+        changeCallback = {this.onClickSelectedSicknessForMedicine}
+        title = "Choroba"
+        cssId = 'medicine-search'
+        className = 'dialog-margin'
+        styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
+        />
+        <br/>
+        <Autocomplete
         requestCallback = {VisitService.getAvailableMedicine}
         changeCallback = {this.onClickAddMedicine}
         title = "Lek"
@@ -441,6 +565,15 @@ this.getVisit();
         className = 'dialog-margin'
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
+        <br/>
+        <WhiteTextField id="descriptionTreatment" name="descriptionTreatment"
+        label="Opis"
+        value = {this.state.clicked.descriptionTreatment}
+        onChange = {this.handleChangeTreatmentDescription}
+        variant = 'outlined'
+        rowsMax = {2}
+        style = {{marginLeft: '20px', width: '94%'}}
+        size="small" fullWidth />
         <br/>
         <div className = 'dialog-btn-hold'>
           <a className = 'btn-dialog-cancel' onClick={this.handleClick} >Anuluj</a>

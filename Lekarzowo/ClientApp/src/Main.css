@@ -1264,3 +1264,6 @@ align-items: center;
 .padding-small {
   padding: 10px 20px;
 }
+.workinghours-container {
+  overflow-y: auto;
+}

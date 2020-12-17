@@ -132,6 +132,7 @@ class FindDoctor extends React.Component {
             <div  className = 'doctor-sidebar-details-profile'>
               <a className = 'subheader-content-profile'>Lokale i godziny pracy lekarza</a>
               <br/>
+              <div className = 'workinghours-container'>
               {this.state.doctorWorkingHoursArray && this.state.doctorWorkingHoursArray.map((local, index ) => (
               <div>
                 <a className = 'subheading-content-profile'>{local.name} ({local.streetname} {local.streetnumber})</a>
@@ -142,8 +143,10 @@ class FindDoctor extends React.Component {
                   {workinghours.to.split('T')[1]}</a>
                 </div>
                 )}
+
               </div>
               ))}
+              </div>
             </div>
             </div>
             :

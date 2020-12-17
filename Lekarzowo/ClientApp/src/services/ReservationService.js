@@ -51,12 +51,12 @@ class ReservationService {
       headers: authHeader()
     })
     .then(response => {
+      console.log(response);
       if (!response.ok) {
-        throw Error({
-          statusCode: response.statusCode,
-          statusText: response.statusText
-        });
+        console.log('w srodk');
+        throw Error(response.status);
       }
+      console.log('Poza');
       return response;
     })
     .then(response => response.json());

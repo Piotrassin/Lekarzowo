@@ -93,6 +93,35 @@ class VisitService {
     }).then(response => response.json());
   }
 
+  getSicknessOnVisitSearch(search, limit, skip){
+    if (search === undefined)
+    {
+      search  = ''
+    }
+    if (skip === undefined)
+    {
+      skip  = 0
+    }
+    return fetch(url + 'Illnesses/AllByName?Name=' +search + '&limit=' + limit
+    + '&skip=' + skip, {
+      headers: authHeader()
+    }).then(response => response.json());
+  }
+
+  getSicknessOnVisit(visitId, limit, skip){
+    return fetch(url + 'Illnesseshistory/AllByVisitId?visitId=' + visitId +
+    '&limit='+ limit + '&skip=' + skip, {
+      headers: authHeader()
+    }).then(response => response.json());
+  }
+
+  getTreatmentOnVisit(visitId, limit, skip){
+    return fetch(url + 'Treatmentonvisits/PerformedTreatments?visitId=' + visitId +
+    '&limit='+ limit + '&skip=' + skip, {
+      headers: authHeader()
+    }).then(response => response.json());
+  }
+
   postSicknessOnVisit(sickness){
     var patientId = JSON.parse(AuthService.getLoggedUser()).id;
     return fetch(url + 'Illnesseshistory', {
@@ -107,8 +136,53 @@ class VisitService {
     })
   }
 
+
+  postTreatmentOnVisit(treatment){
+    var patientId = JSON.parse(AuthService.getLoggedUser()).id;
+    return fetch(url + 'Treatmentonvisits', {
+    method: 'POST',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "TreatmentId": treatment.id,
+      "VisitId": treatment.visitId,
+      "Description": treatment.description,
+      "PatientId": patientId
+    })
+    })
+  }
+
+  putDescriptionOnVisit(visitId, description){
+    var patientId = JSON.parse(AuthService.getLoggedUser()).id;
+    return fetch(url + 'Visits/' + visitId, {
+    method: 'PUT',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "ReservationId": visitId,
+      "Description": description
+    })
+    })
+  }
+
+  postVisit(reservationId){
+    return fetch(url + 'Visits',{
+    method: 'POST',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "ReservationId": reservationId,
+      "Price": 0,
+      "Description": ''
+    })
+    })
+    .then(response => {
+      if(!response.ok) {
+        throw Error(response.message)
+      }
+      return response.json;
+    });
+  }
+
   openVisit(reservation){
-    
+
   }
 
 }
