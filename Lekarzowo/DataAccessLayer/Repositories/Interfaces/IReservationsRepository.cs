@@ -8,6 +8,13 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
     public interface IReservationsRepository : IBaseIdRepository<Reservation>
     {
         /// <summary>
+        /// Returns all reservations with a given patient's id.
+        /// </summary>
+        /// <param name="patientId"></param>
+        /// <returns></returns>
+        Task<IEnumerable<Reservation>> GetAll(decimal patientId);
+
+        /// <summary>
         /// Checks if given reservations is owned by given patient.
         /// </summary>
         /// <param name="patientId"></param>
@@ -50,7 +57,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// <param name="Limit"></param>
         /// <param name="Skip"></param>
         /// <returns></returns>
-        Task<IEnumerable<object>> RecentOrUpcomingReservations(decimal PatientId, bool showUpcomingInstead, int? Limit, int? Skip);
+        Task<IEnumerable<object>> RecentOrUpcomingReservations(decimal PatientId, bool showUpcomingInstead, bool hideCanceledReservations, int? Limit, int? Skip);
 
         /// <summary>
         /// Returns true if none of existing reservations in a given local and with a given doctor overlap passed reservation.

@@ -33,17 +33,23 @@ namespace Lekarzowo.Controllers
         #region CRUD
 
         // GET: api/Reservations
+        [Authorize(Roles = "doctor,admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetReservation()
         {
             return Ok(_repository.GetAll());
         }
-        
+
         // GET: api/Reservations/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Reservation>> GetReservation(decimal id)
+        [Authorize]
+        [HttpGet("{reservationId}")]
+        public async Task<ActionResult<Reservation>> GetReservation(decimal reservationId)
         {
-            var reservation = _repository.GetByID(id);
+            if (IsPatient() && (await _repository.GetAll(GetUserIdFromToken())).All(x => x.Id != reservationId))
+            {
+                return BadRequest();
+            }
+            var reservation = _repository.GetByID(reservationId);
 
             if (reservation == null)
             {
@@ -170,21 +176,26 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Reservations/Upcoming?PatientId=1&Limit=5&Skip=2
+        [Authorize]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> Upcoming(decimal patientId, int? limit, int? skip)
         {
-            return Ok(await _repository.RecentOrUpcomingReservations(patientId, true, limit, skip));
+            return IsPatient()
+                ? Ok(await _repository.RecentOrUpcomingReservations(patientId, true, true, limit, skip))
+                : Ok(await _repository.RecentOrUpcomingReservations(patientId, true, false, limit, skip));
         }
 
         // GET: api/Reservations/Recent?PatientId=1&Limit=5&Skip=2
+        [Authorize]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> Recent(decimal patientId, int? limit, int? skip)
         {
-            return Ok(await _repository.RecentOrUpcomingReservations(patientId, false, limit, skip));
+            return IsPatient()
+                ? Ok(await _repository.RecentOrUpcomingReservations(patientId, false, true, limit, skip))
+                : Ok(await _repository.RecentOrUpcomingReservations(patientId, false, false, limit, skip));
         }
 
         // GET: api/reservations/possibleappointments?CityId=1&SpecId=1&DoctorId=1
-        //TODO:Ma zwracać też id lokalu
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> PossibleAppointments(decimal? cityId, decimal? specId, decimal? doctorId, DateTime? start, DateTime? end, int? limit, int? skip)
         {

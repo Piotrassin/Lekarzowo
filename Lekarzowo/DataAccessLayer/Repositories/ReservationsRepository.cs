@@ -13,6 +13,11 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     {
         public ReservationsRepository(ModelContext context) : base(context) { }
 
+        public async Task<IEnumerable<Reservation>> GetAll(decimal patientId)
+        {
+            return await _context.Reservation.Where(x => x.PatientId == patientId).ToListAsync();
+        }
+
         public IEnumerable<Reservation> AllByOptionalCriteria(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end)
         {
             var query = _context.Reservation
@@ -82,10 +87,15 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return output;
         }
 
-        public async Task<IEnumerable<object>> RecentOrUpcomingReservations(decimal patientId, bool showUpcomingInstead, int? limit, int? skip)
+        public async Task<IEnumerable<object>> RecentOrUpcomingReservations(decimal patientId, bool showUpcomingInstead, bool hideCanceledReservations, int? limit, int? skip)
         {
             var reservationTypeQuery = _context.Reservation
                 .Where(x => x.PatientId == patientId);
+
+            if (hideCanceledReservations)
+            {
+                reservationTypeQuery = reservationTypeQuery.Where(x => x.Canceled == false);
+            }
 
             var anonymousTypeQuery = reservationTypeQuery.Select(x => new
             {
@@ -93,6 +103,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 DoctorSpecialization = x.Doctor.Speciality.Name,
                 ReservationStartTime = x.Starttime,
                 ReservationEndTime = x.Endtime,
+                Canceled = x.Canceled,
                 DoctorName = x.Doctor.IdNavigation.Name,
                 DoctorLastname = x.Doctor.IdNavigation.Lastname,
             });
@@ -103,7 +114,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
             var trimmedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, orderedQuery);
             
-            return await trimmedQuery.ToListAsync(); ;
+            return await trimmedQuery.ToListAsync();
         }
 
         public async Task<IEnumerable<Reservation>> OverlappingReservations(decimal localId, decimal doctorId, DateTime start, DateTime end)
