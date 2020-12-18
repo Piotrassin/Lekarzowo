@@ -1,9 +1,6 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Lekarzowo.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
@@ -18,6 +15,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         /// <param name="limit"></param>
         /// <param name="skip"></param>
         /// <returns></returns>
-        Task<IEnumerable<Illness>> AllByNameOnVisit(decimal visitId, string name, int? limit, int? skip);
+        Task<IEnumerable<object>> AllByNameOnVisit(decimal visitId, string name, int? limit, int? skip);
     }
 }

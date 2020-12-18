@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Lekarzowo.DataAccessLayer.Models;
+﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Lekarzowo.Controllers
 {
@@ -36,12 +35,12 @@ namespace Lekarzowo.Controllers
             return Ok(await _repository.GetAllByName(name, limit, skip));
         }
 
-        //// GET: api/Illnesses/AllByNameOnAVisit?visitId=1&name=abc&limit=0&skip=0
-        //[HttpGet("[action]")]
-        //public async Task<ActionResult<IEnumerable<Illness>>> AllByNameOnAVisit(decimal visitId, string name, int? limit, int? skip)
-        //{
-        //    return Ok(await _repository.AllByNameOnVisit(visitId, name, limit, skip));
-        //}
+        // GET: api/Illnesses/AllByNameOnAVisit?visitId=1&name=abc&limit=0&skip=0
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Illness>>> AllByNameOnAVisit(decimal visitId, string name, int? limit, int? skip)
+        {
+            return Ok(await _repository.AllByNameOnVisit(visitId, name, limit, skip));
+        }
 
         // GET: api/Illnesses/5
         [HttpGet("{id}")]
