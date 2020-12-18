@@ -47,6 +47,20 @@ namespace Lekarzowo.Controllers
             return workinghours;
         }
 
+        // GET: api/workinghours/DoctorsWorkplaces?doctorId=1
+        [HttpGet("[action]")]
+        public async Task<ActionResult<object>> DoctorsWorkplaces(decimal doctorId)
+        {
+            var workplaces = await _repository.DoctorsWorkplaces(doctorId);
+
+            if (workplaces == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(workplaces);
+        }
+
         // GET: api/workinghours/DoctorsUpcomingSchedule?doctorId=1&days=2000
         [HttpGet("[action]")]
         public async Task<ActionResult<object>> DoctorsUpcomingSchedule(decimal doctorId, int days)
