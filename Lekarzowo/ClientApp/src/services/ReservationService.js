@@ -87,13 +87,8 @@ class ReservationService {
   }
 
   cancelReservation(reservationId){
-    return fetch(url + 'Reservations/' + reservationId, {
-      method: 'PUT',
-      headers: authHeader({'Content-Type': 'application/json'}),
-      body: JSON.stringify({
-        "Id": reservationId,
-        "Canceled": 1
-      })
+    return fetch(url + 'Reservations/Cancel/' + reservationId, {
+      headers: authHeader()
     }).then(response => {
       if (!response.ok) {
         throw Error(response.statusText);

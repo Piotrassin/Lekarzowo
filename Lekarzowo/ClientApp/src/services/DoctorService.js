@@ -20,6 +20,11 @@ class DoctorService {
     .then(response => response.json());
   }
 
+  getDoctor(id){
+    return fetch(url + 'Doctors/ContactData/' + id)
+    .then(response => response.json());
+  }
+
 }
 
 export default new DoctorService();

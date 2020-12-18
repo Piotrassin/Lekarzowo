@@ -21,7 +21,8 @@ class FindDoctor extends React.Component {
     this.state = {
       doctorSearch: "",
       doctorsArray: [],
-      doctorWorkingHoursArray: []
+      doctorWorkingHoursArray: [],
+      doctor: null
     };
     this.onChangeDoctorSearch = this.onChangeDoctorSearch.bind(this);
     this.onClickDoctor = this.onClickDoctor.bind(this);
@@ -67,6 +68,12 @@ class FindDoctor extends React.Component {
 
   onClickDoctor(id) {
     console.log(id);
+    DoctorService.getDoctor(id)
+    .then(response => {
+      this.setState({
+        doctor: response[0]
+      });
+    });
     DoctorService.getDoctorWorkingHours(id, 7)
     .then(response => {
       this.setState({
@@ -117,16 +124,13 @@ class FindDoctor extends React.Component {
               <hr/>
               </div>
               <div className = 'profile-data-slot'>
-              <a className = 'profile-data-slot-header'>Imię</a><a>Andrzej</a>
+              <a className = 'profile-data-slot-header'>Imię</a><a>{this.state.doctor.name}</a>
               </div>
               <div className = 'profile-data-slot'>
-              <a className = 'profile-data-slot-header'>Nazwisko</a><a>Andrzejewski</a>
+              <a className = 'profile-data-slot-header'>Nazwisko</a><a>{this.state.doctor.lastname}</a>
               </div>
               <div className = 'profile-data-slot'>
-              <a className = 'profile-data-slot-header'>Email</a><a>a@a.a</a>
-              </div>
-              <div className = 'profile-data-slot'>
-              <a className = 'profile-data-slot-header'>PESEL</a><a>9089786854</a>
+              <a className = 'profile-data-slot-header'>Email</a><a>{this.state.doctor.email}</a>
               </div>
             </div>
             <div  className = 'doctor-sidebar-details-profile'>

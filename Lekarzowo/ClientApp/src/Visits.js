@@ -41,6 +41,8 @@ class Visits extends React.Component {
   }
 
   async componentDidMount() {
+    console.log('Current Role');
+    console.log(currentRole);
     this.getUppcomingVisit();
   }
 
@@ -123,7 +125,9 @@ class Visits extends React.Component {
       .then(response => {
         this.setState({
           visitToCancel: {}
-        })
+        });
+        Dialog.close("visit-cancel-dialog")(event);
+        //window.location.reload()
       });
     }
   }
@@ -165,6 +169,7 @@ class Visits extends React.Component {
                   role={currentRole}
                   history= {this.props.history}
                   dialogCallback = {this.openConfirmCancelReservationDialog}
+                  upcomingVisit = {true}
                   />
                 ))}
                 {(!this.state.checkedVisit) && this.state.recentVisits.map((visit, index ) => (
@@ -172,6 +177,7 @@ class Visits extends React.Component {
                     visit={visit}
                     role={currentRole}
                     history= {this.props.history}
+                    upcomingVisit = {false}
                     />
                   ))}
 

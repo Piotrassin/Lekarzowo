@@ -34,8 +34,16 @@ render() {
         <a>{this.props.role == 'doctor' ? this.props.visit.patientName : this.props.visit.doctorName} {this.props.role == 'doctor' ? this.props.visit.patientLastname : this.props.visit.doctorLastname}</a>
       </div>
       <div className = 'sickness-item-part part-5 flex-column'>
-        <a className = 'button-primary' onClick = {this.onClickVisitDetails} style = {{marginBottom: '5px'}}>Zobacz</a>
-        <a className = 'button-gold' onClick = {this.onClickVisitCancel}>Odwołaj</a>
+        {this.props.upcomingVisit  ?
+          <a className = 'button-gold' onClick = {this.onClickVisitCancel}>Odwołaj</a>
+          :
+          <a/>
+        }
+        {(!this.props.upcomingVisit || this.props.role == 'doctor') ?
+          <a className = 'button-primary' onClick = {this.onClickVisitDetails} style = {{marginBottom: '5px'}}>Zobacz</a>
+          :
+          <a/>
+        }
       </div>
     </div>
 
