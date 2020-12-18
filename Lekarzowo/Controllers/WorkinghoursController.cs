@@ -30,7 +30,7 @@ namespace Lekarzowo.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Workinghours>>> GetWorkinghours()
         {
-            return Ok(_repository.GetAll());
+            return Ok(_repository.GetAll().OrderBy(x => x.From.Date).ThenBy(x => x.From.TimeOfDay));
         }
 
         // GET: api/Workinghours/5
