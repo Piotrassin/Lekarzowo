@@ -10,6 +10,7 @@ import person from './images/Person.svg'
 import lookup from './images/Lookup.svg'
 import logout from './images/Logout.svg'
 import settingsIcon from './images/SettingsIcon.svg';
+import mapIcon from './images/MapIcon.svg';
 
 const currentUserRole = AuthService.getUserCurrentRole();
 class Menu extends React.Component {
@@ -23,6 +24,7 @@ class Menu extends React.Component {
     this.onProfileClick = this.onProfileClick.bind(this);
     this.onDoctorClick = this.onDoctorClick.bind(this);
     this.onAdminPanelClick = this.onAdminPanelClick.bind(this);
+    this.onDashboardClick = this.onDashboardClick.bind(this);
   //this.test = this.test.bind(this)
   }
   state = {
@@ -36,7 +38,7 @@ class Menu extends React.Component {
 
   handleLogout() {
     AuthService.logout();
-    this.props.history.push('/');
+    this.props.history.push('/login');
   }
 
   onAddClick(event) {
@@ -59,6 +61,15 @@ class Menu extends React.Component {
     this.props.history.push('/adminPanel')
   }
 
+  onDashboardClick(event) {
+    if(currentUserRole == 'doctor'){
+        this.props.history.push('/dashboardDoctor')
+    }else {
+        this.props.history.push('/')
+    }
+
+  }
+
   /*<div className = "menu-element">
     <img src = {lookup} className = "addSign" style = {{width: 25}} />
     <a>Szukaj</a>
@@ -75,6 +86,10 @@ class Menu extends React.Component {
         <div className = "side-menu">
           <img src = {logo} className = "imge"/>
           <div className = "icons">
+          <div className = "menu-element" onClick={this.onDashboardClick}>
+            <img src = {mapIcon} className = "addSign" style = {{width: 35}} />
+            <a>Główna</a>
+          </div>
 
             {currentUserRole == 'admin' ?
               <div className = "menu-element" onClick={this.onAdminPanelClick}>
@@ -84,7 +99,7 @@ class Menu extends React.Component {
                 :
                 <div/>
             }
-            {(currentUserRole == 'doctor' || currentUserRole == 'patient') ?
+            {(currentUserRole == 'patient') ?
             <div className = "menu-element" onClick={this.onAddClick}>
               <img src = {addSign} className = "addSign" style = {{width: 25}} />
               <a>Dodaj</a>

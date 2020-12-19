@@ -54,8 +54,30 @@ class AuthService {
       })
     });
   }
+
+  checkifAnyUserData(){
+    try {
+        var a = localStorage.getItem("userData");
+        if(a == null){
+          return false;
+        }
+        return true;
+    } catch(e) {
+        return false;
+    }
+  }
   getUser(){
-    return JSON.parse(localStorage.getItem("userData"));
+    if(this.checkifAnyUserData() == true){
+      return JSON.parse(localStorage.getItem("userData"));
+    }
+    return {status: 401};
+  }
+
+  getUserName(){
+    if(this.checkifAnyUserData() == true){
+      return JSON.parse(localStorage.getItem("userData")).firstName.concat(" ").concat(JSON.parse(localStorage.getItem("userData")).lastName);
+    }
+    return '';
   }
 
   changeRole(roleName){
@@ -106,7 +128,10 @@ class AuthService {
   }
 
   getUserRoles(){
-    return JSON.parse(localStorage.getItem("userData")).roles;
+    if(this.checkifAnyUserData() == true){
+      return JSON.parse(localStorage.getItem("userData")).roles;
+    }
+    return [];
   }
 
 

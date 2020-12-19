@@ -51,7 +51,12 @@ export default function Asynchronous(props) {
 
   async function handleInputChange(event) {
     console.log(event.target.value);
-    const requestOptions = (await props.requestCallback(event.target.value, 100)).reduce(function(acc, curr) {
+    if(props.addId != undefined){
+      var requestCall = (await props.requestCallback(event.target.value, 100, 0, props.addId));
+    }else {
+      var requestCall = (await props.requestCallback(event.target.value, 100));
+    }
+    const requestOptions = requestCall.reduce(function(acc, curr) {
       if(curr.lastname){
         curr.name = curr.name.concat(" ", curr.lastname);
       }
@@ -79,8 +84,13 @@ export default function Asynchronous(props) {
     }
 
     (async () => {
-      let requestOptions = (await props.requestCallback('', 2))
-      if(Object.keys(requestOptions).length === 0){
+      if(props.addId != undefined){
+        var requestOptions = (await props.requestCallback('', 2, 0, props.addId));
+      }else {
+        var requestOptions = (await props.requestCallback('', 2));
+      }
+
+      if(requestOptions.length === 0){
         requestOptions = {
           "": "Wszystkie"
         };

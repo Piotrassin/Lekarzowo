@@ -519,11 +519,13 @@ this.getTreatmentOnVisit();
         <a className = 'dialog-margin dialog-text' >Dodawanie leku</a>
         <br/>
         <Autocomplete
-        requestCallback = {VisitService.getSicknessOnVisit}
+        requestCallback = {VisitService.getSicknessOnVisitSearch}
         changeCallback = {this.onClickSelectedSicknessForMedicine}
         title = "Choroba"
         cssId = 'medicine-search'
         className = 'dialog-margin'
+        variant = 'outlined'
+        addId = {this.state.id}
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
         <br/>
@@ -532,6 +534,7 @@ this.getTreatmentOnVisit();
         changeCallback = {this.onClickAddMedicine}
         title = "Lek"
         cssId = 'medicine-search'
+        variant = 'outlined'
         className = 'dialog-margin'
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
@@ -563,6 +566,7 @@ this.getTreatmentOnVisit();
         title = "Zabieg"
         cssId = 'medicine-search'
         className = 'dialog-margin'
+        variant = 'outlined'
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
         <br/>
@@ -592,6 +596,7 @@ this.getTreatmentOnVisit();
         changeCallback = {this.onClickAddSickness}
         title = "Choroba"
         cssId = 'medicine-search'
+        variant = 'outlined'
         className = 'dialog-margin'
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />

@@ -21,12 +21,24 @@ class ReservationService {
   }
 
   getUpcomingReservations(limit, skip){
-    var patientId = JSON.parse(AuthService.getLoggedUser()).id;
-
+    if(JSON.parse(AuthService.getLoggedUser())){
+      var patientId = JSON.parse(AuthService.getLoggedUser()).id;
+    }
     return fetch(url + 'Reservations/Upcoming?PatientId=' + patientId +
     '&Limit=' + limit + '&skip=' + skip, {
       headers: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401){
+        console.log('throwing 401 error');
+        throw new Error(401);
+      };
+      if(!response.ok){
+        console.log('throwin other error');
+        throw new Error(response.statusText)
+      }
+      console.log('Continue');
+      return response.json()
+    });
   }
 
   getRecentReservations(limit, skip){

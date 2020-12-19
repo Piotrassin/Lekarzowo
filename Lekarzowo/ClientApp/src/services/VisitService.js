@@ -115,6 +115,13 @@ class VisitService {
     }).then(response => response.json());
   }
 
+  getSicknessOnVisitSearch(search, limit, skip, visitId){
+    return fetch(url + 'Illnesseshistory/AllByVisitId?visitId=' + visitId +
+    '&limit='+ limit + '&skip=' + skip, {
+      headers: authHeader()
+    }).then(response => response.json());
+  }
+
   getTreatmentOnVisit(visitId, limit, skip){
     return fetch(url + 'Treatmentonvisits/PerformedTreatments?visitId=' + visitId +
     '&limit='+ limit + '&skip=' + skip, {

@@ -15,6 +15,7 @@ constructor(props) {
   };
   this.onchangeUserRole = this.onchangeUserRole.bind(this);
   this.handleCloseRoleBtn = this.handleCloseRoleBtn.bind(this);
+  this.mapRoleNames = this.mapRoleNames.bind(this);
 }
 
 handleRedirect(){
@@ -34,6 +35,24 @@ onchangeUserRole(event){
   this.setState({
     value: event.currentTarget
   });
+}
+
+mapRoleNames(roleName){
+  switch(roleName) {
+    case 'doctor':
+      return 'Doktor';
+      break;
+    case 'patient':
+      return 'Pacjent';
+      break;
+    case 'admin':
+      return 'Admin';
+      break;
+    default:
+      return 'N/A';
+      break;
+
+  }
 }
 
 handleCloseRoleBtn(event) {
@@ -65,7 +84,7 @@ render() {
           :
           <img src = {UserIcon} style = {{width: '30px', marginRight: '10px'}} />
         }
-        {user.firstName}
+        {this.mapRoleNames(AuthService.getUserCurrentRole())}
         <img src = {DownArrow} style = {{width: '13px', marginLeft: '5px'}} />
       </Button>
       <Menu
@@ -81,7 +100,7 @@ render() {
           onClick={this.handleCloseRoleBtn}
           id = {el}
           >
-            {el}
+            {this.mapRoleNames(el)}
 
           </MenuItem>
         )}
