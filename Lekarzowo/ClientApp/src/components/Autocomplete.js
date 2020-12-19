@@ -92,7 +92,7 @@ export default function Asynchronous(props) {
 
       if(requestOptions.length === 0){
         requestOptions = {
-          "": "Wszystkie"
+          "": "Brak"
         };
       }else {
         requestOptions = requestOptions.reduce(function(acc, curr) {
