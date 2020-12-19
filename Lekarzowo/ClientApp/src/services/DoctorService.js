@@ -6,6 +6,9 @@ const url = 'https://localhost:5001/api/';
 class DoctorService {
 
   getDoctors(search, limit, skip) {
+    if(skip == undefined){
+      skip = '';
+    }
     return fetch(url + 'Doctors/AllByName?Name=' + search + '&limit=' + limit
     + '&skip=' + skip, {
       header: authHeader()
@@ -18,6 +21,16 @@ class DoctorService {
       headers: authHeader()
     })
     .then(response => response.json());
+  }
+
+  getDoctorLocals(search, limit, skip) {
+    if(skip == undefined){
+      skip = '';
+    }
+    return fetch(url + 'Doctors/AllByName?Name=' + search + '&limit=' + limit
+    + '&skip=' + skip, {
+      header: authHeader()
+    }).then(response => response.json());
   }
 
   getDoctor(id){

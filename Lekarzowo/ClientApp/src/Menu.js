@@ -8,8 +8,10 @@ import zapisy from './images/Zapisy.svg'
 import lekarzSign from './images/LekarzSign.svg'
 import person from './images/Person.svg'
 import lookup from './images/Lookup.svg'
-import logout from './images/Logout.svg';
+import logout from './images/Logout.svg'
+import settingsIcon from './images/SettingsIcon.svg';
 
+const currentUserRole = AuthService.getUserCurrentRole();
 class Menu extends React.Component {
   constructor(props){
     super(props);
@@ -20,6 +22,7 @@ class Menu extends React.Component {
     this.onVisitsClick = this.onVisitsClick.bind(this);
     this.onProfileClick = this.onProfileClick.bind(this);
     this.onDoctorClick = this.onDoctorClick.bind(this);
+    this.onAdminPanelClick = this.onAdminPanelClick.bind(this);
   //this.test = this.test.bind(this)
   }
   state = {
@@ -52,7 +55,14 @@ class Menu extends React.Component {
     this.props.history.push('/findDoctor');
   }
 
+  onAdminPanelClick(event) {
+    this.props.history.push('/adminPanel')
+  }
 
+  /*<div className = "menu-element">
+    <img src = {lookup} className = "addSign" style = {{width: 25}} />
+    <a>Szukaj</a>
+  </div>*/
 
   render() {
     return(
@@ -65,14 +75,31 @@ class Menu extends React.Component {
         <div className = "side-menu">
           <img src = {logo} className = "imge"/>
           <div className = "icons">
+
+            {currentUserRole == 'admin' ?
+              <div className = "menu-element" onClick={this.onAdminPanelClick}>
+                <img src = {settingsIcon} className = "addSign" style = {{width: 30}} />
+                <a>Panel</a>
+                </div>
+                :
+                <div/>
+            }
+            {(currentUserRole == 'doctor' || currentUserRole == 'patient') ?
             <div className = "menu-element" onClick={this.onAddClick}>
               <img src = {addSign} className = "addSign" style = {{width: 25}} />
               <a>Dodaj</a>
             </div>
+            :
+            <div/>
+            }
+            {(currentUserRole == 'doctor' || currentUserRole == 'patient')  ?
             <div className = "menu-element" onClick={this.onVisitsClick}>
               <img src = {zapisy} className = "addSign" style = {{width: 25}} />
               <a>Wizyty</a>
             </div>
+            :
+            <div/>
+            }
             <div className = "menu-element" onClick={this.onDoctorClick}>
               <img src = {lekarzSign} className = "addSign" style = {{width: 25}} />
               <a>Lekarze</a>
@@ -81,10 +108,8 @@ class Menu extends React.Component {
               <img src = {person} className = "addSign" style = {{width: 25}} />
               <a>Profil</a>
             </div>
-            <div className = "menu-element">
-              <img src = {lookup} className = "addSign" style = {{width: 25}} />
-              <a>Szukaj</a>
-            </div>
+
+
           </div>
           <div
           className = "menu-element"

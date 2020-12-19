@@ -20,6 +20,7 @@ class Login extends React.Component {
     this.onChangePassword = this.onChangePassword.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.onRegisterRequest = this.onRegisterRequest.bind(this);
+    this.onFindDoctorRequest = this.onFindDoctorRequest.bind(this);
     this.state = {
       email: "",
       password: "",
@@ -49,6 +50,10 @@ class Login extends React.Component {
     this.props.history.push("/signup");
   }
 
+  onFindDoctorRequest(event){
+    this.props.history.push("/findDoctorPublic")
+  }
+
   handleSubmit(event) {
     event.preventDefault();
     //here set the waiitiing and loading values
@@ -67,7 +72,7 @@ class Login extends React.Component {
               console.log("not doctor");
           }
           console.log("Wyszlo Login");
-          //window.location.reload();
+          window.location.reload();
         }
       }
     );
@@ -124,6 +129,12 @@ class Login extends React.Component {
             onClick = {this.onRegisterRequest}
             class = 'white-link'
             >Nie masz konta?
+            </a>
+            <a
+            onClick = {this.onFindDoctorRequest}
+            class = 'white-link'
+            >
+            Znajdz naszych lekarzy
             </a>
           </form>
         </div>

@@ -3,11 +3,13 @@ import Dashboard from './Dashboard';
 import MainContainer from './MainContainer';
 import LoginContainer from './LoginContainer';
 import RegisterContainer from './RegisterContainer';
+import FindDoctorContainer from './FindDoctorContainer';
 import VisitDetails from './VisitDetails.js';
 import AddVisit from './AddVisit';
 import Visits from './Visits';
 import Profile from './Profile';
 import FindDoctor from './FindDoctor';
+import AdminPanel from './AdminPanel';
 import DashboardDoctor from './doctorView/DashboardDoctor.js';
 import  { AuthorizedRoute } from './AuthorizedRoute.js';
 
@@ -31,12 +33,14 @@ class App extends React.Component {
         <div>
         <Route exact path="/login" component={LoginContainer}/>
         <Route exact path="/signup" component={RegisterContainer}/>
+        <Route exact path='/findDoctorPublic' component={FindDoctorContainer} />
         <Route exact path="/visits" component={Visits}/>
         <Route exact path="/" component={MainContainer}/>
         <AuthorizedRoute exact path="/addVisit" component={AddVisit} roles={'patient'} />
         <Route exact path="/myProfile" component={Profile}/>
         <Route exact path="/findDoctor" component={FindDoctor}/>
         <AuthorizedRoute path="/dashboardDoctor" component={DashboardDoctor} roles={'doctor'} />
+        <AuthorizedRoute path="/adminPanel" component={AdminPanel} roles={'admin'} />
         <Route path="/visit" render={(routeProps) => (
               <VisitDetails {...routeProps}/>
           )}/>

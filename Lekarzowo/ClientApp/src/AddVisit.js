@@ -216,6 +216,7 @@ render() {
             title = "Miasto"
             id = 'city-search'
             cssId = 'async-cities'
+            variant = 'outlined'
             />
             <div className = 'space'/>
             <Autocomplete
@@ -223,6 +224,7 @@ render() {
             title = "Specjalizacja"
             changeCallback = {this.onClickSpeciality}
             cssId = 'async-cities'
+            variant = 'outlined'
             />
             <div className = 'space'/>
             <Autocomplete
@@ -230,6 +232,7 @@ render() {
             title = "Doktor"
             changeCallback = {this.onClickDoctor}
             cssId = 'async-cities'
+            variant = 'outlined'
             />
             </div>
             <div className = "res-item-container">

@@ -135,7 +135,7 @@ export default function Asynchronous(props) {
           {...params}
           label={props.title}
           className={classes.input}
-          variant="outlined"
+          variant={props.variant}
           size="small"
           onChange={handleInputChange}
           InputProps={{
