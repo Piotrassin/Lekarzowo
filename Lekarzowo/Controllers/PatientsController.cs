@@ -1,28 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.Models;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Transactions;
+using Lekarzowo.DataAccessLayer.DTO;
+using Lekarzowo.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lekarzowo.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class PatientsController : ControllerBase
+    public class PatientsController : BaseController
     {
-        private readonly IPatientsRepository _repository;
+        private readonly IPatientsRepository _repository; 
+        private readonly IPeopleRepository _peopleRepository;
+        private readonly PeopleController _peopleController;
 
-        public PatientsController(IPatientsRepository repository)
+        public PatientsController(IPatientsRepository repository, PeopleController peopleController, IPeopleRepository peopleRepository)
         {
             _repository = repository;
+            _peopleController = peopleController;
+            _peopleRepository = peopleRepository;
         }
 
         // GET: api/Patients
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Patient>>> GetPatient()
         {
@@ -30,53 +36,42 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Patients/5
+        [Authorize(Roles = "patient,admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Patient>> GetPatient(decimal id)
         {
-            var patient = _repository.GetByID(id);
+            if (IsPatientAccessingElsesData(id)) return Unauthorized();
 
-            if (patient == null)
-            {
-                return NotFound();
-            }
+            var patient = _repository.GetByID(id);
+            if (patient == null) return NotFound();
 
             return patient;
         }
 
         // PUT: api/Patients/5
+        [Authorize(Roles = "patient,admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPatient(decimal id, Patient patient)
         {
-            if (id != patient.Id)
-            {
-                return BadRequest();
-            }
-
-            if (_repository.GetByID(patient.Id) != null)
-            {
-                _repository.Update(patient);
-            }
+            if (IsPatientAccessingElsesData(id)) return Unauthorized();
+            if (id != patient.Id) return BadRequest();
+            if (!PatientExists(id)) return NotFound();
 
             try
             {
+                _repository.Update(patient);
                 _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
-                if (!PatientExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(503, e.Message);
             }
 
             return NoContent();
         }
 
         // POST: api/Patients
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<ActionResult<Patient>> PostPatient(Patient patient)
         {
@@ -90,15 +85,40 @@ namespace Lekarzowo.Controllers
             return Created("", patient);
         }
 
+        // POST: api/Patients/PostPersonAsPatient
+        [AllowAnonymous]
+        [HttpPost("[action]")]
+        public async Task<ActionResult<Patient>> PostPersonAsPatient(UserRegistrationDTO person)
+        {
+            using (var transaction = new TransactionScope())
+            {
+                if (!(_peopleController.RegisterUser(person) is CreatedResult result))
+                {
+                    return BadRequest();
+                }
+
+                Person user = _peopleRepository.GetByEmail(person.Email);
+                Patient newPatient = new Patient() { Id = user.Id, IdNavigation = user };
+
+                _repository.Insert(newPatient);
+                _repository.Save();
+
+                transaction.Complete();
+
+                user.Patient = newPatient;
+                return Created("", user);
+            }
+        }
+
         // DELETE: api/Patients/5
+        [Authorize(Roles = "patient,admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Patient>> DeletePatient(decimal id)
         {
+            if (IsPatientAccessingElsesData(id)) return Unauthorized();
+
             var patient = _repository.GetByID(id);
-            if (patient == null)
-            {
-                return NotFound();
-            }
+            if (patient == null) return NotFound();
 
             _repository.Delete(patient);
             _repository.Save();
@@ -109,6 +129,11 @@ namespace Lekarzowo.Controllers
         private bool PatientExists(decimal id)
         {
             return _repository.Exists(id);
+        }
+
+        private bool IsPatientAccessingElsesData(decimal accessedPatientId)
+        {
+            return IsPatient() && accessedPatientId != GetUserIdFromToken();
         }
     }
 }

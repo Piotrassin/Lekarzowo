@@ -11,6 +11,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     {
         public IllnessesRepository(ModelContext context) : base(context) {}
 
+        //todo może przenieśćdo illnessHistory?
         public async Task<IEnumerable<object>> AllByNameOnVisit(decimal visitId, string name, int? limit, int? skip)
         {
             var query = _context.Illnesshistory

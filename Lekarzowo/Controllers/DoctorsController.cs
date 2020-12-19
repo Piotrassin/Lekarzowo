@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
+using Lekarzowo.DataAccessLayer.DTO;
+using Lekarzowo.Repositories;
 
 namespace Lekarzowo.Controllers
 {
@@ -14,10 +17,14 @@ namespace Lekarzowo.Controllers
     public class DoctorsController : BaseController
     {
         private readonly IDoctorsRepository _repository;
+        private readonly IPeopleRepository _peopleRepository;
+        private readonly PeopleController _peopleController;
 
-        public DoctorsController(IDoctorsRepository repository)
+        public DoctorsController(IDoctorsRepository repository, PeopleController peopleController, IPeopleRepository peopleRepository)
         {
             _repository = repository;
+            _peopleController = peopleController;
+            _peopleRepository = peopleRepository;
         }
 
         // GET: api/Doctors
@@ -107,6 +114,32 @@ namespace Lekarzowo.Controllers
             }
             return Created("", doctor);
         }
+
+        //TODO:
+        //// POST: api/Patients/PostPersonAsPatient
+        //[AllowAnonymous]
+        //[HttpPost("[action]")]
+        //public async Task<ActionResult<Patient>> PostPersonAsDoctor(UserRegistrationDTO person)
+        //{
+        //    using (var transaction = new TransactionScope())
+        //    {
+        //        if (!(_peopleController.RegisterUser(person) is CreatedResult result))
+        //        {
+        //            return BadRequest();
+        //        }
+
+        //        Person user = _peopleRepository.GetByEmail(person.Email);
+        //        Doctor doctor = new Doctor() { Id = user.Id, IdNavigation = user };
+
+        //        _repository.Insert(doctor);
+        //        _repository.Save();
+
+        //        transaction.Complete();
+
+        //        user.Doctor = doctor;
+        //        return Created("", user);
+        //    }
+        //}
 
         // DELETE: api/Doctors/5
         [Authorize(Roles = "admin")]

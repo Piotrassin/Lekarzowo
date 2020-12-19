@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using Lekarzowo.Controllers;
 
 namespace Lekarzowo
 {
@@ -118,6 +119,7 @@ namespace Lekarzowo
             services.AddScoped<IRolesRepository, RolesRepository>();
 
             services.AddScoped<ICustomUserRolesService, CustomUserRolesService>();
+            services.AddScoped<PeopleController, PeopleController>();
 
             services.AddEntityFrameworkOracle()
                 .AddDbContext<ModelContext>(options =>
