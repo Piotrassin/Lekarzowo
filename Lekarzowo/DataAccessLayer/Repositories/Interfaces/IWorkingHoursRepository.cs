@@ -1,8 +1,6 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
@@ -27,7 +25,15 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         Task<IEnumerable<Local>> DoctorsWorkplaces(decimal doctorId);
 
         /// <summary>
-        /// List of all working hours in a given local in the next given amount of days.
+        /// Dynamic search of all locals which names containt given phrase. Optionally can be narrowed down to only those where given doctor works.
+        /// </summary>
+        /// <param name="localName"></param>
+        /// <param name="doctorId"></param>
+        /// <returns></returns>
+        Task<IEnumerable<object>> DoctorsWorkplacesByName(string localName, decimal? doctorId, int? limit, int? skip);
+
+        /// <summary>
+        /// List of nearest working hours in a given local. e.g. days = 7, nearest 7 workinghours objects for that doctor and local are returned.
         /// </summary>
         /// <param name="doctorId"></param>
         /// <param name="localId"></param>

@@ -1,32 +1,28 @@
-﻿using System;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.Models;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Lekarzowo.DataAccessLayer.DTO;
-using Lekarzowo.DataAccessLayer.Repositories;
 
 namespace Lekarzowo.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class WorkinghoursController : ControllerBase
+    public class WorkinghoursController : BaseController
     {
         private readonly IWorkingHoursRepository _repository;
-        private readonly ILocalsRepository _localRepository;
 
-        public WorkinghoursController(IWorkingHoursRepository repository, ILocalsRepository locRepo)
+        public WorkinghoursController(IWorkingHoursRepository repository)
         {
             _repository = repository;
-            _localRepository = locRepo;
         }
 
         // GET: api/Workinghours
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Workinghours>>> GetWorkinghours()
         {
@@ -34,10 +30,11 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Workinghours/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Workinghours>> GetWorkinghours(decimal id)
+        [Authorize]
+        [HttpGet("{doctorId}")]
+        public async Task<ActionResult<Workinghours>> GetWorkinghours(decimal doctorId)
         {
-            var workinghours = _repository.GetByID(id);
+            var workinghours = _repository.GetByID(doctorId);
 
             if (workinghours == null)
             {
@@ -47,11 +44,12 @@ namespace Lekarzowo.Controllers
             return workinghours;
         }
 
-        // GET: api/workinghours/DoctorsWorkplaces?doctorId=1
+        // GET: api/workinghours/DoctorsWorkplacesByName?doctorId=1
+        [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<object>> DoctorsWorkplaces(decimal doctorId)
+        public async Task<ActionResult<object>> DoctorsWorkplacesByName(string localName, decimal? doctorId, int? skip, int? limit)
         {
-            var workplaces = await _repository.DoctorsWorkplaces(doctorId);
+            var workplaces = await _repository.DoctorsWorkplacesByName(localName, doctorId, skip, limit);
 
             if (workplaces == null)
             {
@@ -62,6 +60,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/workinghours/DoctorsUpcomingSchedule?doctorId=1&days=2000
+        [Authorize]
         [HttpGet("[action]")]
         public async Task<ActionResult<object>> DoctorsUpcomingSchedule(decimal doctorId, int days)
         {
@@ -80,58 +79,52 @@ namespace Lekarzowo.Controllers
         }
 
         // PUT: api/Workinghours/5
+        [Authorize(Roles = "doctor,admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutWorkinghours(decimal id, Workinghours workinghours)
         {
-            if (id != workinghours.Id)
-            {
-                return BadRequest();
-            }
+            if (id != workinghours.Id) return BadRequest();
+            if (IsDoctorAccessingElsesData(workinghours.DoctorId)) return Unauthorized();
 
+            if (!WorkinghoursExists(id)) return NotFound();
             try
             {
-
                 _repository.Update(workinghours);
                 _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
-                if (!WorkinghoursExists(id))
-                {
-                    return NotFound();
-                }
-                throw;
+                return StatusCode(500, e.Message);
             }
-
             return NoContent();
         }
 
         // POST: api/Workinghours
+        [Authorize(Roles = "doctor,admin")]
         [HttpPost]
         public async Task<ActionResult<Workinghours>> PostWorkinghours(Workinghours workinghours)
         {
+            if (IsDoctorAccessingElsesData(workinghours.DoctorId)) return Unauthorized();
             try
             {
                 _repository.Insert(workinghours);
                 _repository.Save();
-
-                return Created("", workinghours);
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException e)
             {
-                return StatusCode(503);
+                return StatusCode(500, e.Message);
             }
+            return Created("", workinghours);
         }
 
         // DELETE: api/Workinghours/5
+        [Authorize(Roles = "doctor,admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Workinghours>> DeleteWorkinghours(decimal id)
         {
             var workinghours = _repository.GetByID(id);
-            if (workinghours == null)
-            {
-                return NotFound();
-            }
+            if (workinghours == null) return NotFound();
+            if (IsDoctorAccessingElsesData(workinghours.DoctorId)) return Unauthorized();
 
             _repository.Delete(workinghours);
             _repository.Save();
@@ -143,10 +136,10 @@ namespace Lekarzowo.Controllers
         {
             return _repository.Exists(id);
         }
-
-        private async Task<bool> WorkinghoursExists(Workinghours wh)
+        
+        private bool IsDoctorAccessingElsesData(decimal doctorId)
         {
-            return await _repository.Exists(wh);
+            return IsDoctor() && doctorId != GetUserIdFromToken();
         }
     }
 }
