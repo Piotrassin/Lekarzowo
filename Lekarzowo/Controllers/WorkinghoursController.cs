@@ -15,10 +15,12 @@ namespace Lekarzowo.Controllers
     public class WorkinghoursController : BaseController
     {
         private readonly IWorkingHoursRepository _repository;
+        private readonly IReservationsRepository _reservationsRepository;
 
-        public WorkinghoursController(IWorkingHoursRepository repository)
+        public WorkinghoursController(IWorkingHoursRepository repository, IReservationsRepository reservationsRepository)
         {
             _repository = repository;
+            _reservationsRepository = reservationsRepository;
         }
 
         // GET: api/Workinghours
@@ -81,15 +83,19 @@ namespace Lekarzowo.Controllers
         // PUT: api/Workinghours/5
         [Authorize(Roles = "doctor,admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutWorkinghours(decimal id, Workinghours workinghours)
+        public async Task<IActionResult> PutWorkinghours(decimal id, Workinghours workhours)
         {
-            if (id != workinghours.Id) return BadRequest();
-            if (IsDoctorAccessingElsesData(workinghours.DoctorId)) return Unauthorized();
+            if (id != workhours.Id) return BadRequest();
+            if (IsDoctorAccessingElsesData(workhours.DoctorId)) return Unauthorized();
+            if (await _reservationsRepository.IsAnyReservationScheduledThatDay(workhours.LocalId, workhours.DoctorId, workhours.From, workhours.To))
+            {
+                return Forbid("W ciągu tych godzin pracy stworzono już rezerwację.");
+            }
 
             if (!WorkinghoursExists(id)) return NotFound();
             try
             {
-                _repository.Update(workinghours);
+                _repository.Update(workhours);
                 _repository.Save();
             }
             catch (DbUpdateConcurrencyException e)
@@ -122,14 +128,18 @@ namespace Lekarzowo.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Workinghours>> DeleteWorkinghours(decimal id)
         {
-            var workinghours = _repository.GetByID(id);
-            if (workinghours == null) return NotFound();
-            if (IsDoctorAccessingElsesData(workinghours.DoctorId)) return Unauthorized();
+            var workhours = _repository.GetByID(id);
+            if (workhours == null) return NotFound();
+            if (IsDoctorAccessingElsesData(workhours.DoctorId)) return Unauthorized();
+            if (await _reservationsRepository.IsAnyReservationScheduledThatDay(workhours.LocalId, workhours.DoctorId, workhours.From, workhours.To))
+            {
+                return Forbid("W ciągu tych godzin pracy stworzono już rezerwację.");
+            }
 
-            _repository.Delete(workinghours);
+            _repository.Delete(workhours);
             _repository.Save();
 
-            return workinghours;
+            return workhours;
         }
 
         private bool WorkinghoursExists(decimal id)
