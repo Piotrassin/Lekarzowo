@@ -15,6 +15,23 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         Task<IEnumerable<Reservation>> GetAll(decimal patientId);
 
         /// <summary>
+        /// Returns data of a reservation with a given id with included visit data.
+        /// </summary>
+        /// <param name="reservationId"></param>
+        /// <returns></returns>
+        Task<Reservation> GetById(decimal reservationId);
+
+        /// <summary>
+        /// Checks if any reservation meets given criteria.
+        /// </summary>
+        /// <param name="localId"></param>
+        /// <param name="doctorId"></param>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
+        Task<bool> IsAnyReservationScheduledThatDay(decimal localId, decimal doctorId, DateTime from, DateTime to);
+
+        /// <summary>
         /// Checks if given reservations is owned by given patient.
         /// </summary>
         /// <param name="patientId"></param>

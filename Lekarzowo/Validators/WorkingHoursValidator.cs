@@ -24,12 +24,12 @@ namespace Lekarzowo.Validators
             RuleFor(x => x.From)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("Pole nie może być puste.")
-                .Must(DateTimeValidator.BeInTheFuture);
+                .Must(DateTimeValidator.BeInTheFuture).WithMessage("Godziny pracy nie mogą być w przeszłości");
 
             RuleFor(x => x.To)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("Pole nie może być puste.")
-                .Must(DateTimeValidator.BeInTheFuture);
+                .Must(DateTimeValidator.BeInTheFuture).WithMessage("Godziny pracy nie mogą być w przeszłości"); ;
 
             RuleFor(x => x)
                 .Cascade(CascadeMode.Stop)

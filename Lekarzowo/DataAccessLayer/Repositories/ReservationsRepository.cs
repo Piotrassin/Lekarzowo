@@ -18,6 +18,21 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return await _context.Reservation.Where(x => x.PatientId == patientId).ToListAsync();
         }
 
+        public async Task<Reservation> GetById(decimal reservationId)
+        {
+            return await _context.Reservation.Include(x => x.Visit).FirstOrDefaultAsync(x => x.Id == reservationId);
+        }
+
+        public async Task<bool> IsAnyReservationScheduledThatDay(decimal localId, decimal doctorId, DateTime from, DateTime to)
+        {
+            return await _context.Reservation
+                .Where(x => x.DoctorId == doctorId)
+                .Where(x => x.Room.LocalId == localId)
+                .Where(x => x.Starttime >= from && x.Starttime < to)
+                .Where(x => x.Endtime > from && x.Starttime <= to)
+                .AnyAsync();
+        }
+
         public IEnumerable<Reservation> AllByOptionalCriteria(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end)
         {
             var query = _context.Reservation

@@ -1,24 +1,20 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
+﻿using Lekarzowo.DataAccessLayer.DTO;
+using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.Repositories;
 using Lekarzowo.Services;
-using System;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
-using Lekarzowo.DataAccessLayer.DTO;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Transactions;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.DataAccessLayer.Repositories;
 
 namespace Lekarzowo.Controllers
 {
-    [Authorize] //wystarczy to odkomentować żeby na wszystkie końcówki z tego kontrolera, była potrzebna autoryzacja,
-    //chyba że końcówka jest oznaczona jako [AllowAnonymous].
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PeopleController : BaseController
@@ -27,12 +23,10 @@ namespace Lekarzowo.Controllers
         private readonly ICustomUserRolesService _customUserRolesService;
 
         private readonly IPeopleRepository _repository;
-        private readonly IPatientsRepository _patientsRepository;
-        public PeopleController(IPeopleRepository repository, IJWTService jwtService, IPatientsRepository patientsRepository, ICustomUserRolesService urolesService)
+        public PeopleController(IPeopleRepository repository, IJWTService jwtService, ICustomUserRolesService urolesService)
         {
             _jwtService = jwtService;
             _repository = repository;
-            _patientsRepository = patientsRepository;
             _customUserRolesService = urolesService;
         }
 
@@ -67,119 +61,24 @@ namespace Lekarzowo.Controllers
         }
 
         //POST: api/People
-        [AllowAnonymous]
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public ActionResult RegisterUser(UserRegistrationDTO newPerson)
         {
-            if (ModelState.IsValid)
+            newPerson.Password.Value = AuthService.CreateHash(newPerson.Password.Value);
+
+            if (_repository.Exists(newPerson.Email))
             {
-                newPerson.Password.Value = AuthService.CreateHash(newPerson.Password.Value);
-
-                if (_repository.Exists(newPerson.Email))
-                {
-                    return Conflict("User with that email address already exists");
-                }
-
-                using(var transaction = new TransactionScope())
-                {
-                    newPerson.Email = newPerson.Email.ToLower();
-
-                    _repository.Insert(newPerson);
-                    _repository.Save();
-
-                    Person user = _repository.GetByEmail(newPerson.Email);
-                    Patient newPatient = new Patient() { Id = user.Id, IdNavigation = user };
-
-                    _patientsRepository.Insert(newPatient);
-                    _repository.Save();
-
-                    transaction.Complete();
-                }
-                //return CreatedAtAction("GetPerson", new { personId = personId.Id }, personId);
-                return Created("", null);
+                return Conflict("User with that email address already exists");
             }
-            return BadRequest();
+
+            newPerson.Email = newPerson.Email.ToLower();
+
+            _repository.Insert(newPerson);
+            _repository.Save();
             
+            return Created("", null);
         }
-
-
-        #region role1(rozwiązanie z redundancją)
-        ////POST: api/People/Login
-        //[AllowAnonymous]
-        //[HttpPost("Login")]
-        //public ActionResult<Person> LoginUser(UserLoginDTO current)
-        //{
-        //    Person storedPerson = _repository.GetByEmail(current.Email);
-        //    try
-        //    {
-        //        var storedUserRoles = _customUserRolesService.GetAll(storedPerson.Id);
-        //        var shortRoleData = new List<object>();
-        //        if (storedUserRoles != null)
-        //        {
-        //            foreach (var uRole in storedUserRoles)
-        //            {
-        //                shortRoleData.Add(new { RoleId = uRole.RoleId, RoleName = uRole.Role.Name });
-        //            }
-        //        }
-        //        else
-        //        {
-        //            //TODO: Opisać w dokumentacji, że im niższy personId roli, tym niższy przydział
-        //            //TODO: Role lekarz i pacjent autoryzować na podstawie rekordów w tabelach Patient i Doctor, a nie roli. Dopiero role admin, etc. na podstawie UserRoles
-        //            //TODO: Dodać kontrolę redundancji w CRUDzie doktora i pacjenta
-        //            var leastImportantRole = _customUserRolesService.GetAll().First();
-        //            _customUserRolesService.Insert(new Userroles()
-        //            {
-        //                RoleId = leastImportantRole.RoleId,
-        //                PersonId = storedPerson.Id,
-        //                Dateofissue = DateTime.Now
-        //            }); 
-        //            shortRoleData.Add(new
-        //            {
-        //                RoleId = leastImportantRole.RoleId,
-        //                RoleName = leastImportantRole.Role.Name
-        //            });
-        //        }
-        //        //if (stored == null || !AuthService.VerifyPassword(current.Password.Value, stored.Password))
-        //        //{
-        //        //    return NotFound();
-        //        //}
-
-        //        var token = _jwtService.GenerateAccessToken(storedPerson, storedUserRoles.First().Role);
-
-        //        return Accepted(new
-        //        {
-        //            Id = storedPerson.Id,
-        //            FirstName = storedPerson.Name,
-        //            LastName = storedPerson.Lastname,
-        //            Email = storedPerson.Email,
-        //            Roles = shortRoleData,
-        //            Token = token
-        //        });
-        //    }
-        //    catch (DBConcurrencyException e)
-        //    {
-        //        //throw;
-        //        return Conflict(e.Message);
-        //    }
-        //}
-
-        ////POST: api/People/ChangeActiveRole
-        //[HttpPost("[action]")]
-        //public ActionResult<Person> ChangeActiveRole(decimal roleToActivateId)
-        //{
-        //    var personId = GetUserIdFromToken();
-        //    var newRole = _customUserRolesService.GetByID(personId, roleToActivateId);
-
-        //    if (newRole != null)
-        //    {
-        //        Person storedPerson = _repository.GetByID(personId);
-        //        var newToken = _jwtService.GenerateAccessToken(storedPerson, newRole.Role);
-        //        return Ok(new { Token = newToken });
-        //    }
-        //    return BadRequest();
-        //}
-        #endregion
-
 
         #region role2(rozwiazanie hybrydowe)
         //POST: api/People/Login

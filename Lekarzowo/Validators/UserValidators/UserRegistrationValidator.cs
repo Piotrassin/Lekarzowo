@@ -36,7 +36,8 @@ namespace Lekarzowo.Validators
             RuleFor(x => x.Email)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("Email")
-                .EmailAddress().WithMessage("{PropertyName} jest niepoprawny");
+                .EmailAddress().WithMessage("{PropertyName} jest niepoprawny")
+                .Must(x => peopleRepository.Exists(x)).WithMessage("{PropertyName} jest już zarejestrowany systemie");
 
             RuleFor(x => x.Password)
                 .SetValidator(new PasswordValidator(peopleRepository));

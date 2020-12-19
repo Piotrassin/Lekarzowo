@@ -1,12 +1,11 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Lekarzowo.Models;
+using Lekarzowo.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lekarzowo.Services;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
@@ -32,6 +31,22 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 .ThenBy(x => x.Name);
 
             return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<object>> DoctorsWorkplacesByName(string localName, decimal? doctorId, int? limit, int? skip)
+        {
+            var query = _context.Workinghours
+                .Where(x => !doctorId.HasValue || x.DoctorId == doctorId)
+                .Where(x => localName == null || x.Local.Name.ToLower().Contains(localName.ToLower()))
+                .Where(x => x.From.Date >= DateTime.Now.Date)
+                .Select(x => x.Local).Include(x => x.City)
+                .Distinct()
+                .OrderBy(x => x.City.Name)
+                .ThenBy(x => x.Name);
+
+            var orderedQuery = PaginationService<Local>.SplitAndLimitQueryable(skip, limit, query);
+
+            return await orderedQuery.ToListAsync();
         }
 
         public async Task<IEnumerable<Workinghours>> DoctorUpcomingWorkingHours(decimal doctorId, decimal localId, int days)
