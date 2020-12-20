@@ -62,7 +62,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/workinghours/DoctorsUpcomingSchedule?doctorId=1&days=2000
-        [Authorize]
+        [AllowAnonymous]
         [HttpGet("[action]")]
         public async Task<ActionResult<object>> DoctorsUpcomingSchedule(decimal doctorId, int days)
         {
