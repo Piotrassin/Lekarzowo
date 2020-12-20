@@ -20,7 +20,7 @@ import SicknessOnVisitItem from './components/SicknessOnVisitItem.js';
 import TreatmentOnVisitItem from './components/TreatmentOnVisitItem.js';
 import { Dialog } from './components/Dialog.js';
 import Snackbar from './helpers/Snackbar.js';
-
+import Formater from './helpers/Formater.js';
 
 const currentUserRole = AuthService.getUserCurrentRole();
 const WhiteTextField = withStyles({
@@ -63,6 +63,8 @@ class VisitDetails extends React.Component {
       refresh: false,
       id: id,
       patientId: "",
+      startDate: null,
+      endDate: null,
       openedVisit: openVisit,
       medicineHistory: [],
       sicknessHistory: [],
@@ -131,7 +133,9 @@ class VisitDetails extends React.Component {
       console.log("Rezerwacja");
       console.log(response);
       this.setState({
-        patientId: response.patientId
+        patientId: response.patientId,
+        startDate: response.starttime,
+        endDate: response.endtime
       });
     })
     .catch(err => {
@@ -492,7 +496,8 @@ class VisitDetails extends React.Component {
             <RoleButton history= {this.props.history}/>
           </div>
           <div className = 'subheadline-container'>
-          <b className = "subheadline">17:15 - 20:20</b>
+          <b className = "subheadline">{Formater.formatHour(this.state.startDate)} -
+          {Formater.formatHour(this.state.endDate)}</b>
           </div>
           <div className = 'row-container row-container-small'>
           <div className = "active-treatments basic-container">

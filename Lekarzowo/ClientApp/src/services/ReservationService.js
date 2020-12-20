@@ -113,6 +113,12 @@ class ReservationService {
       "Canceled": 0,
       "LocalId": reservation.localId
     })
+    }).then(response => {
+      if(response.status > 400){
+        console.log(response);
+        throw new Error('Błąd przy rezerwacji');
+      }
+      return response.json();
     })
   }
 

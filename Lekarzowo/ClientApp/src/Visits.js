@@ -11,6 +11,7 @@ import VisitService from './services/VisitService.js';
 import AuthService from './authentication/AuthService';
 import VisitAlert from './components/VisitAlert.js';
 import Formater from './helpers/Formater.js';
+import Snackbar from './helpers/Snackbar.js';
 const PurpleSwitch = withStyles({
   switchBase: {
     color: '#DBD887',
@@ -40,6 +41,7 @@ class Visits extends React.Component {
       visitToCancel: {}
     };
   }
+  snackbarRef = React.createRef();
 
   async componentDidMount() {
     console.log('Current Role');
@@ -124,10 +126,13 @@ class Visits extends React.Component {
       console.log('helo');
       ReservationService.cancelReservation(this.state.visitToCancel.reservationId)
       .then(response => {
+      
+
+        this.snackbarRef.current.openSnackBar('Odwołano wizytę', 'green-snackbar');
+        Dialog.close("visit-cancel-dialog")(event);
         this.setState({
           visitToCancel: {}
         });
-        Dialog.close("visit-cancel-dialog")(event);
         //window.location.reload()
       });
     }
@@ -238,6 +243,7 @@ class Visits extends React.Component {
           :
           <div/>
         }
+        <Snackbar ref = {this.snackbarRef} />
         </div>
       );
   }

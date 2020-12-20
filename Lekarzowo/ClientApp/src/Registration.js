@@ -84,7 +84,7 @@ class Registration extends React.Component {
         <a className="header-1" >Zarejestruj się</a>
         <a className = "header-3">Tylko parę kroków czeka cię od dostępu do tysiąca lekarzy!</a>
         <form onSubmit = {this.handleSubmit} className = "loginForm">
-          <div className = "flex-row">
+          <div className = "flex-row justify-space-between">
           <div className = "label-input-group flex-column">
           <label htmlFor="name" className = "label">Imię</label>
           <input id = "name"
@@ -108,7 +108,7 @@ class Registration extends React.Component {
           />
           </div>
           </div>
-          <div className = "flex-row">
+          <div className = "flex-row justify-space-between">
           <div className = "label-input-group flex-column">
           <label htmlFor="birthdate" className = "label">Data Urodzenia</label>
           <input id = "birthdate"
@@ -132,7 +132,7 @@ class Registration extends React.Component {
           />
           </div>
           </div>
-          <div className = "flex-row">
+          <div className = "flex-row justify-space-between">
           <div className = "label-input-group flex-column">
           <label htmlFor="pesel" className = "label">Pesel</label>
           <input id = "pesel"
@@ -156,7 +156,7 @@ class Registration extends React.Component {
           />
           </div>
           </div>
-          <div className = "flex-row">
+          <div className = "flex-row justify-space-between">
           <div className = "label-input-group flex-column">
           <label htmlFor = "password" className = "label">Hasło</label>
           <input

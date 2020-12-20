@@ -164,6 +164,17 @@ onClickConfimReservation(event){
   ReservationService.postReservation(this.state.selectedReservation)
   .then(response => {
     console.log(response);
+    if(response.status == 400) {
+      response.errors.map((error) => {
+        this.snackbarRef.current.openSnackBar(error, 'red-snackbar');
+      })
+
+    }
+    this.snackbarRef.current.openSnackBar('Dodano rezerwację', 'green-snackbar');
+    Dialog.close("reservation-dialog")(event);
+  })
+  .catch(err => {
+    this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
   });
 }
 
