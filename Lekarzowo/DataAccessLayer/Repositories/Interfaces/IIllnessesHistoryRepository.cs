@@ -13,16 +13,16 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         /// <summary>
         /// Returns a list of full IllnessHistory objects belonging to a given patient.
         /// </summary>
-        /// <param name="PatientId"></param>
+        /// <param name="patientId"></param>
         /// <returns></returns>
-        IEnumerable<Illnesshistory> GetAll(decimal PatientId);
+        IEnumerable<object> GetAll(decimal patientId);
 
         /// <summary>
-        /// Checks if an object already exists by comparing all attributes rather than Id.
+        /// List of all illnessHistory objects with a given visitId.
         /// </summary>
-        /// <param name="illnesshistory"></param>
+        /// <param name="visitId"></param>
         /// <returns></returns>
-        bool Exists(Illnesshistory illnesshistory);
+        Task<IEnumerable<Illnesshistory>> GetByVisitId(decimal visitId);
 
         /// <summary>
         /// Returns shortened versions of objects of most recent diagnosed illnesses of a given patient.
@@ -31,7 +31,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         /// <param name="limit"></param>
         /// <param name="skip"></param>
         /// <returns></returns>
-        Task<IEnumerable<object>> AllByPatientId(decimal patientId, int? limit, int? skip);
+        Task<IEnumerable<object>> PatientHistory(decimal patientId, int? limit, int? skip);
 
         /// <summary>
         /// Illnesses diagnosed on a given visit, ordered alphabetically.
@@ -42,6 +42,14 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         /// <returns></returns>
         Task<IEnumerable<object>> AllByVisitId(decimal visitId, int? limit, int? skip);
 
-
+        /// <summary>
+        /// Illnesses diagnosed on given visit searchable by their name attribute.
+        /// </summary>
+        /// <param name="visitId"></param>
+        /// <param name="name"></param>
+        /// <param name="limit"></param>
+        /// <param name="skip"></param>
+        /// <returns></returns>
+        Task<IEnumerable<object>> AllByNameOnVisit(decimal visitId, string name, int? limit, int? skip);
     }
 }

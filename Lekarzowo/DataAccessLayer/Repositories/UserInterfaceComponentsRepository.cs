@@ -135,7 +135,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                     patientName = x.IdNavigation.Name,
                     patientLastname = x.IdNavigation.Lastname,
 
-                    illnesses = _context.Illnesshistory.Where(q => q.PatientId == PatientId)
+                    illnesses = _context.Illnesshistory.Where(q => q.Visit.Reservation.PatientId == PatientId)
                             .Select(illnessHist => new
                             {
                                 illnessHistoryId = illnessHist.Id,
@@ -182,7 +182,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                     patientName = x.IdNavigation.Name,
                     patientLastname = x.IdNavigation.Lastname,
                     
-                    ilnesses = _context.Illnesshistory.Where(w => w.PatientId == PatientId)
+                    ilnesses = _context.Illnesshistory.Where(w => w.Visit.Reservation.PatientId == PatientId)
                     .Select(w => new
                     {
                         illnessHistoryId = w.Id,
@@ -212,7 +212,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                     patientName = x.IdNavigation.Name,
                     patientLastname = x.IdNavigation.Lastname,
                     
-                    ilnesses = _context.Illnesshistory.Where(w => w.PatientId == PatientId)
+                    ilnesses = _context.Illnesshistory.Where(w => w.Visit.Reservation.PatientId == PatientId)
                     .Select(w => new
                     {
                         illnessHistoryId = w.Id,

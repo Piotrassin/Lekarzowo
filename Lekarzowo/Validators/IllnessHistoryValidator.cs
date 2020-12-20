@@ -11,11 +11,6 @@ namespace Lekarzowo.Validators
         public IllnessHistoryValidator(IIllnessesHistoryRepository illHistRepo, IPatientsRepository patRepo,
             IIllnessesRepository illRepo, IVisitsRepository visitRepo, IHttpContextAccessor httpContext)
         {
-            RuleFor(x => x.PatientId)
-                .Cascade(CascadeMode.Stop)
-                .NotEmpty().WithMessage("Pole nie może być puste.")
-                .SetValidator(new BaseIdValidator<Patient>(patRepo, "Pacjent nie istnieje."));
-
             RuleFor(x => x.IllnessId)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("Pole nie może być puste.")

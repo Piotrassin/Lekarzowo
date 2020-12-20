@@ -11,13 +11,14 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     {
         public IllnessesHistoryRepository(ModelContext context) : base(context) {}
 
-        public IEnumerable<Illnesshistory> GetAll(decimal PatientId)
+        public IEnumerable<object> GetAll(decimal patientId)
         {
-            return _context.Illnesshistory.Where(x => x.PatientId == PatientId)
-                .Select(x => new Illnesshistory
+            return _context.Illnesshistory.Where(x => x.Visit.Reservation.PatientId == patientId)
+                .Select(x => new
                 {
                     Id = x.Id,
-                    PatientId = x.PatientId,
+                    PatientId = x.Visit.Reservation.PatientId,
+                    DoctorId = x.Visit.Reservation.DoctorId,
                     VisitId = x.VisitId,
                     Curedate = x.Curedate,
                     Description = x.Description,
@@ -29,23 +30,21 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 }).ToList();
         }
 
-        public bool Exists(Illnesshistory illnesshistory)
+        public async Task<IEnumerable<Illnesshistory>> GetByVisitId(decimal visitId)
         {
-            return _context.Illnesshistory.Any(x =>
-                x.PatientId == illnesshistory.PatientId &&
-                x.IllnessId == illnesshistory.IllnessId &&
-                x.VisitId == illnesshistory.VisitId);
+            return await _context.Illnesshistory.Where(x => x.VisitId == visitId).ToListAsync();
         }
 
-        public async Task<IEnumerable<object>> AllByPatientId(decimal patientId, int? limit, int? skip)
+        public async Task<IEnumerable<object>> PatientHistory(decimal patientId, int? limit, int? skip)
         {
-            var query = _context.Illnesshistory.Where(x => x.PatientId == patientId)
+            var query = _context.Illnesshistory.Where(x => x.Visit.Reservation.PatientId == patientId)
                 .Select(x => new
                 {
                     IllnessHistoryId = x.Id,
                     IllnessName = x.Illness.Name,
                     DiagnoseDate = x.Visit.Reservation.Starttime,
-                    CureDate = x.Curedate
+                    CureDate = x.Curedate,
+                    Description = x.Description
                 })
                 .OrderBy(x => x.DiagnoseDate);
 
@@ -68,6 +67,21 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
             var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
 
+            return await orderedQuery.ToListAsync();
+        }
+        public async Task<IEnumerable<object>> AllByNameOnVisit(decimal visitId, string name, int? limit, int? skip)
+        {
+            var query = _context.Illnesshistory
+                .Where(x => x.VisitId == visitId)
+                .Where(x => name == null || x.Illness.Name.ToLower().Contains(name.ToLower()))
+                .Select(x => new
+                {
+                    PatientId = x.Visit.Reservation.PatientId,
+                    IllnessHistoryId = x.Id,
+                    IllnessName = x.Illness.Name
+                }).OrderBy(x => x.IllnessName);
+
+            IOrderedQueryable<object> orderedQuery = PaginationService<Illness>.SplitAndLimitQueryable(skip, limit, query);
             return await orderedQuery.ToListAsync();
         }
     }

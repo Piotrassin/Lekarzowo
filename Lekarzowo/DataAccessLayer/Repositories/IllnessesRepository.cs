@@ -11,16 +11,5 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     {
         public IllnessesRepository(ModelContext context) : base(context) {}
 
-        //todo może przenieśćdo illnessHistory?
-        public async Task<IEnumerable<object>> AllByNameOnVisit(decimal visitId, string name, int? limit, int? skip)
-        {
-            var query = _context.Illnesshistory
-                .Where(x => x.VisitId == visitId)
-                .Where(x => name == null || x.Illness.Name.ToLower().Contains(name.ToLower()))
-                .Select(x => x.Illness).OrderBy(x => x.Name);
-
-            IOrderedQueryable<object> orderedQuery = PaginationService<Illness>.SplitAndLimitQueryable(skip, limit, query);
-            return await orderedQuery.ToListAsync();
-        }
     }
 }
