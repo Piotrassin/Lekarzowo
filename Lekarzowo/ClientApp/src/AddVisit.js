@@ -142,8 +142,10 @@ async onSubmitBtnClick(event){
     doctorId: this.state.doctorId,
     specialityId: this.state.specialityId,
     cityId: this.state.cityId,
-    startDate: (startDateNew.toISOString().split('T')[0]).concat('T').concat(this.state.startHour),
-    endDate: (this.state.endDate.toISOString().split('T')[0]).concat('T').concat(this.state.endHour)
+    startDate: (startDateNew.toISOString().split('T')[0]),
+    endDate: (this.state.endDate.toISOString().split('T')[0]),
+    startHour: this.state.startHour,
+    endHour: this.state.endHour
   };
 
   await ReservationService.getPossibleAppointments(reservationRequestObject, 6).then(resp => {
@@ -173,8 +175,10 @@ onClickLoadMore(event){
     doctorId: this.state.doctorId,
     specialityId: this.state.specialityId,
     cityId: this.state.cityId,
-    startDate: (startDateNew.toISOString().split('T')[0]).concat('T').concat(this.state.startHour),
-    endDate: (this.state.endDate.toISOString().split('T')[0]).concat('T').concat(this.state.endHour)
+    startDate: (startDateNew.toISOString().split('T')[0]),
+    endDate: (this.state.endDate.toISOString().split('T')[0]),
+    startHour: this.state.startHour,
+    endHour: this.state.endHour
   };
   ReservationService.getPossibleAppointments(reservationRequestObject, 10, this.state.skipCount).then(resp => {
     console.log('setting state');

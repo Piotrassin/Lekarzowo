@@ -12,11 +12,11 @@ class ReservationService {
       skip = "";
     }
 
-    return fetch(url + 'reservations/possibleappointments?CityId=' +
-    reservationRequestObject.cityId + "&SpecId=" + reservationRequestObject.specialityId + "&DoctorId=" +
-    reservationRequestObject.doctorId +
-    "&start=" + reservationRequestObject.startDate + "&end=" + reservationRequestObject.endDate +
-    "&limit=" + limit + "&skip=" + skip, {
+    return fetch(url + 'reservations/possibleappointments?CityId=' + reservationRequestObject.cityId
+    + '&SpecId=' + reservationRequestObject.specialityId + '&DoctorId=' + reservationRequestObject.doctorId
+    + '&startDate=' + reservationRequestObject.startDate + '&endDate=' + reservationRequestObject.endDate
+    + '&startHour=' + reservationRequestObject.startHour + '&endHour=' + reservationRequestObject.endHour
+    + '&limit=' + limit + '&skip=' + skip, {
       headers: authHeader()
     })
     .then(response => response.json());
