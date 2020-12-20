@@ -19,6 +19,8 @@ import {
   createMuiTheme,
 } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import Snackbar from './helpers/Snackbar.js';
+
 
 const CssTextField = withStyles({
   root: {
@@ -71,6 +73,7 @@ constructor(props){
     selectedReservation: {}
   }
 }
+snackbarRef = React.createRef();
 
 onClickDate(value) {
   this.setState({
@@ -123,12 +126,7 @@ onHourChange(event) {
   this.setState({ [event.target.name]: event.target.value });
   console.log(event.target.name);
   console.log(event.target.value);
-  var splittedHours = event.target.value.split(":");
-  if(event.target.name == "startHour"){
-    this.state.startDate.setHours(splittedHours[0], splittedHours[1]);
-  }else {
-    this.state.endDate.setHours(splittedHours[0], splittedHours[1]);
-  }
+
 }
 
 async onSubmitBtnClick(event){
@@ -137,21 +135,27 @@ async onSubmitBtnClick(event){
   console.log("CityId " + this.state.cityId);
   console.log("DateStarrt " + this.state.startDate);
   console.log("DateEnd " + this.state.endDate);
+  //Add 1 day to Startdate
+  var startDateNew = new Date(this.state.startDate);
+  startDateNew.setDate(startDateNew.getDate() + 1);
   var reservationRequestObject = {
     doctorId: this.state.doctorId,
     specialityId: this.state.specialityId,
     cityId: this.state.cityId,
-    startDate: this.state.startDate,
-    endDate: this.state.endDate
+    startDate: (startDateNew.toISOString().split('T')[0]).concat('T').concat(this.state.startHour),
+    endDate: (this.state.endDate.toISOString().split('T')[0]).concat('T').concat(this.state.endHour)
   };
-  await ReservationService.getPossibleAppointments(this.state.cityId, this.state.specialityId, this.state.doctorId,
-  this.state.startDate, this.state.endDate, 6).then(resp => {
+
+  await ReservationService.getPossibleAppointments(reservationRequestObject, 6).then(resp => {
     this.setState({
       reservationsArray: resp,
       btnTouched: true,
       skipCount: 6
     });
   })
+
+  console.log('Reservation Request object');
+  console.log(reservationRequestObject);
 }
 
 onClickConfimReservation(event){
@@ -163,8 +167,16 @@ onClickConfimReservation(event){
 
 onClickLoadMore(event){
   console.log('before');
-  ReservationService.getPossibleAppointments(this.state.cityId, this.state.specialityId, this.state.doctorId,
-  this.state.startDate, this.state.endDate, 10, this.state.skipCount).then(resp => {
+  var startDateNew = new Date(this.state.startDate);
+  startDateNew.setDate(startDateNew.getDate() + 1);
+  var reservationRequestObject = {
+    doctorId: this.state.doctorId,
+    specialityId: this.state.specialityId,
+    cityId: this.state.cityId,
+    startDate: (startDateNew.toISOString().split('T')[0]).concat('T').concat(this.state.startHour),
+    endDate: (this.state.endDate.toISOString().split('T')[0]).concat('T').concat(this.state.endHour)
+  };
+  ReservationService.getPossibleAppointments(reservationRequestObject, 10, this.state.skipCount).then(resp => {
     console.log('setting state');
 
     this.setState({
@@ -321,6 +333,7 @@ render() {
           <button className = "btn-primary" style = {{marginRight: '20px'}} onClick = {this.onClickConfimReservation}>Potwierdź</button>
         </div>
       </Dialog>
+      <Snackbar ref = {this.snackbarRef} />
     </div>
 
 

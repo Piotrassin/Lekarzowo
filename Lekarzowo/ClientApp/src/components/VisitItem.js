@@ -19,7 +19,7 @@ onClickVisitCancel(event) {
 
 render() {
   return(
-    <div className = {this.props.visit.reservationIsCanceled ? 'sickness-item sickness-item-canceled' : 'sickness-item'} style = {{height: '70px'}}>
+    <div className = {this.props.visit.isCanceled ? 'sickness-item sickness-item-canceled' : 'sickness-item'} style = {{height: '70px'}}>
       <div className = 'sickness-item-part part-1'>
         <a>{this.props.visit.reservationStartTime.split('T')[0]}</a>
       </div>
@@ -34,7 +34,7 @@ render() {
         <a>{this.props.role == 'doctor' ? this.props.visit.patientName : this.props.visit.doctorName} {this.props.role == 'doctor' ? this.props.visit.patientLastname : this.props.visit.doctorLastname}</a>
       </div>
       <div className = 'sickness-item-part part-5 flex-column'>
-      {this.props.visit.reservationIsCanceled ?
+      {this.props.visit.isCanceled ?
         <div className = 'status-info status-info-red'>
         Odwołano
         </div>

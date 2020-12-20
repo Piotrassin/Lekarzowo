@@ -5,17 +5,20 @@ const url = 'https://localhost:5001/api/';
 
 class ReservationService {
 
-  getPossibleAppointments(cityId, specId, doctorId, startDate, endDate, limit, skip){
-    var possibleStartDate = startDate.toISOString().split('Z')[0];
-    var possibleEndDate = endDate.toISOString().split('Z')[0];
+  getPossibleAppointments(reservationRequestObject, limit, skip){
+    //var possibleStartDate = startDate.toISOString().split('Z')[0];
+    //var possibleEndDate = endDate.toISOString().split('Z')[0];
     if(!skip){
       skip = "";
     }
 
     return fetch(url + 'reservations/possibleappointments?CityId=' +
-    cityId + "&SpecId=" + specId + "&DoctorId=" + doctorId +
-    "&start=" + possibleStartDate + "&end=" + possibleEndDate +
-    "&limit=" + limit + "&skip=" + skip)
+    reservationRequestObject.cityId + "&SpecId=" + reservationRequestObject.specialityId + "&DoctorId=" +
+    reservationRequestObject.doctorId +
+    "&start=" + reservationRequestObject.startDate + "&end=" + reservationRequestObject.endDate +
+    "&limit=" + limit + "&skip=" + skip, {
+      headers: authHeader()
+    })
     .then(response => response.json());
 
   }
