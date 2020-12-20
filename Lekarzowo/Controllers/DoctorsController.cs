@@ -1,14 +1,12 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
+using Lekarzowo.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Transactions;
-using Lekarzowo.DataAccessLayer.DTO;
-using Lekarzowo.Repositories;
 
 namespace Lekarzowo.Controllers
 {

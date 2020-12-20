@@ -141,10 +141,6 @@ namespace Lekarzowo.DataAccessLayer.Models
                     .HasColumnName("ILLNESS_ID")
                     .HasColumnType("NUMBER(38)");
 
-                entity.Property(e => e.PatientId)
-                    .HasColumnName("PATIENT_ID")
-                    .HasColumnType("NUMBER(38)");
-
                 entity.Property(e => e.VisitId)
                     .HasColumnName("VISIT_ID")
                     .HasColumnType("NUMBER(38)");
@@ -154,12 +150,6 @@ namespace Lekarzowo.DataAccessLayer.Models
                     .HasForeignKey(d => d.IllnessId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("ILLNESSHISTORY_ILLNESS");
-
-                entity.HasOne(d => d.Patient)
-                    .WithMany(p => p.Illnesshistory)
-                    .HasForeignKey(d => d.PatientId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("ILLNESSHISTORY_PATIENT");
 
                 entity.HasOne(d => d.Visit)
                     .WithMany(p => p.Illnesshistory)

@@ -47,7 +47,23 @@ namespace Lekarzowo.Controllers
         {
             if (await IsPatientAccessingDataOwnedByOtherUser(reservationId)) return Unauthorized();
 
-            var reservation = _repository.GetByID(reservationId);
+            var reservation = await _repository.GetById(reservationId);
+
+            if (reservation == null)
+            {
+                return NotFound();
+            }
+            return reservation;
+        }
+
+        // GET: api/WithPatientData/Reservations/5
+        [Authorize]
+        [HttpGet("[action]/{reservationId}")]
+        public async Task<ActionResult<object>> WithPatientData(decimal reservationId)
+        {
+            if (await IsPatientAccessingDataOwnedByOtherUser(reservationId)) return Unauthorized();
+
+            var reservation = await _repository.GetByIdWithPatientData(reservationId);
 
             if (reservation == null)
             {
