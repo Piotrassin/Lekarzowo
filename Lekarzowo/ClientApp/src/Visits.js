@@ -10,6 +10,7 @@ import ReservationService from './services/ReservationService.js';
 import VisitService from './services/VisitService.js';
 import AuthService from './authentication/AuthService';
 import VisitAlert from './components/VisitAlert.js';
+import Formater from './helpers/Formater.js';
 const PurpleSwitch = withStyles({
   switchBase: {
     color: '#DBD887',
@@ -163,6 +164,7 @@ class Visits extends React.Component {
                 <div className = 'sickness-item-part part-5'>
                 </div>
               </div>
+              <div className = 'overflow-y-auto' style = {{height: '80vh'}}>
               {this.state.checkedVisit && this.state.upcomingVisits.map((visit, index ) => (
                   <VisitItem
                   visit={visit}
@@ -180,7 +182,7 @@ class Visits extends React.Component {
                     upcomingVisit = {false}
                     />
                   ))}
-
+</div>
             </div>
 
           </div>
@@ -210,15 +212,23 @@ class Visits extends React.Component {
             <a>Wizyta</a>
             <hr/>
             </div>
+
+            {currentRole == 'patient' ?
             <div className = 'profile-data-slot'>
             <a className = 'profile-data-slot-header'>Lekarz</a><a>{this.state.visitToCancel.doctorName} {this.state.visitToCancel.doctorLastname}</a>
             </div>
+            :
             <div className = 'profile-data-slot'>
-            <a className = 'profile-data-slot-header'>Data</a><a>{this.state.visitToCancel.reservationStartTime}</a>
+            <a className = 'profile-data-slot-header'>Pacjent</a><a>{this.state.visitToCancel.patientName} {this.state.visitToCancel.patientLastname}</a>
+            </div>
+            }
+
+            <div className = 'profile-data-slot'>
+            <a className = 'profile-data-slot-header'>Data</a><a>{Formater.formatDate(this.state.visitToCancel.reservationStartTime)}</a>
             </div>
             <div className = 'profile-data-slot'>
-            <a className = 'profile-data-slot-header'>Godziny</a><a>{this.state.visitToCancel.reservationStartTime} -
-            {this.state.visitToCancel.reservationEndTime}</a>
+            <a className = 'profile-data-slot-header'>Godziny</a><a>{Formater.formatHour(this.state.visitToCancel.reservationStartTime)} -
+            {Formater.formatHour(this.state.visitToCancel.reservationEndTime)}</a>
             </div>
             </div>
             <div className = "dialog-btn-hold">

@@ -34,16 +34,14 @@ class App extends React.Component {
         <Route exact path="/login" component={LoginContainer}/>
         <Route exact path="/signup" component={RegisterContainer}/>
         <Route exact path='/findDoctorPublic' component={FindDoctorContainer} />
-        <Route exact path="/visits" component={Visits}/>
-        <Route exact path="/" component={MainContainer}/>
+        <AuthorizedRoute exact path="/visits" component={Visits} roles={['patient', 'doctor']}/>
+        <AuthorizedRoute exact path="/" component={MainContainer} roles={['patient', 'doctor', 'admin']}/>
         <AuthorizedRoute exact path="/addVisit" component={AddVisit} roles={'patient'} />
-        <Route exact path="/myProfile" component={Profile}/>
-        <Route exact path="/findDoctor" component={FindDoctor}/>
+        <AuthorizedRoute exact path="/myProfile" component={Profile} roles={['patient', 'doctor', 'admin']}/>
+        <AuthorizedRoute exact path="/findDoctor" component={FindDoctor} roles={['patient', 'doctor', 'admin']}/>
         <AuthorizedRoute path="/dashboardDoctor" component={DashboardDoctor} roles={'doctor'} />
         <AuthorizedRoute path="/adminPanel" component={AdminPanel} roles={'admin'} />
-        <Route path="/visit" render={(routeProps) => (
-              <VisitDetails {...routeProps}/>
-          )}/>
+        <AuthorizedRoute path="/visit" roles={['patient', 'doctor']} component = {VisitDetails}/>
         </div>
         </HashRouter>
       );

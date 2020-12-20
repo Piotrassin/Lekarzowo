@@ -23,6 +23,24 @@ class Validation {
     return (input.trim() == '') && input.length === 0;
   }
 
+  validateUserData(firstName, lastName, dateOfBirth, email, gender, pesel){
+    return {
+      firstName: this.validateBlank(firstName),
+      lastName: this.validateBlank(lastName),
+      dateOfBirth: (new Date(dateOfBirth) >= new Date()),
+      gender: (gender !=  'M' ||  gender != 'K'),
+      pesel: (pesel.length <= 11 && (!(/^\d+$/.test(pesel))))
+    }
+  }
+
+  validatePasswordChange(oldPassword, newPassword, confirmPassword){
+    return {
+      oldPassword: this.validateBlank(oldPassword),
+      newPassword: this.validateBlank(newPassword),
+      confirmPassword:  (newPassword === confirmPassword)
+    }
+  }
+
 
 }
 export default new Validation();

@@ -8,7 +8,7 @@ class VisitService {
 
   getDoctorVisit(localId, startDate, endDate){
     var doctorId = JSON.parse(AuthService.getLoggedUser()).id;
-    return fetch(url + 'Reservations/DoctorScheduleList?doctorId=' + doctorId
+    return fetch(url + 'Reservations/ReservationsByDoctorId?doctorId=' + doctorId
     + '&localId=' + localId + '&start=' + startDate.toISOString() + '&end=' + endDate.toISOString(), {
       headers: authHeader()
     }).then(response => response.json());
@@ -116,8 +116,8 @@ class VisitService {
   }
 
   getSicknessOnVisitSearch(search, limit, skip, visitId){
-    return fetch(url + 'Illnesseshistory/AllByVisitId?visitId=' + visitId +
-    '&limit='+ limit + '&skip=' + skip, {
+    return fetch(url + 'Illnesses/AllByNameOnAVisit?visitId=' + visitId +
+    '&name=' + search + '&limit='+ limit + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => response.json());
   }
@@ -129,23 +129,70 @@ class VisitService {
     }).then(response => response.json());
   }
 
+  deleteSicknessOnVisit(sicknessHistoryId){
+    return fetch(url + 'Illnesseshistory/' + sicknessHistoryId, {
+    method: 'DELETE',
+    headers: authHeader()
+    })
+    .then(response => {
+      if(!response.ok){
+        throw new Error("Nie udało sie");
+      }
+      return response;
+    })
+  }
+
+  deleteTreatmentOnVisit(treatmentOnVisitId){
+    return fetch(url + 'Treatmentonvisits/' + treatmentOnVisitId, {
+    method: 'DELETE',
+    headers: authHeader()
+    })
+    .then(response => {
+      if(!response.ok){
+        throw new Error("Nie udało sie");
+      }
+      return response;
+    })
+  }
+
   postSicknessOnVisit(sickness){
-    var patientId = JSON.parse(AuthService.getLoggedUser()).id;
+
     return fetch(url + 'Illnesseshistory', {
     method: 'POST',
     headers: authHeader({'Content-Type': 'application/json'}),
     body: JSON.stringify({
       "IllnessId": sickness.id,
-      "PatientId": patientId,
+      "PatientId": sickness.patientId,
       "VisitId": sickness.visitId,
       "Description": sickness.description
+    })
+  }).
+  then(response => {
+    if(!response.ok){
+      throw new Error('Nie udalo sie dodac');
+    }
+    return response.json();
+  })
+  }
+
+  postMedicineOnVisit(medicine){
+    var patientId = JSON.parse(AuthService.getLoggedUser()).id;
+    return fetch(url + 'Medicinehistories', {
+    method: 'POST',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "MedicineId": medicine.id,
+      "IllnesshistoryId": medicine.illnessId,
+      "Startdate": medicine.startDate,
+      "Finishdate": medicine.endDate,
+      "Description": medicine.description
     })
     })
   }
 
 
   postTreatmentOnVisit(treatment){
-    var patientId = JSON.parse(AuthService.getLoggedUser()).id;
+
     return fetch(url + 'Treatmentonvisits', {
     method: 'POST',
     headers: authHeader({'Content-Type': 'application/json'}),
@@ -153,8 +200,14 @@ class VisitService {
       "TreatmentId": treatment.id,
       "VisitId": treatment.visitId,
       "Description": treatment.description,
-      "PatientId": patientId
+      "PatientId": treatment.patientId
     })
+    }).
+    then(response => {
+      if(!response.ok){
+        throw new Error('Nie udalo sie dodac');
+      }
+      return response.json();
     })
   }
 

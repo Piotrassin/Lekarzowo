@@ -76,9 +76,11 @@ componentDidMount(){
       <div className = 'container'>
       <Menu history= {this.props.history}/>
       <div  className = 'sidebar-profile'>
-        <a className = 'header-profile'>{this.state.user.name} {this.state.user.lastname}
+        <a className = 'header-profile'>{this.state.user.name}
         </a>
-
+        <a className = 'header-profile' style = {{marginTop: '5px'}}>{this.state.user.lastname}
+        </a>
+        <br/>
         <div className = 'status-info status-info-green'>
           <a>{AuthService.getUserCurrentRole()}</a>
         </div>
@@ -102,27 +104,7 @@ componentDidMount(){
         <div className = 'profile-right-btn-holder'>
         <a className="button-primary">Edytuj</a>
         </div>
-        <div className = 'subheader-profile'>
-        <a>Przebyte Choroby</a>
-        <hr/>
-        </div>
-        <div className = 'profile-sickness-slot'>
-          <img src = {sicknessSign} className = "small-icon" />
-          <div className = 'profile-sickness-text-holder'>
-            <a className = 'profile-sick-slot-header-grey'>17.06.2020 - teraz</a>
-            <a className = 'profile-sick-slot-header-white'>Padaczka</a>
-          </div>
-        </div>
-        <div className = 'profile-sickness-slot'>
-          <img src = {sicknessSign} className = "small-icon" />
-          <div className = 'profile-sickness-text-holder'>
-            <a className = 'profile-sick-slot-header-grey'>17.06.2020 - teraz</a>
-            <a className = 'profile-sick-slot-header-white'>Padaczka</a>
-          </div>
-        </div>
-        <div className = 'profile-right-btn-holder'>
-        <a className="button-primary" onClick={this.onClickEditUser}>Zobacz</a>
-        </div>
+
         <div className = 'profile-img-holder'>
         <img
             className = "centeredImage"
@@ -138,7 +120,7 @@ componentDidMount(){
         <a className = {"profile-menu-part " + (this.state.isMedShow ? 'menu-show' : '')} onClick = {this.onClickMedShow}>Przyjmowane Leki</a>
       </div>
       {this.state.isEditUser && <ProfileUserEdit />}
-      {this.state.isSickShow && <ProfileSickness />}
+      {this.state.isSickShow && <ProfileSickness history= {this.props.history} />}
       {this.state.isMedShow && <ProfileMedicine />}
       </div>
       </div>

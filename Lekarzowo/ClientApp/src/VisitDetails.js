@@ -16,7 +16,10 @@ import ReservationService from './services/ReservationService.js';
 import VisitService from './services/VisitService.js';
 import AuthService from './authentication/AuthService';
 import RoleButton from './components/RoleButton.js';
+import SicknessOnVisitItem from './components/SicknessOnVisitItem.js';
+import TreatmentOnVisitItem from './components/TreatmentOnVisitItem.js';
 import { Dialog } from './components/Dialog.js';
+import Snackbar from './helpers/Snackbar.js';
 
 
 const currentUserRole = AuthService.getUserCurrentRole();
@@ -55,9 +58,11 @@ class VisitDetails extends React.Component {
         openVisit = true;
       }
     }
+
     this.state = {
+      refresh: false,
       id: id,
-      patientId: JSON.parse(AuthService.getLoggedUser()).id,
+      patientId: "",
       openedVisit: openVisit,
       medicineHistory: [],
       sicknessHistory: [],
@@ -78,7 +83,9 @@ class VisitDetails extends React.Component {
         treatment: null,
         descriptionSickness: "",
         sickness: null,
-        descriptionTreatment: ""
+        descriptionTreatment: "",
+        sicknessforMedicine: null,
+        endDate: new Date().toISOString().split('T')[0]
       }
     }
     this.getMedicineHistory = this.getMedicineHistory.bind(this);
@@ -87,32 +94,67 @@ class VisitDetails extends React.Component {
     this.getActiveMedicine = this.getActiveMedicine.bind(this);
     this.getSicknessOnVisit = this.getSicknessOnVisit.bind(this);
     this.getTreatmentOnVisit = this.getTreatmentOnVisit.bind(this);
+    this.getReservation = this.getReservation.bind(this);
     this.getVisit = this.getVisit.bind(this);
     this.handleClickBtnVisit = this.handleClickBtnVisit.bind(this);
     this.handleClickAddMedicine = this.handleClickAddMedicine.bind(this);
     this.onClickAddMedicine = this.onClickAddMedicine.bind(this);
     this.onClickAddTreatment = this.onClickAddTreatment.bind(this);
     this.onClickAddSickness = this.onClickAddSickness.bind(this);
+    this.onClickSelectedSicknessForMedicine = this.onClickSelectedSicknessForMedicine.bind(this);
     this.handleClickAddMedicineDialogBtn = this.handleClickAddMedicineDialogBtn.bind(this);
     this.handleClickAddTreatmentDialogBtn = this.handleClickAddTreatmentDialogBtn.bind(this);
     this.handleClickAddSicknessDialogBtn = this.handleClickAddSicknessDialogBtn.bind(this);
     this.handleChangeMedicineDescription = this.handleChangeMedicineDescription.bind(this);
+    this.handleChangeMedicineEndDate = this.handleChangeMedicineEndDate.bind(this);
     this.handleChangeSicknessDescription = this.handleChangeSicknessDescription.bind(this);
     this.handleChangeTreatmentDescription = this.handleChangeTreatmentDescription.bind(this);
     this.handleChangeDescription = this.handleChangeDescription.bind(this);
+    this.openSnackbarOnRemove = this.openSnackbarOnRemove.bind(this);
   }
+  snackbarRef = React.createRef();
 
   componentDidMount() {
-
-this.getSicknessHistory();
-this.getActiveMedicine();
-this.getVisit();
-this.getSicknessOnVisit();
-this.getTreatmentOnVisit();
-
+    this.getReservation();
+    this.getSicknessHistory();
+    this.getActiveMedicine();
+    this.getVisit();
+    this.getSicknessOnVisit();
+    this.getTreatmentOnVisit();
+    console.log('Array illness history');
+    console.log(this.state.sicknessHistory);
   }
 
+  getReservation(){
+    ReservationService.getReservation(this.state.id)
+    .then(response => {
+      console.log("Rezerwacja");
+      console.log(response);
+      this.setState({
+        patientId: response.patientId
+      });
+    })
+    .catch(err => {
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+    })
+  }
 
+  openSnackbarOnRemove(content, classId, arrayName, item, idColumnName){
+    this.snackbarRef.current.openSnackBar(content, classId);
+    this.setState({
+      refresh: true
+    });
+    if(arrayName){
+      this.setState(prevState => ({
+        ...prevState,
+        [arrayName]: prevState[arrayName].filter(el => {return el[idColumnName] != item.id })
+      }));
+      console.log('Array');
+      console.log(arrayName);
+      console.log(this.state[arrayName]);
+    }
+
+  }
 
   handleChangeMedicineDescription(event) {
     console.log(event.target.value);
@@ -121,6 +163,19 @@ this.getTreatmentOnVisit();
         clicked: {
           ...prevState.clicked,
           descriptionMedicine: newValue
+        }
+    }));
+  }
+
+  handleChangeMedicineEndDate(event) {
+    console.log('End date medicine value:');
+    console.log(event.target.value);
+    console.log(new Date(event.target.value));
+    var newValue = event.target.value;
+    this.setState(prevState => ({
+        clicked: {
+          ...prevState.clicked,
+          endDate: newValue
         }
     }));
   }
@@ -201,10 +256,8 @@ this.getTreatmentOnVisit();
 
   getMedicineHistory() {
 
-
-
-
   }
+
   getSicknessHistory() {
     ReservationService.getPastIllnesses(3)
     .then(response => {
@@ -323,15 +376,43 @@ this.getTreatmentOnVisit();
     }));
   }
 
+  onClickSelectedSicknessForMedicine(sickness){
+
+    this.setState(prevState => ({
+      clicked:{
+        ...prevState.clicked,
+        sicknessforMedicine: sickness
+      }
+    }));
+  }
+
+
 
   handleClickAddMedicineDialogBtn(event){
+    var medicineVisitObject = {
+      id : this.state.clicked.medicine.id,
+      illlnessId: this.state.clicked.sicknessforMedicine.id,
+      startDate: (new Date()).toISOString(),
+      endDate: new Date(this.state.clicked.endDate).toISOString(),
+      description: this.state.clicked.descriptionTreatment,
+      visitId: this.state.id,
+      patientId: this.state.patientId
+    }
+    VisitService.postMedicineOnVisit(medicineVisitObject)
+    .then(response => {
+      console.log(response);
+    });
     this.state.visitMedicine.push(this.state.clicked.medicine);
     console.log(this.state.visitMedicine);
     this.setState({
       clicked: {
-        medicine: null
+        medicine: null,
+        sicknessforMedicine: null,
+        descriptionMedicine: "",
+        endDate: ""
       }
     });
+
     Dialog.close("medicine-dialog")(event);
   }
 
@@ -343,23 +424,24 @@ this.getTreatmentOnVisit();
     var treatmentVisitObject = {
       id : this.state.clicked.treatment.id,
       description: this.state.descriptionTreatment,
-      visitId: this.state.id
+      visitId: this.state.id,
+      patientId: this.state.patientId
     }
     VisitService.postTreatmentOnVisit(treatmentVisitObject)
     .then(response => {
       console.log(response);
-    });
-
-    this.state.visitTreatment.push({
-      treatmentName: this.state.clicked.treatment.name,
-      treatmentDescription: this.state.clicked.descriptionTreatment
+      this.state.visitTreatment.push({
+        treatmentName: this.state.clicked.treatment.name,
+        treatmentDescription: this.state.clicked.descriptionTreatment,
+        id: response.id
+      });
+      this.setState({
+        clicked: {
+          treatment: null
+        }
+      });
     });
     console.log(this.state.visitTreatment);
-    this.setState({
-      clicked: {
-        treatment: null
-      }
-    });
     Dialog.close("treatment-dialog")(event);
   }
 
@@ -367,25 +449,31 @@ this.getTreatmentOnVisit();
     var sicknessVisitObject = {
       id : this.state.clicked.sickness.id,
       description: this.state.descriptionSickness,
-      visitId: this.state.id
+      visitId: this.state.id,
+      patientId: this.state.patientId
     }
     VisitService.postSicknessOnVisit(sicknessVisitObject)
     .then(response => {
       console.log(response);
+      this.state.visitSickness.push({
+        illnessName: this.state.clicked.sickness.name,
+        illnessHistoryId: response.id
+      });
+      this.setState(prevState => ({
+        clicked: {
+          ...prevState.clicked,
+          sickness: null,
+          description: ''
+        }
+      }));
+    })
+    .catch(err => {
+      console.log(err);
     });
 
-    this.state.visitSickness.push({
-      illnessName: this.state.clicked.sickness.name,
-      illnessHistoryId: this.state.clicked.sickness.id
-    });
+
     console.log(this.state.visitSickness);
-    this.setState(prevState => ({
-      clicked: {
-        ...prevState.clicked,
-        sickness: null,
-        description: ''
-      }
-    }));
+
     Dialog.close("sickness-dialog")(event);
   }
 
@@ -436,7 +524,13 @@ this.getTreatmentOnVisit();
             <div className = "basic-container-small basic-container">
               <b className = "standard-black">Zdiagnozowane choroby</b>
               {this.state.visitSickness.length > 0 && this.state.visitSickness.map((sickness, index) => (
-                <div><a id = {sickness.illnessHistoryId}>{sickness.illnessName}</a></div>
+                <SicknessOnVisitItem
+                id = {sickness.illnessHistoryId}
+                sicknessName = {sickness.illnessName}
+                visitId = {this.state.id}
+                isOpen = {this.state.openedVisit}
+                snackbarCallback = {this.openSnackbarOnRemove}
+                />
               ))}
               {(currentUserRole == 'doctor' && this.state.openedVisit) ?
               <img src={plusSign}  style = {{width: "40px", cursor: "pointer"}} onClick = {this.handleClickAddSickness} className = 'plusSign'/>
@@ -467,7 +561,13 @@ this.getTreatmentOnVisit();
               <div/>
               }
               {this.state.visitTreatment && this.state.visitTreatment.map((treatment, index) => (
-                <div><a id = {index}>{treatment.treatmentName}</a></div>
+                <TreatmentOnVisitItem
+                treatmentName = {treatment.treatmentName}
+                treatmentDescription = {treatment.treatmentDescription}
+                id = {treatment.id}
+                isOpen = {this.state.openedVisit}
+                snackbarCallback = {this.openSnackbarOnRemove}
+                />
               ))}
 
             </div>
@@ -515,8 +615,8 @@ this.getTreatmentOnVisit();
         <div className = "header-dialog">
           <a>Dodaj lek</a>
         </div>
-        <br/>
-        <a className = 'dialog-margin dialog-text' >Dodawanie leku</a>
+
+
         <br/>
         <Autocomplete
         requestCallback = {VisitService.getSicknessOnVisitSearch}
@@ -528,7 +628,6 @@ this.getTreatmentOnVisit();
         addId = {this.state.id}
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
-        <br/>
         <Autocomplete
         requestCallback = {VisitService.getAvailableMedicine}
         changeCallback = {this.onClickAddMedicine}
@@ -539,6 +638,16 @@ this.getTreatmentOnVisit();
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
         <br/>
+        <WhiteTextField id="endDate" name="endDate"
+        label="Data zakończenia"
+        value = {this.state.clicked.endDate}
+        onChange = {this.handleChangeMedicineEndDate}
+        variant = 'outlined'
+        rowsMax = {2}
+        type = "date"
+        style = {{marginLeft: '20px', width: '94%'}}
+        size="small" fullWidth />
+        <br/><br/>
         <WhiteTextField id="descriptionMedicine" name="descriptionMedicine"
         label="Opis"
         value = {this.state.clicked.descriptionMedicine}
@@ -615,6 +724,7 @@ this.getTreatmentOnVisit();
           <a className = 'btn-dialog-primary' onClick = {this.handleClickAddSicknessDialogBtn}>Zatwierdź</a>
         </div>
       </Dialog>
+      <Snackbar ref = {this.snackbarRef} />
       </div>
     );
   }

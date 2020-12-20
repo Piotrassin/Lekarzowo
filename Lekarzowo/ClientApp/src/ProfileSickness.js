@@ -49,11 +49,14 @@ render() {
           <a className = 'table-header'>Akcje</a>
         </div>
       </div>
+      <div className = 'overflow-y-auto' style = {{height: '25vh'}}>
 {this.state.illnesses && this.state.illnesses.map((illness, index ) => (
     <SicknessItem
     sickness={illness}
+    history= {this.props.history}
     />
   ))}
+  </div>
 
       </div>
       <a className = 'subheading-content-profile'>Przebyte</a>
@@ -71,11 +74,14 @@ render() {
           <a className = 'table-header'>Akcje</a>
         </div>
       </div>
+      <div className = 'overflow-y-auto' style = {{height: '25vh'}}>
       {this.state.oldIllnesses && this.state.oldIllnesses.map((illness, index ) => (
           <SicknessItem
           sickness={illness}
+          history= {this.props.history}
           />
         ))}
+        </div>
       </div>
       <br/>
       <div className='progress-holder'>

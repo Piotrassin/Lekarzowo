@@ -4,6 +4,11 @@ import sicknessSign from '../images/SicknessSign.svg';
 class SicknessItem extends React.Component {
 constructor(props) {
   super(props);
+  this.onClickShowVisit = this.onClickShowVisit.bind(this);
+}
+
+onClickShowVisit(event){
+  this.props.history.push('/visit/' + this.props.sickness.visitId);
 }
 
 render() {
@@ -19,7 +24,7 @@ render() {
         <a>{this.props.sickness.description}</a>
       </div>
       <div className = 'sickness-item-part part-5'>
-        <a className = 'button-primary'>Zobacz Wizytę</a>
+        <a className = 'button-primary' onClick = {this.onClickShowVisit}>Zobacz Wizytę</a>
       </div>
     </div>
 

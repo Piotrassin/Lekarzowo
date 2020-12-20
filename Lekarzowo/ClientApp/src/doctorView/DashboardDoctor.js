@@ -113,7 +113,7 @@ class Dashboard extends React.Component {
           <a className="button-primary custom-btn" onClick = {this.onClickBtnVisits}>Przejdź</a>
           </div>
           <div className = "visits-container overflow-y-auto" style = {{height: '250px'}}>
-          {this.state.visitArray && this.state.visitArray.map((visit, index ) => (
+          {this.state.visitArray.length > 0 && this.state.visitArray.map((visit, index ) => (
             <div className = "visit-item">
               <b className = "standarder-black">{visit.reservationStartTime.split("T")[0]}</b>
               <a className = "small-dash">{visit.reservationStartTime.split("T")[1]} -

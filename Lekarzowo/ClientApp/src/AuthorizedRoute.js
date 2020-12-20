@@ -24,7 +24,10 @@ export const AuthorizedRoute = ({ component: Component, roles, ...rest }) => (
             }
             return <Redirect to={{ pathname: '/'}} />
         }
+        if(props.render){
+          return props.render;
 
+        }
         // authorised so return component
         return <Component {...props} />
     }} />

@@ -58,6 +58,21 @@ class ReservationService {
     }).then(response => response.json());
   }
 
+  getReservation(reservationId){
+    return fetch(url + 'Reservations/' + reservationId, {
+      headers: authHeader()
+    }).then(response => {
+      console.log(response);
+      if (!response.ok) {
+        console.log('w srodk');
+        throw Error(response.status);
+      }
+      console.log('Poza');
+      return response;
+    })
+    .then(response => response.json());
+  }
+
   getVisitDetails(visitId){
     return fetch(url + 'Visits/' + visitId, {
       headers: authHeader()

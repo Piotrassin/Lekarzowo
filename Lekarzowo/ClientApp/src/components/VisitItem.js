@@ -19,7 +19,7 @@ onClickVisitCancel(event) {
 
 render() {
   return(
-    <div className = 'sickness-item' style = {{height: '70px'}}>
+    <div className = {this.props.visit.reservationIsCanceled ? 'sickness-item sickness-item-canceled' : 'sickness-item'} style = {{height: '70px'}}>
       <div className = 'sickness-item-part part-1'>
         <a>{this.props.visit.reservationStartTime.split('T')[0]}</a>
       </div>
@@ -34,16 +34,25 @@ render() {
         <a>{this.props.role == 'doctor' ? this.props.visit.patientName : this.props.visit.doctorName} {this.props.role == 'doctor' ? this.props.visit.patientLastname : this.props.visit.doctorLastname}</a>
       </div>
       <div className = 'sickness-item-part part-5 flex-column'>
+      {this.props.visit.reservationIsCanceled ?
+        <div className = 'status-info status-info-red'>
+        Odwołano
+        </div>
+        :
+        <div style = {{display: 'flex', flexDirection: 'column'}}>
         {this.props.upcomingVisit  ?
-          <a className = 'button-gold' onClick = {this.onClickVisitCancel}>Odwołaj</a>
+          <a className = 'button-gold' onClick = {this.onClickVisitCancel} style = {{marginBottom: '5px'}}>Odwołaj</a>
           :
           <a/>
         }
         {(!this.props.upcomingVisit || this.props.role == 'doctor') ?
-          <a className = 'button-primary' onClick = {this.onClickVisitDetails} style = {{marginBottom: '5px'}}>Zobacz</a>
+          <a className = 'button-primary' onClick = {this.onClickVisitDetails} >Zobacz</a>
           :
           <a/>
         }
+        </div>
+      }
+
       </div>
     </div>
 
