@@ -62,8 +62,8 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// <summary>
         /// Returns true if passed Workinghours object overlaps with existing workinghours of a given doctor.
         /// </summary>
-        /// <param name="wh"></param>
+        /// <param name="newHours"></param>
         /// <returns></returns>
-        Task<IEnumerable<Workinghours>> IsWorkingHourOverlapping(Workinghours wh);
+        Task<IEnumerable<Workinghours>> IsWorkingHourOverlapping(Workinghours newHours);
     }
 }
