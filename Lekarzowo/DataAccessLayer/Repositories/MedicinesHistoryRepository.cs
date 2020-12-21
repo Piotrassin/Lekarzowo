@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.Services;
 using Microsoft.EntityFrameworkCore;
@@ -27,9 +28,9 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return _context.Medicinehistory.Where(x => x.IllnesshistoryId == IllnessHistoryId).ToList();
         }
 
-        public Medicinehistory GetById(decimal IllnessHistoryId, decimal MedicineId)
+        public Medicinehistory GetById(decimal IllnessHistoryId, decimal MedicineId, DateTime startDate)
         {
-            return _context.Medicinehistory.FirstOrDefault(x => x.IllnesshistoryId == IllnessHistoryId && x.MedicineId == MedicineId);
+            return _context.Medicinehistory.FirstOrDefault(x => x.IllnesshistoryId == IllnessHistoryId && x.MedicineId == MedicineId && x.Startdate.Date == startDate.Date);
         }
 
         public void Update(Medicinehistory t)
@@ -63,7 +64,10 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 .Select(x => new
                 {
                     MedicineName = x.Medicine.Name,
-                    MedicineDosage = x.Description
+                    MedicineDosage = x.Description,
+                    MedicineId = x.MedicineId,
+                    IllnessHistoryId = x.IllnesshistoryId,
+                    StartDate = x.Startdate
                 }).OrderBy(x => x.MedicineName).ThenBy(x => x.MedicineDosage);
 
             var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
