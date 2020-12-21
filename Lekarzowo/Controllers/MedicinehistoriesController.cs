@@ -117,13 +117,10 @@ namespace Lekarzowo.Controllers
                 {
                     return Conflict();
                 }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
-            return CreatedAtAction("GetMedicinehistory", new { id = medicinehistory.MedicineId }, medicinehistory);
+            return Created("", medicinehistory);
         }
 
         /// <summary>
