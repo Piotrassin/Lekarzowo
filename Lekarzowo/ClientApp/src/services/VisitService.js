@@ -156,8 +156,10 @@ class VisitService {
     })
   }
 
-  deleteMedicineOnVisit(medicineOnVisitId){
-    return fetch(url + 'Medicinehistories/' + medicineOnVisitId, {
+  deleteMedicineOnVisit(illnessHistoryId, medicineId, startDate){
+    
+    return fetch(url + 'Medicinehistories/?illnessHistoryId=' + illnessHistoryId +
+    '&medicineId=' + medicineId + '&startDate=' + startDate, {
     method: 'DELETE',
     headers: authHeader()
     })

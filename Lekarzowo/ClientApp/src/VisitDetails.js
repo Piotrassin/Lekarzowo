@@ -18,6 +18,7 @@ import AuthService from './authentication/AuthService';
 import RoleButton from './components/RoleButton.js';
 import SicknessOnVisitItem from './components/SicknessOnVisitItem.js';
 import TreatmentOnVisitItem from './components/TreatmentOnVisitItem.js';
+import MedicineOnVisitItem from './components/MedicineOnVisitItem.js';
 import { Dialog } from './components/Dialog.js';
 import Snackbar from './helpers/Snackbar.js';
 import Formater from './helpers/Formater.js';
@@ -429,8 +430,14 @@ class VisitDetails extends React.Component {
         console.log('error');
       }else {
         console.log(response);
-        this.state.visitMedicine.push(this.state.clicked.medicine);
-        console.log(this.state.visitMedicine);
+        this.state.visitMedicine.push({
+          illnessHistoryId: medicineVisitObject.illnessId,
+          medicineDosage: medicineVisitObject.description,
+          medicineId: medicineVisitObject.id,
+          medicineName: this.state.clicked.medicine.name,
+          startDate: medicineVisitObject.startDate
+        });
+        console.log(medicineVisitObject);
         this.setState({
           clicked: {
             medicine: null,
@@ -577,7 +584,15 @@ class VisitDetails extends React.Component {
 
               <b className = "standard-black">Zlecone leki</b>
               {this.state.visitMedicine && this.state.visitMedicine.map((medicine, index) => (
-                <div><a id = {medicine.id}>{medicine.name}</a></div>
+                <MedicineOnVisitItem
+                illnessHistoryId = {medicine.illnessHistoryId}
+                medicineId = {medicine.medicineId}
+                medicineName = {medicine.medicineName}
+                visitId = {this.state.id}
+                startDate = {medicine.startDate}
+                isOpen = {this.state.openedVisit}
+                snackbarCallback = {this.openSnackbarOnRemove}
+                />
               ))}
               {(currentUserRole == 'doctor' && this.state.openedVisit) ?
               <img src={plusSign}  style = {{width: "40px", cursor: "pointer"}} onClick = {this.handleClickAddMedicine} className = 'plusSign'/>
