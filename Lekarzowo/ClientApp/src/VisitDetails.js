@@ -508,6 +508,7 @@ class VisitDetails extends React.Component {
 
             <b className = "standard-black">Notatki lekarza (wywiad, badanie, diagnoza, zalecenia)</b>
 
+            <br/>
             {(currentUserRole == 'doctor' && this.state.openedVisit) ?
 
             <TextField
@@ -521,10 +522,10 @@ class VisitDetails extends React.Component {
             />
 
             :
-            <div/>
+            <a>{this.state.description}</a>
             }
             <br/>
-            <a>{this.state.description}</a>
+
 
           </div>
           </div>

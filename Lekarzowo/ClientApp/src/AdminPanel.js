@@ -20,13 +20,14 @@ import AdminAddLocal from './AdminAddLocal.js';
 import AdminAddRoom from './AdminAddRoom.js';
 import AdminAddTreatment from './AdminAddTreatment.js';
 import AdminAddSpeciality from './AdminAddSpeciality.js';
+import AdminAddDoctor from './AdminAddDoctor.js';
 
 class AdminPanel extends React.Component {
   constructor(props){
     super(props);
 
     this.state = {
-      currentPage:  "addMedicine"
+      currentPage:  "addDoctor"
     };
     this.handleClickBtn = this.handleClickBtn.bind(this);
     this.showContent = this.showContent.bind(this);
@@ -64,6 +65,9 @@ class AdminPanel extends React.Component {
       case 'addSpeciality':
         return <AdminAddSpeciality />
         break;
+      case 'addDoctor':
+        return <AdminAddDoctor />
+        break;
     }
   }
 
@@ -83,7 +87,7 @@ class AdminPanel extends React.Component {
               <div className = 'admin-btn-container'>
                 <button className = {this.state.currentPage == 'addDoctor' ?
                 'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
-                name = 'addDoctor'>
+                name = 'addDoctor' onClick = {this.handleClickBtn}>
                 Dodaj lekarza
                 </button>
                 <button className = {this.state.currentPage == 'addSickness' ?

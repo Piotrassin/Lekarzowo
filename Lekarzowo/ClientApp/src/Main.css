@@ -785,7 +785,7 @@ padding-right: 15px;
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
-  
+
 }
 .profile-data-slot-header {
   color: #D9D9D9;
@@ -866,7 +866,7 @@ padding-right: 15px;
 
 }
 .admin-content-holder {
-  margin-top: 20px;
+  margin-top: 5px;
   background-color: white;
   height: 100%;
   width: 97%;
@@ -890,7 +890,7 @@ padding-right: 15px;
 }
 .edit-user-form {
   width: 100%;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 .form-left-column {
   width: 50%;

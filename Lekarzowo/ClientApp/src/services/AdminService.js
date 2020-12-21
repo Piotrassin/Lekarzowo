@@ -119,6 +119,20 @@ class AdminService {
 
   }
 
+  postDoctor(doctor){
+    return fetch(url + 'doctors/PostPersonAsDoctor', {
+    method: 'POST',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify(doctor)})
+    .then(response => {
+      if(!response.ok) {
+        throw Error(response.message)
+      }
+      return response.json;
+    });
+
+  }
+
   getLocals(search, limit){
     if (search === undefined)
     {

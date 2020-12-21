@@ -93,7 +93,7 @@ class VisitService {
     }).then(response => response.json());
   }
 
-  getSicknessOnVisitSearch(search, limit, skip){
+  getSicknessOnVisitSearch(search, limit, skip, visitId){
     if (search === undefined)
     {
       search  = ''
@@ -102,8 +102,8 @@ class VisitService {
     {
       skip  = 0
     }
-    return fetch(url + 'Illnesses/AllByName?Name=' +search + '&limit=' + limit
-    + '&skip=' + skip, {
+    return fetch(url + 'Illnesseshistory/AllByNameOnAVisit?Name=' +search + '&limit=' + limit
+    + '&skip=' + skip + '&visitId=' + visitId, {
       headers: authHeader()
     }).then(response => response.json());
   }
@@ -115,12 +115,6 @@ class VisitService {
     }).then(response => response.json());
   }
 
-  getSicknessOnVisitSearch(search, limit, skip, visitId){
-    return fetch(url + 'Illnesses/AllByNameOnAVisit?visitId=' + visitId +
-    '&name=' + search + '&limit='+ limit + '&skip=' + skip, {
-      headers: authHeader()
-    }).then(response => response.json());
-  }
 
   getTreatmentOnVisit(visitId, limit, skip){
     return fetch(url + 'Treatmentonvisits/PerformedTreatments?visitId=' + visitId +

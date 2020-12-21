@@ -81,12 +81,16 @@ render() {
 
             />
             <br/>
+            {this.state.doctorSelected != undefined ?
             <Autocomplete
             requestCallback = {AdminService.getLocalsByDoctorId}
             title = "Lokal"
             changeCallback = {this.onClickLocalSearch}
-            addId = {this.state.doctorSelected.id}
+            addId = {this.state.doctorSelected == undefined ? -1 : this.state.doctorSelected}
             />
+            :
+            <div/>
+          }
             <br/>
             <TextField id="dateStart" name="dateStart"
             label="Data Od"

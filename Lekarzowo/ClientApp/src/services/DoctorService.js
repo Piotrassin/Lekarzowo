@@ -33,6 +33,16 @@ class DoctorService {
     }).then(response => response.json());
   }
 
+  getSpecializations(search, limit, skip) {
+    if(skip == undefined){
+      skip = '';
+    }
+    return fetch(url + 'Specialities/AllByName?Name=' + search + '&limit=' + limit
+    + '&skip=' + skip, {
+      header: authHeader()
+    }).then(response => response.json());
+  }
+
   getDoctor(id){
     return fetch(url + 'Doctors/ContactData/' + id)
     .then(response => response.json());

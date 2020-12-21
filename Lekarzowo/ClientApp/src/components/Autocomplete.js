@@ -52,17 +52,21 @@ export default function Asynchronous(props) {
   async function handleInputChange(event) {
     console.log(event.target.value);
     if(props.addId != undefined){
-      var requestCall = (await props.requestCallback(event.target.value, 100, 0, props.addId));
+      var requestOptions = (await props.requestCallback(event.target.value, 100, 0, props.addId));
     }else {
-      var requestCall = (await props.requestCallback(event.target.value, 100));
+      var requestOptions = (await props.requestCallback(event.target.value, 100));
     }
-    const requestOptions = requestCall.reduce(function(acc, curr) {
+
+     requestOptions = requestOptions.reduce(function(acc, curr) {
       if(curr.lastname){
         curr.name = curr.name.concat(" ", curr.lastname);
       }
       acc[curr.id] = curr;
       return acc;
     }, {});
+
+    console.log('requestOptions');
+    console.log(requestOptions);
       setOptions(Object.keys(requestOptions).map((key) => requestOptions[key]));
 
   }
@@ -90,11 +94,7 @@ export default function Asynchronous(props) {
         var requestOptions = (await props.requestCallback('', 2));
       }
 
-      if(requestOptions.length === 0){
-        requestOptions = {
-          "": "Brak"
-        };
-      }else {
+
         requestOptions = requestOptions.reduce(function(acc, curr) {
           if(curr.lastname){
             curr.name = curr.name.concat(" ", curr.lastname);
@@ -102,7 +102,7 @@ export default function Asynchronous(props) {
           acc[curr.id] = curr;
           return acc;
         }, {});
-      }
+
 
 
       if (active) {
