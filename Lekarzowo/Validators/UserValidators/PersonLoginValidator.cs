@@ -1,19 +1,15 @@
 ﻿using FluentValidation;
 using Lekarzowo.DataAccessLayer.DTO;
 using Lekarzowo.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Lekarzowo.Validators
 {
-    public class UserLoginValidator : AbstractValidator<UserLoginDTO>
+    public class PersonLoginValidator : AbstractValidator<PersonLoginDTO>
     {
-        private readonly PasswordValidator validator;
-        public UserLoginValidator(IPeopleRepository peopleRepository) 
+        private readonly PasswordValidator passwordValidator;
+        public PersonLoginValidator(IPeopleRepository peopleRepository) 
         {
-            validator = new PasswordValidator(peopleRepository);
+            passwordValidator = new PasswordValidator(peopleRepository);
 
             RuleFor(x => x.Email)
                .Cascade(CascadeMode.Stop)
@@ -25,9 +21,9 @@ namespace Lekarzowo.Validators
                 .Must(BeEqualToAPwdInDB).WithMessage("{PropertyName} lub adres email są niepoprawne");
         }
 
-        bool BeEqualToAPwdInDB(UserLoginDTO user, string pwd)
+        bool BeEqualToAPwdInDB(PersonLoginDTO user, string pwd)
         {
-            return validator.BeEqualToAPasswordInDatabase(user.Email, user.Password.Value);
+            return passwordValidator.BeEqualToAPasswordInDatabase(user.Email, user.Password.Value);
         }
     }
 }

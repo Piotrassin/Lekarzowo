@@ -1,6 +1,5 @@
 ﻿using Lekarzowo.DataAccessLayer.DTO;
 using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.Repositories;
 using Lekarzowo.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +9,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Transactions;
 
 namespace Lekarzowo.Controllers
 {
@@ -63,7 +61,7 @@ namespace Lekarzowo.Controllers
         //POST: api/People
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public ActionResult RegisterUser(UserRegistrationDTO newPerson)
+        public ActionResult RegisterUser(PersonRegistrationDTO newPerson)
         {
             newPerson.Password.Value = AuthService.CreateHash(newPerson.Password.Value);
 
@@ -84,7 +82,7 @@ namespace Lekarzowo.Controllers
         //POST: api/People/Login
         [AllowAnonymous]
         [HttpPost("Login")]
-        public async Task<ActionResult<Person>> LoginUser(UserLoginDTO current)
+        public async Task<ActionResult<Person>> LoginUser(PersonLoginDTO current)
         {
             Person storedPerson = _repository.GetByEmail(current.Email);
             try
@@ -135,7 +133,7 @@ namespace Lekarzowo.Controllers
 
         //POST: /api/people/changeactiverole?roleToActivateName=1
         [HttpPost("[action]")]
-        public ActionResult<Person> ChangePassword(UserChangePasswordDTO current, decimal? userId)
+        public ActionResult<Person> ChangePassword(PersonChangePasswordDTO current, decimal? userId)
         {
             var id = GetIdFromProperSource(userId);
             if (id <= 1)

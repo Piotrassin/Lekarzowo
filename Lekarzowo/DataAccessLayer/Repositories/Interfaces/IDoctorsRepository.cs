@@ -18,6 +18,13 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         object DoctorsContactData(decimal doctorId);
 
         /// <summary>
+        /// Returns a doctor with a given Id along with it's speciality/specialization info.
+        /// </summary>
+        /// <param name="doctorId"></param>
+        /// <returns></returns>
+
+        Task<Doctor> GetByIdWithSpecialization(decimal doctorId);
+        /// <summary>
         /// Returns a list of doctors which names and/or lastnames contains given phrase
         /// </summary>
         /// <param name="name"></param>

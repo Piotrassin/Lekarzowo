@@ -88,7 +88,7 @@ namespace Lekarzowo.Controllers
         // POST: api/Patients/PostPersonAsPatient
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public async Task<ActionResult<Patient>> PostPersonAsPatient(UserRegistrationDTO person)
+        public async Task<ActionResult<Patient>> PostPersonAsPatient(PersonRegistrationDTO person)
         {
             using (var transaction = new TransactionScope())
             {

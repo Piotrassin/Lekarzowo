@@ -2,7 +2,6 @@
 using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Microsoft.Extensions.Primitives;
 
 namespace Lekarzowo.Validators
 {

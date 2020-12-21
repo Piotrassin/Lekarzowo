@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Lekarzowo.DataAccessLayer.Models
 {
-    public partial class Person : IEntity, INamedEntity
+    public partial class Person : IEntity, IPerson
     {
         public Person()
         {

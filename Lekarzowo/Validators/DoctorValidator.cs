@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
@@ -13,15 +9,16 @@ namespace Lekarzowo.Validators
 {
     public class DoctorValidator : AbstractValidator<Doctor>
     {
-        public DoctorValidator(ISpecialitiesRepository specRepo, IPeopleRepository pepRepo, IDoctorsRepository docRepo, IHttpContextAccessor httpContext)
+        public DoctorValidator(ISpecialitiesRepository specRepo, IPeopleRepository pepRepo, 
+            IDoctorsRepository docRepo, IHttpContextAccessor httpContext)
         {
 
-            var a = new BaseIdValidator<Doctor>(docRepo, "Osoba już jest lekarzem.");
+            var baseIdValidator = new BaseIdValidator<Doctor>(docRepo, "Osoba już jest lekarzem.");
             RuleFor(x => x.Id)
                 .Cascade(CascadeMode.Stop)
                 .SetValidator(new BaseIdValidator<Person>(pepRepo, "Osoba nie istnieje."))
                     .When(x => x.Id > 0)
-                .Must(x => a.NotExist(x))
+                .Must(x => baseIdValidator.NotExist(x))
                     .WithMessage("Osoba jest już lekarzem.")
                     .When(x => x.Id > 0 && httpContext.HttpContext.Request.Method.ToUpper() == "POST");
 

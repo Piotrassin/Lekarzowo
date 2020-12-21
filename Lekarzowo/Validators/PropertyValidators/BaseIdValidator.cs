@@ -1,12 +1,6 @@
-﻿using FluentValidation;
-using Lekarzowo.Controllers;
+﻿using FluentValidation.Validators;
 using Lekarzowo.DataAccessLayer;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentValidation.Validators;
 
 namespace Lekarzowo.Validators
 {

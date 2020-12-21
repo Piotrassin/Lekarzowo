@@ -28,7 +28,7 @@ namespace Lekarzowo.Repositories
                 .FirstOrDefault(p => p.Email.ToLower() == email.ToLower());
         }
 
-        public void Insert(UserRegistrationDTO a)
+        public void Insert(PersonRegistrationDTO a)
         {
             _context.Person.Add(new Person
             {
@@ -44,7 +44,7 @@ namespace Lekarzowo.Repositories
 
         new public void Insert(Person a)
         {
-            //celowo puste. Przysłania metodę z bazy, aby z niej nie korzystać.
+            //celowo puste. Przesłania metodę z bazy, aby z niej nie korzystać.
             throw new NotSupportedException();
         }
 

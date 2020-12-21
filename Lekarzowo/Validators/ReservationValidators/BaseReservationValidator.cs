@@ -1,11 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using Lekarzowo.DataAccessLayer.DTO;
 using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Lekarzowo.Validators
 {
@@ -18,7 +18,6 @@ namespace Lekarzowo.Validators
         {
             _workHoursRepository = whRepo;
             _reservationsRepository = resRepo;
-            var dateTimeValidator = new DateTimeValidator();
 
             RuleFor(x => x.DoctorId)
                 .SetValidator(new BaseIdValidator<Doctor>(docRepo, "Niepoprawne dane lekarza"));

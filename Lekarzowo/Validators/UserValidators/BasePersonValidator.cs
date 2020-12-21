@@ -1,26 +1,15 @@
 ﻿using FluentValidation;
-using Lekarzowo.DataAccessLayer.DTO;
-using Lekarzowo.Models;
-using Lekarzowo.Repositories;
+using Lekarzowo.DataAccessLayer;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace Lekarzowo.Validators
+namespace Lekarzowo.Validators.UserValidators
 {
-    public class UserRegistrationValidator : AbstractValidator<UserRegistrationDTO>
+    public class BasePersonValidator : AbstractValidator<IPerson>
     {
         public readonly int MaxAgeValue = 150;
-
-        /// <summary>
-        /// TODO: Używając https://docs.fluentvalidation.net/en/latest/including-rules.html, pozbyć się powtórzeń w tym walidatorze oraz w PersonValidator
-        /// </summary>
-        /// <param name="peopleRepository"></param>
-        public UserRegistrationValidator(IPeopleRepository peopleRepository)
+        public BasePersonValidator()
         {
-
             RuleFor(x => x.Name)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("Imię")
@@ -36,11 +25,7 @@ namespace Lekarzowo.Validators
             RuleFor(x => x.Email)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("Email")
-                .EmailAddress().WithMessage("{PropertyName} jest niepoprawny")
-                .Must(x => peopleRepository.Exists(x)).WithMessage("{PropertyName} jest już zarejestrowany systemie");
-
-            RuleFor(x => x.Password)
-                .SetValidator(new PasswordValidator(peopleRepository));
+                .EmailAddress().WithMessage("{PropertyName} jest niepoprawny");
 
             RuleFor(x => x.Birthdate)
                 .Cascade(CascadeMode.Stop)
@@ -58,7 +43,6 @@ namespace Lekarzowo.Validators
                 .Length(1).WithMessage("{PropertyName} musi zawierać jeden znak")
                 .Must(x => x.All(char.IsLetter)).WithMessage("{PropertyName} musi się składać z litery");
         }
-
         public bool BeAValidWord(string text)
         {
             text = text.Trim();
@@ -71,11 +55,7 @@ namespace Lekarzowo.Validators
 
         public bool BeAValidBirthday(DateTime date)
         {
-            if(date <= DateTime.Now && date.Year >= (DateTime.Now.Year - MaxAgeValue))
-            {
-                return true;
-            }
-            return false;
+            return date <= DateTime.Now && date.Year >= (DateTime.Now.Year - MaxAgeValue);
         }
 
         public bool BeAValidNumber(string text)
