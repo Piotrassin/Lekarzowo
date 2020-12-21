@@ -19,6 +19,6 @@ namespace Lekarzowo.Repositories
         void Dispose(bool disposing);
         void Dispose();
         bool Exists(string email);
-        Task<IEnumerable<object>> GetAllByNameOrLastname(string name, int? skip, int? limit);
+        Task<IEnumerable<object>> GetAllByNameOrLastname(string name, int? limit, int? skip);
     }
 }

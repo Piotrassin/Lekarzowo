@@ -49,9 +49,9 @@ namespace Lekarzowo.Controllers
         // GET: api/workinghours/DoctorsWorkplacesByName?doctorId=1
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<object>> DoctorsWorkplacesByName(string localName, decimal? doctorId, int? skip, int? limit)
+        public async Task<ActionResult<object>> DoctorsWorkplacesByName(string localName, decimal? doctorId, int? limit, int? skip)
         {
-            var workplaces = await _repository.DoctorsWorkplacesByName(localName, doctorId, skip, limit);
+            var workplaces = await _repository.DoctorsWorkplacesByName(localName, doctorId, limit, skip);
 
             if (workplaces == null)
             {

@@ -53,7 +53,7 @@ namespace Lekarzowo.Repositories
             return _context.Person.Any(x => x.Email.ToLower() == email.ToLower());
         }
 
-        public async Task<IEnumerable<object>> GetAllByNameOrLastname(string name, int? skip, int? limit)
+        public async Task<IEnumerable<object>> GetAllByNameOrLastname(string name, int? limit, int? skip)
         {
             var query = _context.Person
                 .Where(x => name == null || (x.Name.ToLower().Contains(name.ToLower()) || x.Lastname.ToLower().Contains(name.ToLower())))

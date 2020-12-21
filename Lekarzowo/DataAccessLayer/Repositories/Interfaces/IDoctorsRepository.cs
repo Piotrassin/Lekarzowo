@@ -1,9 +1,6 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Lekarzowo.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
@@ -31,6 +28,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         /// <param name="skip"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        Task<IEnumerable<object>> GetAllByNameOrLastname(string name, int? skip, int? limit);
+        Task<IEnumerable<object>> GetAllByNameOrLastname(string name, int? limit, int? skip);
     }
 }

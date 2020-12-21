@@ -60,23 +60,18 @@ namespace Lekarzowo.Controllers
 
             if (! await OldillnesshistoryExists(oldillnesshistory.IllnessId, oldillnesshistory.PatientId))
             {
-                _repository.Update(oldillnesshistory);
+                return NotFound();
+                
             }
 
             try
             {
+                _repository.Update(oldillnesshistory);
                 await _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
-                if (! await OldillnesshistoryExists(oldillnesshistory.IllnessId, oldillnesshistory.PatientId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, e.Message);
             }
 
             return NoContent();

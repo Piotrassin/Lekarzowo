@@ -15,7 +15,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         /// </summary>
         /// <param name="patientId"></param>
         /// <returns></returns>
-        IEnumerable<object> GetAll(decimal patientId);
+        IEnumerable<Illnesshistory> GetAll(decimal patientId);
 
         /// <summary>
         /// List of all illnessHistory objects with a given visitId.

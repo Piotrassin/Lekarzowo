@@ -38,7 +38,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             }).FirstOrDefaultAsync(x => x.Id == doctorId);
         }
 
-        public async Task<IEnumerable<object>> GetAllByNameOrLastname(string name, int? skip, int? limit)
+        public async Task<IEnumerable<object>> GetAllByNameOrLastname(string name, int? limit, int? skip)
         {
             var query = _context.Doctor
                 .Where(x => name == null || (x.IdNavigation.Name.ToLower().Contains(name.ToLower()) || x.IdNavigation.Lastname.ToLower().Contains(name.ToLower())))
