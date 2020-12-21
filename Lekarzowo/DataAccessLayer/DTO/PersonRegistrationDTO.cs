@@ -1,12 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Lekarzowo.DataAccessLayer.DTO
 {
-    public class UserRegistrationDTO
+    public class PersonRegistrationDTO : IPersonRegistrationDTO
     {
         public string Name { get; set; }
         public string Lastname { get; set; }

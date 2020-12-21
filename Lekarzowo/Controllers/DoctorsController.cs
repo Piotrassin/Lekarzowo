@@ -1,12 +1,14 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.Repositories;
+using Lekarzowo.Validators.UserValidators;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace Lekarzowo.Controllers
 {
@@ -113,31 +115,30 @@ namespace Lekarzowo.Controllers
             return Created("", doctor);
         }
 
-        //TODO:
-        //// POST: api/Patients/PostPersonAsPatient
-        //[AllowAnonymous]
-        //[HttpPost("[action]")]
-        //public async Task<ActionResult<Patient>> PostPersonAsDoctor(UserRegistrationDTO person)
-        //{
-        //    using (var transaction = new TransactionScope())
-        //    {
-        //        if (!(_peopleController.RegisterUser(person) is CreatedResult result))
-        //        {
-        //            return BadRequest();
-        //        }
+        // POST: api/Patients/PostPersonAsDoctor
+        [Authorize(Roles = "admin")]
+        [HttpPost("[action]")]
+        public async Task<ActionResult<Patient>> PostPersonAsDoctor(PersonAsDoctorRegistrationDTO person)
+        {
+            Person addedUser;
+            using (var transaction = new TransactionScope())
+            {
+                if (!(_peopleController.RegisterUser(person) is CreatedResult result))
+                {
+                    return BadRequest();
+                }
 
-        //        Person user = _peopleRepository.GetByEmail(person.Email);
-        //        Doctor doctor = new Doctor() { Id = user.Id, IdNavigation = user };
+                addedUser = _peopleRepository.GetByEmail(person.Email);
+                Doctor doctor = new Doctor() { Id = addedUser.Id, SpecialityId = person.SpecialityId };
 
-        //        _repository.Insert(doctor);
-        //        _repository.Save();
+                _repository.Insert(doctor);
+                _repository.Save();
 
-        //        transaction.Complete();
-
-        //        user.Doctor = doctor;
-        //        return Created("", user);
-        //    }
-        //}
+                transaction.Complete();
+            }
+            addedUser.Doctor = await _repository.GetByIdWithSpecialization(addedUser.Id);
+            return Created("", addedUser);
+        }
 
         // DELETE: api/Doctors/5
         [Authorize(Roles = "admin")]

@@ -15,7 +15,7 @@ namespace Lekarzowo.Repositories
     {
         Person GetByEmail(string email);
         Person GetByEmailWithRoles(string email);
-        void Insert(UserRegistrationDTO personDTO);
+        void Insert(PersonRegistrationDTO personDTO);
         void Dispose(bool disposing);
         void Dispose();
         bool Exists(string email);

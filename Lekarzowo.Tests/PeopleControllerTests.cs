@@ -103,7 +103,7 @@ namespace Lekarzowo.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 //Arrange
-                UserRegistrationDTO person = new UserRegistrationDTO  //hasło test
+                PersonRegistrationDTO person = new PersonRegistrationDTO  //hasło test
                 {
                     Name = name,
                     Lastname = lastname,
@@ -145,7 +145,7 @@ namespace Lekarzowo.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 //Arrange
-                UserRegistrationDTO person = new UserRegistrationDTO  //hasło test
+                PersonRegistrationDTO person = new PersonRegistrationDTO  //hasło test
                 {
                     Name = name,
                     Lastname = lastname,

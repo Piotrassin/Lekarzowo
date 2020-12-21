@@ -1,8 +1,6 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.Models;
 using Lekarzowo.Services;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,6 +22,21 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 });
         }
 
+        public async Task<Doctor> GetByIdWithSpecialization(decimal doctorId)
+        {
+            return await _context.Doctor.Select(x => new Doctor()
+            {
+                Id = x.Id,
+                SpecialityId = x.SpecialityId,
+                Speciality = new Speciality()
+                {
+                    Id = x.Speciality.Id,
+                    Name = x.Speciality.Name,
+                    Price = x.Speciality.Price
+                }
+                
+            }).FirstOrDefaultAsync(x => x.Id == doctorId);
+        }
 
         public async Task<IEnumerable<object>> GetAllByNameOrLastname(string name, int? skip, int? limit)
         {
