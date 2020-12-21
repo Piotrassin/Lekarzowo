@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,7 +9,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
     {
         new IEnumerable<Medicinehistory> GetAll();
         IEnumerable<Medicinehistory> GetAll(decimal IllnessHistoryId);
-        Medicinehistory GetById(decimal IllnessHistoryId, decimal MedicineId);
+        Medicinehistory GetById(decimal IllnessHistoryId, decimal MedicineId, DateTime startDate);
 
         /// <summary>
         /// All medicines currently taken by the given patient.
