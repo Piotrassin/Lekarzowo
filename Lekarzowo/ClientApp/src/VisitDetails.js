@@ -385,7 +385,8 @@ class VisitDetails extends React.Component {
   }
 
   onClickSelectedSicknessForMedicine(sickness){
-
+  console.log('On selected sicness visit');
+  console.log(sickness);
     this.setState(prevState => ({
       clicked:{
         ...prevState.clicked,
@@ -399,29 +400,41 @@ class VisitDetails extends React.Component {
   handleClickAddMedicineDialogBtn(event){
     var medicineVisitObject = {
       id : this.state.clicked.medicine.id,
-      illlnessId: this.state.clicked.sicknessforMedicine.id,
+      illnessId: this.state.clicked.sicknessforMedicine.id,
       startDate: (new Date()).toISOString(),
       endDate: new Date(this.state.clicked.endDate).toISOString(),
       description: this.state.clicked.descriptionTreatment,
       visitId: this.state.id,
       patientId: this.state.patientId
     }
+
+    console.log('Medicine Object Request');
+    console.log(medicineVisitObject);
+
     VisitService.postMedicineOnVisit(medicineVisitObject)
     .then(response => {
-      console.log(response);
-    });
-    this.state.visitMedicine.push(this.state.clicked.medicine);
-    console.log(this.state.visitMedicine);
-    this.setState({
-      clicked: {
-        medicine: null,
-        sicknessforMedicine: null,
-        descriptionMedicine: "",
-        endDate: ""
+      if(response.status >= 400){
+        console.log('error');
+      }else {
+        console.log(response);
+        this.state.visitMedicine.push(this.state.clicked.medicine);
+        console.log(this.state.visitMedicine);
+        this.setState({
+          clicked: {
+            medicine: null,
+            sicknessforMedicine: null,
+            descriptionMedicine: "",
+            endDate: ""
+          }
+        });
+        Dialog.close("medicine-dialog")(event);
       }
+
     });
 
-    Dialog.close("medicine-dialog")(event);
+
+
+
   }
 
   handleClickAddDescriptionBtn(event) {

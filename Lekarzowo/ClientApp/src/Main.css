@@ -1190,7 +1190,7 @@ align-items: center;
 .filter-pane {
   background-color: #1859A6;
   width: 22%;
-  height: 50vh;
+  height: 10vh;
   margin-top: 3vh;
   border-radius: 15px 15px 15px 15px ;
   margin-left: 20px;

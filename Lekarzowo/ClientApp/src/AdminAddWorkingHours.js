@@ -18,10 +18,11 @@ constructor(props){
     timeStart: "07:30",
     timeEnd: "22:00",
     loading: false,
-    doctorSelected: null
+    doctorSelected: null,
+    localSelected: null
   };
   this.onChangeTextField = this.onChangeTextField.bind(this);
-  this.handleClickAddIllness = this.handleClickAddIllness.bind(this);
+  this.handleClickAddWorkinghours = this.handleClickAddWorkinghours.bind(this);
   this.onClickDoctorSearch = this.onClickDoctorSearch.bind(this);
   this.onClickLocalSearch = this.onClickLocalSearch.bind(this);
 }
@@ -49,17 +50,29 @@ onClickLocalSearch(value) {
 }
 
 
-handleClickAddIllness(event){
-  AdminService.postIllness(this.state.illnessName)
+handleClickAddWorkinghours(event){
+
+  var workinghoursObject = {
+    From: this.state.dateStart.concat('T').concat(this.state.timeStart),
+    To: this.state.dateEnd.concat('T').concat(this.state.timeEnd),
+    DoctorId: this.state.doctorSelected,
+    LocalId: this.state.localSelected
+  }
+  AdminService.postWorkinghours(workinghoursObject)
   .then(response => {
     console.log(response);
     this.setState({
-      illnessName: ""
+      dateStart: "1999-01-01",
+      dateEnd: "1999-01-01",
+      timeStart: "07:30",
+      timeEnd: "22:00",
+      doctorSelected: null,
+      localSelected: null
     });
-    this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
+    this.snackbarRef.current.openSnackBar('Dodano godziny pracy', 'green-snackbar');
   })
   .catch(err => {
-    this.snackbarRef.current.openSnackBar(err, 'red-snackbar');
+    this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
   })
 }
 
@@ -123,7 +136,7 @@ render() {
 
           <br/><br/>
           <div>
-          <a className = 'button-green' onClick = {this.handleClickAddIllness}>Dodaj</a>
+          <a className = 'button-green' onClick = {this.handleClickAddWorkinghours}>Dodaj</a>
           </div>
           </form>
           </div>

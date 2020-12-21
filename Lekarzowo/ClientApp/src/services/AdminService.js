@@ -133,6 +133,19 @@ class AdminService {
 
   }
 
+  postWorkinghours(workinghours){
+    return fetch(url + 'Workinghours', {
+    method: 'POST',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify(workinghours)})
+    .then(response => {
+      if(!response.ok) {
+        throw Error(response.message)
+      }
+      return response.json;
+    });
+  }
+
   getLocals(search, limit){
     if (search === undefined)
     {

@@ -149,6 +149,19 @@ class VisitService {
     })
   }
 
+  deleteMedicineOnVisit(medicineOnVisitId){
+    return fetch(url + 'Medicinehistories/' + medicineOnVisitId, {
+    method: 'DELETE',
+    headers: authHeader()
+    })
+    .then(response => {
+      if(!response.ok){
+        throw new Error("Nie udało sie");
+      }
+      return response;
+    })
+  }
+
   postSicknessOnVisit(sickness){
 
     return fetch(url + 'Illnesseshistory', {

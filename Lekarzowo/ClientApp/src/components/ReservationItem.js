@@ -1,5 +1,6 @@
 import React from 'react';
 import arrowSign from '../images/ArrowSign.svg'
+import Formater from '../helpers/Formater.js';
 
 class ReservationItem extends React.Component {
 constructor(props){
@@ -21,12 +22,12 @@ render(){
     <div className = "reservation-item">
       <div className = "res-item-group">
       <div className = "res-item-part-1">
-      <b>{this.props.reservation.start.split('T')[0]}</b>
+      <b>{Formater.formatDate(this.props.reservation.start)}</b>
       <a className = "smaller-font">data</a>
       </div>
       <div className = "res-item-part-2">
-      <a>{this.props.reservation.start.split('T')[1]} -
-      {this.props.reservation.end.split('T')[1]}</a>
+      <a>{Formater.formatHour(this.props.reservation.start)} -
+      {Formater.formatHour(this.props.reservation.end)}</a>
       <a className = "smaller-font">Godziny</a>
       </div>
       <div className = "res-item-part-3">

@@ -159,6 +159,7 @@ class Dashboard extends React.Component {
         {this.state.illnesses && this.state.illnesses.map((illness, index ) => (
             <SicknessItem
             sickness={illness}
+            history= {this.props.history}
             />
           ))}
           </div>

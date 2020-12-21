@@ -16,6 +16,7 @@ constructor(props) {
   this.onchangeUserRole = this.onchangeUserRole.bind(this);
   this.handleCloseRoleBtn = this.handleCloseRoleBtn.bind(this);
   this.mapRoleNames = this.mapRoleNames.bind(this);
+  this.handleCloseNoAction = this.handleCloseNoAction.bind(this);
 }
 
 handleRedirect(){
@@ -53,6 +54,13 @@ mapRoleNames(roleName){
       break;
 
   }
+}
+
+handleCloseNoAction(event){
+  event.preventDefault();
+  this.setState({
+    value: null
+  });
 }
 
 handleCloseRoleBtn(event) {
@@ -93,7 +101,7 @@ render() {
       anchorEl={this.state.value}
       keepMounted
       open={Boolean(this.state.value)}
-      onClose={this.handleCloseRoleBtn}
+      onClose={this.handleCloseNoAction}
       >
         {AuthService.getUserRoles().map((el,id) =>
           <MenuItem

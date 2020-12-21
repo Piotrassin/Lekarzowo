@@ -35,7 +35,7 @@ class AuthService {
   }
 
   register(name, lastname, email, birthdate, password, gender, pesel){
-    return fetch(url + 'People',  {
+    return fetch(url + 'Patients/PostPersonAsPatient',  {
       method: 'POST',
       headers: {
                 'Accept': 'application/json',
