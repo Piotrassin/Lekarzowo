@@ -123,6 +123,13 @@ class VisitService {
     }).then(response => response.json());
   }
 
+  getMedicineOnVisit(visitId, limit, skip){
+    return fetch(url + 'Medicinehistories/PrescribedMedicines?visitId=' + visitId +
+    '&limit='+ limit + '&skip=' + skip, {
+      headers: authHeader()
+    }).then(response => response.json());
+  }
+
   deleteSicknessOnVisit(sicknessHistoryId){
     return fetch(url + 'Illnesseshistory/' + sicknessHistoryId, {
     method: 'DELETE',

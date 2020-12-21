@@ -105,6 +105,7 @@ class VisitDetails extends React.Component {
     this.onClickAddMedicine = this.onClickAddMedicine.bind(this);
     this.onClickAddTreatment = this.onClickAddTreatment.bind(this);
     this.onClickAddSickness = this.onClickAddSickness.bind(this);
+    this.getMedicineOnVisit = this.getMedicineOnVisit.bind(this);
     this.onClickSelectedSicknessForMedicine = this.onClickSelectedSicknessForMedicine.bind(this);
     this.handleClickAddMedicineDialogBtn = this.handleClickAddMedicineDialogBtn.bind(this);
     this.handleClickAddTreatmentDialogBtn = this.handleClickAddTreatmentDialogBtn.bind(this);
@@ -125,6 +126,7 @@ class VisitDetails extends React.Component {
     this.getVisit();
     this.getSicknessOnVisit();
     this.getTreatmentOnVisit();
+    this.getMedicineOnVisit();
     console.log('Array illness history');
     console.log(this.state.sicknessHistory);
   }
@@ -258,6 +260,16 @@ class VisitDetails extends React.Component {
         visitTreatment: response
       });
       console.log(this.state.visitTreatment);
+    });
+  }
+
+  getMedicineOnVisit(){
+    VisitService.getMedicineOnVisit(this.state.id, 10, 0)
+    .then(response => {
+      this.setState({
+        visitMedicine: response
+      });
+      console.log(this.state.visitMedicine);
     });
   }
 
