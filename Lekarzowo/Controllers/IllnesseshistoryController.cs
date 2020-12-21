@@ -37,10 +37,10 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]/{illnessHistoryId}")]
         public ActionResult<Illnesshistory> Single(decimal illnessHistoryId)
         {
-            //if (IsPatient() && _repository.GetAll(GetUserIdFromToken()).All(x => x.Id != illnessHistoryId))
-            //{
-            //    return BadRequest();
-            //}
+            if (IsPatient() && _repository.GetAll(GetUserIdFromToken()).All(x => x.Id != illnessHistoryId))
+            {
+                return BadRequest();
+            }
 
             var illnesshistory = _repository.GetByID(illnessHistoryId);
             if(illnesshistory == null)
@@ -72,10 +72,10 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> AllByVisitId(decimal visitId, int? limit, int? skip)
         {
-            //if (IsPatient() && _repository.GetAll(GetUserIdFromToken()).All(x => x.VisitId != visitId))
-            //{
-            //    return BadRequest();
-            //}
+            if (IsPatient() && _repository.GetAll(GetUserIdFromToken()).All(x => x.VisitId != visitId))
+            {
+                return BadRequest();
+            }
 
             var illnesshistory = await _repository.AllByVisitId(visitId, limit, skip);
 

@@ -11,14 +11,12 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     {
         public IllnessesHistoryRepository(ModelContext context) : base(context) {}
 
-        public IEnumerable<object> GetAll(decimal patientId)
+        public IEnumerable<Illnesshistory> GetAll(decimal patientId)
         {
             return _context.Illnesshistory.Where(x => x.Visit.Reservation.PatientId == patientId)
-                .Select(x => new
+                .Select(x => new Illnesshistory()
                 {
                     Id = x.Id,
-                    PatientId = x.Visit.Reservation.PatientId,
-                    DoctorId = x.Visit.Reservation.DoctorId,
                     VisitId = x.VisitId,
                     Curedate = x.Curedate,
                     Description = x.Description,
@@ -77,9 +75,9 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 .Select(x => new
                 {
                     PatientId = x.Visit.Reservation.PatientId,
-                    IllnessHistoryId = x.Id,
-                    IllnessName = x.Illness.Name
-                }).OrderBy(x => x.IllnessName);
+                    Id = x.Id,
+                    Name = x.Illness.Name
+                }).OrderBy(x => x.Name);
 
             IOrderedQueryable<object> orderedQuery = PaginationService<Illness>.SplitAndLimitQueryable(skip, limit, query);
             return await orderedQuery.ToListAsync();
