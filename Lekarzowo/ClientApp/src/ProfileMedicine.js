@@ -46,7 +46,7 @@ render() {
           <a className = 'table-header'>Dawka</a>
         </div>
         <div className = 'sickness-item-part part-5'>
-          <a className = 'table-header'>Akcje</a>
+          
         </div>
       </div>
 {this.state.medicines && this.state.medicines.map((medicine, index ) => (

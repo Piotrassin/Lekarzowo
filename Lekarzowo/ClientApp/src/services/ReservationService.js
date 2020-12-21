@@ -62,7 +62,7 @@ class ReservationService {
   }
 
   getReservation(reservationId){
-    return fetch(url + 'Reservations/' + reservationId, {
+    return fetch(url + 'Reservations/WithPatientData/' + reservationId, {
       headers: authHeader()
     }).then(response => {
       console.log(response);

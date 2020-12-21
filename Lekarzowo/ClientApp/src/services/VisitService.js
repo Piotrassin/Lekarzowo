@@ -162,7 +162,6 @@ class VisitService {
     headers: authHeader({'Content-Type': 'application/json'}),
     body: JSON.stringify({
       "IllnessId": sickness.id,
-      "PatientId": sickness.patientId,
       "VisitId": sickness.visitId,
       "Description": sickness.description
     })

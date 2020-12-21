@@ -36,7 +36,7 @@ class Dashboard extends React.Component {
 
   componentWillMount() {
     var daysAfter = new Date(new Date());
-    daysAfter.setDate(daysAfter.getDate() + 3);
+    daysAfter.setDate(daysAfter.getDate());
     VisitService.getDoctorVisit(1, new Date(), daysAfter)
     .then(response => {
       if(response.status == 401){

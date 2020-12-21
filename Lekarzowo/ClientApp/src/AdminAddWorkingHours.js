@@ -17,11 +17,13 @@ constructor(props){
     dateEnd: "1999-01-01",
     timeStart: "07:30",
     timeEnd: "22:00",
-    loading: false
+    loading: false,
+    doctorSelected: null
   };
   this.onChangeTextField = this.onChangeTextField.bind(this);
   this.handleClickAddIllness = this.handleClickAddIllness.bind(this);
   this.onClickDoctorSearch = this.onClickDoctorSearch.bind(this);
+  this.onClickLocalSearch = this.onClickLocalSearch.bind(this);
 }
 
 snackbarRef = React.createRef();
@@ -35,6 +37,13 @@ onChangeTextField(event){
 onClickDoctorSearch(value) {
   this.setState({
     doctorSelected: value.id
+  });
+  console.log(value.id);
+}
+
+onClickLocalSearch(value) {
+  this.setState({
+    localSelected: value.id
   });
   console.log(value.id);
 }
@@ -69,6 +78,14 @@ render() {
             requestCallback = {DoctorService.getDoctors}
             title = "Doktor"
             changeCallback = {this.onClickDoctorSearch}
+
+            />
+            <br/>
+            <Autocomplete
+            requestCallback = {AdminService.getLocalsByDoctorId}
+            title = "Lokal"
+            changeCallback = {this.onClickLocalSearch}
+            addId = {this.state.doctorSelected.id}
             />
             <br/>
             <TextField id="dateStart" name="dateStart"

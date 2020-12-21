@@ -63,6 +63,8 @@ class VisitDetails extends React.Component {
       refresh: false,
       id: id,
       patientId: "",
+      patientName: "",
+      patientLastname: "",
       startDate: null,
       endDate: null,
       openedVisit: openVisit,
@@ -134,6 +136,8 @@ class VisitDetails extends React.Component {
       console.log(response);
       this.setState({
         patientId: response.patientId,
+        patientName: response.patientName,
+        patientLastname: response.patientLastname,
         startDate: response.starttime,
         endDate: response.endtime
       });
@@ -590,7 +594,7 @@ class VisitDetails extends React.Component {
         {currentUserRole == 'doctor' ?
         <div className = "visit-member">
           <b className = "standard-dashed">Profil Pacjenta</b>
-          <b className = "big-white">{this.state.name} {this.state.surname}</b>
+          <b className = "big-white">{this.state.patientName} {this.state.patientLastname}</b>
           <img src={womanAvatar} alt="Avatar" className = "avatar"/>
           <div className = "medicine-history">
             <b className = "standard-dashed left-margin-small">Przyjmowane Leki</b>

@@ -19,7 +19,7 @@ render() {
         <a>{this.props.medicine.medicineDosage}</a>
       </div>
       <div className = 'sickness-item-part part-5'>
-        <a className = 'button-primary'>Zobacz</a>
+        
       </div>
     </div>
 

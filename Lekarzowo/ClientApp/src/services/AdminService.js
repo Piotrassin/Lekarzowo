@@ -135,6 +135,22 @@ class AdminService {
 
   }
 
+  getLocalsByDoctorId(search, limit, skip, doctorId){
+    if (search === undefined)
+    {
+      search  = ''
+    }
+    return fetch(url + 'workinghours/DoctorsWorkplacesByName?localName=' + search + '&limit=' + limit +
+    '&doctorId=' + doctorId, {
+      headers: authHeader()
+    }).then(response => {
+      console.log(response);
+      var resp =  response.json();
+
+      return resp;
+    });
+  }
+
 
 
 

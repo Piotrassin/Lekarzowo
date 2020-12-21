@@ -12,7 +12,7 @@ import VisitAlert from './components/VisitAlert.js';
 import TextField from '@material-ui/core/TextField';
 import DoctorItem from './components/DoctorItem.js';
 import DoctorService from './services/DoctorService.js';
-
+import Formater from './helpers/Formater.js';
 
 class FindDoctor extends React.Component {
   constructor(props){
@@ -112,10 +112,11 @@ class FindDoctor extends React.Component {
             {this.state.doctorWorkingHoursArray.length > 0 ?
             <div className = 'flex-row doctor-details-container'>
             <div  className = 'doctor-sidebar-profile '>
-              <a className = 'subheader-profile-doctor'>Andrzej
+              <a className = 'subheader-profile-doctor'>{this.state.doctor.name}
               </a>
-              <a className = 'subheader-profile-doctor'>Andrzejewski
+              <a className = 'subheader-profile-doctor'>{this.state.doctor.lastname}
               </a>
+              <br/>
               <div className = 'status-info status-info-green'>
                 <a>Doktor</a>
               </div>
@@ -142,8 +143,9 @@ class FindDoctor extends React.Component {
                 <a className = 'subheading-content-profile'>{local.name} ({local.streetname} {local.streetnumber})</a>
                 <hr style = {{width: '100%'}}/>
                 {local.workinghours.map((workinghours, index) =>
-                <div className = 'profile-data-slot' style = {{width: '300px', color: 'black'}}>
-                  <a className = 'profile-data-slot-header' style = {{color: 'black'}}>{this.getDayofWeek(workinghours.from)}</a><a>{workinghours.from.split('T')[1]} -
+                <div className = 'profile-data-slot' style = {{width: '60%', color: 'black'}}>
+                  <a className = 'profile-data-slot-header' style = {{color: 'black'}}>{this.getDayofWeek(workinghours.from)} ({Formater.formatDate(workinghours.from)})
+                  </a><a>{workinghours.from.split('T')[1]} -
                   {workinghours.to.split('T')[1]}</a>
                 </div>
                 )}
