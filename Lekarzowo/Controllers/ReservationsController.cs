@@ -56,7 +56,7 @@ namespace Lekarzowo.Controllers
             return reservation;
         }
 
-        // GET: api/WithPatientData/Reservations/5
+        // GET: api/Reservations/WithPatientData/5
         [Authorize]
         [HttpGet("[action]/{reservationId}")]
         public async Task<ActionResult<object>> WithPatientData(decimal reservationId)
@@ -190,7 +190,7 @@ namespace Lekarzowo.Controllers
             return Ok(await _repository.RecentOrUpcomingReservations(patientId, false, false, limit, skip));
         }
 
-        // GET: api/reservations/possibleappointments?CityId=1&SpecId=1&DoctorId=1
+        // GET: api/reservations/possibleappointments?CityId=2&SpecId=1&DoctorId=1&startDate=2020-12-20&endDate=2020-12-30&startHour=09:00:00&endHour=10:30:00
         [Authorize]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> PossibleAppointments(decimal? cityId, decimal? specId, decimal? doctorId, DateTime? startHour, DateTime? endHour, DateTime? startDate, DateTime? endDate, int? limit, int? skip)
