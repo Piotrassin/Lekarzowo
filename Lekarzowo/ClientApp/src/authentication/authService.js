@@ -52,7 +52,7 @@ class AuthService {
         gender: gender,
         pesel: pesel
       })
-    });
+    }).then(response => response.json());
   }
 
   checkifAnyUserData(){

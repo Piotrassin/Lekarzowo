@@ -126,10 +126,8 @@ class UserService {
         }
       })
     }).then(response => {
-      if (!response.ok) {
-        throw Error(response.statusText);
-      }
-      return response;
+
+      return response.json();
     });
   }
 

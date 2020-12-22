@@ -4,6 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import UserService from './services/UserService.js';
 import AuthService from './authentication/AuthService.js';
 import Snackbar from './helpers/Snackbar.js';
+import Validation from './helpers/Validation.js';
 
 class ProfileUserEdit extends React.Component {
 constructor(props){
@@ -52,27 +53,54 @@ handleChange(event) {
 
 handleClickUserChange(event){
   if(this.state.touched.user){
-    var userObject = {
-      email: this.state.email,
-      name: this.state.name,
-      lastname: this.state.lastname,
-      birthdate: this.state.birthdate,
-      gender: this.state.gender,
-      pesel: this.state.pesel
+    this.setState ({
+      errors: Validation.validateUserChange(this.state.name, this.state.lastname, this.state.birthdate,
+        this.state.gender, this.state.pesel, this.state.email)
+    }, () => {
+      console.log(this.state.errors);
+      if(Object.keys(this.state.errors).length > 0){
+        var message = Validation.handleValidationOutcome(this.state.errors);
+        this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+
+      }else {
+        var userObject = {
+          email: this.state.email,
+          name: this.state.name,
+          lastname: this.state.lastname,
+          birthdate: this.state.birthdate,
+          gender: this.state.gender,
+          pesel: this.state.pesel
+        }
+        UserService.postUserChangeDetails(userObject)
+        .then(response => {
+          console.log(response);
+          this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
+        })
+        .catch(err => console.log(err));
     }
-    UserService.postUserChangeDetails(userObject)
-    .then(response => {
-      console.log(response);
-      this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
-    })
-    .catch(err => console.log(err));
-  }
+  })
+}
+else {
+  this.snackbarRef.current.openSnackBar( 'Nic nie zostało zmienione' ,'red-snackbar');
+}
 }
 
 handleClickPasswordChange(event){
 
   if(this.state.touched.password){
     if(this.state.password == this.state.passwordValid){
+      console.log(this.state.errors);
+      console.log(this.state.password);
+      this.setState ({
+        errors: Validation.validatePasswordChange(this.state.password, this.state.passwordValid)
+      }, () => {
+        console.log('Zmieniono errors');
+        console.log(this.state.errors);
+        if(Object.keys(this.state.errors).length > 0){
+          var message = Validation.handleValidationOutcome(this.state.errors);
+          this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+
+        }else {
       var passwordObject = {
         currentPassword: this.state.oldPassword,
         newPassword: this.state.password,
@@ -81,13 +109,28 @@ handleClickPasswordChange(event){
       UserService.changePassword(passwordObject)
       .then(response => {
         console.log(response);
-        this.snackbarRef.current.openSnackBar('Zaktualizowano Hasło', 'green-snackbar');
+        if(response.status >= 400){
+          if(response.status == 400){
+            var message = Validation.handleValidationFetchOutcome(response.errors);
+            this.snackbarRef.current.openSnackBar(message, 'red-snackbar');
+          }else {
+            this.snackbarRef.current.openSnackBar('Wystąpił problem, spróbuj ponownie później.', 'red-snackbar');
+          }
+        }else {
+            this.snackbarRef.current.openSnackBar('Zaktualizowano Hasło', 'green-snackbar');
+        }
+
       })
       .catch(err => console.log(err));
     }
-    this.snackbarRef.current.openSnackBar('Wpisane hasła są różne', 'red-snackbar');
-  }
+  })
+    }
+    else {this.snackbarRef.current.openSnackBar('Wpisane hasła są różne', 'red-snackbar');}
+
+  }else {
   this.snackbarRef.current.openSnackBar('Niepełne dane', 'red-snackbar');
+  }
+
 
 }
 

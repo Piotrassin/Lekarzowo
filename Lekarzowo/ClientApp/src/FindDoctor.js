@@ -59,7 +59,8 @@ class FindDoctor extends React.Component {
         });
         if(this.state.doctorWorkingHoursArray.length > 0){
           this.setState({
-            doctorWorkingHoursArray: []
+            doctorWorkingHoursArray: [],
+            doctor: null
           });
         }
       });
@@ -109,8 +110,9 @@ class FindDoctor extends React.Component {
               ))}
 
             </div>
-            {this.state.doctorWorkingHoursArray.length > 0 ?
+
             <div className = 'flex-row doctor-details-container'>
+            {this.state.doctor != null ?
             <div  className = 'doctor-sidebar-profile '>
               <a className = 'subheader-profile-doctor'>{this.state.doctor.name}
               </a>
@@ -134,6 +136,10 @@ class FindDoctor extends React.Component {
               <a className = 'profile-data-slot-header'>Email</a><a>{this.state.doctor.email}</a>
               </div>
             </div>
+            :
+            <div/>
+            }
+            {this.state.doctorWorkingHoursArray.length > 0 ?
             <div  className = 'doctor-sidebar-details-profile'>
               <a className = 'subheader-content-profile'>Lokale i godziny pracy lekarza</a>
               <br/>
@@ -154,10 +160,11 @@ class FindDoctor extends React.Component {
               ))}
               </div>
             </div>
-            </div>
+
             :
             <div/>
           }
+          </div>
           </div>
           <VisitAlert history= {this.props.history}/>
         </div>

@@ -41,26 +41,36 @@ class Registration extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
     this.setState ({
-      errors: Validation.validateRegistration(this.state.name, this.state.lastname, this.state.email,
-        this.state.birthdate, this.state.password, this.state.gender,
-        this.state.pesel)
-    });
-    if(this.state.errors > 0){
+      errors: Validation.validateRegistration(this.state.name, this.state.lastname, this.state.birthdate,
+        this.state.gender, this.state.pesel, this.state.email, this.state.password,
+        this.state.passwordValid)
+    }, () => {
       console.log(this.state.errors);
-    }else {
-      AuthService.register(this.state.name, this.state.lastname, this.state.email,
-        this.state.birthdate, this.state.password, this.state.gender,
-        this.state.pesel).then(
-          response => {
-            if(response.status >= 400){
-              this.snackbarRef.current.openSnackBar('problems');
-            }else{
-              this.props.history.push('/');
-              window.location.reload();
+      if(Object.keys(this.state.errors).length > 0){
+        var message = Validation.handleValidationOutcome(this.state.errors);
+        this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+
+      }else {
+        AuthService.register(this.state.name, this.state.lastname, this.state.email,
+          this.state.birthdate, this.state.password, this.state.gender,
+          this.state.pesel).then(
+            response => {
+              if(response.status >= 400){
+                if(response.status == 400){
+                  var message = Validation.handleValidationFetchOutcome(response.errors);
+                  this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+                }
+
+                this.snackbarRef.current.openSnackBar( 'Wystąił problem, spróbuj ponownie później' ,'red-snackbar');
+              }else{
+                this.props.history.push('/');
+                window.location.reload();
+              }
             }
-          }
-        );
-    }
+          );
+      }
+    });
+
   }
 
   handleBlur = (field) => (evt) => {

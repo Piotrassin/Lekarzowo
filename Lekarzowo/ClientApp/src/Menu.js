@@ -84,7 +84,7 @@ class Menu extends React.Component {
       transitions
       sidebar = {
         <div className = "side-menu">
-          <img src = {logo} className = "imge"/>
+          <img src = {logo} className = "imge" style = {{marginTop: '10px'}}/>
           <div className = "icons">
           <div className = "menu-element" onClick={this.onDashboardClick}>
             <img src = {mapIcon} className = "addSign" style = {{width: 35}} />
