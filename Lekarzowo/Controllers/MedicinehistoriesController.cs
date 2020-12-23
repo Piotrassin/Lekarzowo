@@ -121,11 +121,6 @@ namespace Lekarzowo.Controllers
             return Created("", medicinehistory);
         }
 
-        /// <summary>
-        /// TODO: Dodać startdate 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         // DELETE: api/Medicinehistories/5
         [Authorize(Roles = "admin,doctor")]
         [HttpDelete]

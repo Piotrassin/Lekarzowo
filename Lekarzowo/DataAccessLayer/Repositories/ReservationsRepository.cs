@@ -131,6 +131,10 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 reservationTypeQuery = reservationTypeQuery.Where(x => x.Canceled == false);
             }
 
+            reservationTypeQuery = showUpcomingInstead
+                ? reservationTypeQuery.Where(x => x.Visit == null)
+                : reservationTypeQuery.Where(x => x.Visit != null);
+
             var anonymousTypeQuery = reservationTypeQuery.Select(x => new
             {
                 ReservationId = x.Id,
@@ -140,6 +144,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 isCanceled = x.Canceled,
                 DoctorName = x.Doctor.IdNavigation.Name,
                 DoctorLastname = x.Doctor.IdNavigation.Lastname,
+                Visit = _context.Visit.Where(y => y.ReservationId == x.Id).FirstOrDefault()
             });
 
             IOrderedQueryable<object> orderedQuery = showUpcomingInstead 
@@ -150,6 +155,12 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             
             return await trimmedQuery.ToListAsync();
         }
+
+        //public async Task<IEnumerable<object>> UpcomingReservations(decimal patientId, bool hideCanceledReservations, int? limit, int? skip)
+        //{
+        //    var reservationTypeQuery = _context.Reservation
+        //        .Where(x => x.PatientId == patientId);
+        //}
 
         public async Task<IEnumerable<Reservation>> OverlappingReservations(decimal localId, decimal doctorId, DateTime start, DateTime end)
         {
