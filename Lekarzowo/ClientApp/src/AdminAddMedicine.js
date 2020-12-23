@@ -35,7 +35,7 @@ handleClickAddMedicine(event){
     this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
   })
   .catch(err => {
-    this.snackbarRef.current.openSnackBar(err, 'red-snackbar');
+    this.snackbarRef.current.openSnackBar('Błąd przy dodawaniu', 'red-snackbar');
   })
 }
 

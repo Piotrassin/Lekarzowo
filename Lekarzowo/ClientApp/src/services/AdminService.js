@@ -43,9 +43,11 @@ class AdminService {
       "Name": city
     })})
     .then(response => {
-      return response.text();
+      if(!response.ok) {
+        throw Error(response.message)
+      }
+      return response.json;
     });
-
   }
 
   postLocal(local){

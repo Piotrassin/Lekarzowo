@@ -77,7 +77,7 @@ handleClickAddDoctor(event){
     this.snackbarRef.current.openSnackBar('Dodano lekarza', 'green-snackbar');
   })
   .catch(err => {
-    this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+    this.snackbarRef.current.openSnackBar('Błąd przy dodawaniu', 'red-snackbar');
   })
 }
 

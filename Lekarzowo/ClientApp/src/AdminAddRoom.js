@@ -61,7 +61,7 @@ handleClickAddRoom(event){
   })
   .catch(err => {
     console.log(err);
-    this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+    this.snackbarRef.current.openSnackBar('Błąd przy dodawaniu', 'red-snackbar');
   })
 }
 

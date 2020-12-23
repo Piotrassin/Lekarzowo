@@ -116,9 +116,9 @@ class FindDoctorContainer extends React.Component {
             {this.state.doctorWorkingHoursArray.length > 0 ?
             <div className = 'flex-row doctor-details-container' style={{height: '36vh'}}>
             <div  className = 'doctor-sidebar-profile ' style = {{height: '100%'}}>
-              <a className = 'subheader-profile-doctor'>Andrzej
+              <a className = 'subheader-profile-doctor'>{this.state.doctor.name}
               </a>
-              <a className = 'subheader-profile-doctor'>Andrzejewski
+              <a className = 'subheader-profile-doctor'>{this.state.doctor.lastname}
               </a>
               <div className = 'status-info status-info-green'>
                 <a>Doktor</a>
