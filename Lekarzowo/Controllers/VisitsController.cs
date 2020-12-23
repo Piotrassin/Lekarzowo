@@ -81,6 +81,7 @@ namespace Lekarzowo.Controllers
                 return Conflict("That visit already exists");
             }
 
+            visit.OnGoing = true;
             try
             {
                 _repository.Insert(visit);
