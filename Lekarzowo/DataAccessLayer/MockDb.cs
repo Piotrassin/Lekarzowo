@@ -1,5 +1,4 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
