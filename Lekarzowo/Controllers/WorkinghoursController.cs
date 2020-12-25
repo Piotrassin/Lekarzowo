@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -136,8 +137,15 @@ namespace Lekarzowo.Controllers
                 return BadRequest(new JsonResult("W ciągu tych godzin pracy stworzono już rezerwację."));
             }
 
-            _repository.Delete(workhours);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(workhours);
+                _repository.Save();
+            }
+            catch (OracleException e)
+            {
+                return StatusCode(500, e.Message);
+            }
 
             return workhours;
         }

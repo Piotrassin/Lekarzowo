@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -94,8 +95,15 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            _repository.Delete(medicine);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(medicine);
+                _repository.Save();
+            }
+            catch (OracleException e)
+            {
+                return StatusCode(500, e.Message);
+            }
 
             return medicine;
         }

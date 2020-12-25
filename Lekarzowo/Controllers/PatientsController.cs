@@ -8,6 +8,7 @@ using System.Transactions;
 using Lekarzowo.DataAccessLayer.DTO;
 using Lekarzowo.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -120,8 +121,15 @@ namespace Lekarzowo.Controllers
             var patient = _repository.GetByID(id);
             if (patient == null) return NotFound();
 
-            _repository.Delete(patient);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(patient);
+                _repository.Save();
+            }
+            catch (OracleException e)
+            {
+                return StatusCode(500, e.Message);
+            }
 
             return patient;
         }

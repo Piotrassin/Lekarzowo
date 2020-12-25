@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -197,6 +198,7 @@ namespace Lekarzowo.Controllers
             return BadRequest();
         }
 
+        //TODO: usuwanie osoby powinno kaskadowo usuwać wszystko z nią związane
         // DELETE: api/People
         [HttpDelete]
         public  ActionResult<Person> Delete(decimal? userId)
@@ -212,8 +214,16 @@ namespace Lekarzowo.Controllers
             {
                 return NotFound();
             }
-            _repository.Delete(person);
-            _repository.Save();
+
+            try
+            {
+                _repository.Delete(person);
+                _repository.Save();
+            }
+            catch (OracleException e)
+            {
+                return StatusCode(500, e.Message);
+            }
 
             return person;
         }

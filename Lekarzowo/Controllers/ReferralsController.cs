@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -58,16 +59,14 @@ namespace Lekarzowo.Controllers
             {
                 _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
                 if (!ReferralExists(id))
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+
+                return StatusCode(500, e.Message);
             }
 
             return NoContent();
@@ -79,7 +78,7 @@ namespace Lekarzowo.Controllers
         {
             if (ReferralExists(referral.Id))
             {
-                return Conflict("That referral already exists");
+                return Conflict(new JsonResult("That referral already exists"));
             }
             _repository.Insert(referral);
             _repository.Save();
@@ -97,8 +96,15 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            _repository.Delete(referral);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(referral);
+                _repository.Save();
+            }
+            catch (OracleException e)
+            {
+                return StatusCode(500, e.Message);
+            }
 
             return referral;
         }

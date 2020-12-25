@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -129,8 +130,15 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            _repository.Delete(medicinehistory);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(medicinehistory);
+                _repository.Save();
+            }
+            catch (OracleException e)
+            {
+                return StatusCode(500, e.Message);
+            }
 
             return medicinehistory;
         }

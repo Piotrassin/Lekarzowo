@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -140,8 +141,15 @@ namespace Lekarzowo.Controllers
             if (reservation == null) return NotFound();
             if (reservation.Visit != null && reservation.Visit.OnGoing) return BadRequest(new JsonResult("Na tej rezerwacji odbywa się właśnie wizyta."));
 
-            _repository.Delete(reservation);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(reservation);
+                _repository.Save();
+            }
+            catch (OracleException e)
+            {
+                return StatusCode(500, e.Message);
+            }
 
             return reservation;
         }
