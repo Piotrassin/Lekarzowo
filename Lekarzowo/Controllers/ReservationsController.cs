@@ -148,14 +148,50 @@ namespace Lekarzowo.Controllers
 
         #endregion
 
-        // GET: api/Reservations/ReservationsByDoctorId?doctorId=1&localId=1&start=2020-05-10&end=2026-05-20
+        //TODO przetestować
+        // GET: api/Reservations/RecentByDoctorId?doctorId=1&localId=1&start=2020-05-10&end=2026-05-20
         [Authorize(Roles = "doctor,admin")]
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> ReservationsByDoctorId(decimal doctorId, decimal localId, DateTime? start, DateTime? end)
+        public async Task<ActionResult<IEnumerable<object>>> RecentByDoctorId(decimal doctorId, decimal localId, DateTime? start, DateTime? end)
         {
-            return IsDoctor() && doctorId != GetUserIdFromToken()
-                ? (ActionResult<IEnumerable<object>>) Unauthorized()
-                : Ok(await _repository.DoctorScheduleList(doctorId, localId, start, end));
+            if (IsDoctor() && doctorId != GetUserIdFromToken())
+            {
+                return Unauthorized();
+            }
+
+            if (start == null || start > end || start > DateTime.Now)
+            {
+                start = DateTime.Now.Date.AddDays(-7);
+            }
+            if (end == null || end > DateTime.Now)
+            {
+                end = DateTime.Now;
+            }
+
+            return Ok(await _repository.DoctorScheduleList(doctorId, localId, true, start, end));
+        }
+
+        //TODO przetestować
+        // GET: api/Reservations/UpcomingByDoctorId?doctorId=1&localId=1&start=2020-05-10&end=2026-05-20
+        [Authorize(Roles = "doctor,admin")]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> UpcomingByDoctorId(decimal doctorId, decimal localId, DateTime? start, DateTime? end)
+        {
+            if (IsDoctor() && doctorId != GetUserIdFromToken())
+            {
+                return Unauthorized();
+            }
+
+            if (start == null || start > end || start < DateTime.Now)
+            {
+                start = DateTime.Now.Date;
+            }
+            if (end == null || end < DateTime.Now)
+            {
+                end = DateTime.Now.AddDays(7);
+            } 
+            
+            return Ok(await _repository.DoctorScheduleList(doctorId, localId, false, start, end));
         }
 
         // GET: api/Reservations/Upcoming?PatientId=1&Limit=5&Skip=2
