@@ -59,26 +59,21 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            if (_repository.GetByID(illness.Id) != null)
+            if (!IllnessExists(illness.Id))
             {
-                _repository.Update(illness);
+                return NotFound();
             }
 
             try
             {
+                _repository.Update(illness);
                 _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
-                if (!IllnessExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, e.Message);
             }
+
             return NoContent();
         }
 
@@ -87,30 +82,9 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public ActionResult<Doctor> PostIllness(Illness illness)
         {
-            #region wygenerowane przez EF core. Przydatne?
-            //_context.Doctor.Add(doctor);
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (DbUpdateException)
-            //{
-            //    if (DoctorExists(doctor.Id))
-            //    {
-            //        return Conflict();
-            //    }
-            //    else
-            //    {
-            //        throw;
-            //    }
-            //}
-
-            //return CreatedAtAction("GetDoctor", new { id = doctor.Id }, doctor);
-            #endregion
-
             if (_repository.Exists(illness.Name))
             {
-                return Conflict("That illness already exists");
+                return Conflict(new JsonResult("That illness already exists"));
             }
 
             try

@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.DataAccessLayer.Repositories;
+﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Lekarzowo.Controllers
 {
@@ -112,19 +109,17 @@ namespace Lekarzowo.Controllers
                 _repository.Insert(userroles);
                 _repository.Save();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException e)
             {
                 if (UserrolesExists(userroles.PersonId, userroles.RoleId))
                 {
                     return Conflict();
                 }
-                else
-                {
-                    throw;
-                }
+
+                return StatusCode(500, e.Message);
             }
 
-            return CreatedAtAction("GetNonStandard", new { id = userroles.PersonId }, userroles);
+            return Created("", userroles);
         }
 
         // DELETE: api/Userroles/5

@@ -55,10 +55,7 @@ namespace Lekarzowo.Controllers
             {
                 return BadRequest();
             }
-            if (!VisitExists(id))
-            {
-                return NotFound();
-            }
+
             try
             {
                 _repository.Update(visit);
@@ -66,6 +63,10 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
+                if (!VisitExists(id))
+                {
+                    return NotFound();
+                }
                 return StatusCode(500, e.Message);
             }
 
@@ -79,7 +80,7 @@ namespace Lekarzowo.Controllers
         {
             if (VisitExists(visit.ReservationId))
             {
-                return Conflict("That visit already exists");
+                return Conflict(new JsonResult("That visit already exists"));
             }
 
             visit.OnGoing = true;
@@ -146,7 +147,6 @@ namespace Lekarzowo.Controllers
             return await PutVisit(visitId, visit);
         }
 
-        //todo przetestować
         // GET: api/Visits/CanBeOpened/5
         [Authorize(Roles = "doctor,admin")]
         [HttpGet("[action]/{visitId}")]

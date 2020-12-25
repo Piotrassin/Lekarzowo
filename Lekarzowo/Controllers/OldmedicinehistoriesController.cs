@@ -29,8 +29,6 @@ namespace Lekarzowo.Controllers
         [HttpGet("{PatientId}/{MedicineId}")]
         public async Task<ActionResult<Oldmedicinehistory>> GetOldmedicinehistory(decimal PatientId, decimal MedicineId)
         {
-            //return Ok($"{PatientId}:{MedicineId}");
-
             var oldmedicinehistory = await _repository.GetByID(MedicineId, PatientId);
 
             if (oldmedicinehistory == null)
@@ -77,19 +75,16 @@ namespace Lekarzowo.Controllers
             {
                 await _repository.Save();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException e)
             {
                 if (!await OldmedicinehistoryExists(oldmedicinehistory.MedicineId, oldmedicinehistory.PatientId))
                 {
                     return Conflict();
                 }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, e.Message);
             }
 
-            return CreatedAtAction("GetOldmedicinehistory", new { id = oldmedicinehistory.MedicineId }, oldmedicinehistory);
+            return Created("", oldmedicinehistory);
         }
 
         // DELETE: api/Oldmedicinehistories/5

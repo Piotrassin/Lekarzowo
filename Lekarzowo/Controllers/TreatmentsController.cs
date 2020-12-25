@@ -56,25 +56,19 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            if (_repository.GetByID(treatment.Id) != null)
-            {
-                _repository.Update(treatment);
-            }
-
             try
             {
+                _repository.Update(treatment);
                 _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
                 if (!TreatmentExists(id))
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+
+                return StatusCode(500, e.Message);
             }
 
             return NoContent();
@@ -86,7 +80,7 @@ namespace Lekarzowo.Controllers
         {
             if (TreatmentExists(treatment.Id))
             {
-                return Conflict("That treatment already exists");
+                return Conflict(new JsonResult("That treatment already exists"));
             }
             _repository.Insert(treatment);
             _repository.Save();

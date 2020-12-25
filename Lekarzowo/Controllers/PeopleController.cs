@@ -37,7 +37,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/People/AllByName?Name=abc&limit=0&skip=0
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<Person>>> AllByName(string name, int? limit, int? skip)
         {
@@ -67,7 +67,7 @@ namespace Lekarzowo.Controllers
 
             if (_repository.Exists(newPerson.Email))
             {
-                return Conflict("User with that email address already exists");
+                return Conflict(new JsonResult("User with that email address already exists"));
             }
 
             newPerson.Email = newPerson.Email.ToLower();
@@ -84,14 +84,17 @@ namespace Lekarzowo.Controllers
         [HttpPost("Login")]
         public async Task<ActionResult<Person>> LoginUser(PersonLoginDTO current)
         {
-            Person storedPerson = _repository.GetByEmail(current.Email);
+            var storedPerson = _repository.GetByEmail(current.Email);
+            if (storedPerson == null)
+            {
+                return Unauthorized();
+            }
             try
             {
                 var storedUserRoles = await _customUserRolesService.GatherAllUserRoles(storedPerson.Id);
                 if (storedUserRoles.Count < 1)
                 {
-                    //TODO: Każdy użytkownik musi mieć rolę. Jak nie ma to trzeba ręcznie dodać np. przez API, albo przez bazę.
-                    return UnprocessableEntity("User has no roles.");
+                    return UnprocessableEntity(new JsonResult("User has no roles."));
                 }
 
                 var token = _jwtService.GenerateAccessToken(storedPerson, storedUserRoles.First());
@@ -108,7 +111,6 @@ namespace Lekarzowo.Controllers
             }
             catch (DBConcurrencyException e)
             {
-                //throw;
                 return Conflict(e.Message);
             }
         }
@@ -122,7 +124,7 @@ namespace Lekarzowo.Controllers
 
             if (uRoles.Count > 0 && uRoles.Contains(roleToActivateName))
             {
-                Person storedPerson = _repository.GetByID(personId);
+                var storedPerson = _repository.GetByID(personId);
                 var newToken = _jwtService.GenerateAccessToken(storedPerson, roleToActivateName);
                 return Ok(new { Token = newToken });
             }
@@ -150,7 +152,7 @@ namespace Lekarzowo.Controllers
                 try
                 {
                     _repository.Save();
-                    return Ok("Hasło zmienione");
+                    return Ok(new JsonResult("Hasło zmienione"));
                 }
                 catch (DbUpdateConcurrencyException e)
                 {

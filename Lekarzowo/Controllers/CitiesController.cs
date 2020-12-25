@@ -61,7 +61,7 @@ namespace Lekarzowo.Controllers
             }
             if (_repository.Exists(city.Name))
             {
-                return Conflict("City with that name already exists");
+                return Conflict(new JsonResult("City with that name already exists"));
             }
 
             try
@@ -87,7 +87,7 @@ namespace Lekarzowo.Controllers
         {
             if(_repository.Exists(city.Name))
             {
-                return Conflict("City with that name already exists");
+                return Conflict(new JsonResult("City with that name already exists"));
             }
 
             try

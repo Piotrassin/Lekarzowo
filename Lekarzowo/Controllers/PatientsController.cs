@@ -64,7 +64,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(503, e.Message);
+                return StatusCode(500, e.Message);
             }
 
             return NoContent();
@@ -77,7 +77,7 @@ namespace Lekarzowo.Controllers
         {
             if (PatientExists(patient.Id))
             {
-                return Conflict("That patient already exists");
+                return Conflict(new JsonResult("That patient already exists"));
             }
             _repository.Insert(patient);
             _repository.Save();

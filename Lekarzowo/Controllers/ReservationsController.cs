@@ -108,7 +108,7 @@ namespace Lekarzowo.Controllers
             if (IsPatient() && input.PatientId != GetUserIdFromToken()) return Unauthorized();
 
             var room = await FindAvailableRoom(input);
-            if (room == null) return BadRequest("Brak dostępnych pokoi w lokalu.");
+            if (room == null) return BadRequest(new JsonResult("Brak dostępnych pokoi w lokalu."));
 
             try
             {
@@ -138,7 +138,7 @@ namespace Lekarzowo.Controllers
         {
             var reservation = await _repository.GetById(id);
             if (reservation == null) return NotFound();
-            if (reservation.Visit != null && reservation.Visit.OnGoing) return BadRequest("Na tej rezerwacji odbywa się właśnie wizyta.");
+            if (reservation.Visit != null && reservation.Visit.OnGoing) return BadRequest(new JsonResult("Na tej rezerwacji odbywa się właśnie wizyta."));
 
             _repository.Delete(reservation);
             _repository.Save();
@@ -235,7 +235,7 @@ namespace Lekarzowo.Controllers
                 || (!cityId.HasValue && specId.HasValue && doctorId.HasValue)
                 || (!cityId.HasValue && !specId.HasValue && !doctorId.HasValue))
             {
-                return BadRequest("Niepoprawne kryteria wyszukiwania");
+                return BadRequest(new JsonResult("Niepoprawne kryteria wyszukiwania"));
             }
 
             IEnumerable<Reservation> allReservations = _repository.AllByOptionalCriteria(cityId, specId, doctorId, startDate, endDate);

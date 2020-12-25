@@ -48,25 +48,19 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            if (_repository.GetByID(room.Id) != null)
-            {
-                _repository.Update(room);
-            }
-
             try
             {
+                _repository.Update(room);
                 _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
                 if (!RoomExists(id))
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+
+                return StatusCode(500, e.Message);
             }
 
             return NoContent();
@@ -78,7 +72,7 @@ namespace Lekarzowo.Controllers
         {
             if (RoomExists(room.Id))
             {
-                return Conflict("That room already exists");
+                return Conflict(new JsonResult("That room already exists"));
             }
             _repository.Insert(room);
             _repository.Save();

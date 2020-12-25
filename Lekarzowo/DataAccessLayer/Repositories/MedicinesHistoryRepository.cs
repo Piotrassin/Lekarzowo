@@ -23,14 +23,14 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return _context.Medicinehistory.ToList().OrderBy(x => x.Startdate);
         }
 
-        public IEnumerable<Medicinehistory> GetAll(decimal IllnessHistoryId)
+        public IEnumerable<Medicinehistory> GetAll(decimal illnessHistoryId)
         {
-            return _context.Medicinehistory.Where(x => x.IllnesshistoryId == IllnessHistoryId).ToList();
+            return _context.Medicinehistory.Where(x => x.IllnesshistoryId == illnessHistoryId).ToList();
         }
 
-        public Medicinehistory GetById(decimal IllnessHistoryId, decimal MedicineId, DateTime startDate)
+        public Medicinehistory GetById(decimal illnessHistoryId, decimal medicineId, DateTime startDate)
         {
-            return _context.Medicinehistory.FirstOrDefault(x => x.IllnesshistoryId == IllnessHistoryId && x.MedicineId == MedicineId && x.Startdate.Date == startDate.Date);
+            return _context.Medicinehistory.FirstOrDefault(x => x.IllnesshistoryId == illnessHistoryId && x.MedicineId == medicineId && x.Startdate.Date == startDate.Date);
         }
 
         public void Update(Medicinehistory t)

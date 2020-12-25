@@ -24,7 +24,6 @@ namespace Lekarzowo.Controllers
         public ActionResult<IEnumerable<Medicine>> GetMedicine()
         {
             return _repository.GetAll().ToList();
-            //return await _repository.Medicine.ToListAsync();
         }
 
         // GET: api/Medicines/AllByName?Name=abc&limit=0&skip=0
@@ -57,25 +56,19 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            if (_repository.GetByID(medicine.Id) != null)
+            if (!MedicineExists(medicine.Id))
             {
-                _repository.Update(medicine);
+                return NotFound();
             } 
 
             try
             {
+                _repository.Update(medicine);
                 _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
-                if (!MedicineExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, e.Message);
             }
 
             return NoContent();
@@ -88,7 +81,7 @@ namespace Lekarzowo.Controllers
             _repository.Insert(medicine);
             _repository.Save();
 
-            return CreatedAtAction("GetMedicine", new { id = medicine.Id }, medicine);
+            return Created("", medicine);
         }
 
         // DELETE: api/Medicines/5

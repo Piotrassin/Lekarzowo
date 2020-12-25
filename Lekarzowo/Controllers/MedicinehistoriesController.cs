@@ -78,22 +78,19 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            if (!_repository.Exists(medicinehistory.IllnesshistoryId, medicinehistory.MedicineId))
+            if (!MedicinehistoryExists(medicinehistory))
             {
-                _repository.Update(medicinehistory);
+                return NotFound();
             }
 
             try
             {
-                 _repository.Save();
+                _repository.Update(medicinehistory);
+                _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
-                if (!MedicinehistoryExists(medicinehistory))
-                {
-                    return NotFound();
-                }
-                throw;
+                return StatusCode(500, e.Message);
             }
 
             return NoContent();
@@ -104,18 +101,18 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public ActionResult<Medicinehistory> PostMedicinehistory(Medicinehistory medicinehistory)
         {
-            _repository.Insert(medicinehistory);
             try
             {
+                _repository.Insert(medicinehistory);
                 _repository.Save();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException e)
             {
                 if (MedicinehistoryExists(medicinehistory))
                 {
                     return Conflict();
                 }
-                throw;
+                return StatusCode(500, e.Message);
             }
 
             return Created("", medicinehistory);
@@ -138,9 +135,9 @@ namespace Lekarzowo.Controllers
             return medicinehistory;
         }
 
-        private bool MedicinehistoryExists(Medicinehistory medicinehistory)
+        private bool MedicinehistoryExists(Medicinehistory medHist)
         {
-            return _repository.Exists(medicinehistory.IllnesshistoryId, medicinehistory.MedicineId);
+            return _repository.Exists(medHist.IllnesshistoryId, medHist.MedicineId, medHist.Startdate);
         }
     }
 }

@@ -118,18 +118,22 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
+            if (!IllnesshistoryExists(illnesshistory.Id))
+            {
+                return NotFound();
+            }
+
             try
             {
-                if (!IllnesshistoryExists(illnesshistory.Id)) return NotFound();
-
                 _repository.Update(illnesshistory);
-                _repository.Save(); 
-                return NoContent();
+                _repository.Save();
             }
             catch (DbUpdateConcurrencyException e)
             {
                 return StatusCode(500, e.Message);
             }
+
+            return NoContent();
         }
 
         // POST: api/Illnesseshistory
@@ -143,7 +147,7 @@ namespace Lekarzowo.Controllers
             var illnessesOnVisit = await _repository.GetByVisitId(visit.ReservationId);
             if (illnessesOnVisit.Contains(illnesshistory))
             {
-                return Conflict("That illness history already exists");
+                return Conflict(new JsonResult("That illness history already exists"));
             }
 
             try

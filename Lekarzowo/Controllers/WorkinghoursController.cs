@@ -89,7 +89,7 @@ namespace Lekarzowo.Controllers
             if (IsDoctorAccessingElsesData(workhours.DoctorId)) return Unauthorized();
             if (await _reservationsRepository.IsAnyReservationScheduledThatDay(workhours.LocalId, workhours.DoctorId, workhours.From, workhours.To))
             {
-                return Forbid("W ciągu tych godzin pracy stworzono już rezerwację.");
+                return BadRequest(new JsonResult("W ciągu tych godzin pracy stworzono już rezerwację."));
             }
 
             if (!WorkinghoursExists(id)) return NotFound();
@@ -133,7 +133,7 @@ namespace Lekarzowo.Controllers
             if (IsDoctorAccessingElsesData(workhours.DoctorId)) return Unauthorized();
             if (await _reservationsRepository.IsAnyReservationScheduledThatDay(workhours.LocalId, workhours.DoctorId, workhours.From, workhours.To))
             {
-                return Forbid("W ciągu tych godzin pracy stworzono już rezerwację.");
+                return BadRequest(new JsonResult("W ciągu tych godzin pracy stworzono już rezerwację."));
             }
 
             _repository.Delete(workhours);

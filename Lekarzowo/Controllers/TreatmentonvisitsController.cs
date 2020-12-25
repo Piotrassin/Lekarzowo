@@ -55,23 +55,19 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            if (_repository.GetByID(treatmentonvisit.Id) != null)
-            {
-                _repository.Update(treatmentonvisit);
-            }
-
             try
             {
+                _repository.Update(treatmentonvisit);
                 _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
                 if (!TreatmentonvisitExists(id))
                 {
                     return NotFound();
                 }
 
-                throw;
+                return StatusCode(500, e.Message);
             }
 
             return NoContent();

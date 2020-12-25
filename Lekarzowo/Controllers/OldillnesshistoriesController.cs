@@ -25,12 +25,6 @@ namespace Lekarzowo.Controllers
             return Ok(await _repository.GetAll());
         }
 
-
-        /// <summary>
-        /// TODO: Parametry powinny być przekazywane wewnątrz ciała, a nie w URI? W jakiś sposób trzeba zapewnić ochronę przed podglądaniem nie swojej historii.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         // GET: api/Oldillnesshistories/5
         [HttpGet("{PatientId}/{IlnessId}")]
         public async Task<ActionResult<Oldillnesshistory>> GetOldillnesshistory(decimal PatientId, decimal IlnessId)
@@ -82,19 +76,16 @@ namespace Lekarzowo.Controllers
             {
                 await _repository.Save();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException e)
             {
                 if (!await OldillnesshistoryExists(oldillnesshistory.IllnessId, oldillnesshistory.PatientId))
                 {
                     return Conflict();
                 }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, e.Message);
             }
 
-            return CreatedAtAction("GetOldillnesshistory", new { id = oldillnesshistory.IllnessId }, oldillnesshistory);
+            return Created("", oldillnesshistory);
         }
 
         // DELETE: api/Oldillnesshistories/5

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.DataAccessLayer.Repositories;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Lekarzowo.Controllers
 {
@@ -73,8 +69,7 @@ namespace Lekarzowo.Controllers
                 }
                 catch (DbUpdateConcurrencyException e)
                 {
-                    //throw;
-                    return StatusCode(503, e.Message);
+                    return StatusCode(500, e.Message);
                 }
             }
             return NotFound();
@@ -87,7 +82,7 @@ namespace Lekarzowo.Controllers
             var storedRole = await _repository.GetSingleByName(role.Name);
             if (storedRole != null)
             {
-                return Conflict("Role with that name already exists");
+                return Conflict(new JsonResult("Rola o tej nazwie już istnieje."));
             }
             _repository.Insert(role);
             _repository.Save();
