@@ -148,7 +148,6 @@ namespace Lekarzowo.Controllers
 
         #endregion
 
-        //TODO przetestować
         // GET: api/Reservations/RecentByDoctorId?doctorId=1&localId=1&start=2020-05-10&end=2026-05-20
         [Authorize(Roles = "doctor,admin")]
         [HttpGet("[action]")]
@@ -171,7 +170,6 @@ namespace Lekarzowo.Controllers
             return Ok(await _repository.DoctorScheduleList(doctorId, localId, true, start, end));
         }
 
-        //TODO przetestować
         // GET: api/Reservations/UpcomingByDoctorId?doctorId=1&localId=1&start=2020-05-10&end=2026-05-20
         [Authorize(Roles = "doctor,admin")]
         [HttpGet("[action]")]
