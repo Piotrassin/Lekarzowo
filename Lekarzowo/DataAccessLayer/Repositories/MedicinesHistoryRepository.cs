@@ -13,9 +13,9 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     {
         public MedicinesHistoryRepository(ModelContext context) : base(context) { }
 
-        public bool Exists(decimal IllnessHistoryId, decimal MedicineId)
+        public bool Exists(decimal illnessHistoryId, decimal medicineId, DateTime startDate)
         {
-            return _context.Medicinehistory.Any(x => x.IllnesshistoryId == IllnessHistoryId && x.MedicineId == MedicineId);
+            return _context.Medicinehistory.Any(x => x.IllnesshistoryId == illnessHistoryId && x.MedicineId == medicineId && x.Startdate == startDate);
         }
 
         public new IEnumerable<Medicinehistory> GetAll()

@@ -36,16 +36,11 @@ namespace Lekarzowo
             services.AddHttpContextAccessor();
 
             #region Accessing appsettings.json
+            services.AddOptions();
             var appSettings = Configuration.GetSection("SecretSection");
             services.Configure<SecretSettings>(appSettings);
 
-            var secretSettings = appSettings.Get<SecretSettings>();
-            var key = Encoding.ASCII.GetBytes(secretSettings.Secret);
-            #endregion
-
-            #region Accessing appsettings.json v2.0
-            services.AddOptions();
-            services.Configure<SecretSettings>(Configuration.GetSection("SecretSection"));
+            var key = Encoding.ASCII.GetBytes(appSettings.Get<SecretSettings>().Secret);
             services.AddScoped<IJWTService, JWTService>();
             #endregion
 
