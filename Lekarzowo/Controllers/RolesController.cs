@@ -1,8 +1,11 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Threading.Tasks;
 using Oracle.ManagedDataAccess.Client;
 
@@ -70,7 +73,7 @@ namespace Lekarzowo.Controllers
                 }
                 catch (DbUpdateConcurrencyException e)
                 {
-                    return StatusCode(500, e.Message);
+                    return StatusCode(500, new JsonResult(e.Message));
                 }
             }
             return NotFound();
@@ -106,9 +109,9 @@ namespace Lekarzowo.Controllers
                 _repository.Delete(role);
                 _repository.Save();
             }
-            catch (OracleException e)
+            catch (DbUpdateException e)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
             return role;

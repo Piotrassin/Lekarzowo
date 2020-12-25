@@ -61,7 +61,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
             return NoContent();
@@ -82,7 +82,7 @@ namespace Lekarzowo.Controllers
                 {
                     return Conflict();
                 }
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
             return Created("", oldmedicinehistory);
@@ -103,9 +103,9 @@ namespace Lekarzowo.Controllers
                 _repository.Delete(oldmedicinehistory);
                 await _repository.Save();
             }
-            catch (OracleException e)
+            catch (DbUpdateException e)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
             return oldmedicinehistory;
