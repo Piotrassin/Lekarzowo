@@ -23,6 +23,27 @@ class ReservationService {
 
   }
 
+  getUpcomingDoctorReservations(dateStart, dateEnd){
+    if(JSON.parse(AuthService.getLoggedUser())){
+      var doctorId = JSON.parse(AuthService.getLoggedUser()).id;
+    }
+    return fetch(url + 'Reservations/UpcomingByDoctorId?doctorId=' + doctorId +
+    '&localId=1' + '&start=' + dateStart.toISOString() + '&end=' + dateEnd.toISOString(), {
+      headers: authHeader()
+    }).then(response => {
+      if(response.status == 401){
+        console.log('throwing 401 error');
+        throw new Error(401);
+      };
+      if(!response.ok){
+        console.log('throwin other error');
+        throw new Error(response.statusText)
+      }
+      console.log('Continue');
+      return response.json()
+    });
+  }
+
   getUpcomingReservations(limit, skip){
     if(JSON.parse(AuthService.getLoggedUser())){
       var patientId = JSON.parse(AuthService.getLoggedUser()).id;

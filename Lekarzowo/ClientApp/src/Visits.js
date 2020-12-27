@@ -75,7 +75,7 @@ class Visits extends React.Component {
     if(currentRole == 'doctor' ){
       var tommorrow = new Date(new Date());
       tommorrow.setDate(tommorrow.getDate() + 20);
-      return await VisitService.getDoctorVisit(1, new Date(), tommorrow)
+      return await ReservationService.getUpcomingDoctorReservations(new Date(), tommorrow)
       .then(response => {
         this.setState({
           upcomingVisits: response
@@ -126,7 +126,7 @@ class Visits extends React.Component {
       console.log('helo');
       ReservationService.cancelReservation(this.state.visitToCancel.reservationId)
       .then(response => {
-      
+
 
         this.snackbarRef.current.openSnackBar('Odwołano wizytę', 'green-snackbar');
         Dialog.close("visit-cancel-dialog")(event);

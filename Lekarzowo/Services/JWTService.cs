@@ -22,33 +22,8 @@ namespace Lekarzowo.Services
             _standardUserRoles = roles;
         }
 
-<<<<<<< HEAD
-        //TODO: Prawdopodobnie do usunięcia
-        public string GenerateAccessToken(Person person, Role activeRole)
-        {
-            //TODO: Docelowo sekret do tworzenia podpisu powinien być pobierany z appsettings.json
-  //          var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.Secret));
-            //var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.Secret));
 
-            //Dev
-            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("super sekretny sekret, którego nikt nie może nigdy poznać, bo przypał"));
 
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
-
-            var claims = new List<Claim>();
-            claims.Add(new Claim("UserId", person.Id.ToString()));
-            claims.Add(new Claim(ClaimTypes.Role, activeRole.Name));
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(180),
-                signingCredentials: credentials);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-=======
->>>>>>> 504d6a69d13e23485f4ed00b3984196b58ddca07
         public string GenerateAccessToken(Person person, string activeRole)
         {
             //TODO: Docelowo sekret do tworzenia podpisu powinien być pobierany z appsettings.json
