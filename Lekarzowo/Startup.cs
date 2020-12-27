@@ -119,7 +119,7 @@ namespace Lekarzowo
             services.AddEntityFrameworkOracle()
                 .AddDbContext<ModelContext>(options =>
                 {
-                    options.UseOracle(Configuration.GetConnectionString("DefaultConnection"));
+                    options.UseOracle(Configuration.GetConnectionString("pjatkConnection"));
                 });
 
             services.AddMvc()
