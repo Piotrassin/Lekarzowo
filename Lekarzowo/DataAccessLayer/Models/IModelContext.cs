@@ -1,9 +1,5 @@
-﻿using Lekarzowo.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Lekarzowo.DataAccessLayer.Models
 {
@@ -28,22 +24,7 @@ namespace Lekarzowo.DataAccessLayer.Models
         DbSet<Treatmentonvisit> Treatmentonvisit { get; set; }
         DbSet<Visit> Visit { get; set; }
         DbSet<Workinghours> Workinghours { get; set; }
-
-
-
-
-        //widoki
-        DbQuery<View_AddressData> View_AddressData { get; set; }
-        DbQuery<View_DocsAndSpecs> View_DocsAndSpecs { get; set; }
-        DbQuery<View_DoctorList> View_DoctorList { get; set; }
-        DbQuery<View_DoctorSchedule> View_DoctorSchedule { get; set; }
-        DbQuery<View_IllnessMedDetails> View_IllnessMedDetails { get; set; }
-        DbQuery<View_IllnessMedList> View_IllnessMedList { get; set; }
-        //public virtual DbQuery<View_PatientIllnesses> View_PatientIllnesses { get; set; }
-
-        DbQuery<View_VisitDetails> View_VisitDetails { get; set; }
-        DbQuery<View_VisitList> View_VisitList { get; set; }
-
+        
 
         int SaveChanges();
         void MarkAsModified<T>(T item);

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -89,7 +90,7 @@ namespace Lekarzowo.Controllers
             if (IsDoctorAccessingElsesData(workhours.DoctorId)) return Unauthorized();
             if (await _reservationsRepository.IsAnyReservationScheduledThatDay(workhours.LocalId, workhours.DoctorId, workhours.From, workhours.To))
             {
-                return Forbid("W ciągu tych godzin pracy stworzono już rezerwację.");
+                return BadRequest(new JsonResult("W ciągu tych godzin pracy stworzono już rezerwację."));
             }
 
             if (!WorkinghoursExists(id)) return NotFound();
@@ -100,7 +101,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
             return NoContent();
         }
@@ -118,7 +119,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
             return Created("", workinghours);
         }
@@ -133,11 +134,18 @@ namespace Lekarzowo.Controllers
             if (IsDoctorAccessingElsesData(workhours.DoctorId)) return Unauthorized();
             if (await _reservationsRepository.IsAnyReservationScheduledThatDay(workhours.LocalId, workhours.DoctorId, workhours.From, workhours.To))
             {
-                return Forbid("W ciągu tych godzin pracy stworzono już rezerwację.");
+                return BadRequest(new JsonResult("W ciągu tych godzin pracy stworzono już rezerwację."));
             }
 
-            _repository.Delete(workhours);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(workhours);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return workhours;
         }

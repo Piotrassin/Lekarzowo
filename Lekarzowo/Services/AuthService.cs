@@ -1,21 +1,10 @@
-﻿using Lekarzowo.Helpers;
-using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Lekarzowo.Services
+﻿namespace Lekarzowo.Services
 {
     public class AuthService
     {
-        private readonly SecretSettings _settings;
         private static readonly int workFactor = 10;
 
-        public AuthService(IOptions<SecretSettings> secretSettings)
-        {
-            _settings = secretSettings.Value;
-        }
+        public AuthService() { }
 
         public static string CreateHash(string password)
         {

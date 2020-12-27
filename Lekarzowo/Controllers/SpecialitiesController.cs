@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.Models;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -59,25 +56,19 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            if (_repository.GetByID(speciality.Id) != null)
-            {
-                _repository.Update(speciality);
-            }
-
             try
             {
+                _repository.Update(speciality);
                 _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
                 if (!SpecialityExists(id))
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
             return NoContent();
@@ -89,7 +80,7 @@ namespace Lekarzowo.Controllers
         {
             if (SpecialityExists(speciality.Id))
             {
-                return Conflict("That speciality already exists");
+                return Conflict(new JsonResult("That speciality already exists"));
             }
             _repository.Insert(speciality);
             _repository.Save();
@@ -107,8 +98,15 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            _repository.Delete(speciality);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(speciality);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return speciality;
         }

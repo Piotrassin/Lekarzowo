@@ -1,12 +1,10 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Lekarzowo.Models;
-using System;
+using Lekarzowo.Services;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lekarzowo.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {

@@ -1,13 +1,11 @@
-﻿using System;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.Models;
-using Lekarzowo.DataAccessLayer.Repositories;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -27,7 +25,6 @@ namespace Lekarzowo.Controllers
         public ActionResult<IEnumerable<Medicine>> GetMedicine()
         {
             return _repository.GetAll().ToList();
-            //return await _repository.Medicine.ToListAsync();
         }
 
         // GET: api/Medicines/AllByName?Name=abc&limit=0&skip=0
@@ -60,25 +57,19 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            if (_repository.GetByID(medicine.Id) != null)
+            if (!MedicineExists(medicine.Id))
             {
-                _repository.Update(medicine);
+                return NotFound();
             } 
 
             try
             {
+                _repository.Update(medicine);
                 _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
-                if (!MedicineExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
             return NoContent();
@@ -91,7 +82,7 @@ namespace Lekarzowo.Controllers
             _repository.Insert(medicine);
             _repository.Save();
 
-            return CreatedAtAction("GetMedicine", new { id = medicine.Id }, medicine);
+            return Created("", medicine);
         }
 
         // DELETE: api/Medicines/5
@@ -104,8 +95,15 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            _repository.Delete(medicine);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(medicine);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return medicine;
         }

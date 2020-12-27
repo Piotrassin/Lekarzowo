@@ -15,6 +15,8 @@ using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 
+using Oracle.ManagedDataAccess.Client;
+
 
 namespace Lekarzowo.Controllers
 {
@@ -24,6 +26,7 @@ namespace Lekarzowo.Controllers
     public class VisitsController : BaseController
     {
         private readonly IVisitsRepository _repository;
+        private static readonly int visitStatusChangeTimeOffsetMinutes = 30;
 
         public VisitsController(IVisitsRepository repository)
         {
@@ -63,10 +66,7 @@ namespace Lekarzowo.Controllers
             {
                 return BadRequest();
             }
-            if (!VisitExists(id))
-            {
-                return NotFound();
-            }
+
             try
             {
                 _repository.Update(visit);
@@ -74,7 +74,11 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, e.Message);
+                if (!VisitExists(id))
+                {
+                    return NotFound();
+                }
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
             return NoContent();
@@ -87,7 +91,7 @@ namespace Lekarzowo.Controllers
         {
             if (VisitExists(visit.ReservationId))
             {
-                return Conflict("That visit already exists");
+                return Conflict(new JsonResult("That visit already exists"));
             }
 
             visit.OnGoing = true;
@@ -98,7 +102,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
             return Created("", visit);
@@ -115,37 +119,17 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            _repository.Delete(visit);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(visit);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return visit;
-        }
-
-        // PUT: api/Visits/ChangeStatus?visitId=5&isOnGoing=true
-        [Authorize(Roles = "doctor,admin")]
-        [HttpPut("[action]")]
-        public async Task<IActionResult> ChangeStatus(decimal visitId, bool isOnGoing)
-        {
-            var visit = _repository.GetByID(visitId);
-            if (visit == null)
-            {
-                return NotFound();
-            }
-            var onGoingVisits = await _repository.OnGoingVisitsToday(visit.Reservation.DoctorId);
-
-            if (visit.Reservation.Starttime > DateTime.Now.AddMinutes(30) ||
-                visit.Reservation.Endtime < DateTime.Now.AddMinutes(-30))
-            {
-                return BadRequest();
-            }
-
-            if (onGoingVisits.Any() && !onGoingVisits.Contains(visit))
-            {
-                return BadRequest();
-            }
-
-            visit.OnGoing = isOnGoing;
-            return await PutVisit(visitId, visit);
         }
 
         // GET: api/Visits/OnGoing/5
@@ -161,9 +145,55 @@ namespace Lekarzowo.Controllers
             return Ok(visit);
         }
 
+        // PUT: api/Visits/ChangeStatus?visitId=5&isOnGoing=true
+        [Authorize(Roles = "doctor,admin")]
+        [HttpPut("[action]")]
+        public async Task<IActionResult> ChangeStatus(decimal visitId, bool isOnGoing)
+        {
+            var visit = _repository.GetByID(visitId);
+            if (visit == null)
+            {
+                return NotFound();
+            }
+
+            if (!await CanVisitBeOpened(visitId))
+            {
+                return BadRequest();
+            }
+
+            visit.OnGoing = isOnGoing;
+            return await PutVisit(visitId, visit);
+        }
+
+        // GET: api/Visits/CanBeOpened/5
+        [Authorize(Roles = "doctor,admin")]
+        [HttpGet("[action]/{visitId}")]
+        public async Task<IActionResult> CanBeOpened(decimal visitId)
+        {
+            if(await CanVisitBeOpened(visitId))
+            {
+                return Ok(new JsonResult(true));
+            }
+            return Ok(new JsonResult(false));
+        }
+
         private bool VisitExists(decimal id)
         {
             return _repository.Exists(id);
+        }
+
+        private async Task<bool> CanVisitBeOpened(decimal visitId)
+        {
+            var visit = _repository.GetByID(visitId);
+            var onGoingVisits = await _repository.OnGoingVisitsToday(visit.Reservation.DoctorId);
+
+            if (visit.Reservation.Starttime > DateTime.Now.AddMinutes(visitStatusChangeTimeOffsetMinutes) ||
+                visit.Reservation.Endtime < DateTime.Now.AddMinutes(-visitStatusChangeTimeOffsetMinutes) ||
+                (onGoingVisits.Any() && !onGoingVisits.Contains(visit)))
+            {
+                return false;
+            }
+            return true;
         }
 
     }

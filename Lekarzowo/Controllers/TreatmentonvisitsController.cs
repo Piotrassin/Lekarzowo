@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.Models;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -59,23 +56,19 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            if (_repository.GetByID(treatmentonvisit.Id) != null)
-            {
-                _repository.Update(treatmentonvisit);
-            }
-
             try
             {
+                _repository.Update(treatmentonvisit);
                 _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
                 if (!TreatmentonvisitExists(id))
                 {
                     return NotFound();
                 }
 
-                throw;
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
             return NoContent();
@@ -97,7 +90,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
             return Created("", treatmentonvisit);
         }
@@ -112,8 +105,15 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            _repository.Delete(treatmentonvisit);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(treatmentonvisit);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return treatmentonvisit;
         }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -118,18 +119,22 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
+            if (!IllnesshistoryExists(illnesshistory.Id))
+            {
+                return NotFound();
+            }
+
             try
             {
-                if (!IllnesshistoryExists(illnesshistory.Id)) return NotFound();
-
                 _repository.Update(illnesshistory);
-                _repository.Save(); 
-                return NoContent();
+                _repository.Save();
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
+
+            return NoContent();
         }
 
         // POST: api/Illnesseshistory
@@ -143,7 +148,7 @@ namespace Lekarzowo.Controllers
             var illnessesOnVisit = await _repository.GetByVisitId(visit.ReservationId);
             if (illnessesOnVisit.Contains(illnesshistory))
             {
-                return Conflict("That illness history already exists");
+                return Conflict(new JsonResult("That illness history already exists"));
             }
 
             try
@@ -153,7 +158,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
             return Created("", illnesshistory);
         }
@@ -169,8 +174,15 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            _repository.Delete(illnesshistory);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(illnesshistory);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return illnesshistory;
         }

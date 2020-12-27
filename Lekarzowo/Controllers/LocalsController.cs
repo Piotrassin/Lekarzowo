@@ -1,14 +1,12 @@
-﻿using System;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Lekarzowo.Models;
-using Lekarzowo.DataAccessLayer.Repositories;
-using Lekarzowo.DataAccessLayer.Models;
-using Microsoft.AspNetCore.Authorization;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -62,17 +60,20 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
+            if (!LocalExists(local.Id))
+            {
+                return NotFound();
+            }
+
             try
             {
-                if (!_repository.Exists(local.Id)) return NotFound();
-
                 _repository.Update(local);
                 _repository.Save(); 
                 return NoContent();
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
         }
 
@@ -81,10 +82,9 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public IActionResult PostLocal(Local local)
         {
-
             if (_repository.Exists(local.Name))
             {
-                return Conflict("Local with that name already exists");
+                return Conflict(new JsonResult("Local with that name already exists"));
             }
 
             try
@@ -94,7 +94,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
             return Created("", local);
         }
@@ -110,8 +110,15 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            _repository.Delete(city);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(city);
+                _repository.Save();
+            }
+            catch (OracleException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return city;
         }

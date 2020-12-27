@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.Models;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -33,8 +30,6 @@ namespace Lekarzowo.Controllers
         [HttpGet("{PatientId}/{MedicineId}")]
         public async Task<ActionResult<Oldmedicinehistory>> GetOldmedicinehistory(decimal PatientId, decimal MedicineId)
         {
-            //return Ok($"{PatientId}:{MedicineId}");
-
             var oldmedicinehistory = await _repository.GetByID(MedicineId, PatientId);
 
             if (oldmedicinehistory == null)
@@ -66,7 +61,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
             return NoContent();
@@ -81,19 +76,16 @@ namespace Lekarzowo.Controllers
             {
                 await _repository.Save();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException e)
             {
                 if (!await OldmedicinehistoryExists(oldmedicinehistory.MedicineId, oldmedicinehistory.PatientId))
                 {
                     return Conflict();
                 }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
-            return CreatedAtAction("GetOldmedicinehistory", new { id = oldmedicinehistory.MedicineId }, oldmedicinehistory);
+            return Created("", oldmedicinehistory);
         }
 
         // DELETE: api/Oldmedicinehistories/5
@@ -106,8 +98,15 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            _repository.Delete(oldmedicinehistory);
-            await _repository.Save();
+            try
+            {
+                _repository.Delete(oldmedicinehistory);
+                await _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return oldmedicinehistory;
         }

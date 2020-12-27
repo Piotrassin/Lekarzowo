@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.Models;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -62,16 +59,14 @@ namespace Lekarzowo.Controllers
             {
                 _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
                 if (!ReferralExists(id))
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
             return NoContent();
@@ -83,7 +78,7 @@ namespace Lekarzowo.Controllers
         {
             if (ReferralExists(referral.Id))
             {
-                return Conflict("That referral already exists");
+                return Conflict(new JsonResult("That referral already exists"));
             }
             _repository.Insert(referral);
             _repository.Save();
@@ -101,8 +96,15 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            _repository.Delete(referral);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(referral);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return referral;
         }

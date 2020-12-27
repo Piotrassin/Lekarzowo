@@ -8,8 +8,8 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
     public interface IMedicinesHistoryRepository : IBaseCRUDRepository<Medicinehistory>
     {
         new IEnumerable<Medicinehistory> GetAll();
-        IEnumerable<Medicinehistory> GetAll(decimal IllnessHistoryId);
-        Medicinehistory GetById(decimal IllnessHistoryId, decimal MedicineId, DateTime startDate);
+        IEnumerable<Medicinehistory> GetAll(decimal illnessHistoryId);
+        Medicinehistory GetById(decimal illnessHistoryId, decimal medicineId, DateTime startDate);
 
         /// <summary>
         /// All medicines currently taken by the given patient.
@@ -30,6 +30,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         Task<IEnumerable<object>> PrescribedMedicines(decimal visitId, int? limit, int? skip);
 
         void Update(Medicinehistory t);
-        bool Exists(decimal IllnessHistoryId, decimal MedicineId);
+        bool Exists(decimal illnessHistoryId, decimal medicineId, DateTime startDate);
     }
 }

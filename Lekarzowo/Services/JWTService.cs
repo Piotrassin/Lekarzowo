@@ -1,16 +1,13 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.Helpers;
-using Lekarzowo.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 
 namespace Lekarzowo.Services
 {
@@ -25,6 +22,7 @@ namespace Lekarzowo.Services
             _standardUserRoles = roles;
         }
 
+<<<<<<< HEAD
         //TODO: Prawdopodobnie do usunięcia
         public string GenerateAccessToken(Person person, Role activeRole)
         {
@@ -49,6 +47,8 @@ namespace Lekarzowo.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+=======
+>>>>>>> 504d6a69d13e23485f4ed00b3984196b58ddca07
         public string GenerateAccessToken(Person person, string activeRole)
         {
             //TODO: Docelowo sekret do tworzenia podpisu powinien być pobierany z appsettings.json
@@ -70,7 +70,6 @@ namespace Lekarzowo.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
 
         public string GenerateRefreshToken(string currentToken)
         {

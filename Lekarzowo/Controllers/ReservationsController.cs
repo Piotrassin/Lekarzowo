@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -95,7 +96,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
             return NoContent();
         }
@@ -108,7 +109,7 @@ namespace Lekarzowo.Controllers
             if (IsPatient() && input.PatientId != GetUserIdFromToken()) return Unauthorized();
 
             var room = await FindAvailableRoom(input);
-            if (room == null) return BadRequest("Brak dostępnych pokoi w lokalu.");
+            if (room == null) return BadRequest(new JsonResult("Brak dostępnych pokoi w lokalu."));
 
             try
             {
@@ -127,7 +128,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
         }
 
@@ -138,24 +139,65 @@ namespace Lekarzowo.Controllers
         {
             var reservation = await _repository.GetById(id);
             if (reservation == null) return NotFound();
-            if (reservation.Visit != null && reservation.Visit.OnGoing) return BadRequest("Na tej rezerwacji odbywa się właśnie wizyta.");
+            if (reservation.Visit != null && reservation.Visit.OnGoing) return BadRequest(new JsonResult("Na tej rezerwacji odbywa się właśnie wizyta."));
 
-            _repository.Delete(reservation);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(reservation);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return reservation;
         }
 
         #endregion
 
-        // GET: api/Reservations/ReservationsByDoctorId?doctorId=1&localId=1&start=2020-05-10&end=2026-05-20
+        // GET: api/Reservations/RecentByDoctorId?doctorId=1&localId=1&start=2020-05-10&end=2026-05-20
         [Authorize(Roles = "doctor,admin")]
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> ReservationsByDoctorId(decimal doctorId, decimal localId, DateTime? start, DateTime? end)
+        public async Task<ActionResult<IEnumerable<object>>> RecentByDoctorId(decimal doctorId, decimal localId, DateTime? start, DateTime? end)
         {
-            return IsDoctor() && doctorId != GetUserIdFromToken()
-                ? (ActionResult<IEnumerable<object>>) Unauthorized()
-                : Ok(await _repository.DoctorScheduleList(doctorId, localId, start, end));
+            if (IsDoctor() && doctorId != GetUserIdFromToken())
+            {
+                return Unauthorized();
+            }
+
+            if (start == null || start > end || start > DateTime.Now)
+            {
+                start = DateTime.Now.Date.AddDays(-7);
+            }
+            if (end == null || end > DateTime.Now)
+            {
+                end = DateTime.Now;
+            }
+
+            return Ok(await _repository.DoctorScheduleList(doctorId, localId, true, start, end));
+        }
+
+        // GET: api/Reservations/UpcomingByDoctorId?doctorId=1&localId=1&start=2020-05-10&end=2026-05-20
+        [Authorize(Roles = "doctor,admin")]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> UpcomingByDoctorId(decimal doctorId, decimal localId, DateTime? start, DateTime? end)
+        {
+            if (IsDoctor() && doctorId != GetUserIdFromToken())
+            {
+                return Unauthorized();
+            }
+
+            if (start == null || start > end || start < DateTime.Now)
+            {
+                start = DateTime.Now.Date;
+            }
+            if (end == null || end < DateTime.Now)
+            {
+                end = DateTime.Now.AddDays(7);
+            } 
+            
+            return Ok(await _repository.DoctorScheduleList(doctorId, localId, false, start, end));
         }
 
         // GET: api/Reservations/Upcoming?PatientId=1&Limit=5&Skip=2
@@ -201,7 +243,7 @@ namespace Lekarzowo.Controllers
                 || (!cityId.HasValue && specId.HasValue && doctorId.HasValue)
                 || (!cityId.HasValue && !specId.HasValue && !doctorId.HasValue))
             {
-                return BadRequest("Niepoprawne kryteria wyszukiwania");
+                return BadRequest(new JsonResult("Niepoprawne kryteria wyszukiwania"));
             }
 
             IEnumerable<Reservation> allReservations = _repository.AllByOptionalCriteria(cityId, specId, doctorId, startDate, endDate);

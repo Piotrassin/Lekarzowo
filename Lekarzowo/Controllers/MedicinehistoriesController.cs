@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -78,22 +79,19 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            if (!_repository.Exists(medicinehistory.IllnesshistoryId, medicinehistory.MedicineId))
+            if (!MedicinehistoryExists(medicinehistory))
             {
-                _repository.Update(medicinehistory);
+                return NotFound();
             }
 
             try
             {
-                 _repository.Save();
+                _repository.Update(medicinehistory);
+                _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
-                if (!MedicinehistoryExists(medicinehistory))
-                {
-                    return NotFound();
-                }
-                throw;
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
             return NoContent();
@@ -104,18 +102,18 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public ActionResult<Medicinehistory> PostMedicinehistory(Medicinehistory medicinehistory)
         {
-            _repository.Insert(medicinehistory);
             try
             {
+                _repository.Insert(medicinehistory);
                 _repository.Save();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException e)
             {
                 if (MedicinehistoryExists(medicinehistory))
                 {
                     return Conflict();
                 }
-                throw;
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
             return Created("", medicinehistory);
@@ -132,15 +130,22 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            _repository.Delete(medicinehistory);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(medicinehistory);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return medicinehistory;
         }
 
-        private bool MedicinehistoryExists(Medicinehistory medicinehistory)
+        private bool MedicinehistoryExists(Medicinehistory medHist)
         {
-            return _repository.Exists(medicinehistory.IllnesshistoryId, medicinehistory.MedicineId);
+            return _repository.Exists(medHist.IllnesshistoryId, medHist.MedicineId, medHist.Startdate);
         }
     }
 }

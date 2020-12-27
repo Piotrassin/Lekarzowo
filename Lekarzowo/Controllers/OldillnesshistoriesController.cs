@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.Models;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -29,12 +26,6 @@ namespace Lekarzowo.Controllers
             return Ok(await _repository.GetAll());
         }
 
-
-        /// <summary>
-        /// TODO: Parametry powinny być przekazywane wewnątrz ciała, a nie w URI? W jakiś sposób trzeba zapewnić ochronę przed podglądaniem nie swojej historii.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         // GET: api/Oldillnesshistories/5
         [HttpGet("{PatientId}/{IlnessId}")]
         public async Task<ActionResult<Oldillnesshistory>> GetOldillnesshistory(decimal PatientId, decimal IlnessId)
@@ -71,7 +62,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
             return NoContent();
@@ -86,19 +77,16 @@ namespace Lekarzowo.Controllers
             {
                 await _repository.Save();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException e)
             {
                 if (!await OldillnesshistoryExists(oldillnesshistory.IllnessId, oldillnesshistory.PatientId))
                 {
                     return Conflict();
                 }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
-            return CreatedAtAction("GetOldillnesshistory", new { id = oldillnesshistory.IllnessId }, oldillnesshistory);
+            return Created("", oldillnesshistory);
         }
 
         // DELETE: api/Oldillnesshistories/5
@@ -111,8 +99,15 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            _repository.Delete(oldillnesshistory);
-            await _repository.Save();
+            try
+            {
+                _repository.Delete(oldillnesshistory);
+                await _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return oldillnesshistory;
         }

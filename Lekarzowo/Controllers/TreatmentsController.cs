@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.Models;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -60,25 +57,19 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            if (_repository.GetByID(treatment.Id) != null)
-            {
-                _repository.Update(treatment);
-            }
-
             try
             {
+                _repository.Update(treatment);
                 _repository.Save();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
                 if (!TreatmentExists(id))
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
             return NoContent();
@@ -90,7 +81,7 @@ namespace Lekarzowo.Controllers
         {
             if (TreatmentExists(treatment.Id))
             {
-                return Conflict("That treatment already exists");
+                return Conflict(new JsonResult("That treatment already exists"));
             }
             _repository.Insert(treatment);
             _repository.Save();
@@ -108,8 +99,15 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            _repository.Delete(treatment);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(treatment);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return treatment;
         }

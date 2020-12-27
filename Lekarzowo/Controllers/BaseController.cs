@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Lekarzowo.Services;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Lekarzowo.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Lekarzowo.Controllers
 {

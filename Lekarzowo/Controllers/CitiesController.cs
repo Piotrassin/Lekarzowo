@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -61,7 +63,7 @@ namespace Lekarzowo.Controllers
             }
             if (_repository.Exists(city.Name))
             {
-                return Conflict("City with that name already exists");
+                return Conflict(new JsonResult("City with that name already exists"));
             }
 
             try
@@ -76,7 +78,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
         }
 
@@ -87,7 +89,7 @@ namespace Lekarzowo.Controllers
         {
             if(_repository.Exists(city.Name))
             {
-                return Conflict("City with that name already exists");
+                return Conflict(new JsonResult("City with that name already exists"));
             }
 
             try
@@ -97,7 +99,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
             return Created("", city);
@@ -114,8 +116,15 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            _repository.Delete(city);
-            _repository.Save();
+            try
+            {
+                _repository.Delete(city);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return city;
         }
