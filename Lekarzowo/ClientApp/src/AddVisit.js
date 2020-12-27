@@ -20,6 +20,7 @@ import {
 } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Snackbar from './helpers/Snackbar.js';
+import Validation from './helpers/Validation.js';
 
 
 const CssTextField = withStyles({
@@ -129,6 +130,10 @@ onHourChange(event) {
 
 }
 
+performValidation(){
+
+}
+
 async onSubmitBtnClick(event){
   console.log("DoctorId " + this.state.doctorId);
   console.log("SpecId " + this.state.specialityId);
@@ -147,14 +152,26 @@ async onSubmitBtnClick(event){
     startHour: this.state.startHour,
     endHour: this.state.endHour
   };
+  this.setState ({
+    errors: Validation.validateAddVisit(this.state.cityId, this.state.doctorId, this.state.specialityId,
+      this.state.startDate, this.state.endDate)
+  }, () => {
+    console.log(this.state.errors);
+    if(Object.keys(this.state.errors).length > 0){
+      var message = Validation.handleValidationOutcome(this.state.errors);
+      this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
 
-  await ReservationService.getPossibleAppointments(reservationRequestObject, 6).then(resp => {
-    this.setState({
-      reservationsArray: resp,
-      btnTouched: true,
-      skipCount: 6
-    });
-  })
+    }else {
+      ReservationService.getPossibleAppointments(reservationRequestObject, 6).then(resp => {
+        this.setState({
+          reservationsArray: resp,
+          btnTouched: true,
+          skipCount: 6
+        });
+      });
+    }
+  });
+
 
   console.log('Reservation Request object');
   console.log(reservationRequestObject);

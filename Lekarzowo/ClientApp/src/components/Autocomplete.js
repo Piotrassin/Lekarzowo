@@ -76,6 +76,8 @@ export default function Asynchronous(props) {
     console.log(value);
     if(value != null){
       props.changeCallback(value);
+    }else {
+      props.changeCallback("");
     }
   }
 

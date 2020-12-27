@@ -27,6 +27,15 @@ class Validation {
     return message;
   }
 
+  validateAddVisit(cityId, doctorId, specId, dateStart, dateEnd){
+    var errorObject = {};
+    this.addErrorToObject(errorObject, 'Miasto', this.validateBlankNumber(cityId));
+    //this.addErrorToObject(errorObject, 'Doktor', this.validateBlank(doctorId));
+    this.addErrorToObject(errorObject, 'Specjalizacja', this.validateBlankNumber(specId));
+
+
+    return errorObject;
+  }
 
   validateLogin(email, password){
     var errorObject = {};
@@ -34,7 +43,7 @@ class Validation {
     //this.addErrorToObject(errorObject, 'Email', this.validateEmail(email));
     this.addErrorToObject(errorObject, 'Hasło', this.validateBlank(password));
     //this.addErrorToObject(errorObject, 'Hasło', this.validatePassword(password));
-    
+
     return errorObject;
   }
 
@@ -96,7 +105,15 @@ class Validation {
   }
 
   validateBlank(input){
-    var validationResult = (input.trim() == '') || input.length === 0;
+    var validationResult = (input == undefined) || (input.trim() == '') || input.length === 0;
+    if(validationResult){
+      return " jest puste";
+    }
+    return validationResult;
+  }
+
+  validateBlankNumber(input){
+    var validationResult = (input == undefined) || (input < 0) || input.length === 0;
     if(validationResult){
       return " jest puste";
     }
