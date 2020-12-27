@@ -159,7 +159,7 @@ namespace Lekarzowo.Controllers
         // GET: api/Reservations/RecentByDoctorId?doctorId=1&localId=1&start=2020-05-10&end=2026-05-20
         [Authorize(Roles = "doctor,admin")]
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> RecentByDoctorId(decimal doctorId, decimal localId, DateTime? start, DateTime? end)
+        public async Task<ActionResult<IEnumerable<object>>> RecentByDoctorId(decimal doctorId, DateTime? start, DateTime? end, int? limit, int? skip)
         {
             if (IsDoctor() && doctorId != GetUserIdFromToken())
             {
@@ -175,13 +175,13 @@ namespace Lekarzowo.Controllers
                 end = DateTime.Now;
             }
 
-            return Ok(await _repository.DoctorScheduleList(doctorId, localId, true, start, end));
+            return Ok(await _repository.DoctorScheduleList(doctorId, true, start, end, limit, skip));
         }
 
         // GET: api/Reservations/UpcomingByDoctorId?doctorId=1&localId=1&start=2020-05-10&end=2026-05-20
         [Authorize(Roles = "doctor,admin")]
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> UpcomingByDoctorId(decimal doctorId, decimal localId, DateTime? start, DateTime? end)
+        public async Task<ActionResult<IEnumerable<object>>> UpcomingByDoctorId(decimal doctorId, DateTime? start, DateTime? end, int? limit, int? skip)
         {
             if (IsDoctor() && doctorId != GetUserIdFromToken())
             {
@@ -197,7 +197,7 @@ namespace Lekarzowo.Controllers
                 end = DateTime.Now.AddDays(7);
             } 
             
-            return Ok(await _repository.DoctorScheduleList(doctorId, localId, false, start, end));
+            return Ok(await _repository.DoctorScheduleList(doctorId, false, start, end, limit, skip));
         }
 
         // GET: api/Reservations/Upcoming?PatientId=1&Limit=5&Skip=2
@@ -211,9 +211,9 @@ namespace Lekarzowo.Controllers
                 {
                     return Unauthorized();
                 }
-                return Ok(await _repository.RecentOrUpcomingReservations(patientId, true, true, limit, skip));
+                return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, true, true, limit, skip));
             }
-            return Ok(await _repository.RecentOrUpcomingReservations(patientId, true, false, limit, skip));
+            return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, true, false, limit, skip));
         }
 
         // GET: api/Reservations/Recent?PatientId=1&Limit=5&Skip=2
@@ -227,9 +227,9 @@ namespace Lekarzowo.Controllers
                 {
                     return Unauthorized();
                 }
-                return Ok(await _repository.RecentOrUpcomingReservations(patientId, false, true, limit, skip));
+                return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, false, true, limit, skip));
             }
-            return Ok(await _repository.RecentOrUpcomingReservations(patientId, false, false, limit, skip));
+            return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, false, false, limit, skip));
         }
 
         // GET: api/reservations/possibleappointments?CityId=2&SpecId=1&DoctorId=1&startDate=2020-12-20&endDate=2020-12-30&startHour=09:00:00&endHour=10:30:00
