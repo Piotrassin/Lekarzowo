@@ -532,8 +532,8 @@ class VisitDetails extends React.Component {
             <RoleButton history= {this.props.history}/>
           </div>
           <div className = 'subheadline-container'>
-          <b className = "subheadline">{Formater.formatHour(this.state.startDate)} -
-          {Formater.formatHour(this.state.endDate)}</b>
+          <b className = "subheadline">{Formater.formatDate(this.state.startDate)}: </b>
+          <a className = "subheadline">{Formater.formatHour(this.state.startDate)} - {Formater.formatHour(this.state.endDate)}</a>
           </div>
           <div className = 'row-container row-container-small'>
           <div className = "active-treatments basic-container">
