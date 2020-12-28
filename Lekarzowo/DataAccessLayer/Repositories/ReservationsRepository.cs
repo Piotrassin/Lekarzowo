@@ -11,7 +11,9 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 {
     public class ReservationsRepository : BaseIdRepository<Reservation>, IReservationsRepository
     {
-        public ReservationsRepository(ModelContext context) : base(context) { }
+        public ReservationsRepository(ModelContext context) : base(context)
+        {
+        }
 
         public async Task<IEnumerable<Reservation>> GetAll(decimal patientId)
         {
@@ -42,7 +44,8 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return await _context.Reservation.Include(x => x.Visit).FirstOrDefaultAsync(x => x.Id == reservationId);
         }
 
-        public async Task<bool> IsAnyReservationScheduledThatDay(decimal localId, decimal doctorId, DateTime from, DateTime to)
+        public async Task<bool> IsAnyReservationScheduledThatDay(decimal localId, decimal doctorId, DateTime from,
+            DateTime to)
         {
             return await _context.Reservation
                 .Where(x => x.DoctorId == doctorId)
@@ -52,7 +55,8 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 .AnyAsync();
         }
 
-        public IEnumerable<Reservation> AllByOptionalCriteria(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end)
+        public IEnumerable<Reservation> AllByOptionalCriteria(decimal? CityId, decimal? SpecId, decimal? DoctorId,
+            DateTime? start, DateTime? end)
         {
             var query = _context.Reservation
                 .Include(x => x.Room).ThenInclude(x => x.Local)
@@ -83,40 +87,48 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return await _context.Reservation
                 .Where(x => x.Room.LocalId == localId)
                 .Where(x => x.Starttime.Date == start.Date)
-                .Where(x => (x.Endtime > start && x.Endtime <= end) 
-                || (x.Starttime >= start && x.Starttime < end) 
-                || (x.Starttime < start && x.Endtime > end))
+                .Where(x => (x.Endtime > start && x.Endtime <= end)
+                            || (x.Starttime >= start && x.Starttime < end)
+                            || (x.Starttime < start && x.Endtime > end))
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<object>> DoctorScheduleList(decimal doctorId, decimal localId, bool showRecent, DateTime? start, DateTime? end)
+        public async Task<IEnumerable<object>> DoctorScheduleList(decimal doctorId, bool showRecent, DateTime? start,
+            DateTime? end, int? limit, int? skip)
         {
             var query = _context.Reservation
-                .Where(d => d.DoctorId == doctorId && d.Room.LocalId == localId)
+                .Where(d => d.DoctorId == doctorId)
                 .Where(x => x.Starttime.Date >= start.Value.Date && x.Endtime.Date <= end.Value.Date);
 
             query = showRecent
-                ? query.Where(x => x.Visit != null && x.Canceled == false).OrderByDescending(x => x.Starttime)
-                : query.Where(x => x.Visit == null).OrderBy(x => x.Starttime);
-            
-            var anonymousQuery = query.Select(s => new
-                {
-                    reservationId = s.Id,
-                    startTime = s.Starttime,
-                    endTime = s.Endtime,
-                    isCanceled = s.Canceled,
-                    patientId = s.Patient.Id,
-                    patientName = s.Patient.IdNavigation.Name,
-                    patientLastname = s.Patient.IdNavigation.Lastname,
-                    localName = s.Room.Local.Name,
-                    roomNumber = s.Room.Number,
-                    visit = _context.Visit.FirstOrDefault(y => y.ReservationId == s.Id)
-                });
+                ? query.Where(x => x.Visit != null && x.Canceled == false)
+                : query.Where(x => x.Visit == null);
 
-            return await anonymousQuery.ToListAsync();
+            var anonymousQuery = query.Select(s => new
+            {
+                reservationId = s.Id,
+                reservationStartTime = s.Starttime,
+                reservationEndTime = s.Endtime,
+                isCanceled = s.Canceled,
+                localName = s.Room.Local.Name,
+                roomNumber = s.Room.Number,
+                patientId = s.Patient.Id,
+                patientName = s.Patient.IdNavigation.Name,
+                patientLastname = s.Patient.IdNavigation.Lastname,
+                visit = _context.Visit.FirstOrDefault(y => y.ReservationId == s.Id)
+            });
+
+            IOrderedQueryable<object> orderedQuery = showRecent
+                ? anonymousQuery.Where(x => x.reservationStartTime < DateTime.Now).OrderByDescending(x => x.reservationStartTime)
+                : anonymousQuery.Where(x => x.reservationStartTime >= DateTime.Now).OrderBy(x => x.reservationStartTime);
+
+            var trimmedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, orderedQuery);
+
+            return await trimmedQuery.ToListAsync();
         }
 
-        public async Task<IEnumerable<object>> RecentOrUpcomingReservations(decimal patientId, bool showUpcomingInstead, bool hideCanceledReservations, int? limit, int? skip)
+        public async Task<IEnumerable<object>> RecentOrUpcomingByPatientId(decimal patientId, bool showUpcomingInstead,
+            bool hideCanceledReservations, int? limit, int? skip)
         {
             var reservationTypeQuery = _context.Reservation
                 .Where(x => x.PatientId == patientId);
@@ -132,40 +144,45 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
             var anonymousTypeQuery = reservationTypeQuery.Select(x => new
             {
-                ReservationId = x.Id,
-                DoctorSpecialization = x.Doctor.Speciality.Name,
-                ReservationStartTime = x.Starttime,
-                ReservationEndTime = x.Endtime,
+                reservationId = x.Id,
+                reservationStartTime = x.Starttime,
+                reservationEndTime = x.Endtime,
                 isCanceled = x.Canceled,
-                DoctorName = x.Doctor.IdNavigation.Name,
-                DoctorLastname = x.Doctor.IdNavigation.Lastname,
-                Visit = _context.Visit.FirstOrDefault(y => y.ReservationId == x.Id)
+                localName = x.Room.Local.Name,
+                roomNumber = x.Room.Number,
+                doctorId = x.DoctorId,
+                doctorName = x.Doctor.IdNavigation.Name,
+                doctorLastname = x.Doctor.IdNavigation.Lastname,
+                doctorSpecialization = x.Doctor.Speciality.Name,
+                visit = _context.Visit.FirstOrDefault(y => y.ReservationId == x.Id)
             });
 
-            IOrderedQueryable<object> orderedQuery = showUpcomingInstead 
-                ? anonymousTypeQuery.Where(x => x.ReservationStartTime >= DateTime.Now).OrderBy(x => x.ReservationStartTime) 
-                : anonymousTypeQuery.Where(x => x.ReservationStartTime < DateTime.Now).OrderByDescending(x => x.ReservationStartTime);
+            IOrderedQueryable<object> orderedQuery = showUpcomingInstead
+                ? anonymousTypeQuery.Where(x => x.reservationStartTime >= DateTime.Now).OrderBy(x => x.reservationStartTime)
+                : anonymousTypeQuery.Where(x => x.reservationStartTime < DateTime.Now).OrderByDescending(x => x.reservationStartTime);
 
             var trimmedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, orderedQuery);
-            
+
             return await trimmedQuery.ToListAsync();
         }
 
-        public async Task<IEnumerable<Reservation>> OverlappingReservations(decimal localId, decimal doctorId, DateTime start, DateTime end)
+        public async Task<IEnumerable<Reservation>> OverlappingReservations(decimal localId, decimal doctorId,
+            DateTime start, DateTime end)
         {
             var query = _context.Reservation
                 .Where(x => x.Room.LocalId == localId)
                 .Where(x => x.DoctorId == doctorId)
                 .Where(x => x.Starttime.Date == start.Date)
-                .Where(x => start <= x.Starttime && end > x.Starttime || 
-                            start >= x.Starttime && end <= x.Endtime || 
+                .Where(x => start <= x.Starttime && end > x.Starttime ||
+                            start >= x.Starttime && end <= x.Endtime ||
                             start <= x.Starttime && end >= x.Endtime ||
                             start < x.Endtime && end >= x.Endtime);
 
             return await query.ToListAsync();
         }
 
-        public async Task<bool> IsReservationOverlappingWithAnother(decimal localId, decimal doctorId, DateTime start, DateTime end)
+        public async Task<bool> IsReservationOverlappingWithAnother(decimal localId, decimal doctorId, DateTime start,
+            DateTime end)
         {
             var query = _context.Reservation
                 .Where(x => x.Room.LocalId == localId)
@@ -173,16 +190,16 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 .Where(x => x.Starttime.Date == start.Date)
                 .AllAsync(x => (x.Starttime < start && x.Endtime <= start) || (x.Starttime >= end));
 
-            return ! await query;
+            return !await query;
         }
 
         public async Task<bool> Exists(Reservation res)
         {
             return await _context.Reservation.AnyAsync(
                 x => x.Room.LocalId == res.Room.LocalId
-                && x.Starttime == res.Starttime
-                && x.Endtime == res.Endtime
-                && x.DoctorId == res.DoctorId);
+                     && x.Starttime == res.Starttime
+                     && x.Endtime == res.Endtime
+                     && x.DoctorId == res.DoctorId);
         }
 
         public async Task<bool> IsOwnedByPatient(decimal patientId, decimal reservationId)

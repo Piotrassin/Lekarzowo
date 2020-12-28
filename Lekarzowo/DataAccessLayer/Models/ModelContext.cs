@@ -35,19 +35,18 @@ namespace Lekarzowo.DataAccessLayer.Models
         public virtual DbSet<Visit> Visit { get; set; }
         public virtual DbSet<Workinghours> Workinghours { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseOracle("Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=db-oracle)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=BAZA.PJWSTK.EDU.PL)));Persist Security Info=True;User Id=S17437;Password=oracle12;");
-            }
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    if (!optionsBuilder.IsConfigured)
+        //    {
+        //    }
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
-                .HasAnnotation("Relational:DefaultSchema", "S17437");
+                .HasAnnotation("Relational:DefaultSchema", "S17437")
+                ;
 
             modelBuilder.Entity<City>(entity =>
             {
@@ -765,33 +764,33 @@ namespace Lekarzowo.DataAccessLayer.Models
                     .HasConstraintName("WORKINGHOURS_LOCAL");
             });
 
-            modelBuilder.HasSequence("ISEQ$$_1132754");
+            //modelBuilder.HasSequence("ISEQ$$_1132754");
 
-            modelBuilder.HasSequence("ISEQ$$_1132759");
+            //modelBuilder.HasSequence("ISEQ$$_1132759");
 
-            modelBuilder.HasSequence("ISEQ$$_1132762");
+            //modelBuilder.HasSequence("ISEQ$$_1132762");
 
-            modelBuilder.HasSequence("ISEQ$$_1132765");
+            //modelBuilder.HasSequence("ISEQ$$_1132765");
 
-            modelBuilder.HasSequence("ISEQ$$_1132768");
+            //modelBuilder.HasSequence("ISEQ$$_1132768");
 
-            modelBuilder.HasSequence("ISEQ$$_1132779");
+            //modelBuilder.HasSequence("ISEQ$$_1132779");
 
-            modelBuilder.HasSequence("ISEQ$$_1132782");
+            //modelBuilder.HasSequence("ISEQ$$_1132782");
 
-            modelBuilder.HasSequence("ISEQ$$_1132785");
+            //modelBuilder.HasSequence("ISEQ$$_1132785");
 
-            modelBuilder.HasSequence("ISEQ$$_1132788");
+            //modelBuilder.HasSequence("ISEQ$$_1132788");
 
-            modelBuilder.HasSequence("ISEQ$$_1132791");
+            //modelBuilder.HasSequence("ISEQ$$_1132791");
 
-            modelBuilder.HasSequence("ISEQ$$_1132794");
+            //modelBuilder.HasSequence("ISEQ$$_1132794");
 
-            modelBuilder.HasSequence("ISEQ$$_1132797");
+            //modelBuilder.HasSequence("ISEQ$$_1132797");
 
-            modelBuilder.HasSequence("ISEQ$$_1132802");
+            //modelBuilder.HasSequence("ISEQ$$_1132802");
 
-            modelBuilder.HasSequence("ISEQ$$_1263944");
+            //modelBuilder.HasSequence("ISEQ$$_1263944");
         }
     }
 }
