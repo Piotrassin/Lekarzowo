@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
-using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -83,27 +82,34 @@ namespace Lekarzowo.Controllers
             {
                 return BadRequest();
             }
+            if (!_repository.Exists(doctor.Id))
+            {
+                return NotFound();
+            }
+
             try
             {
-                if (_repository.Exists(doctor.Id))
-                {
-                    _repository.Update(doctor); 
-                    _repository.Save();
-                    return Ok();
-                }
-                return NotFound();
+                _repository.Update(doctor); 
+                _repository.Save();
             }
             catch (DbUpdateConcurrencyException e)
             {
                 return StatusCode(500, new JsonResult(e.Message));
             }
+            return NoContent();
+
         }
 
         // POST: api/Doctors
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public ActionResult<Doctor> PostDoctor(Doctor doctor)
+        public ActionResult PostDoctor(Doctor doctor)
         {
+            if (_repository.Exists(doctor.Id))
+            {
+                return Conflict();
+            }
+
             try
             {
                 _repository.Insert(doctor);
@@ -116,6 +122,7 @@ namespace Lekarzowo.Controllers
             return Created("", doctor);
         }
 
+        //TODO przetestować
         // POST: api/Patients/PostPersonAsDoctor
         [Authorize(Roles = "admin")]
         [HttpPost("[action]")]
@@ -132,8 +139,12 @@ namespace Lekarzowo.Controllers
                 addedUser = _peopleRepository.GetByEmail(person.Email);
                 Doctor doctor = new Doctor() { Id = addedUser.Id, SpecialityId = person.SpecialityId };
 
-                _repository.Insert(doctor);
-                _repository.Save();
+                if (!(PostDoctor(doctor) is CreatedResult resultDoctor))
+                {
+                    return BadRequest();
+                }
+                //_repository.Insert(doctor);
+                //_repository.Save();
 
                 transaction.Complete();
             }

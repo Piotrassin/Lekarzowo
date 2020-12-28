@@ -56,12 +56,13 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             var query = _context.Illnesshistory.Where(x => x.VisitId == visitId)
                 .Select(x => new
                 {
-                    IllnessHistoryId = x.Id,
-                    IllnessName = x.Illness.Name,
-                    DiagnoseDate = x.Visit.Reservation.Starttime,
-                    CureDate = x.Curedate
+                    illnessHistoryId = x.Id,
+                    illnessName = x.Illness.Name,
+                    diagnoseDate = x.Visit.Reservation.Starttime,
+                    cureDate = x.Curedate,
+                    description = x.Description
                 })
-                .OrderBy(x => x.IllnessName);
+                .OrderBy(x => x.illnessName);
 
             var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
 

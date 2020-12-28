@@ -2,14 +2,13 @@
 using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -109,27 +108,29 @@ namespace Lekarzowo.Controllers
             if (IsPatient() && input.PatientId != GetUserIdFromToken()) return Unauthorized();
 
             var room = await FindAvailableRoom(input);
-            if (room == null) return BadRequest(new JsonResult("Brak dostępnych pokoi w lokalu."));
+            if (room == null) return BadRequest(new JsonResult("No rooms available in that local."));
+
+            var reservationToInsert = new Reservation
+            {
+                DoctorId = input.DoctorId,
+                PatientId = input.PatientId,
+                Starttime = input.Starttime,
+                Endtime = input.Endtime,
+                Canceled = input.Canceled,
+                RoomId = room.Id
+            };
 
             try
             {
-                var reservationToInsert = new Reservation
-                {
-                    DoctorId = input.DoctorId,
-                    PatientId = input.PatientId,
-                    Starttime = input.Starttime,
-                    Endtime = input.Endtime,
-                    Canceled = input.Canceled,
-                    RoomId = room.Id
-                };
                 _repository.Insert(reservationToInsert);
                 _repository.Save();
-                return Created("", reservationToInsert);
             }
             catch (DbUpdateConcurrencyException e)
             {
                 return StatusCode(500, new JsonResult(e.Message));
             }
+
+            return Created("", reservationToInsert);
         }
 
         // DELETE: api/Reservations/5

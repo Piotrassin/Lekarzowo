@@ -1,13 +1,12 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -17,12 +16,14 @@ namespace Lekarzowo.Controllers
     {
         private readonly IIllnessesHistoryRepository _repository;
         private readonly IVisitsRepository _visitsRepository;
+        private readonly IIllnessesRepository _illnessesRepository;
 
 
-        public IllnesseshistoryController(IIllnessesHistoryRepository context, IVisitsRepository visitsRepository)
+        public IllnesseshistoryController(IIllnessesHistoryRepository context, IVisitsRepository visitsRepository, IIllnessesRepository illnessesRepository)
         {
             _repository = context;
             _visitsRepository = visitsRepository;
+            _illnessesRepository = illnessesRepository;
         }
 
         // GET: api/Illnesseshistory
@@ -143,10 +144,17 @@ namespace Lekarzowo.Controllers
         public async Task<ActionResult<Illnesshistory>> PostIllnesshistory(Illnesshistory illnesshistory)
         {
             var visit = _visitsRepository.GetByID(illnesshistory.VisitId);
-            if (visit == null) return BadRequest("Wizyta nie istnieje.");
+            if (visit == null)
+            {
+                return BadRequest("Visit doesn't exist.");
+            }
 
-            var illnessesOnVisit = await _repository.GetByVisitId(visit.ReservationId);
-            if (illnessesOnVisit.Contains(illnesshistory))
+            if (_illnessesRepository.GetByID(illnesshistory.IllnessId) == null)
+            {
+                return BadRequest("Illness doesn't exist.");
+            }
+
+            if ((await _repository.GetByVisitId(visit.ReservationId)).Contains(illnesshistory))
             {
                 return Conflict(new JsonResult("That illness history already exists"));
             }

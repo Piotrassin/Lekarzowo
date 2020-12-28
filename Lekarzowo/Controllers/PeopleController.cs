@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -173,9 +172,12 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            if (_repository.Exists(id))
+            if (!_repository.Exists(id))
             {
-                var userToEdit = _repository.GetByID(id);
+                return NotFound();
+            }
+
+            var userToEdit = _repository.GetByID(id);
                 userToEdit.Name = edited.Name;
                 userToEdit.Lastname = edited.Lastname;
                 userToEdit.Pesel = edited.Pesel;
@@ -183,19 +185,17 @@ namespace Lekarzowo.Controllers
                 userToEdit.Birthdate = edited.Birthdate;
                 userToEdit.Gender = edited.Gender;
 
-                try
-                {
-                    _repository.Update(userToEdit);
-                    _repository.Save();
-                    return Ok();
-                }
-                catch (DbUpdateConcurrencyException e)
-                {
-                    return StatusCode(500, new JsonResult(e.Message));
-                }
+            try
+            {
+                _repository.Update(userToEdit);
+                _repository.Save();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
             }
 
-            return BadRequest();
+            return Ok();
         }
 
         //TODO: usuwanie osoby powinno kaskadowo usuwać wszystko z nią związane

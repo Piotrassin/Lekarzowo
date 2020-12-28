@@ -1,10 +1,10 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -20,6 +20,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Specialities
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Speciality>>> GetSpeciality()
         {
@@ -27,6 +28,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Specialities/AllByName?Name=abc&limit=0&skip=0
+        [Authorize(Roles = "patient,doctor,admin")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<Speciality>>> AllByName(string name, int? limit, int? skip)
         {
@@ -34,6 +36,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Specialities/5
+        [Authorize(Roles = "admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Speciality>> GetSpeciality(decimal id)
         {
@@ -48,12 +51,21 @@ namespace Lekarzowo.Controllers
         }
 
         // PUT: api/Specialities/5
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSpeciality(decimal id, Speciality speciality)
         {
             if (id != speciality.Id)
             {
                 return BadRequest();
+            }
+            if (!SpecialityExists(id))
+            {
+                return NotFound();
+            }
+            if (_repository.Exists(speciality.Name))
+            {
+                return Conflict(new JsonResult("Specialization with that name already exists"));
             }
 
             try
@@ -63,11 +75,6 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                if (!SpecialityExists(id))
-                {
-                    return NotFound();
-                }
-
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
@@ -75,20 +82,30 @@ namespace Lekarzowo.Controllers
         }
 
         // POST: api/Specialities
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<ActionResult<Speciality>> PostSpeciality(Speciality speciality)
         {
             if (SpecialityExists(speciality.Id))
             {
-                return Conflict(new JsonResult("That speciality already exists"));
+                return Conflict(new JsonResult("That specialization already exists"));
             }
-            _repository.Insert(speciality);
-            _repository.Save();
+
+            try
+            {
+                _repository.Insert(speciality);
+                _repository.Save();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return Created("", speciality);
         }
 
         // DELETE: api/Specialities/5
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Speciality>> DeleteSpeciality(decimal id)
         {

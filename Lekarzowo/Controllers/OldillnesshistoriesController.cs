@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Oracle.ManagedDataAccess.Client;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lekarzowo.Controllers
 {
@@ -20,6 +20,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Oldillnesshistories
+        [Authorize(Roles = "patient,doctor,admin")]
         [HttpGet("{PatientId}")]
         public async Task<ActionResult<IEnumerable<Oldillnesshistory>>> GetOldillnesshistory()
         {
@@ -27,6 +28,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Oldillnesshistories/5
+        [Authorize(Roles = "patient,doctor,admin")]
         [HttpGet("{PatientId}/{IlnessId}")]
         public async Task<ActionResult<Oldillnesshistory>> GetOldillnesshistory(decimal PatientId, decimal IlnessId)
         {
@@ -41,6 +43,7 @@ namespace Lekarzowo.Controllers
         }
 
         // PUT: api/Oldillnesshistories/5
+        [Authorize(Roles = "doctor,admin")]
         [HttpPut("{PatientId}/{IlnessId}")]
         public async Task<IActionResult> PutOldillnesshistory(decimal PatientId, decimal IllnessId, Oldillnesshistory oldillnesshistory)
         {
@@ -69,20 +72,22 @@ namespace Lekarzowo.Controllers
         }
 
         // POST: api/Oldillnesshistories
+        [Authorize(Roles = "doctor,admin")]
         [HttpPost]
         public async Task<ActionResult<Oldillnesshistory>> PostOldillnesshistory(Oldillnesshistory oldillnesshistory)
         {
-            await _repository.Insert(oldillnesshistory);
+            if (await OldillnesshistoryExists(oldillnesshistory.IllnessId, oldillnesshistory.PatientId))
+            {
+                return Conflict(new JsonResult("Old illness history with that name already exists"));
+            }
+
             try
             {
+                await _repository.Insert(oldillnesshistory);
                 await _repository.Save();
             }
             catch (DbUpdateException e)
             {
-                if (!await OldillnesshistoryExists(oldillnesshistory.IllnessId, oldillnesshistory.PatientId))
-                {
-                    return Conflict();
-                }
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
@@ -90,6 +95,7 @@ namespace Lekarzowo.Controllers
         }
 
         // DELETE: api/Oldillnesshistories/5
+        [Authorize(Roles = "doctor,admin")]
         [HttpDelete("{PatientId}/{IlnessId}")]
         public async Task<ActionResult<Oldillnesshistory>> DeleteOldillnesshistory(decimal PatientId, decimal IlnessId)
         {

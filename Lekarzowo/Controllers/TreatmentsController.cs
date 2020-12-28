@@ -1,13 +1,14 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
+    [Authorize(Roles = "patient,doctor,admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class TreatmentsController : ControllerBase
@@ -49,12 +50,17 @@ namespace Lekarzowo.Controllers
         }
 
         // PUT: api/Treatments/5
+        [Authorize(Roles = "doctor,admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTreatment(decimal id, Treatment treatment)
         {
             if (id != treatment.Id)
             {
                 return BadRequest();
+            }
+            if (!TreatmentExists(id))
+            {
+                return NotFound();
             }
 
             try
@@ -64,11 +70,6 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                if (!TreatmentExists(id))
-                {
-                    return NotFound();
-                }
-
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
@@ -76,6 +77,7 @@ namespace Lekarzowo.Controllers
         }
 
         // POST: api/Treatments
+        [Authorize(Roles = "doctor,admin")]
         [HttpPost]
         public async Task<ActionResult<Treatment>> PostTreatment(Treatment treatment)
         {
@@ -83,13 +85,23 @@ namespace Lekarzowo.Controllers
             {
                 return Conflict(new JsonResult("That treatment already exists"));
             }
-            _repository.Insert(treatment);
-            _repository.Save();
+
+            try
+            {
+                _repository.Insert(treatment);
+                _repository.Save();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
+
 
             return Created("", treatment);
         }
 
         // DELETE: api/Treatments/5
+        [Authorize(Roles = "doctor,admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Treatment>> DeleteTreatment(decimal id)
         {

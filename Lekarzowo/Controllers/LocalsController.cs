@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -65,16 +64,22 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
+            if (_repository.Exists(local.Name))
+            {
+                return Conflict(new JsonResult("Local with that name already exists"));
+            }
+
             try
             {
                 _repository.Update(local);
                 _repository.Save(); 
-                return NoContent();
             }
             catch (DbUpdateConcurrencyException e)
             {
                 return StatusCode(500, new JsonResult(e.Message));
             }
+
+            return NoContent();
         }
 
         // POST: api/Locals
@@ -96,6 +101,7 @@ namespace Lekarzowo.Controllers
             {
                 return StatusCode(500, new JsonResult(e.Message));
             }
+
             return Created("", local);
         }
 
@@ -115,7 +121,7 @@ namespace Lekarzowo.Controllers
                 _repository.Delete(city);
                 _repository.Save();
             }
-            catch (OracleException e)
+            catch (DbUpdateException e)
             {
                 return StatusCode(500, new JsonResult(e.Message));
             }

@@ -1,15 +1,16 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
+    [Authorize(Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserrolesController : ControllerBase
@@ -104,6 +105,10 @@ namespace Lekarzowo.Controllers
             {
                 userroles.Dateofissue = DateTime.Now;
             }
+            if (UserrolesExists(userroles.PersonId, userroles.RoleId))
+            {
+                return Conflict(new JsonResult("User already has that role"));
+            }
 
             try
             {
@@ -112,11 +117,6 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                if (UserrolesExists(userroles.PersonId, userroles.RoleId))
-                {
-                    return Conflict();
-                }
-
                 return StatusCode(500, new JsonResult(e.Message));
             }
 

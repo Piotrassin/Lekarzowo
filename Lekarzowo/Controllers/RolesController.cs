@@ -1,16 +1,14 @@
-﻿using System;
-using Lekarzowo.DataAccessLayer.Models;
+﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
 using System.Threading.Tasks;
-using Oracle.ManagedDataAccess.Client;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lekarzowo.Controllers
 {
+    [Authorize(Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class RolesController : ControllerBase
@@ -23,6 +21,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Roles
+        [AllowAnonymous]    //TODO do usunięcia po zakończeniu testowania programu
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Role>>> GetRole()
         {
@@ -60,22 +59,24 @@ namespace Lekarzowo.Controllers
                 return BadRequest();
             }
 
-            if (RoleExists(id))
+            if (!RoleExists(id))
             {
-                var storedRole = _repository.GetByID(role.Id);
-                storedRole.Name = role.Name;
-                _repository.Update(storedRole);
-
-                try
-                {
-                    _repository.Save();
-                    return Ok();
-                }
-                catch (DbUpdateConcurrencyException e)
-                {
-                    return StatusCode(500, new JsonResult(e.Message));
-                }
+                return NotFound();
             }
+
+            var storedRole = _repository.GetByID(role.Id);
+            storedRole.Name = role.Name;
+
+            try
+            {
+                _repository.Update(storedRole);
+                _repository.Save();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
+
             return NotFound();
         }
 
@@ -86,10 +87,18 @@ namespace Lekarzowo.Controllers
             var storedRole = await _repository.GetSingleByName(role.Name);
             if (storedRole != null)
             {
-                return Conflict(new JsonResult("Rola o tej nazwie już istnieje."));
+                return Conflict(new JsonResult("Role with that name already exist"));
             }
-            _repository.Insert(role);
-            _repository.Save();
+
+            try
+            {
+                _repository.Insert(role);
+                _repository.Save();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return Created("", role);
         }

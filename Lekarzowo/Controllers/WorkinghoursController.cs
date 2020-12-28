@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -90,10 +89,10 @@ namespace Lekarzowo.Controllers
             if (IsDoctorAccessingElsesData(workhours.DoctorId)) return Unauthorized();
             if (await _reservationsRepository.IsAnyReservationScheduledThatDay(workhours.LocalId, workhours.DoctorId, workhours.From, workhours.To))
             {
-                return BadRequest(new JsonResult("W ciągu tych godzin pracy stworzono już rezerwację."));
+                return BadRequest(new JsonResult("During these work hours, there's already an appointment reserved"));
             }
-
             if (!WorkinghoursExists(id)) return NotFound();
+
             try
             {
                 _repository.Update(workhours);

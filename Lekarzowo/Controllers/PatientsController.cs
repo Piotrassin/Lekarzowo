@@ -1,14 +1,13 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using Lekarzowo.DataAccessLayer.DTO;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Lekarzowo.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Transactions;
-using Lekarzowo.DataAccessLayer.DTO;
-using Lekarzowo.Repositories;
-using Microsoft.AspNetCore.Authorization;
-using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -74,18 +73,27 @@ namespace Lekarzowo.Controllers
         // POST: api/Patients
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public async Task<ActionResult<Patient>> PostPatient(Patient patient)
+        public async Task<ActionResult> PostPatient(Patient patient)
         {
             if (PatientExists(patient.Id))
             {
-                return Conflict(new JsonResult("That patient already exists"));
+                return Conflict(new JsonResult("This person already is a patient"));
             }
-            _repository.Insert(patient);
-            _repository.Save();
+
+            try
+            {
+                _repository.Insert(patient);
+                _repository.Save();
+            }
+            catch (DbUpdateException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return Created("", patient);
         }
 
+        //TODO przetestować
         // POST: api/Patients/PostPersonAsPatient
         [AllowAnonymous]
         [HttpPost("[action]")]
@@ -101,8 +109,13 @@ namespace Lekarzowo.Controllers
                 Person user = _peopleRepository.GetByEmail(person.Email);
                 Patient newPatient = new Patient() { Id = user.Id, IdNavigation = user };
 
-                _repository.Insert(newPatient);
-                _repository.Save();
+
+                if (!(await PostPatient(newPatient) is CreatedResult resultDoctor))
+                {
+                    return BadRequest();
+                }
+                //_repository.Insert(newPatient);
+                //_repository.Save();
 
                 transaction.Complete();
 

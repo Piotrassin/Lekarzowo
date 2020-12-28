@@ -1,5 +1,4 @@
-﻿using System;
-using Lekarzowo.DataAccessLayer.Models;
+﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -61,25 +59,27 @@ namespace Lekarzowo.Controllers
             {
                 return BadRequest();
             }
+            if (!_repository.Exists(city.Id))
+            {
+                return NotFound();
+            }
             if (_repository.Exists(city.Name))
             {
+                //return Conflict();
                 return Conflict(new JsonResult("City with that name already exists"));
             }
 
             try
             {
-                if (_repository.Exists(city.Id))
-                {
-                    _repository.Update(city);
-                    _repository.Save();
-                    return Ok();
-                }
-                return NotFound();
+                _repository.Update(city);
+                _repository.Save();
             }
             catch (DbUpdateConcurrencyException e)
             {
                 return StatusCode(500, new JsonResult(e.Message));
             }
+
+            return NoContent();
         }
 
         // POST: api/Cities
