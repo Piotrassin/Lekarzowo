@@ -61,7 +61,10 @@ class UserService {
   getUserData(){
     return fetch(url + 'people/single', {
       headers: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      console.log(response.headers.entries());
+      return response.json();
+    });
   }
 
   getUserSicknessHistory(id) {

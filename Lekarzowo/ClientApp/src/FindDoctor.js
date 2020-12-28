@@ -151,8 +151,7 @@ class FindDoctor extends React.Component {
                 {local.workinghours.map((workinghours, index) =>
                 <div className = 'profile-data-slot' style = {{width: '60%', color: 'black'}}>
                   <a className = 'profile-data-slot-header' style = {{color: 'black'}}>{this.getDayofWeek(workinghours.from)} ({Formater.formatDate(workinghours.from)})
-                  </a><a>{workinghours.from.split('T')[1]} -
-                  {workinghours.to.split('T')[1]}</a>
+                  </a><a>{Formater.formatHour(workinghours.from)} - {Formater.formatHour(workinghours.to)}</a>
                 </div>
                 )}
 
