@@ -53,7 +53,7 @@ class Visits extends React.Component {
     if(currentRole == 'doctor'){
       var daysBefore = new Date(new Date());
       daysBefore.setDate(daysBefore.getDate() - 7);
-      return await VisitService.getDoctorVisit(1, daysBefore , new Date())
+      return await ReservationService.getRecentDoctorReservations(daysBefore , new Date())
       .then(response => {
         this.setState({
           recentVisits: response

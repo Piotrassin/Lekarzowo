@@ -116,6 +116,7 @@ class VisitDetails extends React.Component {
     this.handleChangeSicknessDescription = this.handleChangeSicknessDescription.bind(this);
     this.handleChangeTreatmentDescription = this.handleChangeTreatmentDescription.bind(this);
     this.handleChangeDescription = this.handleChangeDescription.bind(this);
+    this.patientHistoryLoadMore = this.patientHistoryLoadMore.bind(this);
     this.openSnackbarOnRemove = this.openSnackbarOnRemove.bind(this);
   }
   snackbarRef = React.createRef();
@@ -130,6 +131,13 @@ class VisitDetails extends React.Component {
     this.getMedicineOnVisit();
     console.log('Array illness history');
     console.log(this.state.sicknessHistory);
+  }
+
+  patientHistoryLoadMore(event){
+    if(this.state.patientId != ""){
+        this.props.history.push("/patientHistoryMore/" + this.state.patientId + '?visit=' + this.state.id);
+    }
+
   }
 
   getReservation(){
@@ -488,7 +496,7 @@ class VisitDetails extends React.Component {
   handleClickAddSicknessDialogBtn(event){
     var sicknessVisitObject = {
       id : this.state.clicked.sickness.id,
-      description: this.state.descriptionSickness,
+      description: this.state.clicked.descriptionSickness,
       visitId: this.state.id,
       patientId: this.state.patientId
     }
@@ -656,6 +664,9 @@ class VisitDetails extends React.Component {
               id = {illness.illnessHistoryId}
               />
             ))}
+          </div>
+          <div className = 'flex-row' style = {{marginTop: '10px', alignContent: 'flex-end'}}>
+            <button className = 'btn-dialog-primary' onClick = {this.patientHistoryLoadMore}>Rozwiń</button>
           </div>
         </div>
         :

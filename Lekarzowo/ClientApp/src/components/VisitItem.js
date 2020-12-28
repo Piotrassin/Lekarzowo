@@ -1,4 +1,5 @@
 import React from 'react';
+import Formater from '../helpers/Formater.js';
 
 
 class VisitItem extends React.Component {
@@ -21,11 +22,11 @@ render() {
   return(
     <div className = {this.props.visit.isCanceled ? 'sickness-item sickness-item-canceled' : 'sickness-item'} style = {{height: '70px'}}>
       <div className = 'sickness-item-part part-1'>
-        <a>{this.props.visit.reservationStartTime.split('T')[0]}</a>
+        <a>{Formater.formatDate(this.props.visit.reservationStartTime)}</a>
       </div>
       <div className = 'sickness-item-part part-2'>
-        <a>{this.props.visit.reservationStartTime.split('T')[1]} -
-        {this.props.visit.reservationEndTime.split('T')[1]}</a>
+        <a>{Formater.formatHour(this.props.visit.reservationStartTime)} -
+        {Formater.formatHour(this.props.visit.reservationEndTime)}</a>
       </div>
       <div className = 'sickness-item-part part-3'>
         <a>{this.props.role == 'doctor' ? this.props.visit.localName : this.props.visit.doctorSpecialization}</a>

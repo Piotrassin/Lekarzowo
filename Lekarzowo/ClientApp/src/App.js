@@ -11,6 +11,7 @@ import Profile from './Profile';
 import FindDoctor from './FindDoctor';
 import AdminPanel from './AdminPanel';
 import DashboardDoctor from './doctorView/DashboardDoctor.js';
+import PatientHistory from './PatientHistory.js';
 import  { AuthorizedRoute } from './AuthorizedRoute.js';
 
 
@@ -40,6 +41,7 @@ class App extends React.Component {
         <AuthorizedRoute exact path="/myProfile" component={Profile} roles={['patient', 'doctor', 'admin']}/>
         <AuthorizedRoute exact path="/findDoctor" component={FindDoctor} roles={['patient', 'doctor', 'admin']}/>
         <AuthorizedRoute path="/dashboardDoctor" component={DashboardDoctor} roles={'doctor'} />
+        <AuthorizedRoute path="/patientHistoryMore" component={PatientHistory} roles={'doctor'} />
         <AuthorizedRoute path="/adminPanel" component={AdminPanel} roles={'admin'} />
         <AuthorizedRoute path="/visit" roles={['patient', 'doctor']} component = {VisitDetails}/>
         </div>

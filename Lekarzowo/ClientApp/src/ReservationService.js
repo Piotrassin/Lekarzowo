@@ -106,14 +106,6 @@ class ReservationService {
     }).then(response => response.json());
   }
 
-  getTakenMedicinePatient(patientId, limit) {
-
-    return fetch(url + 'Medicinehistories/TakenMedicines?patientId=' + patientId
-    + '&limit=' + limit, {
-      headers: authHeader()
-    }).then(response => response.json());
-  }
-
   getReservation(reservationId){
     return fetch(url + 'Reservations/WithPatientData/' + reservationId, {
       headers: authHeader()
@@ -154,7 +146,7 @@ class ReservationService {
   }
 
   getPastIllnessesPatient(patientId, limit){
-
+    
     return fetch(url + 'Illnesseshistory/PatientHistory?patientId=' + patientId
     + '&limit=' + limit, {
       headers: authHeader()
