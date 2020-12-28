@@ -41,8 +41,9 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
         public async Task<IEnumerable<object>> TakenMedicines(decimal patientId, int? limit, int? skip)
         {
-            var query = _context.Medicinehistory.Where(x => x.Illnesshistory.Visit.Reservation.PatientId == patientId)
-                .Where(x => x.Finishdate == null)
+            var query = _context.Medicinehistory
+                .Where(x => x.Illnesshistory.Visit.Reservation.PatientId == patientId)
+                .Where(x => x.Finishdate == null || x.Finishdate >= DateTime.Now.Date)
                 .Select(x => new
                 {
                     MedicineName = x.Medicine.Name,
