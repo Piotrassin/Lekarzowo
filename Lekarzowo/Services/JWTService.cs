@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Lekarzowo.Services
 {
@@ -15,28 +16,28 @@ namespace Lekarzowo.Services
     {
         private readonly SecretSettings _settings;
         private readonly IStandardUserRolesRepository _standardUserRoles;
+        private readonly ICustomUserRolesService _customUserRolesService;
 
-        public JWTService(IOptions<SecretSettings> secretSettings, IStandardUserRolesRepository roles)
+
+        public JWTService(IOptions<SecretSettings> secretSettings, IStandardUserRolesRepository roles, ICustomUserRolesService urolesService)
         {
             _settings = secretSettings.Value;
             _standardUserRoles = roles;
+            _customUserRolesService = urolesService;
         }
 
-
-
-        public string GenerateAccessToken(Person person, string activeRole)
+        public async Task<string> GenerateAccessToken(Person person, string activeRole)
         {
             //TODO: Docelowo sekret do tworzenia podpisu powinien być pobierany z appsettings.json
-            //var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.Secret));
-
-            //Dev
-            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("super sekretny sekret, którego nikt nie może nigdy poznać, bo przypał"));
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.Secret));
 
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
+            var storedUserRoles = await _customUserRolesService.GatherAllUserRoles(person.Id);
 
             var claims = new List<Claim>();
             claims.Add(new Claim("UserId", person.Id.ToString()));
             claims.Add(new Claim(ClaimTypes.Role, activeRole));
+            storedUserRoles.ForEach(role => claims.Add(new Claim("User roles", role)));
 
             var token = new JwtSecurityToken(
                 claims: claims,

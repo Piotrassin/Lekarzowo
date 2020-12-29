@@ -17,10 +17,10 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             var query = _context.Treatmentonvisit.Where(x => x.VisitId == visitId)
                 .Select(x => new
                 {
-                    Id = x.Id, 
-                    TreatmentName = x.Treatment.Name,
-                    TreatmentDescription = x.Description
-                }).OrderBy(x => x.TreatmentName);
+                    id = x.Id, 
+                    name = x.Treatment.Name,
+                    description = x.Description
+                }).OrderBy(x => x.name);
 
             var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
 

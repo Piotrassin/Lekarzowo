@@ -32,10 +32,8 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         /// Returns shortened versions of objects of most recent diagnosed illnesses of a given patient.
         /// </summary>
         /// <param name="patientId"></param>
-        /// <param name="limit"></param>
-        /// <param name="skip"></param>
         /// <returns></returns>
-        Task<IEnumerable<object>> PatientHistory(decimal patientId, int? limit, int? skip);
+        Task<IEnumerable<object>> PatientHistory(decimal patientId);
 
         /// <summary>
         /// Illnesses diagnosed on a given visit, ordered alphabetically.

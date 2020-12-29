@@ -46,13 +46,14 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 .Where(x => x.Finishdate == null || x.Finishdate >= DateTime.Now.Date)
                 .Select(x => new
                 {
-                    MedicineName = x.Medicine.Name,
-                    MedicineDosage = x.Description,
-                    IllnesshistoryId = x.IllnesshistoryId,
-                    MedicineId = x.MedicineId,
-                    Startdate = x.Startdate,
-                    Finishdate = x.Finishdate
-                }).OrderBy(x => x.MedicineName).ThenBy(x => x.MedicineDosage);
+                    medicineName = x.Medicine.Name,
+                    medicineDosage = x.Description,
+                    illnesshistoryId = x.IllnesshistoryId,
+                    medicineId = x.MedicineId,
+                    startdate = x.Startdate,
+                    finishdate = x.Finishdate,
+                    description = x.Description
+                }).OrderBy(x => x.medicineName).ThenBy(x => x.finishdate == null).ThenBy(x => x.finishdate);
 
             var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
 
@@ -64,12 +65,13 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             var query = _context.Medicinehistory.Where(x => x.Illnesshistory.VisitId == visitId)
                 .Select(x => new
                 {
-                    MedicineName = x.Medicine.Name,
-                    MedicineDosage = x.Description,
-                    MedicineId = x.MedicineId,
-                    IllnessHistoryId = x.IllnesshistoryId,
-                    StartDate = x.Startdate
-                }).OrderBy(x => x.MedicineName).ThenBy(x => x.MedicineDosage);
+                    medicineName = x.Medicine.Name,
+                    medicineDosage = x.Description,
+                    medicineId = x.MedicineId,
+                    illnessHistoryId = x.IllnesshistoryId,
+                    startDate = x.Startdate,
+                    description = x.Description
+                }).OrderBy(x => x.startDate).ThenBy(x => x.medicineName);
 
             var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
 

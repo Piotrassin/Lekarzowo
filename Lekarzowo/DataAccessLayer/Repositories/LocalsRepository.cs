@@ -1,4 +1,7 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Lekarzowo.DataAccessLayer.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {

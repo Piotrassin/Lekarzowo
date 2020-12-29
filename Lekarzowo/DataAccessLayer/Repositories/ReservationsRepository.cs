@@ -148,12 +148,17 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 reservationStartTime = x.Starttime,
                 reservationEndTime = x.Endtime,
                 isCanceled = x.Canceled,
-                localName = x.Room.Local.Name,
-                roomNumber = x.Room.Number,
                 doctorId = x.DoctorId,
                 doctorName = x.Doctor.IdNavigation.Name,
                 doctorLastname = x.Doctor.IdNavigation.Lastname,
                 doctorSpecialization = x.Doctor.Speciality.Name,
+                roomNumber = x.Room.Number,
+                localName = x.Room.Local.Name,
+                streetName = x.Room.Local.Streetname,
+                streetNumber = x.Room.Local.Streetnumber,
+                blockNumber = x.Room.Local.Blocknumber,
+                postCode = x.Room.Local.Postcode,
+                cityName = x.Room.Local.City.Name,
                 visit = _context.Visit.FirstOrDefault(y => y.ReservationId == x.Id)
             });
 
