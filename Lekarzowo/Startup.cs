@@ -1,4 +1,5 @@
 using FluentValidation.AspNetCore;
+using Lekarzowo.Controllers;
 using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
@@ -15,9 +16,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+using System;
 using System.Text;
-using Lekarzowo.Controllers;
+using System.Threading.Tasks;
 
 namespace Lekarzowo
 {
@@ -63,7 +64,20 @@ namespace Lekarzowo
                     ValidateLifetime = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                };
+                b.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = httpContext =>
+                    {
+                        if (httpContext.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        {
+                            httpContext.Response.Headers.Add("Token_has_expired", "true");
+                        }
+
+                        return Task.CompletedTask;
+                    }
                 };
             });
             //services.AddScoped<JWTService>(s => s.GetService<IOptions<SecretSettings>>().Value);

@@ -201,10 +201,10 @@ namespace Lekarzowo.Controllers
             return Ok(await _repository.DoctorScheduleList(doctorId, false, start, end, limit, skip));
         }
 
-        // GET: api/Reservations/Upcoming?PatientId=1&Limit=5&Skip=2
+        // GET: api/reservations/Upcoming?PatientId=122&DoctorId=1&from=2022-12-30&to=2022-12-30&Limit=50&Skip=0
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> Upcoming(decimal patientId, int? limit, int? skip)
+        public async Task<ActionResult<IEnumerable<object>>> Upcoming(decimal patientId, decimal? doctorId, DateTime? from, DateTime? to, int? limit, int? skip)
         {
             if (IsPatient())
             {
@@ -212,15 +212,15 @@ namespace Lekarzowo.Controllers
                 {
                     return Unauthorized();
                 }
-                return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, true, true, limit, skip));
+                return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, true, true, doctorId, from, to, limit, skip));
             }
-            return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, true, false, limit, skip));
+            return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, true, false, doctorId, from, to, limit, skip));
         }
 
         // GET: api/Reservations/Recent?PatientId=1&Limit=5&Skip=2
         [Authorize]
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> Recent(decimal patientId, int? limit, int? skip)
+        public async Task<ActionResult<IEnumerable<object>>> Recent(decimal patientId, decimal? doctorId, DateTime? from, DateTime? to, int? limit, int? skip)
         {
             if (IsPatient())
             {
@@ -228,9 +228,9 @@ namespace Lekarzowo.Controllers
                 {
                     return Unauthorized();
                 }
-                return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, false, true, limit, skip));
+                return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, false, true, doctorId, from, to, limit, skip));
             }
-            return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, false, false, limit, skip));
+            return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, false, false, doctorId, from, to, limit, skip));
         }
 
         // GET: api/reservations/possibleappointments?CityId=2&SpecId=1&DoctorId=1&startDate=2020-12-20&endDate=2020-12-30&startHour=09:00:00&endHour=10:30:00

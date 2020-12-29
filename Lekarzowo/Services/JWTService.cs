@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,7 +29,6 @@ namespace Lekarzowo.Services
 
         public async Task<string> GenerateAccessToken(Person person, string activeRole)
         {
-            //TODO: Docelowo sekret do tworzenia podpisu powinien być pobierany z appsettings.json
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.Secret));
 
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
@@ -41,7 +41,7 @@ namespace Lekarzowo.Services
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.Now.AddHours(2),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -49,6 +49,12 @@ namespace Lekarzowo.Services
 
         public string GenerateRefreshToken(string currentToken)
         {
+            //var randomNum = new byte[16];
+
+            //var generator1 = RandomNumberGenerator.Create();
+            //generator1.GetBytes(randomNum);
+            //return Convert.ToBase64String(randomNum);
+
             throw new NotImplementedException();
         }
     }

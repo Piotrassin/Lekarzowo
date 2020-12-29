@@ -127,11 +127,13 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return await trimmedQuery.ToListAsync();
         }
 
-        public async Task<IEnumerable<object>> RecentOrUpcomingByPatientId(decimal patientId, bool showUpcomingInstead,
-            bool hideCanceledReservations, int? limit, int? skip)
+        public async Task<IEnumerable<object>> RecentOrUpcomingByPatientId(decimal patientId, bool showUpcomingInstead, bool hideCanceledReservations, decimal? doctorId, DateTime? from, DateTime? to, int? limit, int? skip)
         {
             var reservationTypeQuery = _context.Reservation
-                .Where(x => x.PatientId == patientId);
+                .Where(x => x.PatientId == patientId)
+                .Where(x => doctorId == null || x.DoctorId == doctorId)
+                .Where(x => from == null || x.Starttime.Date >= from.Value.Date)
+                .Where(x => to == null || x.Endtime.Date <= to.Value.Date);
 
             if (hideCanceledReservations)
             {
