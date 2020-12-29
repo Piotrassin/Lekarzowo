@@ -51,22 +51,20 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return await _context.Illnesshistory.Where(x => x.VisitId == visitId).ToListAsync();
         }
 
-        public async Task<IEnumerable<object>> PatientHistory(decimal patientId, int? limit, int? skip)
+        public async Task<IEnumerable<object>> PatientHistory(decimal patientId)
         {
             var query = _context.Illnesshistory.Where(x => x.Visit.Reservation.PatientId == patientId)
                 .Select(x => new
                 {
-                    IllnessHistoryId = x.Id,
-                    IllnessName = x.Illness.Name,
-                    DiagnoseDate = x.Visit.Reservation.Starttime,
-                    CureDate = x.Curedate,
-                    Description = x.Description
+                    illnessHistoryId = x.Id,
+                    illnessName = x.Illness.Name,
+                    diagnoseDate = x.Visit.Reservation.Starttime,
+                    cureDate = x.Curedate,
+                    description = x.Description
                 })
-                .OrderBy(x => x.DiagnoseDate);
+                .OrderBy(x => x.diagnoseDate);
 
-            var orderedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
-
-            return await orderedQuery.ToListAsync();
+            return await query.ToListAsync();
         }
 
         public async Task<IEnumerable<object>> AllByVisitId(decimal visitId, int? limit, int? skip)

@@ -70,13 +70,7 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
-            var oldillnesshistory = await _oldIllnessesHistoryRepository.GetAll(patientId);
-            List<object> patientsHistory = new List<object>();
-            patientsHistory.AddRange(illnesshistory);
-            patientsHistory.AddRange(oldillnesshistory);
-
-            IEnumerable<object> enumerableHistory = patientsHistory;
-            enumerableHistory = PaginationService<object>.SplitAndLimitIEnumerable(skip, limit, enumerableHistory);
+            var enumerableHistory = PaginationService<object>.SplitAndLimitIEnumerable(skip, limit, illnesshistory);
 
             return enumerableHistory.ToList();
         }
@@ -119,7 +113,17 @@ namespace Lekarzowo.Controllers
         {
             if (IsPatientAskingForElsesData(patientId)) return BadRequest();
 
-            return Ok(await _repository.PatientHistory(patientId, limit, skip));
+            var illnessHistory = await _repository.PatientHistory(patientId);
+            var oldillnesshistory = await _oldIllnessesHistoryRepository.GetAll(patientId);
+
+            List<object> patientsHistory = new List<object>();
+            patientsHistory.AddRange(illnessHistory);
+            patientsHistory.AddRange(oldillnesshistory);
+
+            IEnumerable<object> enumerableHistory = patientsHistory;
+            enumerableHistory = PaginationService<object>.SplitAndLimitIEnumerable(skip, limit, enumerableHistory);
+
+            return Ok(enumerableHistory);
         }
 
         // PUT: api/Illnesseshistory/5

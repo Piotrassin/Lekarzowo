@@ -126,7 +126,7 @@ namespace Lekarzowo.Controllers
             if (uRoles.Count > 0 && uRoles.Contains(roleToActivateName))
             {
                 var storedPerson = _repository.GetByID(personId);
-                var newToken = _jwtService.GenerateAccessToken(storedPerson, roleToActivateName);
+                var newToken = await _jwtService.GenerateAccessToken(storedPerson, roleToActivateName);
                 return Ok(new { Token = newToken });
             }
             return BadRequest();
