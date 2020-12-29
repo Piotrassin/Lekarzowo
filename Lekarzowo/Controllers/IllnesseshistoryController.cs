@@ -21,7 +21,6 @@ namespace Lekarzowo.Controllers
         private readonly IOldIllnessesHistoryRepository _oldIllnessesHistoryRepository;
 
 
-
         public IllnesseshistoryController(IIllnessesHistoryRepository context, IVisitsRepository visitsRepository, IIllnessesRepository illnessesRepository, IOldIllnessesHistoryRepository oldIllnessesHistoryRepository)
         {
             _repository = context;

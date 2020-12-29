@@ -91,13 +91,14 @@ namespace Lekarzowo.Controllers
             }
             try
             {
+                //TODO do usunięcia, po tym jak frontend przejdzie na role w tokenie
                 var storedUserRoles = await _customUserRolesService.GatherAllUserRoles(storedPerson.Id);
                 if (storedUserRoles.Count < 1)
                 {
                     return UnprocessableEntity(new JsonResult("User has no roles."));
                 }
 
-                var token = _jwtService.GenerateAccessToken(storedPerson, storedUserRoles.First());
+                var token = await _jwtService.GenerateAccessToken(storedPerson, storedUserRoles.First());
 
                 return Accepted(new
                 {
