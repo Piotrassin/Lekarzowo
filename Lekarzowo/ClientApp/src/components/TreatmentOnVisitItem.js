@@ -28,7 +28,10 @@ deleteTreatmentOnVisit(event){
 render() {
   return(
     <div className = 'sickness-on-visit-item'>
+        <div className = 'flex-column'>
         <a>{this.props.treatmentName}</a>
+        <a className = 'tiny-dashed'>{this.props.treatmentDescription}</a>
+        </div>
         {this.props.isOpen ?
         <img src = {removeSign} style = {{width: 30, pointer: 'cursor'}} onClick = {this.deleteTreatmentOnVisit} />
         :

@@ -1422,3 +1422,7 @@ align-items: center;
 .justify-space-between {
   justify-content: space-between;
 }
+.tiny-dashed {
+  color: #565656;
+  font-size: 13px;
+}

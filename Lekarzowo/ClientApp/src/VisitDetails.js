@@ -581,6 +581,7 @@ class VisitDetails extends React.Component {
                 <SicknessOnVisitItem
                 id = {sickness.illnessHistoryId}
                 sicknessName = {sickness.illnessName}
+                sicknessDescription = {sickness.description}
                 visitId = {this.state.id}
                 isOpen = {this.state.openedVisit}
                 snackbarCallback = {this.openSnackbarOnRemove}
@@ -600,6 +601,7 @@ class VisitDetails extends React.Component {
                 illnessHistoryId = {medicine.illnessHistoryId}
                 medicineId = {medicine.medicineId}
                 medicineName = {medicine.medicineName}
+                medicineDosage = {medicine.medicineDosage}
                 visitId = {this.state.id}
                 startDate = {medicine.startDate}
                 isOpen = {this.state.openedVisit}
@@ -624,8 +626,8 @@ class VisitDetails extends React.Component {
               }
               {this.state.visitTreatment && this.state.visitTreatment.map((treatment, index) => (
                 <TreatmentOnVisitItem
-                treatmentName = {treatment.treatmentName}
-                treatmentDescription = {treatment.treatmentDescription}
+                treatmentName = {treatment.name}
+                treatmentDescription = {treatment.description}
                 id = {treatment.id}
                 isOpen = {this.state.openedVisit}
                 snackbarCallback = {this.openSnackbarOnRemove}
