@@ -260,6 +260,25 @@ class VisitService {
 
   }
 
+  postOldMedicinehistory(oldMedicineHistoryObject){
+    return fetch(url + 'Oldmedicinehistories',{
+    method: 'POST',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "MedicineId": oldMedicineHistoryObject.medicineId,
+      "PatientId": oldMedicineHistoryObject.patientId,
+      "Date": oldMedicineHistoryObject.finishDate,
+      "Description": oldMedicineHistoryObject.description
+    })
+    })
+    .then(response => {
+      if(!response.ok) {
+        throw Error(response.message)
+      }
+      return response.json;
+    });
+  }
+
   postOldillnesshistory(oldIllnessHistoryObject){
     return fetch(url + 'Oldillnesshistories',{
     method: 'POST',

@@ -27,6 +27,24 @@ class Validation {
     return message;
   }
 
+  validateOldMedicineAdd(medicine, medicineDescription, medicineFinishDate){
+    var errorObject = {};
+    this.addErrorToObject(errorObject, 'Lek', this.validateBlankObject(medicine));
+    this.addErrorToObject(errorObject, 'Opis', this.validateBlank(medicineDescription));
+
+
+    return errorObject;
+  }
+
+  validateOldIllnessAdd(illnessName, illnessDescription, diagnoseDate, cureDate){
+    var errorObject = {};
+    this.addErrorToObject(errorObject, 'Choroba', this.validateBlankObject(illnessName));
+    this.addErrorToObject(errorObject, 'Opis', this.validateBlank(illnessDescription));
+
+
+    return errorObject;
+  }
+
   validateAddVisit(cityId, doctorId, specId, dateStart, dateEnd){
     var errorObject = {};
     this.addErrorToObject(errorObject, 'Miasto', this.validateBlankNumber(cityId));
@@ -114,6 +132,14 @@ class Validation {
 
   validateBlankNumber(input){
     var validationResult = (input == undefined) || (input < 0) || input.length === 0;
+    if(validationResult){
+      return " jest puste";
+    }
+    return validationResult;
+  }
+
+  validateBlankObject(input){
+    var validationResult = (input == undefined);
     if(validationResult){
       return " jest puste";
     }

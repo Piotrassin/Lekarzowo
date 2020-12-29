@@ -24,6 +24,7 @@ import Snackbar from './helpers/Snackbar.js';
 import Formater from './helpers/Formater.js';
 import SicknessPatientItem from './components/SicknessPatientItem.js';
 import MedicinePatientItem from './components/MedicinePatientItem.js';
+import Validation from './helpers/Validation.js';
 
 const currentUserRole = AuthService.getUserCurrentRole();
 const WhiteTextField = withStyles({
@@ -68,6 +69,7 @@ class PatientHistory extends React.Component {
       patientLastname: "",
       startDate: null,
       endDate: null,
+      clear: false,
       medicineHistory: [],
       sicknessHistory: [],
       treatmentHistory: [],
@@ -84,10 +86,9 @@ class PatientHistory extends React.Component {
       clicked: {
         medicine: null,
         descriptionMedicine: "",
-        treatment: null,
+        medicineFinishDate: new Date().toISOString().split('T')[0],
         descriptionSickness: "",
         sickness: null,
-        descriptionTreatment: "",
         sicknessforMedicine: null,
         diagnoseDate: new Date().toISOString().split('T')[0],
         cureDate: new Date().toISOString().split('T')[0]
@@ -95,10 +96,14 @@ class PatientHistory extends React.Component {
     }
     this.handleBack = this.handleBack.bind(this);
     this.handleChangeSicknessDescription = this.handleChangeSicknessDescription.bind(this);
+    this.handleChangeMedicineDescription = this.handleChangeMedicineDescription.bind(this);
     this.onClickAddSickness = this.onClickAddSickness.bind(this);
+    this.onClickAddMedicine = this.onClickAddMedicine.bind(this);
     this.handleChangeSicknessDiagnoseDate = this.handleChangeSicknessDiagnoseDate.bind(this);
     this.handleChangeSicknessCureDate= this.handleChangeSicknessCureDate.bind(this);
+    this.handleChangeMedicineFinishDate = this.handleChangeMedicineFinishDate.bind(this);
     this.handleClickAddSickness = this.handleClickAddSickness.bind(this);
+    this.handleClickAddMedicine = this.handleClickAddMedicine.bind(this);
   }
   snackbarRef = React.createRef();
 
@@ -108,6 +113,33 @@ class PatientHistory extends React.Component {
     this.getActiveMedicine();
     this.getReservation();
 
+  }
+
+  clearSicknessAdd() {
+    this.setState(prevState => ({
+        ...prevState,
+        clear: !prevState.clear,
+        clicked: {
+          ...prevState.clicked,
+          descriptionSickness: "",
+          sickness: null,
+          diagnoseDate: new Date().toISOString().split('T')[0],
+          cureDate: new Date().toISOString().split('T')[0]
+        }
+    }));
+  }
+
+  clearMedicineAdd() {
+    this.setState(prevState => ({
+        ...prevState,
+        clear: !prevState.clear,
+        clicked: {
+          ...prevState.clicked,
+          descriptionMedicine: "",
+          medicine: null,
+          medicineFinishDate: new Date().toISOString().split('T')[0]
+        }
+    }));
   }
 
   handleBack(event){
@@ -142,6 +174,17 @@ class PatientHistory extends React.Component {
         clicked: {
           ...prevState.clicked,
           descriptionMedicine: newValue
+        }
+    }));
+  }
+
+  handleChangeMedicineFinishDate(event){
+    console.log(event.target.value);
+    var newValue = event.target.value;
+    this.setState(prevState => ({
+        clicked: {
+          ...prevState.clicked,
+          medicineFinishDate: newValue
         }
     }));
   }
@@ -210,30 +253,68 @@ class PatientHistory extends React.Component {
   }
 
   handleClickAddMedicine(event){
-    event.preventDefault();
 
-    Dialog.open("medicine-dialog")(event);
+        this.setState ({
+          errors: Validation.validateOldMedicineAdd(this.state.clicked.medicine, this.state.clicked.descriptionMedicine,
+            this.state.clicked.medicineFinishDate)
+        }, () => {
+          console.log(this.state.errors);
+          if(Object.keys(this.state.errors).length > 0){
+            var message = Validation.handleValidationOutcome(this.state.errors);
+            this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+
+          }else {
+            var oldIllnessHistoryObject = {
+              "medicineId": this.state.clicked.medicine.id,
+              "patientId": this.state.id,
+              "finishDate": this.state.clicked.medicineFinishDate,
+              "description": this.state.clicked.descriptionMedicine
+            }
+            VisitService.postOldMedicinehistory(oldIllnessHistoryObject)
+            .then(response => {
+              this.snackbarRef.current.openSnackBar( 'Dodano' ,'green-snackbar');
+              this.clearMedicineAdd();
+            })
+            .catch(err => {
+              this.snackbarRef.current.openSnackBar( err.message ,'red-snackbar');
+            });
+          }
+        });
   }
 
 
   handleClickAddSickness(event){
-    var oldIllnessHistoryObject = {
-      "illnessId": this.state.clicked.sickness.id,
-      "patientId": this.state.id,
-      "diagnoseDate": this.state.clicked.diagnoseDate,
-      "description": this.state.clicked.descriptionSickness,
-      "cureDate": this.state.clicked.cureDate
-    }
-    console.log('Old Illness Object');
-    console.log(oldIllnessHistoryObject);
 
-    VisitService.postOldillnesshistory(oldIllnessHistoryObject)
-    .then(response => {
-      console.log(response);
-    })
-    .catch(err => {
-      console.log(err);
+
+    this.setState ({
+      errors: Validation.validateOldIllnessAdd(this.state.clicked.sickness, this.state.clicked.descriptionSickness,
+        this.state.clicked.diagnoseDate, this.state.clicked.cureDate)
+    }, () => {
+      console.log(this.state.errors);
+      if(Object.keys(this.state.errors).length > 0){
+        var message = Validation.handleValidationOutcome(this.state.errors);
+        this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+
+      }else {
+        var oldIllnessHistoryObject = {
+          "illnessId": this.state.clicked.sickness.id,
+          "patientId": this.state.id,
+          "diagnoseDate": this.state.clicked.diagnoseDate,
+          "description": this.state.clicked.descriptionSickness,
+          "cureDate": this.state.clicked.cureDate
+        }
+        VisitService.postOldillnesshistory(oldIllnessHistoryObject)
+        .then(response => {
+          this.snackbarRef.current.openSnackBar( 'Dodano' ,'green-snackbar');
+          this.clearSicknessAdd();
+        })
+        .catch(err => {
+          this.snackbarRef.current.openSnackBar( err.message ,'red-snackbar');
+        });
+      }
     });
+
+
   }
 
   onClickAddMedicine(medicine) {
@@ -294,6 +375,7 @@ class PatientHistory extends React.Component {
           cssId = 'medicine-search'
           variant = 'outlined'
           className = 'dialog-margin'
+          clear = {this.state.clear}
           styles = {{ width: "94%", marginLeft: "20px" }}
           />
 
@@ -348,6 +430,7 @@ class PatientHistory extends React.Component {
           cssId = 'medicine-search'
           variant = 'outlined'
           className = 'dialog-margin'
+          clear = {this.state.clear}
           styles = {{ width: "94%",  marginLeft: "20px" }}
           />
 
@@ -357,6 +440,15 @@ class PatientHistory extends React.Component {
           onChange = {this.handleChangeMedicineDescription}
           variant = 'outlined'
           rowsMax = {2}
+          style = {{marginLeft: '20px', width: '94%'}}
+          size="small" fullWidth />
+          <WhiteTextField id="medicineFinishDate" name="medicineFinishDate"
+          label="Data zakonczenia"
+          value = {this.state.clicked.medicineFinishDate}
+          onChange = {this.handleChangeMedicineFinishDate}
+          variant = 'outlined'
+          rowsMax = {2}
+          type = "date"
           style = {{marginLeft: '20px', width: '94%'}}
           size="small" fullWidth />
           </div>
@@ -373,119 +465,7 @@ class PatientHistory extends React.Component {
         :
         <div/>
       }
-      <Dialog id = "medicine-dialog">
-        <div className = "header-dialog">
-          <a>Dodaj lek</a>
-        </div>
 
-
-        <br/>
-        <Autocomplete
-        requestCallback = {VisitService.getSicknessOnVisitSearch}
-        changeCallback = {this.onClickSelectedSicknessForMedicine}
-        title = "Choroba"
-        cssId = 'medicine-search'
-        className = 'dialog-margin'
-        variant = 'outlined'
-        addId = {this.state.id}
-        styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
-        />
-        <Autocomplete
-        requestCallback = {VisitService.getAvailableMedicine}
-        changeCallback = {this.onClickAddMedicine}
-        title = "Lek"
-        cssId = 'medicine-search'
-        variant = 'outlined'
-        className = 'dialog-margin'
-        styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
-        />
-        <br/>
-        <WhiteTextField id="endDate" name="endDate"
-        label="Data zakończenia"
-        value = {this.state.clicked.endDate}
-        onChange = {this.handleChangeMedicineEndDate}
-        variant = 'outlined'
-        rowsMax = {2}
-        type = "date"
-        style = {{marginLeft: '20px', width: '94%'}}
-        size="small" fullWidth />
-        <br/><br/>
-        <WhiteTextField id="descriptionMedicine" name="descriptionMedicine"
-        label="Opis"
-        value = {this.state.clicked.descriptionMedicine}
-        onChange = {this.handleChangeMedicineDescription}
-        variant = 'outlined'
-        rowsMax = {2}
-        style = {{marginLeft: '20px', width: '94%'}}
-        size="small" fullWidth />
-        <br/>
-        <div className = 'dialog-btn-hold'>
-          <a className = 'btn-dialog-cancel'>Anuluj</a>
-          <a className = 'btn-dialog-primary' onClick = {this.handleClickAddMedicineDialogBtn}>Zatwierdź</a>
-        </div>
-      </Dialog>
-      <Dialog id = "treatment-dialog">
-        <div className = "header-dialog">
-          <a>Dodaj Zabieg</a>
-        </div>
-        <br/>
-        <a className = 'dialog-margin dialog-text' >Dodawanie zabiegu</a>
-        <br/>
-        <Autocomplete
-        requestCallback = {VisitService.getAvailableTreatments}
-        changeCallback = {this.onClickAddTreatment}
-        title = "Zabieg"
-        cssId = 'medicine-search'
-        className = 'dialog-margin'
-        variant = 'outlined'
-        styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
-        />
-        <br/>
-        <WhiteTextField id="descriptionTreatment" name="descriptionTreatment"
-        label="Opis"
-        value = {this.state.clicked.descriptionTreatment}
-        onChange = {this.handleChangeTreatmentDescription}
-        variant = 'outlined'
-        rowsMax = {2}
-        style = {{marginLeft: '20px', width: '94%'}}
-        size="small" fullWidth />
-        <br/>
-        <div className = 'dialog-btn-hold'>
-          <a className = 'btn-dialog-cancel' onClick={this.handleClick} >Anuluj</a>
-          <a className = 'btn-dialog-primary' onClick = {this.handleClickAddTreatmentDialogBtn}>Zatwierdź</a>
-        </div>
-      </Dialog>
-      <Dialog id = "sickness-dialog">
-        <div className = "header-dialog">
-          <a>Dodaj Chorobę</a>
-        </div>
-        <br/>
-        <a className = 'dialog-margin dialog-text' >Dodawanie choroby</a>
-        <br/>
-        <Autocomplete
-        requestCallback = {VisitService.getAvailableSicknesses}
-        changeCallback = {this.onClickAddSickness}
-        title = "Choroba"
-        cssId = 'medicine-search'
-        variant = 'outlined'
-        className = 'dialog-margin'
-        styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
-        />
-        <br/>
-        <WhiteTextField id="descriptionSickness" name="descriptionSickness"
-        label="Opis"
-        value = {this.state.clicked.descriptionSickness}
-        onChange = {this.handleChangeSicknessDescription}
-        variant = 'outlined'
-        rowsMax = {2}
-        style = {{marginLeft: '20px', width: '94%'}}
-        size="small" fullWidth />
-        <br/>
-        <div className = 'dialog-btn-hold'>
-          <a className = 'btn-dialog-cancel' onClick={this.handleClick} >Anuluj</a>
-          <a className = 'btn-dialog-primary' onClick = {this.handleClickAddSicknessDialogBtn}>Zatwierdź</a>
-        </div>
-      </Dialog>
       <Snackbar ref = {this.snackbarRef} />
       </div>
     );

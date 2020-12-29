@@ -129,6 +129,7 @@ export default function Asynchronous(props) {
     <Autocomplete
       id={props.cssId}
       style={props.styles}
+      key={props.clear}
       open={open}
       className={classes.inputHolder}
       onOpen={() => {
