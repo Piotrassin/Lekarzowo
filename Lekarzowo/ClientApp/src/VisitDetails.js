@@ -122,9 +122,13 @@ class VisitDetails extends React.Component {
   snackbarRef = React.createRef();
 
   componentDidMount() {
-    this.getReservation();
-    this.getSicknessHistory();
-    this.getActiveMedicine();
+    this.getReservation()
+    .then(response => {
+        this.getSicknessHistory();
+        this.getActiveMedicine();
+    })
+
+
     this.getVisit();
     this.getSicknessOnVisit();
     this.getTreatmentOnVisit();
@@ -141,7 +145,7 @@ class VisitDetails extends React.Component {
   }
 
   getReservation(){
-    ReservationService.getReservation(this.state.id)
+    return ReservationService.getReservation(this.state.id)
     .then(response => {
       console.log("Rezerwacja");
       console.log(response);
@@ -288,7 +292,7 @@ class VisitDetails extends React.Component {
   }
 
   getSicknessHistory() {
-    ReservationService.getPastIllnesses(3)
+    ReservationService.getPastIllnessesPatient(this.state.patientId, 3)
     .then(response => {
       this.setState({
         sicknessHistory: response
@@ -297,7 +301,7 @@ class VisitDetails extends React.Component {
   }
 
   getActiveMedicine(){
-    ReservationService.getTakenMedicine(2)
+    ReservationService.getTakenMedicinePatient(this.state.patientId, 2)
     .then(response => {
       this.setState({
         takenMedicine: response
