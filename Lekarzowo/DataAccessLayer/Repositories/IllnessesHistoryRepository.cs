@@ -62,7 +62,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                     cureDate = x.Curedate,
                     description = x.Description
                 })
-                .OrderBy(x => x.diagnoseDate);
+                .OrderByDescending(x => x.diagnoseDate).ThenByDescending(x => x.cureDate == null).ThenByDescending(x => x.cureDate);
 
             return await query.ToListAsync();
         }
