@@ -26,5 +26,20 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
             return await orderedQuery.ToListAsync();
         }
+
+        public async Task<IEnumerable<Treatmentonvisit>> PerformedTreatmentsAsTreatments(decimal visitId)
+        {
+            var query = _context.Treatmentonvisit.Where(x => x.VisitId == visitId)
+                .Select(x => new Treatmentonvisit
+                {
+                    Id = x.Id,
+                    Treatment = new Treatment()
+                    {
+                        Price = x.Treatment.Price
+                    }
+                });
+
+            return await query.ToListAsync();
+        }
     }
 }

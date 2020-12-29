@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lekarzowo.DataAccessLayer.Repositories;
 
 namespace Lekarzowo.Controllers
 {
@@ -15,11 +16,17 @@ namespace Lekarzowo.Controllers
     public class VisitsController : BaseController
     {
         private readonly IVisitsRepository _repository;
+        private readonly ITreatmentsOnVisitRepository _treatmentsOnVisitRepository;
+        private readonly IDoctorsRepository _doctorsRepository;
+        private readonly IReservationsRepository _reservationsRepository;
         private static readonly int visitStatusChangeTimeOffsetMinutes = 30;
 
-        public VisitsController(IVisitsRepository repository)
+        public VisitsController(IVisitsRepository repository, ITreatmentsOnVisitRepository treatmentsOnVisitRepository, IDoctorsRepository doctorsRepository, IReservationsRepository reservationsRepository)
         {
             _repository = repository;
+            _treatmentsOnVisitRepository = treatmentsOnVisitRepository;
+            _doctorsRepository = doctorsRepository;
+            _reservationsRepository = reservationsRepository;
         }
 
         // GET: api/Visits
@@ -59,6 +66,9 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
+            //TODO PRZETESOWAĆ
+            visit.Price = await UpdateVisitPrice(visit.ReservationId);
+            
             try
             {
                 _repository.Update(visit);
@@ -184,5 +194,18 @@ namespace Lekarzowo.Controllers
             return true;
         }
 
+        private async Task<decimal> UpdateVisitPrice(decimal visitId)
+        {
+            decimal sum = 0;
+
+            var doctor = await _reservationsRepository.GetById(visitId);
+            var specPrice = (await _doctorsRepository.GetByIdWithSpecialization(doctor.DoctorId)).Speciality.Price;
+            sum += specPrice;
+
+            var treatments = await _treatmentsOnVisitRepository.PerformedTreatmentsAsTreatments(visitId);
+            sum += treatments.Sum(treatment => treatment.Treatment.Price);
+
+            return sum;
+        }
     }
 }

@@ -217,7 +217,7 @@ namespace Lekarzowo.Controllers
             return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, true, false, doctorId, from, to, limit, skip));
         }
 
-        // GET: api/Reservations/Recent?PatientId=1&Limit=5&Skip=2
+        // GET: api/Reservations/Recent?PatientId=1&DoctorId=1&from=2022-12-30&to=2022-12-30&Limit=50&Skip=0
         [Authorize]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> Recent(decimal patientId, decimal? doctorId, DateTime? from, DateTime? to, int? limit, int? skip)
