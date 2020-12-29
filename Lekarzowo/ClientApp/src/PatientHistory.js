@@ -419,6 +419,8 @@ class PatientHistory extends React.Component {
             image = {medicine1}
             medicineName = {medicine.medicineName}
             dose = {medicine.medicineDosage}
+            finishDate = {medicine.finishdate}
+            medicine = {medicine}
             />
           ))}
           </div>

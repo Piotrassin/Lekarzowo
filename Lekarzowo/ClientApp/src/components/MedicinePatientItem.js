@@ -1,5 +1,7 @@
 import React from 'react';
 import sicknessSign from '../images/SicknessSign.svg';
+import UserService from '../services/UserService.js';
+import Formater from '../helpers/Formater.js';
 
 class MedicinePatientItem extends React.Component {
 constructor(props) {
@@ -8,7 +10,15 @@ constructor(props) {
 }
 
 onClickChangeMedicine(event){
-  //this.props.history.push('/visit/' + this.props.sickness.visitId);
+
+  UserService.medicineNoLongerTaken(this.props.medicine)
+  .then(response => {
+    console.log(response);
+    window.location.reload();
+  })
+  .catch(err => {
+    console.log(err.message);
+  })
 }
 
 render() {
@@ -17,15 +27,30 @@ render() {
       <div className = 'sickness-item-part-small part-1-small'>
         <img src = {sicknessSign} className = "small-icon" />
       </div>
-      <div className = 'sickness-item-part-small part-2-3-4-small'>
+      <div className = 'sickness-item-part-small part-2'>
         <div className = 'flex-column'>
         <b>{this.props.medicineName}</b>
         <a>{this.props.dose}</a>
         </div>
       </div>
-
+      <div className = 'sickness-item-part-small part-3'>
+        <div className = 'flex-column'>
+        <b>{Formater.formatDate(this.props.medicine.startdate)}</b>
+        <a>Data rozpoczęcia</a>
+        </div>
+      </div>
+      <div className = 'sickness-item-part-small part-4'>
+        <div className = 'flex-column'>
+        <b>{this.props.medicine.finishdate  == undefined  ? 'teraz' : Formater.formatDate(this.props.medicine.finishdate)}</b>
+        <a>Data zakończenia</a>
+        </div>
+      </div>
       <div className = 'sickness-item-part-small part-5'>
-        <a className = 'button-primary' onClick = {this.onClickChangeMedicine}>Pacjent nie przyjmuje</a>
+        {this.props.finishDate == undefined  ?
+          <a className = 'button-primary' onClick = {this.onClickChangeMedicine}>Pacjent nie przyjmuje</a>
+          :
+          <div/>
+      }
       </div>
     </div>
 

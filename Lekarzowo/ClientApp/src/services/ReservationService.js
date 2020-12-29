@@ -24,13 +24,16 @@ class ReservationService {
 
   }
 
-  getUpcomingDoctorReservations(dateStart, dateEnd){
+  getUpcomingDoctorReservations(dateStart, dateEnd,limit){
     if(JSON.parse(AuthService.getLoggedUser())){
       var doctorId = JSON.parse(AuthService.getLoggedUser()).id;
     }
+    if(limit == undefined){
+      limit = "";
+    }
     return fetch(url + 'Reservations/UpcomingByDoctorId?doctorId=' + doctorId +
     '&localId=1' + '&start=' + Formater.formatDate(dateStart.toISOString()) + '&end='
-    + Formater.formatDate(dateEnd.toISOString()), {
+    + Formater.formatDate(dateEnd.toISOString()) +  '&limit=' + limit, {
       headers: authHeader()
     }).then(response => {
       if(response.status == 401){

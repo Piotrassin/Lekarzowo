@@ -1,5 +1,6 @@
 import authHeader from '../authentication/AuthHeader.js';
 import AuthService from '../authentication/AuthService.js';
+import Formater from '../helpers/Formater.js';
 
 const url = 'https://localhost:5001/api/';
 
@@ -69,7 +70,7 @@ class UserService {
 
   getUserSicknessHistory(id) {
     var patientId = JSON.parse(AuthService.getLoggedUser()).id;
-    return fetch(url + 'Illnesseshistory/AllByPatientId/' + patientId, {
+    return fetch(url + 'Illnesseshistory/AllByPatientId?patientId=' + patientId, {
       headers: authHeader()
     }).then(response => response.json());
   }
@@ -132,6 +133,25 @@ class UserService {
 
       return response.json();
     });
+  }
+
+  medicineNoLongerTaken(medicineObject){
+    return fetch(url + 'medicinehistories?IllnessHistoryId=' + medicineObject.illnesshistoryId +
+    '&MedicineId=' + medicineObject.medicineId + '&StartDate=' + medicineObject.startdate, {
+    method: 'PUT',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "Finishdate": new Date(),
+      "IllnessHistoryId": medicineObject.illnesshistoryId ,
+      "MedicineId": medicineObject.medicineId,
+      "StartDate": medicineObject.startdate
+    })
+  }).then(response => {
+    if (!response.ok) {
+      throw Error(response.statusText);
+    }
+    return response;
+  });
   }
 
 }
