@@ -28,6 +28,24 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 }).ToList();
         }
 
+        public IEnumerable<object> GetAllWithAdditionalInfo(decimal patientId)
+        {
+            return _context.Illnesshistory.Where(x => x.Visit.Reservation.PatientId == patientId)
+                .Select(x => new
+                {
+                    id = x.Id,
+                    visitId = x.VisitId,
+                    diagnoseDate = x.Visit.Reservation.Starttime,
+                    cureDate = x.Curedate,
+                    description = x.Description,
+                    illness = new
+                    {
+                        id = x.Illness.Id,
+                        name = x.Illness.Name
+                    }
+                }).OrderBy(s => s.diagnoseDate).ToList();
+        }
+
         public async Task<IEnumerable<Illnesshistory>> GetByVisitId(decimal visitId)
         {
             return await _context.Illnesshistory.Where(x => x.VisitId == visitId).ToListAsync();

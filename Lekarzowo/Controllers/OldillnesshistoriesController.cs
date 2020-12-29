@@ -20,7 +20,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Oldillnesshistories
-        [Authorize(Roles = "patient,doctor,admin")]
+        [Authorize(Roles = "admin")]
         [HttpGet("{PatientId}")]
         public async Task<ActionResult<IEnumerable<Oldillnesshistory>>> GetOldillnesshistory()
         {
@@ -29,10 +29,10 @@ namespace Lekarzowo.Controllers
 
         // GET: api/Oldillnesshistories/5
         [Authorize(Roles = "patient,doctor,admin")]
-        [HttpGet("{PatientId}/{IlnessId}")]
-        public async Task<ActionResult<Oldillnesshistory>> GetOldillnesshistory(decimal PatientId, decimal IlnessId)
+        [HttpGet("{patientId}/{illnessId}")]
+        public async Task<ActionResult<Oldillnesshistory>> GetOldillnesshistory(decimal patientId, decimal illnessId)
         {
-            var oldillnesshistory = await _repository.GetByID(IlnessId, PatientId);
+            var oldillnesshistory = await _repository.GetByID(illnessId, patientId);
 
             if (oldillnesshistory == null)
             {
