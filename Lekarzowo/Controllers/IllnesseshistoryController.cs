@@ -1,13 +1,13 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Oracle.ManagedDataAccess.Client;
+using Lekarzowo.Services;
 
 namespace Lekarzowo.Controllers
 {
@@ -17,12 +17,17 @@ namespace Lekarzowo.Controllers
     {
         private readonly IIllnessesHistoryRepository _repository;
         private readonly IVisitsRepository _visitsRepository;
+        private readonly IIllnessesRepository _illnessesRepository;
+        private readonly IOldIllnessesHistoryRepository _oldIllnessesHistoryRepository;
 
 
-        public IllnesseshistoryController(IIllnessesHistoryRepository context, IVisitsRepository visitsRepository)
+
+        public IllnesseshistoryController(IIllnessesHistoryRepository context, IVisitsRepository visitsRepository, IIllnessesRepository illnessesRepository, IOldIllnessesHistoryRepository oldIllnessesHistoryRepository)
         {
             _repository = context;
             _visitsRepository = visitsRepository;
+            _illnessesRepository = illnessesRepository;
+            _oldIllnessesHistoryRepository = oldIllnessesHistoryRepository;
         }
 
         // GET: api/Illnesseshistory
@@ -52,20 +57,29 @@ namespace Lekarzowo.Controllers
             return illnesshistory;
         }
 
-        // GET: api/Illnesseshistory/AllByPatientId/5
+        // GET: api/Illnesseshistory/AllByPatientId
         [Authorize(Roles = "patient,doctor,admin")]
-        [HttpGet("[action]/{patientId}")]
-        public ActionResult<IEnumerable<object>> AllByPatientId(decimal patientId)
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> AllByPatientId(decimal patientId, int? limit, int? skip)
         {
             if (IsPatientAskingForElsesData(patientId)) return BadRequest();
 
-            var illnesshistory = _repository.GetAll(patientId);
-
+            var illnesshistory = _repository.GetAllWithAdditionalInfo(patientId); 
+            
             if (illnesshistory == null)
             {
                 return NotFound();
             }
-            return illnesshistory.ToList();
+
+            var oldillnesshistory = await _oldIllnessesHistoryRepository.GetAll(patientId);
+            List<object> patientsHistory = new List<object>();
+            patientsHistory.AddRange(illnesshistory);
+            patientsHistory.AddRange(oldillnesshistory);
+
+            IEnumerable<object> enumerableHistory = patientsHistory;
+            enumerableHistory = PaginationService<object>.SplitAndLimitIEnumerable(skip, limit, enumerableHistory);
+
+            return enumerableHistory.ToList();
         }
 
         // GET: api/Illnesseshistory/AllByVisitId?visitId=1&limit=10&skip=1
@@ -143,10 +157,17 @@ namespace Lekarzowo.Controllers
         public async Task<ActionResult<Illnesshistory>> PostIllnesshistory(Illnesshistory illnesshistory)
         {
             var visit = _visitsRepository.GetByID(illnesshistory.VisitId);
-            if (visit == null) return BadRequest("Wizyta nie istnieje.");
+            if (visit == null)
+            {
+                return BadRequest("Visit doesn't exist.");
+            }
 
-            var illnessesOnVisit = await _repository.GetByVisitId(visit.ReservationId);
-            if (illnessesOnVisit.Contains(illnesshistory))
+            if (_illnessesRepository.GetByID(illnesshistory.IllnessId) == null)
+            {
+                return BadRequest("Illness doesn't exist.");
+            }
+
+            if ((await _repository.GetByVisitId(visit.ReservationId)).Contains(illnesshistory))
             {
                 return Conflict(new JsonResult("That illness history already exists"));
             }

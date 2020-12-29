@@ -1,13 +1,12 @@
-﻿using System;
-using Lekarzowo.DataAccessLayer.Models;
+﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -102,6 +101,11 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public ActionResult<Medicinehistory> PostMedicinehistory(Medicinehistory medicinehistory)
         {
+            if (MedicinehistoryExists(medicinehistory))
+            {
+                return Conflict(new JsonResult("Identical medicine history already exists"));
+            }
+
             try
             {
                 _repository.Insert(medicinehistory);
@@ -109,10 +113,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                if (MedicinehistoryExists(medicinehistory))
-                {
-                    return Conflict();
-                }
+
                 return StatusCode(500, new JsonResult(e.Message));
             }
 

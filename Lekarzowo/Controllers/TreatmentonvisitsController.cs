@@ -1,13 +1,14 @@
 ﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
+    [Authorize(Roles = "patient,doctor,admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class TreatmentonvisitsController : ControllerBase
@@ -48,12 +49,17 @@ namespace Lekarzowo.Controllers
         }
 
         // PUT: api/Treatmentonvisits/5
+        [Authorize(Roles = "doctor,admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTreatmentonvisit(decimal id, Treatmentonvisit treatmentonvisit)
         {
             if (id != treatmentonvisit.Id)
             {
                 return BadRequest();
+            }
+            if (!TreatmentonvisitExists(id))
+            {
+                return NotFound();
             }
 
             try
@@ -63,11 +69,6 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                if (!TreatmentonvisitExists(id))
-                {
-                    return NotFound();
-                }
-
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
@@ -75,6 +76,7 @@ namespace Lekarzowo.Controllers
         }
 
         // POST: api/Treatmentonvisits
+        [Authorize(Roles = "doctor,admin")]
         [HttpPost]
         public async Task<ActionResult<Treatmentonvisit>> PostTreatmentonvisit(Treatmentonvisit treatmentonvisit)
         {
@@ -92,10 +94,12 @@ namespace Lekarzowo.Controllers
             {
                 return StatusCode(500, new JsonResult(e.Message));
             }
+
             return Created("", treatmentonvisit);
         }
 
         // DELETE: api/Treatmentonvisits/5
+        [Authorize(Roles = "doctor,admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Treatmentonvisit>> DeleteTreatmentonvisit(decimal id)
         {

@@ -15,6 +15,13 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         IEnumerable<Illnesshistory> GetAll(decimal patientId);
 
         /// <summary>
+        /// Returns a list of objects belonging to a given patient, which consist of IllnessHistori objects, but with additional info.
+        /// </summary>
+        /// <param name="patientId"></param>
+        /// <returns></returns>
+        IEnumerable<object> GetAllWithAdditionalInfo(decimal patientId);
+
+        /// <summary>
         /// List of all illnessHistory objects with a given visitId.
         /// </summary>
         /// <param name="visitId"></param>
@@ -48,5 +55,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         /// <param name="skip"></param>
         /// <returns></returns>
         Task<IEnumerable<object>> AllByNameOnVisit(decimal visitId, string name, int? limit, int? skip);
+
     }
 }

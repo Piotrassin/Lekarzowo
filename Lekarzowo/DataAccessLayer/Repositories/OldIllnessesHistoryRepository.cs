@@ -34,7 +34,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
         public async Task<IEnumerable<Oldillnesshistory>> GetAll(decimal PatientId)
         {
-            return await _context.Oldillnesshistory.Where(x => x.PatientId == PatientId).ToListAsync();
+            return await _context.Oldillnesshistory.Where(x => x.PatientId == PatientId).OrderBy(x => x.Date).ToListAsync();
         }
 
         public async Task<Oldillnesshistory> GetByID(decimal IllnessId, decimal PatientId)

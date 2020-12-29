@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Oracle.ManagedDataAccess.Client;
 
 namespace Lekarzowo.Controllers
 {
@@ -85,7 +84,7 @@ namespace Lekarzowo.Controllers
         {
             if (_repository.Exists(illness.Name))
             {
-                return Conflict(new JsonResult("That illness already exists"));
+                return Conflict(new JsonResult("That illness with that name already exists"));
             }
 
             try

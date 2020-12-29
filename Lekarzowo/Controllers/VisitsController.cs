@@ -7,14 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-
-using Oracle.ManagedDataAccess.Client;
 
 
 namespace Lekarzowo.Controllers
@@ -45,7 +37,6 @@ namespace Lekarzowo.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Visit>> GetVisit(decimal id)
         {
-
             var visit = _repository.GetByID(id);
 
             if (visit == null)
@@ -65,6 +56,10 @@ namespace Lekarzowo.Controllers
             {
                 return BadRequest();
             }
+            if (!VisitExists(id))
+            {
+                return NotFound();
+            }
 
             try
             {
@@ -73,10 +68,6 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                if (!VisitExists(id))
-                {
-                    return NotFound();
-                }
                 return StatusCode(500, new JsonResult(e.Message));
             }
 

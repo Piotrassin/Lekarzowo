@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Oracle.ManagedDataAccess.Client;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lekarzowo.Controllers
 {
@@ -20,6 +20,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Rooms
+        [Authorize(Roles = "doctor,admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Room>>> GetRoom()
         {
@@ -27,6 +28,7 @@ namespace Lekarzowo.Controllers
         }
 
         // GET: api/Rooms/5
+        [Authorize(Roles = "doctor,admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Room>> GetRoom(decimal id)
         {
@@ -41,12 +43,17 @@ namespace Lekarzowo.Controllers
         }
 
         // PUT: api/Rooms/5
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRoom(decimal id, Room room)
         {
             if (id != room.Id)
             {
                 return BadRequest();
+            }
+            if (!RoomExists(id))
+            {
+                return NotFound();
             }
 
             try
@@ -56,11 +63,6 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                if (!RoomExists(id))
-                {
-                    return NotFound();
-                }
-
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
@@ -68,9 +70,11 @@ namespace Lekarzowo.Controllers
         }
 
         // POST: api/Rooms
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<ActionResult<Room>> PostRoom(Room room)
         {
+            //TODO: powinno sprawdzać numer pokoju i lokal, a nie id
             if (RoomExists(room.Id))
             {
                 return Conflict(new JsonResult("That room already exists"));
@@ -82,6 +86,7 @@ namespace Lekarzowo.Controllers
         }
 
         // DELETE: api/Rooms/5
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Room>> DeleteRoom(decimal id)
         {
