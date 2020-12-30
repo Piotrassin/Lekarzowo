@@ -29,11 +29,25 @@ class VisitService {
   }
 
   checkIfAnyOpenVisit(){
-    var activeVisit = localStorage.getItem('activeVisit');
+    var doctorId = JSON.parse(AuthService.getLoggedUser()).id;
+    return fetch(url + 'Visits/OnGoing/' + doctorId, {
+     headers: authHeader()
+   }).then(response => {
+     if(response.status == 404){
+       return false;
+     }
+     if(response.status == 200){
+       return true;
+     }
+     return false;
+   });
+    /*var activeVisit = localStorage.getItem('activeVisit');
     if(activeVisit == null){
       return false;
     }
     return true;
+*/
+
   }
 
   getOpenedVisit(){
@@ -42,6 +56,22 @@ class VisitService {
       return false;
     }
     return JSON.parse(activeVisit);
+  }
+
+  canVisitBeOpened(id){
+
+    /*return fetch(url + 'Visits/CanBeOpened/' + id, {
+     headers: authHeader()
+   }).then(response => {
+     if(response.status == 404){
+       return false;
+     }
+     if(response.status == 200){
+       return true;
+     }
+     return false;
+   });
+   */
   }
 
   getAvailableMedicine(search, limit, skip){

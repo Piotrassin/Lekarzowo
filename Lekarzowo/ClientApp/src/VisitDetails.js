@@ -54,11 +54,7 @@ class VisitDetails extends React.Component {
     super(props);
     var id = window.location.href.split('visit/')[1];
     var openVisit = false;
-    if(VisitService.checkIfAnyOpenVisit()){
-      if(VisitService.getOpenedVisit().id == id){
-        openVisit = true;
-      }
-    }
+
 
     this.state = {
       refresh: false,
@@ -131,6 +127,14 @@ class VisitDetails extends React.Component {
   snackbarRef = React.createRef();
 
   componentDidMount() {
+
+    if(VisitService.checkIfAnyOpenVisit()){
+      if(VisitService.getOpenedVisit().id == this.state.id){
+        this.setState({
+          openedVisit : true
+        });
+      }
+    }
     this.getReservation()
     .then(response => {
         this.getSicknessHistory();
@@ -162,6 +166,8 @@ class VisitDetails extends React.Component {
     }
 
   }
+
+
 
   getReservation(){
     return ReservationService.getReservation(this.state.id)
@@ -341,19 +347,21 @@ class VisitDetails extends React.Component {
   handleClickBtnVisit(event) {
     console.log('Hello');
     if(VisitService.getOpenedVisit() == false){
+      //if(VisitService.canVisitBeOpened(this.state.id)){
+        var state = VisitService.startVisit(this.state.id);
+        if(state){
+          VisitService.postVisit(this.state.id)
+          .then(response => {
+            this.setState({
+              openedVisit: state
+            });
+          })
+          .catch(err => {
+            console.log('Error');
+            console.log(err);
+          })
+      //}
 
-      var state = VisitService.startVisit(this.state.id);
-      if(state){
-        VisitService.postVisit(this.state.id)
-        .then(response => {
-          this.setState({
-            openedVisit: state
-          });
-        })
-        .catch(err => {
-          console.log('Error');
-          console.log(err);
-        })
 
 
       }
@@ -361,6 +369,7 @@ class VisitDetails extends React.Component {
     }else {
       console.log('Masz aktywną wizytę');
       if(VisitService.getOpenedVisit().id == this.state.id){
+        console.log("Zakonczenie wizyty");
         VisitService.putDescriptionOnVisit(this.state.id, this.state.description)
         .then(response => {
           VisitService.endVisit();
