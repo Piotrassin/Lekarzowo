@@ -68,6 +68,14 @@ class VisitDetails extends React.Component {
       patientLastname: "",
       startDate: null,
       endDate: null,
+      clear: false,
+      clearSick: false,
+      clear: {
+        treatment: "",
+        sickness: "",
+        sicknessOnVisit: "",
+        medicine: ""
+      },
       openedVisit: openVisit,
       medicineHistory: [],
       sicknessHistory: [],
@@ -116,6 +124,7 @@ class VisitDetails extends React.Component {
     this.handleChangeSicknessDescription = this.handleChangeSicknessDescription.bind(this);
     this.handleChangeTreatmentDescription = this.handleChangeTreatmentDescription.bind(this);
     this.handleChangeDescription = this.handleChangeDescription.bind(this);
+    this.putDescriptionOnVisit = this.putDescriptionOnVisit.bind(this);
     this.patientHistoryLoadMore = this.patientHistoryLoadMore.bind(this);
     this.openSnackbarOnRemove = this.openSnackbarOnRemove.bind(this);
   }
@@ -135,6 +144,16 @@ class VisitDetails extends React.Component {
     this.getMedicineOnVisit();
     console.log('Array illness history');
     console.log(this.state.sicknessHistory);
+  }
+
+  putDescriptionOnVisit(event){
+    VisitService.putDescriptionOnVisit(this.state.id, this.state.description)
+    .then(response => {
+      this.snackbarRef.current.openSnackBar('Zaktualizowano notatkę', 'green-snackbar');
+    }).catch(err => {
+      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+    });
+
   }
 
   patientHistoryLoadMore(event){
@@ -428,7 +447,7 @@ class VisitDetails extends React.Component {
       illnessId: this.state.clicked.sicknessforMedicine.id,
       startDate: (new Date()).toISOString(),
       endDate: new Date(this.state.clicked.endDate).toISOString(),
-      description: this.state.clicked.descriptionTreatment,
+      description: this.state.clicked.descriptionMedicine,
       visitId: this.state.id,
       patientId: this.state.patientId
     }
@@ -447,17 +466,25 @@ class VisitDetails extends React.Component {
           medicineDosage: medicineVisitObject.description,
           medicineId: medicineVisitObject.id,
           medicineName: this.state.clicked.medicine.name,
-          startDate: medicineVisitObject.startDate
+          startDate: medicineVisitObject.startDate,
+          description: this.state.clicked.descriptionMedicine,
         });
         console.log(medicineVisitObject);
-        this.setState({
+        this.setState(prevState  => ({
+          ...prevState,
+          clear: {
+            ...prevState.clear,
+            sicknessOnVisit: "clear",
+            medicine: "clear"
+          },
           clicked: {
+            ...prevState.clicked,
             medicine: null,
             sicknessforMedicine: null,
             descriptionMedicine: "",
             endDate: ""
           }
-        });
+        }));
         Dialog.close("medicine-dialog")(event);
       }
 
@@ -475,7 +502,7 @@ class VisitDetails extends React.Component {
   handleClickAddTreatmentDialogBtn(event){
     var treatmentVisitObject = {
       id : this.state.clicked.treatment.id,
-      description: this.state.descriptionTreatment,
+      description: this.state.clicked.descriptionTreatment,
       visitId: this.state.id,
       patientId: this.state.patientId
     }
@@ -483,15 +510,21 @@ class VisitDetails extends React.Component {
     .then(response => {
       console.log(response);
       this.state.visitTreatment.push({
-        treatmentName: this.state.clicked.treatment.name,
-        treatmentDescription: this.state.clicked.descriptionTreatment,
+        name: this.state.clicked.treatment.name,
+        description: this.state.clicked.descriptionTreatment,
         id: response.id
       });
-      this.setState({
+      this.setState(prevState => ({
+        ...prevState,
+        clear: {
+          ...prevState.clear,
+          treatment: "clear"
+        },
         clicked: {
+          ...prevState.clicked,
           treatment: null
         }
-      });
+      }));
     });
     console.log(this.state.visitTreatment);
     Dialog.close("treatment-dialog")(event);
@@ -509,13 +542,19 @@ class VisitDetails extends React.Component {
       console.log(response);
       this.state.visitSickness.push({
         illnessName: this.state.clicked.sickness.name,
-        illnessHistoryId: response.id
+        illnessHistoryId: response.id,
+        description: this.state.clicked.descriptionSickness
       });
       this.setState(prevState => ({
+        ...prevState,
+        clear: {
+          ...prevState.clear,
+          sickness: "clear"
+        },
         clicked: {
           ...prevState.clicked,
           sickness: null,
-          description: ''
+          descriptionSickness: ''
         }
       }));
     })
@@ -554,7 +593,7 @@ class VisitDetails extends React.Component {
 
             <br/>
             {(currentUserRole == 'doctor' && this.state.openedVisit) ?
-
+            <div style = {{width: '100%'}}>
             <TextField
             id="doctor-notes-input"
             label="Notatki"
@@ -564,7 +603,8 @@ class VisitDetails extends React.Component {
             onChange = {this.handleChangeDescription}
             multiline
             />
-
+            <button className = 'btn-primary plusSign' onClick = {this.putDescriptionOnVisit}>Zapisz</button>
+            </div>
             :
             <a>{this.state.description}</a>
             }
@@ -577,6 +617,7 @@ class VisitDetails extends React.Component {
           <div className = "flex-column justify-content-space column-container">
             <div className = "basic-container-small basic-container">
               <b className = "standard-black">Zdiagnozowane choroby</b>
+              <div className = 'item-holder'>
               {this.state.visitSickness.length > 0 && this.state.visitSickness.map((sickness, index) => (
                 <SicknessOnVisitItem
                 id = {sickness.illnessHistoryId}
@@ -587,6 +628,7 @@ class VisitDetails extends React.Component {
                 snackbarCallback = {this.openSnackbarOnRemove}
                 />
               ))}
+              </div>
               {(currentUserRole == 'doctor' && this.state.openedVisit) ?
               <img src={plusSign}  style = {{width: "40px", cursor: "pointer"}} onClick = {this.handleClickAddSickness} className = 'plusSign'/>
               :
@@ -596,6 +638,7 @@ class VisitDetails extends React.Component {
             <div className = "basic-container-small basic-container">
 
               <b className = "standard-black">Zlecone leki</b>
+              <div className = 'item-holder'>
               {this.state.visitMedicine && this.state.visitMedicine.map((medicine, index) => (
                 <MedicineOnVisitItem
                 illnessHistoryId = {medicine.illnessHistoryId}
@@ -608,6 +651,7 @@ class VisitDetails extends React.Component {
                 snackbarCallback = {this.openSnackbarOnRemove}
                 />
               ))}
+              </div>
               {(currentUserRole == 'doctor' && this.state.openedVisit) ?
               <img src={plusSign}  style = {{width: "40px", cursor: "pointer"}} onClick = {this.handleClickAddMedicine} className = 'plusSign'/>
               :
@@ -624,6 +668,7 @@ class VisitDetails extends React.Component {
               :
               <div/>
               }
+              <div className = 'item-holder-long'>
               {this.state.visitTreatment && this.state.visitTreatment.map((treatment, index) => (
                 <TreatmentOnVisitItem
                 treatmentName = {treatment.name}
@@ -633,6 +678,7 @@ class VisitDetails extends React.Component {
                 snackbarCallback = {this.openSnackbarOnRemove}
                 />
               ))}
+              </div>
 
             </div>
             </div>
@@ -692,6 +738,7 @@ class VisitDetails extends React.Component {
         cssId = 'medicine-search'
         className = 'dialog-margin'
         variant = 'outlined'
+        key={this.state.clear.sicknessOnVisit}
         addId = {this.state.id}
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
@@ -701,6 +748,7 @@ class VisitDetails extends React.Component {
         title = "Lek"
         cssId = 'medicine-search'
         variant = 'outlined'
+        key={this.state.clear.medicine}
         className = 'dialog-margin'
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
@@ -743,6 +791,7 @@ class VisitDetails extends React.Component {
         cssId = 'medicine-search'
         className = 'dialog-margin'
         variant = 'outlined'
+        key={this.state.clear.treatment}
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
         <br/>
@@ -774,6 +823,7 @@ class VisitDetails extends React.Component {
         cssId = 'medicine-search'
         variant = 'outlined'
         className = 'dialog-margin'
+        key={this.state.clear.sickness}
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
         <br/>

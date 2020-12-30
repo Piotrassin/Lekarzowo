@@ -1426,3 +1426,15 @@ align-items: center;
   color: #565656;
   font-size: 13px;
 }
+.item-holder {
+  height: 60%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+}
+.item-holder-long {
+  height: 80%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+}
