@@ -3,14 +3,14 @@ using Lekarzowo.DataAccessLayer.Models;
 
 namespace Lekarzowo.Validators
 {
-    public class CityValidator : AbstractValidator<City>
+    public class MedicineValidator : AbstractValidator<Medicine>
     {
-        public CityValidator()
+        public MedicineValidator()
         {
             RuleFor(x => x.Name)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("Pole nie może być puste")
-                .MaximumLength(63).WithMessage("Maksymalna długość wynosi {MaxLength} znaków, wpisano {TotalLength}.");
+                .MaximumLength(127).WithMessage("Maksymalna długość wynosi {MaxLength} znaków, wpisano {TotalLength}.");
         }
     }
 }
