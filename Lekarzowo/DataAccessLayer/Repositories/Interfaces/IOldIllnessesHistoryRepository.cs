@@ -14,5 +14,12 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         void Update(Oldillnesshistory t);
         Task<bool> Exists(decimal IllnessId, decimal PatientId);
         Task Save();
+
+        /// <summary>
+        /// Returns objects with partial and specific odlIllnessHistory data used to different endpoint.
+        /// </summary>
+        /// <param name="PatientId"></param>
+        /// <returns></returns>
+        Task<IEnumerable<object>> GetAllSpecificData(decimal PatientId);
     }
 }

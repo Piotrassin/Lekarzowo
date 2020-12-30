@@ -114,7 +114,7 @@ namespace Lekarzowo.Controllers
             if (IsPatientAskingForElsesData(patientId)) return BadRequest();
 
             var illnessHistory = await _repository.PatientHistory(patientId);
-            var oldillnesshistory = await _oldIllnessesHistoryRepository.GetAll(patientId);
+            var oldillnesshistory = await _oldIllnessesHistoryRepository.GetAllSpecificData(patientId);
 
             List<object> patientsHistory = new List<object>();
             patientsHistory.AddRange(illnessHistory);

@@ -83,7 +83,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// <param name="limit"></param>
         /// <param name="skip"></param>
         /// <returns></returns>
-        Task<IEnumerable<object>> RecentOrUpcomingByPatientId(decimal patientId, bool showUpcomingInstead, bool hideCanceledReservations, int? limit, int? skip);
+        Task<IEnumerable<object>> RecentOrUpcomingByPatientId(decimal patientId, bool showUpcomingInstead, bool hideCanceledReservations, decimal? doctorId, DateTime? from, DateTime? to, int? limit, int? skip);
 
         /// <summary>
         /// Returns true if none of existing reservations in a given local and with a given doctor overlap passed reservation.

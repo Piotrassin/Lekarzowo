@@ -40,7 +40,7 @@ namespace Lekarzowo.Controllers
             return list;
         }
 
-        // GET: api/Medicinehistories/1/1
+        // GET: api/medicinehistories?IllnessHistoryId=164&MedicineId=2&startDate=2020-12-21
         [HttpGet]
         public ActionResult<Medicinehistory> GetMedicinehistory(decimal IllnessHistoryId, decimal MedicineId, DateTime startDate)
         {
@@ -68,7 +68,7 @@ namespace Lekarzowo.Controllers
             return Ok(await _repository.PrescribedMedicines(visitId, limit, skip));
         }
 
-        // PUT: api/Medicinehistories/5
+        // PUT: api/medicinehistories?IllnessHistoryId=164&MedicineId=2&startDate=2020-12-21
         [Authorize(Roles = "admin,doctor")]
         [HttpPut]
         public IActionResult PutMedicinehistory(decimal IllnessHistoryId, decimal MedicineId, DateTime startDate, Medicinehistory medicinehistory)
@@ -120,7 +120,7 @@ namespace Lekarzowo.Controllers
             return Created("", medicinehistory);
         }
 
-        // DELETE: api/Medicinehistories/5
+        // DELETE: api/medicinehistories?IllnessHistoryId=164&MedicineId=2&startDate=2020-12-21
         [Authorize(Roles = "admin,doctor")]
         [HttpDelete]
         public ActionResult<Medicinehistory> DeleteMedicinehistory(decimal illnessHistoryId, decimal medicineId, DateTime startDate)
