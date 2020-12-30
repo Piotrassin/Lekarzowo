@@ -347,23 +347,29 @@ class VisitDetails extends React.Component {
   handleClickBtnVisit(event) {
     console.log('Hello');
     if(VisitService.getOpenedVisit() == false){
-      //if(VisitService.canVisitBeOpened(this.state.id)){
-        var state = VisitService.startVisit(this.state.id);
-        if(state){
+      if(VisitService.canVisitBeOpened(this.state.id)){
+
+
           VisitService.postVisit(this.state.id)
           .then(response => {
             this.setState({
-              openedVisit: state
+              openedVisit: true
             });
+            VisitService.startVisit(this.state.id);
+            VisitService.setVisitOngoing(this.state.id, true);
           })
           .catch(err => {
             console.log('Error');
-            console.log(err);
+            //console.log(err);
+            this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
           })
-      //}
 
 
 
+
+      }
+      else {
+        this.snackbarRef.current.openSnackBar('Nie mozna otworzyc wizyty', 'red-snackbar');
       }
 
     }else {
@@ -372,11 +378,18 @@ class VisitDetails extends React.Component {
         console.log("Zakonczenie wizyty");
         VisitService.putDescriptionOnVisit(this.state.id, this.state.description)
         .then(response => {
-          VisitService.endVisit();
-          this.setState({
-            openedVisit: false
+          VisitService.setVisitOngoing(this.state.id, false)
+          .then(response => {
+            VisitService.endVisit();
+            this.setState({
+              openedVisit: false
+            });
+            window.location.reload();
+          }).catch(err => {
+            this.snackbarRef.current.openSnackBar('Błąd przy zamykaniu wizyty', 'red-snackbar');
           });
-          window.location.reload();
+
+
         });
 
       }else {

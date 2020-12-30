@@ -28,6 +28,15 @@ class VisitService {
     return true;
   }
 
+  setVisitOngoing(id, state){
+
+    return fetch(url + 'Visits/ChangeStatus?visitId=' + id +
+    '&isOnGoing=' + state, {
+    method: 'PUT',
+    headers: authHeader({'Content-Type': 'application/json'})
+    })
+  }
+
   checkIfAnyOpenVisit(){
     var doctorId = JSON.parse(AuthService.getLoggedUser()).id;
     return fetch(url + 'Visits/OnGoing/' + doctorId, {
@@ -50,6 +59,16 @@ class VisitService {
 
   }
 
+  checkIfAnyOpenVisitLocal(){
+
+    var activeVisit = localStorage.getItem('activeVisit');
+    if(activeVisit == null){
+      return false;
+    }
+    return true;
+
+  }
+
   getOpenedVisit(){
     var activeVisit = localStorage.getItem('activeVisit');
     if(activeVisit == null){
@@ -60,18 +79,18 @@ class VisitService {
 
   canVisitBeOpened(id){
 
-    /*return fetch(url + 'Visits/CanBeOpened/' + id, {
+    return fetch(url + 'Visits/CanBeOpened/' + id, {
      headers: authHeader()
    }).then(response => {
-     if(response.status == 404){
-       return false;
+     if(response.status >= 400){
+       throw Error("err");
      }
-     if(response.status == 200){
-       return true;
-     }
-     return false;
-   });
-   */
+     return response.json();
+   })
+   .then(response => {
+     return response.value;
+   })
+
   }
 
   getAvailableMedicine(search, limit, skip){

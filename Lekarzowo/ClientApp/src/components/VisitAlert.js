@@ -12,14 +12,14 @@ onClickRedirect(event){
   if(VisitService.checkIfAnyOpenVisit()){
     this.props.history.push('/visit/' + VisitService.getOpenedVisit().id);
   }
-  //<div className = {VisitService.checkIfAnyOpenVisit() ? 'visit-alert' : 'visit-alert visible-none'}>
+  
 }
 
 
 
 render() {
   return(
-    <div className = 'visit-alert visible-none'>
+    <div className = {VisitService.checkIfAnyOpenVisitLocal() ? 'visit-alert' : 'visit-alert visible-none'}>
       <b style = {{fontSize: "18px"}} class = 'flash-text '>Masz otwartą wizytę</b>
       <a style = {{textDecoration: "underline", cursor: "pointer"}} onClick = {this.onClickRedirect}>Kliknij tu aby powrócic</a>
     </div>
