@@ -24,6 +24,8 @@ namespace Lekarzowo
 {
     public class Startup
     {
+        private static bool hasTokenExpired = false;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -73,16 +75,31 @@ namespace Lekarzowo
                     {
                         if (httpContext.Exception.GetType() == typeof(SecurityTokenExpiredException))
                         {
-                            httpContext.Response.Headers.Add("Token_has_expired", "true");
+                            hasTokenExpired = true;
+                            //httpContext.Response.Headers.Add("Token_has_expired", "true");
+                        }
+                        else
+                        {
+                            hasTokenExpired = false;
                         }
 
                         return Task.CompletedTask;
-                    }
+                    },
                 };
             });
             //services.AddScoped<JWTService>(s => s.GetService<IOptions<SecretSettings>>().Value);
             services.AddScoped<JWTService>();
             #endregion
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(cors =>
+                {
+                    cors.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowAnyOrigin();
+                });
+            });
 
             services.AddMvc(options =>
                 {
@@ -92,7 +109,10 @@ namespace Lekarzowo
                 {
                     options.RegisterValidatorsFromAssemblyContaining<Startup>();
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonOptions(
+                    options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
 
             services.AddSwaggerGen();
 
@@ -138,10 +158,10 @@ namespace Lekarzowo
 
                 });
 
-            services.AddMvc()
-                .AddJsonOptions(
-                    options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-                );
+            //services.AddMvc()
+            //    .AddJsonOptions(
+            //        options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            //    );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -157,6 +177,14 @@ namespace Lekarzowo
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseCors();
+
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers["Token_has_expired"] = hasTokenExpired.ToString();
+                await next.Invoke();
+            });
 
             app.UseSwagger();
             app.UseSwaggerUI(x =>
