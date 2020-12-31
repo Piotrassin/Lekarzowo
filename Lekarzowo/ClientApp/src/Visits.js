@@ -60,6 +60,13 @@ class Visits extends React.Component {
         this.setState({
           recentVisits: response
         });
+      })
+      .catch(err => {
+        if(err.message ==  401){
+          this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+        }else {
+          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }
       });
     }
     else if (currentRole == 'patient'){
@@ -68,6 +75,13 @@ class Visits extends React.Component {
         this.setState({
           recentVisits: response
         });
+      })
+      .catch(err => {
+        if(err.message ==  401){
+          this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+        }else {
+          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }
       });
     }
 
@@ -82,6 +96,13 @@ class Visits extends React.Component {
         this.setState({
           upcomingVisits: response
         });
+      })
+      .catch(err => {
+        if(err.message ==  401){
+          this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+        }else {
+          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }
       });
     }
     else if(currentRole == 'patient') {
@@ -90,6 +111,13 @@ class Visits extends React.Component {
         this.setState({
           upcomingVisits: response
         });
+      })
+      .catch(err => {
+        if(err.message ==  401){
+          this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+        }else {
+          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }
       });
     }
 
@@ -128,14 +156,19 @@ class Visits extends React.Component {
       console.log('helo');
       ReservationService.cancelReservation(this.state.visitToCancel.reservationId)
       .then(response => {
-
-
         this.snackbarRef.current.openSnackBar('Odwołano wizytę', 'green-snackbar');
         Dialog.close("visit-cancel-dialog")(event);
         this.setState({
           visitToCancel: {}
         });
         //window.location.reload()
+      })
+      .catch(err => {
+        if(err.message ==  401){
+          this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+        }else {
+          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }
       });
     }
   }

@@ -160,8 +160,12 @@ class PatientHistory extends React.Component {
       });
     })
     .catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-    })
+      if(err.message ==  401){
+        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+      }else {
+        this.snackbarRef.current.openSnackBar(err.message, 'green-snackbar');
+      }
+    });
   }
 
 
@@ -233,6 +237,13 @@ class PatientHistory extends React.Component {
       this.setState({
         sicknessHistory: response
       })
+    })
+    .catch(err => {
+      if(err.message ==  401){
+        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+      }else {
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      }
     });
   }
 
@@ -242,6 +253,13 @@ class PatientHistory extends React.Component {
       this.setState({
         takenMedicine: response
       });
+    })
+    .catch(err => {
+      if(err.message ==  401){
+        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+      }else {
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      }
     });
   }
 
@@ -276,7 +294,11 @@ class PatientHistory extends React.Component {
               this.clearMedicineAdd();
             })
             .catch(err => {
-              this.snackbarRef.current.openSnackBar( err.message ,'red-snackbar');
+              if(err.message ==  401){
+                this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+              }else {
+                this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+              }
             });
           }
         });
@@ -309,7 +331,11 @@ class PatientHistory extends React.Component {
           this.clearSicknessAdd();
         })
         .catch(err => {
-          this.snackbarRef.current.openSnackBar( err.message ,'red-snackbar');
+          if(err.message ==  401){
+            this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+          }else {
+            this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }
         });
       }
     });

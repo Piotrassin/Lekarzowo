@@ -1,8 +1,9 @@
 import authHeader from '../authentication/AuthHeader.js';
 import AuthService from '../authentication/AuthService.js';
 import Formater from '../helpers/Formater.js';
+import MasterService  from  './MasterService.js';
 
-const url = 'https://localhost:5001/api/';
+const url = MasterService.url();
 
 class ReservationService {
 
@@ -20,7 +21,12 @@ class ReservationService {
     + '&limit=' + limit + '&skip=' + skip, {
       headers: authHeader()
     })
-    .then(response => response.json());
+    .then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
 
   }
 
@@ -36,15 +42,9 @@ class ReservationService {
     + Formater.formatDate(dateEnd.toISOString()) +  '&limit=' + limit, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401){
-        console.log('throwing 401 error');
-        throw new Error(401);
-      };
-      if(!response.ok){
-        console.log('throwin other error');
-        throw new Error(response.statusText)
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      console.log('Continue');
       return response.json()
     });
   }
@@ -57,15 +57,9 @@ class ReservationService {
     '&Limit=' + limit + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401){
-        console.log('throwing 401 error');
-        throw new Error(401);
-      };
-      if(!response.ok){
-        console.log('throwin other error');
-        throw new Error(response.statusText)
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      console.log('Continue');
       return response.json()
     });
   }
@@ -79,15 +73,9 @@ class ReservationService {
     + Formater.formatDate(dateEnd.toISOString()), {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401){
-        console.log('throwing 401 error');
-        throw new Error(401);
-      };
-      if(!response.ok){
-        console.log('throwin other error');
-        throw new Error(response.statusText)
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      console.log('Continue');
       return response.json()
     });
   }
@@ -97,7 +85,12 @@ class ReservationService {
     return fetch(url + 'Reservations/Recent?PatientId=' + patientId +
     '&Limit=' + limit + '&skip=' + skip, {
       headers: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
 
@@ -106,7 +99,12 @@ class ReservationService {
     return fetch(url + 'Medicinehistories/TakenMedicines?patientId=' + patientId
     + '&limit=' + limit, {
       headers: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   getTakenMedicinePatient(patientId, limit) {
@@ -114,7 +112,12 @@ class ReservationService {
     return fetch(url + 'Medicinehistories/TakenMedicines?patientId=' + patientId
     + '&limit=' + limit, {
       headers: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   getReservation(reservationId){
@@ -129,7 +132,12 @@ class ReservationService {
       console.log('Poza');
       return response;
     })
-    .then(response => response.json());
+    .then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   getVisitDetails(visitId){
@@ -137,15 +145,11 @@ class ReservationService {
       headers: authHeader()
     })
     .then(response => {
-      console.log(response);
-      if (!response.ok) {
-        console.log('w srodk');
-        throw Error(response.status);
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      console.log('Poza');
-      return response;
-    })
-    .then(response => response.json());
+      return response.json()
+    });
   }
 
   getPastIllnesses(limit){
@@ -153,7 +157,12 @@ class ReservationService {
     return fetch(url + 'Illnesseshistory/PatientHistory?patientId=' + patientId
     + '&limit=' + limit, {
       headers: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   getPastIllnessesPatient(patientId, limit){
@@ -161,7 +170,12 @@ class ReservationService {
     return fetch(url + 'Illnesseshistory/PatientHistory?patientId=' + patientId
     + '&limit=' + limit, {
       headers: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   postReservation(reservation){
@@ -178,22 +192,24 @@ class ReservationService {
       "LocalId": reservation.localId
     })
     }).then(response => {
-      if(response.status > 400){
-        console.log(response);
-        throw new Error('Błąd przy rezerwacji');
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      return response.json();
-    })
+      return response.json()
+    });
   }
 
   cancelReservation(reservationId){
     return fetch(url + 'Reservations/Cancel/' + reservationId, {
       headers: authHeader()
     }).then(response => {
-      if (!response.ok) {
-        throw Error(response.statusText);
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      return response;
+      if(!response.ok){
+          throw new Error("Nie udało się anulować  rezerwacji. Spróbuj później");
+      }
+      return response.json()
     });
   }
 

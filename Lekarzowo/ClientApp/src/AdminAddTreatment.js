@@ -36,8 +36,12 @@ handleClickAddTreatment(event){
     this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
   })
   .catch(err => {
-    this.snackbarRef.current.openSnackBar('Błąd przy dodawaniu', 'red-snackbar');
-  })
+    if(err.message ==  401){
+      this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+    }else {
+      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+    }
+  });
 }
 
 componentDidMount() {

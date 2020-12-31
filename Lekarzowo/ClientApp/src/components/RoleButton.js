@@ -79,7 +79,11 @@ handleCloseRoleBtn(event) {
   })
   this.setState({
     value: null
+  })
+  .catch(err => {
+    console.log(err.message);
   });
+
 }
 
 render() {

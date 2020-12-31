@@ -63,6 +63,13 @@ class FindDoctor extends React.Component {
             doctor: null
           });
         }
+      })
+      .catch(err => {
+        if(err.message ==  401){
+          this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+        }else {
+          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }
       });
     });
   }
@@ -74,12 +81,26 @@ class FindDoctor extends React.Component {
       this.setState({
         doctor: response[0]
       });
+    })
+    .catch(err => {
+      if(err.message ==  401){
+        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+      }else {
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      }
     });
     DoctorService.getDoctorWorkingHours(id, 7)
     .then(response => {
       this.setState({
         doctorWorkingHoursArray: response
       });
+    })
+    .catch(err => {
+      if(err.message ==  401){
+        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+      }else {
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      }
     });
   }
 

@@ -1,7 +1,8 @@
 import authHeader from '../authentication/AuthHeader.js';
 import AuthService from '../authentication/AuthService.js';
+import MasterService  from  './MasterService.js';
 
-const url = 'https://localhost:5001/api/';
+const url = MasterService.url();
 
 class VisitService {
 
@@ -11,7 +12,12 @@ class VisitService {
     return fetch(url + 'Reservations/ReservationsByDoctorId?doctorId=' + doctorId
     + '&localId=' + localId + '&start=' + startDate.toISOString() + '&end=' + endDate.toISOString(), {
       headers: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   startVisit(id) {
@@ -34,7 +40,12 @@ class VisitService {
     '&isOnGoing=' + state, {
     method: 'PUT',
     headers: authHeader({'Content-Type': 'application/json'})
-    })
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   checkIfAnyOpenVisit(){
@@ -50,12 +61,7 @@ class VisitService {
      }
      return false;
    });
-    /*var activeVisit = localStorage.getItem('activeVisit');
-    if(activeVisit == null){
-      return false;
-    }
-    return true;
-*/
+
 
   }
 
@@ -82,6 +88,9 @@ class VisitService {
     return fetch(url + 'Visits/CanBeOpened/' + id, {
      headers: authHeader()
    }).then(response => {
+     if(response.status == 401 && (!MasterService.handle401Logout(response))){
+         throw new Error(401);
+     }
      if(response.status >= 400){
        throw Error("err");
      }
@@ -105,12 +114,15 @@ class VisitService {
     return fetch(url + 'Medicines/AllByName?Name=' +search + '&limit=' + limit
     + '&skip=' + skip, {
       headers: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
-  saveMedicineOnVisit(medicineId){
 
-  }
 
   getAvailableTreatments(search, limit, skip){
     if (search === undefined)
@@ -124,7 +136,12 @@ class VisitService {
     return fetch(url + 'Treatments/AllByName?Name=' +search + '&limit=' + limit
     + '&skip=' + skip, {
       headers: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   getAvailableSicknesses(search, limit, skip){
@@ -139,7 +156,12 @@ class VisitService {
     return fetch(url + 'Illnesses/AllByName?Name=' +search + '&limit=' + limit
     + '&skip=' + skip, {
       headers: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   getSicknessOnVisitSearch(search, limit, skip, visitId){
@@ -154,14 +176,24 @@ class VisitService {
     return fetch(url + 'Illnesseshistory/AllByNameOnAVisit?Name=' +search + '&limit=' + limit
     + '&skip=' + skip + '&visitId=' + visitId, {
       headers: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   getSicknessOnVisit(visitId, limit, skip){
     return fetch(url + 'Illnesseshistory/AllByVisitId?visitId=' + visitId +
     '&limit='+ limit + '&skip=' + skip, {
       headers: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
 
@@ -169,14 +201,24 @@ class VisitService {
     return fetch(url + 'Treatmentonvisits/PerformedTreatments?visitId=' + visitId +
     '&limit='+ limit + '&skip=' + skip, {
       headers: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   getMedicineOnVisit(visitId, limit, skip){
     return fetch(url + 'Medicinehistories/PrescribedMedicines?visitId=' + visitId +
     '&limit='+ limit + '&skip=' + skip, {
       headers: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   deleteSicknessOnVisit(sicknessHistoryId){
@@ -185,11 +227,16 @@ class VisitService {
     headers: authHeader()
     })
     .then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
       if(!response.ok){
         throw new Error("Nie udało sie");
       }
       return response;
-    })
+    });
+
+
   }
 
   deleteTreatmentOnVisit(treatmentOnVisitId){
@@ -198,6 +245,9 @@ class VisitService {
     headers: authHeader()
     })
     .then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
       if(!response.ok){
         throw new Error("Nie udało sie");
       }
@@ -213,6 +263,9 @@ class VisitService {
     headers: authHeader()
     })
     .then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
       if(!response.ok){
         throw new Error("Nie udało sie");
       }
@@ -230,13 +283,14 @@ class VisitService {
       "VisitId": sickness.visitId,
       "Description": sickness.description
     })
-  }).
-  then(response => {
-    if(!response.ok){
-      throw new Error('Nie udalo sie dodac');
+  }).then(response => {
+    if(response.status == 401 && (!MasterService.handle401Logout(response))){
+        throw new Error(401);
     }
-    return response.json();
-  })
+    return response.json()
+  });
+
+
   }
 
   postMedicineOnVisit(medicine){
@@ -251,7 +305,12 @@ class VisitService {
       "Finishdate": medicine.endDate,
       "Description": medicine.description
     })
-    })
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
 
@@ -266,13 +325,12 @@ class VisitService {
       "Description": treatment.description,
       "PatientId": treatment.patientId
     })
-    }).
-    then(response => {
-      if(!response.ok){
-        throw new Error('Nie udalo sie dodac');
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      return response.json();
-    })
+      return response.json()
+    });
   }
 
   putDescriptionOnVisit(visitId, description){
@@ -284,7 +342,12 @@ class VisitService {
       "ReservationId": visitId,
       "Description": description
     })
-    })
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   postVisit(reservationId){
@@ -298,16 +361,14 @@ class VisitService {
     })
     })
     .then(response => {
-      if(!response.ok) {
-        throw Error(response.message)
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      return response.json;
+      return response.json()
     });
   }
 
-  openVisit(reservation){
 
-  }
 
   postOldMedicinehistory(oldMedicineHistoryObject){
     return fetch(url + 'Oldmedicinehistories',{
@@ -321,10 +382,10 @@ class VisitService {
     })
     })
     .then(response => {
-      if(!response.ok) {
-        throw Error(response.message)
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      return response.json;
+      return response.json()
     });
   }
 
@@ -341,10 +402,10 @@ class VisitService {
     })
     })
     .then(response => {
-      if(!response.ok) {
-        throw Error(response.message)
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      return response.json;
+      return response.json()
     });
 
   }

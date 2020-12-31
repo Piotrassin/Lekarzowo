@@ -1,15 +1,12 @@
 import authHeader from '../authentication/AuthHeader.js';
 import AuthService from '../authentication/AuthService.js';
 import Formater from '../helpers/Formater.js';
+import MasterService  from  './MasterService.js';
 
-const url = 'https://localhost:5001/api/';
+const url = MasterService.url();
 
 class UserService {
-  getDashboardContent(){
-    return fetch(url + 'visits' , {
-      headers: authHeader()
-    });
-  }
+
 
   getCities(search, limit){
     if (search === undefined)
@@ -19,10 +16,10 @@ class UserService {
     return fetch(url + 'cities/AllByName?Name=' + search + '&limit=' + limit, {
       headers: authHeader()
     }).then(response => {
-      console.log(response);
-      var resp =  response.json();
-      console.log(resp[0]);
-      return resp;
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
     });
 
   }
@@ -36,10 +33,10 @@ class UserService {
     return fetch(url + 'Specialities/AllByName?Name=' + search + '&limit=' + limit, {
       headers: authHeader()
     }).then(response => {
-      console.log(response);
-      var resp =  response.json();
-      console.log(resp[0]);
-      return resp;
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
     });
 
   }
@@ -53,8 +50,10 @@ class UserService {
     return fetch(url + 'Doctors/AllByName?Name=' + search + '&limit=' + limit, {
       headers: authHeader()
     }).then(response => {
-      var resp =  response.json();
-      return resp;
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
     });
 
   }
@@ -63,8 +62,10 @@ class UserService {
     return fetch(url + 'people/single', {
       headers: authHeader()
     }).then(response => {
-      console.log(response.headers.entries());
-      return response.json();
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
     });
   }
 
@@ -72,7 +73,12 @@ class UserService {
     var patientId = JSON.parse(AuthService.getLoggedUser()).id;
     return fetch(url + 'Illnesseshistory/AllByPatientId?patientId=' + patientId, {
       headers: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   getUserMedicineHistory(limit, skip) {
@@ -86,7 +92,12 @@ class UserService {
     return fetch(url + 'Medicinehistories/TakenMedicines?patientId=' + patientId
     + '&limit=' + limit + '&skip=' + skip, {
       headers: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
 
   }
 
@@ -105,11 +116,12 @@ class UserService {
       "Gender": user.gender
     })
   }).then(response => {
-    if (!response.ok) {
-      throw Error(response.statusText);
+    if(response.status == 401 && (!MasterService.handle401Logout(response))){
+        throw new Error(401);
     }
-    return response;
+    return response.json()
   });
+
   }
 
   changePassword(passwordObject){
@@ -130,8 +142,10 @@ class UserService {
         }
       })
     }).then(response => {
-
-      return response.json();
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
     });
   }
 
@@ -147,10 +161,10 @@ class UserService {
       "StartDate": medicineObject.startdate
     })
   }).then(response => {
-    if (!response.ok) {
-      throw Error(response.statusText);
+    if(response.status == 401 && (!MasterService.handle401Logout(response))){
+        throw new Error(401);
     }
-    return response;
+    return response.json()
   });
   }
 

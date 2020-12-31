@@ -155,7 +155,11 @@ class VisitDetails extends React.Component {
     .then(response => {
       this.snackbarRef.current.openSnackBar('Zaktualizowano notatkę', 'green-snackbar');
     }).catch(err => {
-      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      if(err.message ==  401){
+        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+      }else {
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      }
     });
 
   }
@@ -183,8 +187,12 @@ class VisitDetails extends React.Component {
       });
     })
     .catch(err => {
+      if(err.message ==  401){
+        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+      }else {
         this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-    })
+      }
+    });
   }
 
   openSnackbarOnRemove(content, classId, arrayName, item, idColumnName){
@@ -288,6 +296,13 @@ class VisitDetails extends React.Component {
         visitSickness: response
       });
       console.log(this.state.visitSickness);
+    })
+    .catch(err => {
+      if(err.message ==  401){
+        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+      }else {
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      }
     });
   }
 
@@ -298,6 +313,13 @@ class VisitDetails extends React.Component {
         visitTreatment: response
       });
       console.log(this.state.visitTreatment);
+    })
+    .catch(err => {
+      if(err.message ==  401){
+        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+      }else {
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      }
     });
   }
 
@@ -308,6 +330,13 @@ class VisitDetails extends React.Component {
         visitMedicine: response
       });
       console.log(this.state.visitMedicine);
+    })
+    .catch(err => {
+      if(err.message ==  401){
+        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+      }else {
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      }
     });
   }
 
@@ -322,6 +351,13 @@ class VisitDetails extends React.Component {
       this.setState({
         sicknessHistory: response
       })
+    })
+    .catch(err => {
+      if(err.message ==  401){
+        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+      }else {
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      }
     });
   }
 
@@ -331,6 +367,13 @@ class VisitDetails extends React.Component {
       this.setState({
         takenMedicine: response
       });
+    })
+    .catch(err => {
+      if(err.message ==  401){
+        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+      }else {
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      }
     });
   }
 
@@ -359,10 +402,12 @@ class VisitDetails extends React.Component {
             VisitService.setVisitOngoing(this.state.id, true);
           })
           .catch(err => {
-            console.log('Error');
-            //console.log(err);
-            this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-          })
+            if(err.message ==  401){
+              this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+            }else {
+              this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+            }
+          });
 
 
 
@@ -385,8 +430,13 @@ class VisitDetails extends React.Component {
               openedVisit: false
             });
             window.location.reload();
-          }).catch(err => {
-            this.snackbarRef.current.openSnackBar('Błąd przy zamykaniu wizyty', 'red-snackbar');
+          })
+          .catch(err => {
+            if(err.message ==  401){
+              this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+            }else {
+              this.snackbarRef.current.openSnackBar('Błąd przy zamykaniu wizyty', 'red-snackbar');
+            }
           });
 
 
@@ -510,6 +560,13 @@ class VisitDetails extends React.Component {
         Dialog.close("medicine-dialog")(event);
       }
 
+    })
+    .catch(err => {
+      if(err.message ==  401){
+        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+      }else {
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      }
     });
 
 
@@ -547,6 +604,13 @@ class VisitDetails extends React.Component {
           treatment: null
         }
       }));
+    })
+    .catch(err => {
+      if(err.message ==  401){
+        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+      }else {
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      }
     });
     console.log(this.state.visitTreatment);
     Dialog.close("treatment-dialog")(event);
@@ -581,7 +645,11 @@ class VisitDetails extends React.Component {
       }));
     })
     .catch(err => {
-      console.log(err);
+      if(err.message ==  401){
+        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+      }else {
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      }
     });
 
 

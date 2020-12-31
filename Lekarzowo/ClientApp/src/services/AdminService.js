@@ -1,7 +1,8 @@
 import authHeader from '../authentication/AuthHeader.js';
 import AuthService from '../authentication/AuthService.js';
+import MasterService  from  './MasterService.js';
 
-const url = 'https://localhost:5001/api/';
+const url = MasterService.url();
 
 class AdminService {
 
@@ -13,10 +14,10 @@ class AdminService {
       "Name": medicine
     })})
     .then(response => {
-      if(!response.ok) {
-        throw Error(response.message)
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      return response.json;
+      return response.json()
     });
   }
 
@@ -28,10 +29,10 @@ class AdminService {
       "Name": illness
     })})
     .then(response => {
-      if(!response.ok) {
-        throw Error(response.message)
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      return response.json;
+      return response.json()
     });
   }
 
@@ -43,10 +44,10 @@ class AdminService {
       "Name": city
     })})
     .then(response => {
-      if(!response.ok) {
-        throw Error(response.message)
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      return response.json;
+      return response.json()
     });
   }
 
@@ -63,10 +64,10 @@ class AdminService {
       "Blocknumber": local.blockNumber
     })})
     .then(response => {
-      if(!response.ok) {
-        throw Error(response.message)
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      return response.json;
+      return response.json()
     });
 
   }
@@ -80,10 +81,10 @@ class AdminService {
       "LocalId": room.localId
     })})
     .then(response => {
-      if(!response.ok) {
-        throw Error(response.message)
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      return response.json;
+      return response.json()
     });
 
   }
@@ -96,10 +97,10 @@ class AdminService {
       "Name": treatment
     })})
     .then(response => {
-      if(!response.ok) {
-        throw Error(response.message)
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      return response.json;
+      return response.json()
     });
 
   }
@@ -113,10 +114,10 @@ class AdminService {
       "Price": speciality.price
     })})
     .then(response => {
-      if(!response.ok) {
-        throw Error(response.message)
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      return response.json;
+      return response.json()
     });
 
   }
@@ -127,10 +128,10 @@ class AdminService {
     headers: authHeader({'Content-Type': 'application/json'}),
     body: JSON.stringify(doctor)})
     .then(response => {
-      if(!response.ok) {
-        throw Error(response.message)
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      return response.json;
+      return response.json()
     });
 
   }
@@ -141,10 +142,10 @@ class AdminService {
     headers: authHeader({'Content-Type': 'application/json'}),
     body: JSON.stringify(workinghours)})
     .then(response => {
-      if(!response.ok) {
-        throw Error(response.message)
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
       }
-      return response.json;
+      return response.json()
     });
   }
 
@@ -156,10 +157,10 @@ class AdminService {
     return fetch(url + 'locals/AllByName?Name=' + search + '&limit=' + limit, {
       headers: authHeader()
     }).then(response => {
-      console.log(response);
-      var resp =  response.json();
-
-      return resp;
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
     });
 
   }
@@ -173,10 +174,10 @@ class AdminService {
     '&doctorId=' + doctorId, {
       headers: authHeader()
     }).then(response => {
-      console.log(response);
-      var resp =  response.json();
-
-      return resp;
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
     });
   }
 

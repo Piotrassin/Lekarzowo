@@ -27,6 +27,13 @@ componentDidMount() {
     this.setState({
       loading: false
     });
+  })
+  .catch(err => {
+    if(err.message ==  401){
+      this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+    }else {
+      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+    }
   });
 }
 
@@ -46,7 +53,7 @@ render() {
           <a className = 'table-header'>Dawka</a>
         </div>
         <div className = 'sickness-item-part part-5'>
-          
+
         </div>
       </div>
 {this.state.medicines && this.state.medicines.map((medicine, index ) => (

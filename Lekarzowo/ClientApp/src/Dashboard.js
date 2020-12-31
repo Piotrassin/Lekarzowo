@@ -62,6 +62,13 @@ class Dashboard extends React.Component {
       illnesses: response.filter(responseObject => responseObject.curedate == null),
       oldIllnesses: response.filter(responseObject => responseObject.curedate != null)
       });
+    })
+    .catch(err => {
+      if(err.message ==  401){
+        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+      }else {
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      }
     });
   }
 

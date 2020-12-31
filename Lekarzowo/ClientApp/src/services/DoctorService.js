@@ -1,7 +1,8 @@
 import authHeader from '../authentication/AuthHeader.js';
 import AuthService from '../authentication/AuthService.js';
+import MasterService  from  './MasterService.js';
 
-const url = 'https://localhost:5001/api/';
+const url = MasterService.url();
 
 class DoctorService {
 
@@ -12,7 +13,12 @@ class DoctorService {
     return fetch(url + 'Doctors/AllByName?Name=' + search + '&limit=' + limit
     + '&skip=' + skip, {
       header: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   getDoctorWorkingHours(doctorId, days) {
@@ -20,7 +26,12 @@ class DoctorService {
     '&days=' + days, {
       headers: authHeader()
     })
-    .then(response => response.json());
+    .then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   getDoctorLocals(search, limit, skip) {
@@ -30,7 +41,12 @@ class DoctorService {
     return fetch(url + 'Doctors/AllByName?Name=' + search + '&limit=' + limit
     + '&skip=' + skip, {
       header: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   getSpecializations(search, limit, skip) {
@@ -40,12 +56,22 @@ class DoctorService {
     return fetch(url + 'Specialities/AllByName?Name=' + search + '&limit=' + limit
     + '&skip=' + skip, {
       header: authHeader()
-    }).then(response => response.json());
+    }).then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
   getDoctor(id){
     return fetch(url + 'Doctors/ContactData/' + id)
-    .then(response => response.json());
+    .then(response => {
+      if(response.status == 401 && (!MasterService.handle401Logout(response))){
+          throw new Error(401);
+      }
+      return response.json()
+    });
   }
 
 }
