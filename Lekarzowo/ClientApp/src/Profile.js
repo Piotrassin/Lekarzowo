@@ -70,11 +70,7 @@ componentDidMount(){
       });
   })
   .catch(err => {
-    if(err.message ==  401){
-      this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-    }else {
       this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-    }
   });
 
 }

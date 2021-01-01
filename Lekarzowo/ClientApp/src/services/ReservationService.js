@@ -2,6 +2,7 @@ import authHeader from '../authentication/AuthHeader.js';
 import AuthService from '../authentication/AuthService.js';
 import Formater from '../helpers/Formater.js';
 import MasterService  from  './MasterService.js';
+import Validation from '../helpers/Validation.js';
 
 const url = MasterService.url();
 
@@ -22,10 +23,14 @@ class ReservationService {
       headers: authHeader()
     })
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
+
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
 
   }
@@ -42,10 +47,14 @@ class ReservationService {
     + Formater.formatDate(dateEnd.toISOString()) +  '&limit=' + limit, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
+
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -57,10 +66,14 @@ class ReservationService {
     '&Limit=' + limit + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
+
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -73,10 +86,14 @@ class ReservationService {
     + Formater.formatDate(dateEnd.toISOString()), {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
+
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -86,10 +103,14 @@ class ReservationService {
     '&Limit=' + limit + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
+
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -100,10 +121,14 @@ class ReservationService {
     + '&limit=' + limit, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
+
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -113,30 +138,30 @@ class ReservationService {
     + '&limit=' + limit, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
+
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
   getReservation(reservationId){
     return fetch(url + 'Reservations/WithPatientData/' + reservationId, {
       headers: authHeader()
-    }).then(response => {
-      console.log(response);
-      if (!response.ok) {
-        console.log('w srodk');
-        throw Error(response.status);
-      }
-      console.log('Poza');
-      return response;
     })
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
+
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -145,10 +170,16 @@ class ReservationService {
       headers: authHeader()
     })
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
+      //MasterService.handleResponseStatus(response);
+      if(response.status == 404){
+        throw Error(404);
       }
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -158,10 +189,14 @@ class ReservationService {
     + '&limit=' + limit, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
+
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -171,10 +206,14 @@ class ReservationService {
     + '&limit=' + limit, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
+
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -192,24 +231,29 @@ class ReservationService {
       "LocalId": reservation.localId
     })
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
+
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
   cancelReservation(reservationId){
     return fetch(url + 'Reservations/Cancel/' + reservationId, {
       headers: authHeader()
-    }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
-      if(!response.ok){
-          throw new Error("Nie udało się anulować  rezerwacji. Spróbuj później");
-      }
+    })
+    .then(response => {
+      MasterService.handleResponseStatus(response, "Nie udało się anulować  rezerwacji. Spróbuj później");
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 

@@ -170,11 +170,7 @@ async onSubmitBtnClick(event){
         });
       })
       .catch(err => {
-        if(err.message ==  401){
-          this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-        }else {
           this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-        }
       });
     }
   });
@@ -198,11 +194,7 @@ onClickConfimReservation(event){
     Dialog.close("reservation-dialog")(event);
   })
   .catch(err => {
-    if(err.message ==  401){
-      this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-    }else {
       this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-    }
   });
 }
 
@@ -230,11 +222,7 @@ onClickLoadMore(event){
     console.log(this.state.reservationsArray);
   })
   .catch(err => {
-    if(err.message ==  401){
-      this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-    }else {
       this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-    }
   });
 }
 

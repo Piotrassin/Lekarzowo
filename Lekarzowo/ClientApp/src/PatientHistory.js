@@ -86,12 +86,12 @@ class PatientHistory extends React.Component {
       clicked: {
         medicine: null,
         descriptionMedicine: "",
-        medicineFinishDate: new Date().toISOString().split('T')[0],
+        medicineFinishDate: "",
         descriptionSickness: "",
         sickness: null,
         sicknessforMedicine: null,
         diagnoseDate: new Date().toISOString().split('T')[0],
-        cureDate: new Date().toISOString().split('T')[0]
+        cureDate: ""
       }
     }
     this.handleBack = this.handleBack.bind(this);
@@ -124,7 +124,7 @@ class PatientHistory extends React.Component {
           descriptionSickness: "",
           sickness: null,
           diagnoseDate: new Date().toISOString().split('T')[0],
-          cureDate: new Date().toISOString().split('T')[0]
+          cureDate: ""
         }
     }));
   }
@@ -137,7 +137,7 @@ class PatientHistory extends React.Component {
           ...prevState.clicked,
           descriptionMedicine: "",
           medicine: null,
-          medicineFinishDate: new Date().toISOString().split('T')[0]
+          medicineFinishDate: ""
         }
     }));
   }
@@ -160,11 +160,7 @@ class PatientHistory extends React.Component {
       });
     })
     .catch(err => {
-      if(err.message ==  401){
-        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-      }else {
-        this.snackbarRef.current.openSnackBar(err.message, 'green-snackbar');
-      }
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
     });
   }
 
@@ -239,11 +235,7 @@ class PatientHistory extends React.Component {
       })
     })
     .catch(err => {
-      if(err.message ==  401){
-        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-      }else {
         this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-      }
     });
   }
 
@@ -255,11 +247,7 @@ class PatientHistory extends React.Component {
       });
     })
     .catch(err => {
-      if(err.message ==  401){
-        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-      }else {
         this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-      }
     });
   }
 
@@ -294,11 +282,7 @@ class PatientHistory extends React.Component {
               this.clearMedicineAdd();
             })
             .catch(err => {
-              if(err.message ==  401){
-                this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-              }else {
                 this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-              }
             });
           }
         });
@@ -331,11 +315,7 @@ class PatientHistory extends React.Component {
           this.clearSicknessAdd();
         })
         .catch(err => {
-          if(err.message ==  401){
-            this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-          }else {
             this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-          }
         });
       }
     });
@@ -418,6 +398,7 @@ class PatientHistory extends React.Component {
           value = {this.state.clicked.diagnoseDate}
           onChange = {this.handleChangeSicknessDiagnoseDate}
           variant = 'outlined'
+
           rowsMax = {2}
           type = "date"
           style = {{marginLeft: '20px', width: '94%'}}
@@ -428,6 +409,7 @@ class PatientHistory extends React.Component {
           onChange = {this.handleChangeSicknessCureDate}
           variant = 'outlined'
           rowsMax = {2}
+          InputLabelProps={{ shrink: true }}
           type = "date"
           style = {{marginLeft: '20px', width: '94%'}}
           size="small" fullWidth />
@@ -477,6 +459,7 @@ class PatientHistory extends React.Component {
           variant = 'outlined'
           rowsMax = {2}
           type = "date"
+          InputLabelProps={{ shrink: true }}
           style = {{marginLeft: '20px', width: '94%'}}
           size="small" fullWidth />
           </div>

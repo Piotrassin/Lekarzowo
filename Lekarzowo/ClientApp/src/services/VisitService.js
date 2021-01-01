@@ -1,6 +1,7 @@
 import authHeader from '../authentication/AuthHeader.js';
 import AuthService from '../authentication/AuthService.js';
 import MasterService  from  './MasterService.js';
+import Validation from '../helpers/Validation.js';
 
 const url = MasterService.url();
 
@@ -13,10 +14,13 @@ class VisitService {
     + '&localId=' + localId + '&start=' + startDate.toISOString() + '&end=' + endDate.toISOString(), {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -44,7 +48,10 @@ class VisitService {
       if(response.status == 401 && (!MasterService.handle401Logout(response))){
           throw new Error(401);
       }
-      return response.json()
+      if(response.status != 204){
+        return response.json();
+      }
+      return response.text()
     });
   }
 
@@ -88,17 +95,17 @@ class VisitService {
     return fetch(url + 'Visits/CanBeOpened/' + id, {
      headers: authHeader()
    }).then(response => {
-     if(response.status == 401 && (!MasterService.handle401Logout(response))){
-         throw new Error(401);
+     MasterService.handleResponseStatus(response);
+     return response.json()
+   }).then(response => {
+     if(response.status && response.status == 400){
+       throw Error(Validation.handleValidationFetchOutcome(response.errors));
      }
-     if(response.status >= 400){
-       throw Error("err");
-     }
-     return response.json();
+     return response;
    })
    .then(response => {
      return response.value;
-   })
+   });
 
   }
 
@@ -115,10 +122,13 @@ class VisitService {
     + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -137,10 +147,13 @@ class VisitService {
     + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -157,10 +170,13 @@ class VisitService {
     + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -177,10 +193,13 @@ class VisitService {
     + '&skip=' + skip + '&visitId=' + visitId, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -189,10 +208,13 @@ class VisitService {
     '&limit='+ limit + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -202,10 +224,13 @@ class VisitService {
     '&limit='+ limit + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -214,10 +239,13 @@ class VisitService {
     '&limit='+ limit + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -227,11 +255,11 @@ class VisitService {
     headers: authHeader()
     })
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
-      if(!response.ok){
-        throw new Error("Nie udało sie");
+      MasterService.handleResponseStatus(response, "Nie udało się usunąć. Spróbuj ponownie później");
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
       return response;
     });
@@ -245,14 +273,14 @@ class VisitService {
     headers: authHeader()
     })
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
-      if(!response.ok){
-        throw new Error("Nie udało sie");
+      MasterService.handleResponseStatus(response, "Nie udało się usunąć. Spróbuj ponownie później");
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
       return response;
-    })
+    });
   }
 
   deleteMedicineOnVisit(illnessHistoryId, medicineId, startDate){
@@ -263,14 +291,14 @@ class VisitService {
     headers: authHeader()
     })
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
-      if(!response.ok){
-        throw new Error("Nie udało sie");
+      MasterService.handleResponseStatus(response, "Nie udało się usunąć. Spróbuj ponownie później");
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
       return response;
-    })
+    });
   }
 
   postSicknessOnVisit(sickness){
@@ -284,10 +312,13 @@ class VisitService {
       "Description": sickness.description
     })
   }).then(response => {
-    if(response.status == 401 && (!MasterService.handle401Logout(response))){
-        throw new Error(401);
-    }
+    MasterService.handleResponseStatus(response);
     return response.json()
+  }).then(response => {
+    if(response.status && response.status == 400){
+      throw Error(Validation.handleValidationFetchOutcome(response.errors));
+    }
+    return response;
   });
 
 
@@ -306,10 +337,13 @@ class VisitService {
       "Description": medicine.description
     })
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -326,10 +360,13 @@ class VisitService {
       "PatientId": treatment.patientId
     })
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -343,10 +380,16 @@ class VisitService {
       "Description": description
     })
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
+      MasterService.handleResponseStatus(response);
+      if(response.status != 204){
+        return response.json();
       }
-      return response.json()
+      return response.text();
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -361,10 +404,13 @@ class VisitService {
     })
     })
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -382,10 +428,13 @@ class VisitService {
     })
     })
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -402,10 +451,13 @@ class VisitService {
     })
     })
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
 
   }

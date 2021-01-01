@@ -2,6 +2,7 @@ import authHeader from '../authentication/AuthHeader.js';
 import AuthService from '../authentication/AuthService.js';
 import Formater from '../helpers/Formater.js';
 import MasterService  from  './MasterService.js';
+import Validation from '../helpers/Validation.js';
 
 const url = MasterService.url();
 
@@ -16,10 +17,13 @@ class UserService {
     return fetch(url + 'cities/AllByName?Name=' + search + '&limit=' + limit, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
 
   }
@@ -33,10 +37,13 @@ class UserService {
     return fetch(url + 'Specialities/AllByName?Name=' + search + '&limit=' + limit, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
 
   }
@@ -50,10 +57,13 @@ class UserService {
     return fetch(url + 'Doctors/AllByName?Name=' + search + '&limit=' + limit, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
 
   }
@@ -62,10 +72,13 @@ class UserService {
     return fetch(url + 'people/single', {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -74,10 +87,13 @@ class UserService {
     return fetch(url + 'Illnesseshistory/AllByPatientId?patientId=' + patientId, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -93,10 +109,13 @@ class UserService {
     + '&limit=' + limit + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
 
   }
@@ -116,10 +135,13 @@ class UserService {
       "Gender": user.gender
     })
   }).then(response => {
-    if(response.status == 401 && (!MasterService.handle401Logout(response))){
-        throw new Error(401);
-    }
+    MasterService.handleResponseStatus(response);
     return response.json()
+  }).then(response => {
+    if(response.status && response.status == 400){
+      throw Error(Validation.handleValidationFetchOutcome(response.errors));
+    }
+    return response;
   });
 
   }
@@ -142,10 +164,13 @@ class UserService {
         }
       })
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response, "Nie udało się zmienić hasła. Spróbuj później");
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -161,10 +186,13 @@ class UserService {
       "StartDate": medicineObject.startdate
     })
   }).then(response => {
-    if(response.status == 401 && (!MasterService.handle401Logout(response))){
-        throw new Error(401);
-    }
+    MasterService.handleResponseStatus(response);
     return response.json()
+  }).then(response => {
+    if(response.status && response.status == 400){
+      throw Error(Validation.handleValidationFetchOutcome(response.errors));
+    }
+    return response;
   });
   }
 

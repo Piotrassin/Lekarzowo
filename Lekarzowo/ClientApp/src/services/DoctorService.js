@@ -1,6 +1,7 @@
 import authHeader from '../authentication/AuthHeader.js';
 import AuthService from '../authentication/AuthService.js';
 import MasterService  from  './MasterService.js';
+import Validation from '../helpers/Validation.js';
 
 const url = MasterService.url();
 
@@ -14,10 +15,13 @@ class DoctorService {
     + '&skip=' + skip, {
       header: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -27,10 +31,13 @@ class DoctorService {
       headers: authHeader()
     })
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -42,10 +49,13 @@ class DoctorService {
     + '&skip=' + skip, {
       header: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -57,20 +67,26 @@ class DoctorService {
     + '&skip=' + skip, {
       header: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
   getDoctor(id){
     return fetch(url + 'Doctors/ContactData/' + id)
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 

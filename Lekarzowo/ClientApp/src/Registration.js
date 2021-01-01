@@ -67,7 +67,10 @@ class Registration extends React.Component {
                 window.location.reload();
               }
             }
-          );
+          )
+          .catch(err => {
+              this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          });
       }
     });
 

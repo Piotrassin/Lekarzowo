@@ -127,27 +127,29 @@ class VisitDetails extends React.Component {
   snackbarRef = React.createRef();
 
   componentDidMount() {
-
-    if(VisitService.checkIfAnyOpenVisit()){
-      if(VisitService.getOpenedVisit().id == this.state.id){
-        this.setState({
-          openedVisit : true
-        });
+    if(this.state.id){
+      if(VisitService.checkIfAnyOpenVisit()){
+        if(VisitService.getOpenedVisit().id == this.state.id){
+          this.setState({
+            openedVisit : true
+          });
+        }
       }
+      this.getReservation()
+      .then(response => {
+          this.getSicknessHistory();
+          this.getActiveMedicine();
+      })
+
+
+      this.getVisit();
+      this.getSicknessOnVisit();
+      this.getTreatmentOnVisit();
+      this.getMedicineOnVisit();
+      console.log('Array illness history');
+      console.log(this.state.sicknessHistory);
     }
-    this.getReservation()
-    .then(response => {
-        this.getSicknessHistory();
-        this.getActiveMedicine();
-    })
 
-
-    this.getVisit();
-    this.getSicknessOnVisit();
-    this.getTreatmentOnVisit();
-    this.getMedicineOnVisit();
-    console.log('Array illness history');
-    console.log(this.state.sicknessHistory);
   }
 
   putDescriptionOnVisit(event){
@@ -155,11 +157,7 @@ class VisitDetails extends React.Component {
     .then(response => {
       this.snackbarRef.current.openSnackBar('Zaktualizowano notatkę', 'green-snackbar');
     }).catch(err => {
-      if(err.message ==  401){
-        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-      }else {
         this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-      }
     });
 
   }
@@ -187,11 +185,7 @@ class VisitDetails extends React.Component {
       });
     })
     .catch(err => {
-      if(err.message ==  401){
-        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-      }else {
         this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-      }
     });
   }
 
@@ -298,11 +292,7 @@ class VisitDetails extends React.Component {
       console.log(this.state.visitSickness);
     })
     .catch(err => {
-      if(err.message ==  401){
-        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-      }else {
         this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-      }
     });
   }
 
@@ -315,11 +305,7 @@ class VisitDetails extends React.Component {
       console.log(this.state.visitTreatment);
     })
     .catch(err => {
-      if(err.message ==  401){
-        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-      }else {
         this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-      }
     });
   }
 
@@ -332,11 +318,7 @@ class VisitDetails extends React.Component {
       console.log(this.state.visitMedicine);
     })
     .catch(err => {
-      if(err.message ==  401){
-        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-      }else {
         this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-      }
     });
   }
 
@@ -353,11 +335,7 @@ class VisitDetails extends React.Component {
       })
     })
     .catch(err => {
-      if(err.message ==  401){
-        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-      }else {
         this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-      }
     });
   }
 
@@ -369,11 +347,7 @@ class VisitDetails extends React.Component {
       });
     })
     .catch(err => {
-      if(err.message ==  401){
-        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-      }else {
         this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-      }
     });
   }
 
@@ -402,11 +376,7 @@ class VisitDetails extends React.Component {
             VisitService.setVisitOngoing(this.state.id, true);
           })
           .catch(err => {
-            if(err.message ==  401){
-              this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-            }else {
               this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-            }
           });
 
 
@@ -432,11 +402,7 @@ class VisitDetails extends React.Component {
             window.location.reload();
           })
           .catch(err => {
-            if(err.message ==  401){
-              this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-            }else {
-              this.snackbarRef.current.openSnackBar('Błąd przy zamykaniu wizyty', 'red-snackbar');
-            }
+              this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
           });
 
 
@@ -562,11 +528,7 @@ class VisitDetails extends React.Component {
 
     })
     .catch(err => {
-      if(err.message ==  401){
-        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-      }else {
         this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-      }
     });
 
 
@@ -606,11 +568,7 @@ class VisitDetails extends React.Component {
       }));
     })
     .catch(err => {
-      if(err.message ==  401){
-        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-      }else {
         this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-      }
     });
     console.log(this.state.visitTreatment);
     Dialog.close("treatment-dialog")(event);
@@ -645,11 +603,7 @@ class VisitDetails extends React.Component {
       }));
     })
     .catch(err => {
-      if(err.message ==  401){
-        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-      }else {
         this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-      }
     });
 
 

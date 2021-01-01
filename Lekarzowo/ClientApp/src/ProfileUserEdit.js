@@ -77,7 +77,9 @@ handleClickUserChange(event){
           console.log(response);
           this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        });
     }
   })
 }
@@ -122,7 +124,9 @@ handleClickPasswordChange(event){
         }
 
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      });
     }
   })
     }
@@ -149,11 +153,7 @@ componentDidMount(){
       });
   })
   .catch(err => {
-    if(err.message ==  401){
-      this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-    }else {
       this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-    }
   });
 
 }

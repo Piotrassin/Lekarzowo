@@ -1,6 +1,7 @@
 import authHeader from '../authentication/AuthHeader.js';
 import AuthService from '../authentication/AuthService.js';
 import MasterService  from  './MasterService.js';
+import Validation from '../helpers/Validation.js';
 
 const url = MasterService.url();
 
@@ -14,10 +15,13 @@ class AdminService {
       "Name": medicine
     })})
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -29,10 +33,13 @@ class AdminService {
       "Name": illness
     })})
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -44,10 +51,13 @@ class AdminService {
       "Name": city
     })})
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -64,10 +74,13 @@ class AdminService {
       "Blocknumber": local.blockNumber
     })})
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
 
   }
@@ -81,10 +94,13 @@ class AdminService {
       "LocalId": room.localId
     })})
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
 
   }
@@ -97,10 +113,13 @@ class AdminService {
       "Name": treatment
     })})
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
 
   }
@@ -114,10 +133,13 @@ class AdminService {
       "Price": speciality.price
     })})
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
 
   }
@@ -128,10 +150,13 @@ class AdminService {
     headers: authHeader({'Content-Type': 'application/json'}),
     body: JSON.stringify(doctor)})
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
 
   }
@@ -142,10 +167,13 @@ class AdminService {
     headers: authHeader({'Content-Type': 'application/json'}),
     body: JSON.stringify(workinghours)})
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
@@ -157,10 +185,13 @@ class AdminService {
     return fetch(url + 'locals/AllByName?Name=' + search + '&limit=' + limit, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
 
   }
@@ -174,10 +205,13 @@ class AdminService {
     '&doctorId=' + doctorId, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
     });
   }
 
