@@ -10,7 +10,7 @@ namespace Lekarzowo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SpecialitiesController : ControllerBase
+    public class SpecialitiesController : BaseController
     {
         private readonly ISpecialitiesRepository _repository;
 

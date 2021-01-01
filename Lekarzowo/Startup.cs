@@ -77,11 +77,7 @@ namespace Lekarzowo
                         if (httpContext.Exception.GetType() == typeof(SecurityTokenExpiredException))
                         {
                             hasTokenExpired = true;
-                            //httpContext.Response.Headers.Add("Token_has_expired", "true");
-                        }
-                        else
-                        {
-                            hasTokenExpired = false;
+                            httpContext.Response.Headers.Add("Token_has_expired", "true");    //Przegl¹darki ignoruj¹ to podejœcie i nie wyœwietlaj¹ tego nag³ówka :(
                         }
 
                         return Task.CompletedTask;
@@ -108,7 +104,10 @@ namespace Lekarzowo
                 {
                     cors.AllowAnyHeader()
                         .AllowAnyMethod()
-                        .AllowAnyOrigin();
+                        .AllowAnyOrigin()
+                        .WithExposedHeaders("Token_has_expired")      //Google chrome mimo wszystko nie wyœwietla tego nag³ówka
+                        .WithExposedHeaders("Token_has_expired2")      //Google chrome mimo wszystko nie wyœwietla tego nag³ówka
+                        ;
                 });
             });
 
@@ -169,6 +168,7 @@ namespace Lekarzowo
 
                 });
 
+            //TODO  do usuniêcia
             //services.AddMvc()
             //    .AddJsonOptions(
             //        options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
@@ -189,11 +189,18 @@ namespace Lekarzowo
                 app.UseHsts();
             }
 
-            app.UseCors();
+            app.UseCors(
+                options => options
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .WithExposedHeaders("Token_has_expired")
+            );
 
+            // To jedyny sposób, który z powodzeniem zwraca specjalny nag³ówek do³¹czany do statusu 401 w zale¿noœci od wa¿noœci tokenu.
             app.Use(async (context, next) =>
             {
-                context.Response.Headers["Token_has_expired"] = hasTokenExpired.ToString();
+                context.Response.Headers["Token_has_expired2"] = hasTokenExpired.ToString();
                 await next.Invoke();
             });
 

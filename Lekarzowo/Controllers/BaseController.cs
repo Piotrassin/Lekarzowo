@@ -2,10 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
+using System.Web.Http.Cors;
+using Microsoft.AspNetCore.Cors;
 
 namespace Lekarzowo.Controllers
 {
+    [Microsoft.AspNetCore.Cors.EnableCors]
     [Route("api/[controller]")]
     [ApiController]
     public abstract class BaseController : ControllerBase
