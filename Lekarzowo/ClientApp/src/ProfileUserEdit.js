@@ -6,6 +6,7 @@ import AuthService from './authentication/AuthService.js';
 import Snackbar from './helpers/Snackbar.js';
 import Validation from './helpers/Validation.js';
 
+
 class ProfileUserEdit extends React.Component {
 constructor(props){
   super(props);
@@ -151,7 +152,7 @@ componentDidMount(){
     if(err.message ==  401){
       this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
     }else {
-      this.snackbarRef.current.openSnackBar(err.message, 'green-snackbar');
+      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
     }
   });
 

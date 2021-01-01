@@ -3,6 +3,7 @@ import SicknessItem from './components/SicknessItem.js';
 import UserService from './services/UserService.js';
 import Fade from '@material-ui/core/Fade';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Snackbar from './helpers/Snackbar.js';
 
 class ProfileSickness extends React.Component {
 constructor(props){
@@ -13,6 +14,7 @@ constructor(props){
     loading: false
   };
 }
+snackbarRef = React.createRef();
 
 componentDidMount() {
   this.setState({
@@ -32,7 +34,7 @@ componentDidMount() {
     if(err.message ==  401){
       this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
     }else {
-      this.snackbarRef.current.openSnackBar(err.message, 'green-snackbar');
+      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
     }
   });
 }
@@ -99,6 +101,7 @@ render() {
           <LinearProgress />
           </Fade>
         </div>
+        <Snackbar ref = {this.snackbarRef} />
     </div>
   );
 }

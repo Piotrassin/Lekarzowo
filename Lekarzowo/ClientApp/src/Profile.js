@@ -7,6 +7,7 @@ import ProfileSickness from './ProfileSickness.js';
 import ProfileMedicine from './ProfileMedicine.js';
 import UserService from './services/UserService.js';
 import AuthService from './authentication/AuthService.js';
+import Snackbar from './helpers/Snackbar.js';
 
 class Profile extends React.Component {
 constructor(props){
@@ -26,6 +27,7 @@ constructor(props){
     }
   }
 }
+snackbarRef = React.createRef();
 
 onClickEditUser(event) {
   event.preventDefault();
@@ -130,6 +132,7 @@ componentDidMount(){
       {this.state.isSickShow && <ProfileSickness history= {this.props.history} />}
       {this.state.isMedShow && <ProfileMedicine />}
       </div>
+      <Snackbar ref = {this.snackbarRef} />
       </div>
 
     );

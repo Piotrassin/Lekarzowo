@@ -3,6 +3,7 @@ import MedicineItem from './components/MedicineItem.js';
 import UserService from './services/UserService.js';
 import Fade from '@material-ui/core/Fade';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Snackbar from './helpers/Snackbar.js';
 
 class ProfileMedicine extends React.Component {
 constructor(props){
@@ -12,6 +13,7 @@ constructor(props){
     loading: false
   };
 }
+snackbarRef = React.createRef();
 
 componentDidMount() {
   this.setState({
@@ -73,6 +75,7 @@ render() {
           <LinearProgress />
           </Fade>
         </div>
+        <Snackbar ref = {this.snackbarRef} />
     </div>
   );
 }
