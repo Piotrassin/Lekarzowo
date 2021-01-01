@@ -32,6 +32,7 @@ namespace Lekarzowo
         }
 
         public IConfiguration Configuration { get; }
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -76,7 +77,7 @@ namespace Lekarzowo
                         if (httpContext.Exception.GetType() == typeof(SecurityTokenExpiredException))
                         {
                             hasTokenExpired = true;
-                            httpContext.Response.Headers.Add("Token_has_expired", "true");    //Przegl¹darki ignoruj¹ to podejœcie i nie wyœwietlaj¹ tego nag³ówka :(
+                            httpContext.Response.Headers.Add("Token_has_expired", "true");    //PrzeglÂ¹darki ignorujÂ¹ to podejÅ“cie i nie wyÅ“wietlajÂ¹ tego nagÂ³Ã³wka :(
                         }
 
                         return Task.CompletedTask;
@@ -86,6 +87,16 @@ namespace Lekarzowo
             //services.AddScoped<JWTService>(s => s.GetService<IOptions<SecretSettings>>().Value);
             services.AddScoped<JWTService>();
             #endregion
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://localhost:3000"
+                                                          ).AllowAnyHeader()
+                                                           .AllowAnyMethod();
+                                  });
+            });
 
             services.AddCors(options =>
             {
@@ -94,8 +105,8 @@ namespace Lekarzowo
                     cors.AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowAnyOrigin()
-                        .WithExposedHeaders("Token_has_expired")      //Google chrome mimo wszystko nie wyœwietla tego nag³ówka
-                        .WithExposedHeaders("Token_has_expired2")      //Google chrome mimo wszystko nie wyœwietla tego nag³ówka
+                        .WithExposedHeaders("Token_has_expired")      //Google chrome mimo wszystko nie wyÅ“wietla tego nagÂ³Ã³wka
+                        .WithExposedHeaders("Token_has_expired2")      //Google chrome mimo wszystko nie wyÅ“wietla tego nagÂ³Ã³wka
                         ;
                 });
             });
@@ -157,7 +168,7 @@ namespace Lekarzowo
 
                 });
 
-            //TODO  do usuniêcia
+            //TODO  do usuniÃªcia
             //services.AddMvc()
             //    .AddJsonOptions(
             //        options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
@@ -186,7 +197,7 @@ namespace Lekarzowo
                     .WithExposedHeaders("Token_has_expired")
             );
 
-            // To jedyny sposób, który z powodzeniem zwraca specjalny nag³ówek do³¹czany do statusu 401 w zale¿noœci od wa¿noœci tokenu.
+            // To jedyny sposÃ³b, ktÃ³ry z powodzeniem zwraca specjalny nagÂ³Ã³wek doÂ³Â¹czany do statusu 401 w zaleÂ¿noÅ“ci od waÂ¿noÅ“ci tokenu.
             app.Use(async (context, next) =>
             {
                 context.Response.Headers["Token_has_expired2"] = hasTokenExpired.ToString();
@@ -203,6 +214,7 @@ namespace Lekarzowo
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+            app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthentication();
 
             app.UseMvc(routes =>
@@ -220,6 +232,7 @@ namespace Lekarzowo
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
+
         }
     }
 }

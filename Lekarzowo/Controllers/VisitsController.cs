@@ -9,8 +9,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lekarzowo.DataAccessLayer.Repositories;
 
+
 namespace Lekarzowo.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class VisitsController : BaseController
@@ -190,7 +192,7 @@ namespace Lekarzowo.Controllers
             var onGoingVisits = await _repository.OnGoingVisitsToday(visit.Reservation.DoctorId);
 
             if (visit.Reservation.Starttime > DateTime.Now.AddMinutes(visitStatusChangeTimeOffsetMinutes) ||
-                visit.Reservation.Endtime < DateTime.Now.AddMinutes(-visitStatusChangeTimeOffsetMinutes) || 
+                visit.Reservation.Endtime < DateTime.Now.AddMinutes(-visitStatusChangeTimeOffsetMinutes) ||
                 (onGoingVisits.Any() && !onGoingVisits.Contains(visit)))
             {
                 return false;

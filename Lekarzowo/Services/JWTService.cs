@@ -16,7 +16,7 @@ namespace Lekarzowo.Services
     public class JWTService : IJWTService
     {
         private readonly SecretSettings _settings;
-        private readonly IStandardUserRolesRepository _standardUserRoles; 
+        private readonly IStandardUserRolesRepository _standardUserRoles;
         private readonly ICustomUserRolesService _customUserRolesService;
 
 

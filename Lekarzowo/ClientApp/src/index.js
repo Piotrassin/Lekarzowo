@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import history from './History.js';
 import './index.css';
 import App from './App';
-import Main from './Main'
+import { Router } from 'react-router-dom'
 import VisitDetails from './VisitDetails'
 import DateStepper from './DateStepper'
 import Dashboard from './Dashboard'
@@ -11,7 +12,9 @@ import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
+   <Router history={history}>
   <App/>
+  </Router>
   </React.StrictMode>,
   document.getElementById('root')
 );

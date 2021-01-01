@@ -1,0 +1,132 @@
+.loginContainer{
+  background-color: white;
+  height: 70vh;
+  width: 60vw;
+  display: block;
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  border-radius: 20px;
+}
+.loginPictureContainer {
+  height: 100%;
+  width: 60%;
+  background-color: white;
+  display: flex;
+
+}
+.loginInputContainer{
+  height: 100%;
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  background-color: #1859A6;
+  border-radius: 20px;
+}
+.loginForm {
+  height: 40%;
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+  align-content: space-between;
+}
+.loginForm * {
+  margin-top: auto;
+}
+.centeredImage {
+  margin: auto;
+}
+.logo {
+  margin-top: 10vh;
+}
+.input {
+  background-color: #E3E3E3;
+  border-radius: 5px;
+  border: 1px solid #B0B0B0;
+  height: 30px;
+  font-weight: 490;
+  font-size: 18px;
+  text-decoration: none;
+  color: #1859A6;
+}
+.login-button {
+  background-color: white;
+  height: 40px;
+  font-size: 18px;
+  color: #1859A6;
+  border: none;
+  align-content: flex-start;
+  border-radius: 5px;
+  text-align: left;
+}
+.register-button{
+  background-color: white;
+  height: 35px;
+  font-size: 18px;
+  color: #1859A6;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+margin-top: 30px;
+  width: 194px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+.label {
+  font-size: 18px;
+  color: white;
+margin-bottom: 3px;
+}
+.error {
+  border: 2px solid red;
+}
+.containerLogin {
+  background-color: #29568B;
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-1 {
+  color: white;
+  font-size: 30px;
+  font-weight: bold;
+  padding-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 25px;
+}
+.header-2 {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  padding-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 25px;
+}
+.header-3 {
+  color: #C5C5C5;
+  font-size: 15px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+.header-4 {
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  padding-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 25px;
+}
+.label-input-group {
+  margin-top: 15px;
+}
