@@ -10,7 +10,7 @@ namespace Lekarzowo.Controllers
     //TODO: USUNĄĆ
     [Route("api/[controller]")]
     [ApiController]
-    public class ReferralsController : ControllerBase
+    public class ReferralsController : BaseController
     {
         private readonly IReferralsRepository _repository;
 

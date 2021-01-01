@@ -12,7 +12,7 @@ namespace Lekarzowo.Controllers
     [Authorize(Roles = "doctor,admin")]
     [Route("api/[controller]")]
     [ApiController]
-    public class IllnessesController : ControllerBase
+    public class IllnessesController : BaseController
     {
         private readonly IIllnessesRepository _repository;
 

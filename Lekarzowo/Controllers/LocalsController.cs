@@ -12,7 +12,7 @@ namespace Lekarzowo.Controllers
     [Authorize(Roles = "patient,doctor,admin")]
     [Route("api/[controller]")]
     [ApiController]
-    public class LocalsController : ControllerBase
+    public class LocalsController : BaseController
     {
         private readonly ILocalsRepository _repository;
 
