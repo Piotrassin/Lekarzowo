@@ -15,6 +15,7 @@ import {
 } from "react-router-dom";
 import RoleButton from './components/RoleButton.js';
 import SicknessItem from './components/SicknessItem.js';
+import Snackbar from './helpers/Snackbar.js';
 
 
 const user = AuthService.getUserName();
@@ -30,6 +31,7 @@ class Dashboard extends React.Component {
     this.handleClickAddVisit = this.handleClickAddVisit.bind(this);
     this.handleClickShowVisit = this.handleClickShowVisit.bind(this);
   }
+  snackbarRef = React.createRef();
 
   componentWillMount() {
     ReservationService.getUpcomingReservations(4, 0)
@@ -48,11 +50,10 @@ class Dashboard extends React.Component {
       })
     })
     .catch(err => {
-      if(err.message == 401){
-        AuthService.logout();
-        this.props.history.push('/login');
-        window.location.reload();
-
+      if(err.message ==  401){
+        this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+      }else {
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
       }
     });
 
@@ -170,6 +171,7 @@ class Dashboard extends React.Component {
         </div>
 
       </div>
+      <Snackbar ref = {this.snackbarRef} />
       </div>
 
     );

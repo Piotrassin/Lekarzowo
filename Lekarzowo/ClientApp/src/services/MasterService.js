@@ -12,11 +12,12 @@ url(){
 handle401Logout(response){
   console.log('Response');
   console.log(response);
-  console.log(response.headers.get('WWW-Authenticate'));
+  console.log(response.headers.get('Token_has_expired'));
   if(response != undefined  && response.status == 401 && response.headers.has('Token_has_expired')){
     console.log("Weszlo");
     AuthService.logout();
-    history.push('/login');
+    //history.push('/login');
+    window.location.reload();
     return true;
   }else {
     console.log("Zwracam false");
