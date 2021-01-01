@@ -24,6 +24,8 @@ namespace Lekarzowo
 {
     public class Startup
     {
+        private static bool hasTokenExpired = false;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -74,11 +76,12 @@ namespace Lekarzowo
                     {
                         if (httpContext.Exception.GetType() == typeof(SecurityTokenExpiredException))
                         {
-                            httpContext.Response.Headers.Add("Token_has_expired", "true");
+                            hasTokenExpired = true;
+                            httpContext.Response.Headers.Add("Token_has_expired", "true");    //Przegl¹darki ignoruj¹ to podejœcie i nie wyœwietlaj¹ tego nag³ówka :(
                         }
 
                         return Task.CompletedTask;
-                    }
+                    },
                 };
             });
             //services.AddScoped<JWTService>(s => s.GetService<IOptions<SecretSettings>>().Value);
@@ -95,6 +98,19 @@ namespace Lekarzowo
                                   });
             });
 
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(cors =>
+                {
+                    cors.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowAnyOrigin()
+                        .WithExposedHeaders("Token_has_expired")      //Google chrome mimo wszystko nie wyœwietla tego nag³ówka
+                        .WithExposedHeaders("Token_has_expired2")      //Google chrome mimo wszystko nie wyœwietla tego nag³ówka
+                        ;
+                });
+            });
+
             services.AddMvc(options =>
                 {
                     options.Filters.Add(new ModelValidationFilter());
@@ -103,7 +119,10 @@ namespace Lekarzowo
                 {
                     options.RegisterValidatorsFromAssemblyContaining<Startup>();
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonOptions(
+                    options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
 
             services.AddSwaggerGen();
 
@@ -149,12 +168,11 @@ namespace Lekarzowo
 
                 });
 
-
-            services.AddMvc()
-                .AddJsonOptions(
-                    options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-                );
-
+            //TODO  do usuniêcia
+            //services.AddMvc()
+            //    .AddJsonOptions(
+            //        options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            //    );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -170,6 +188,21 @@ namespace Lekarzowo
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            
+            app.UseCors(
+                options => options
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .WithExposedHeaders("Token_has_expired")
+            );
+
+            // To jedyny sposób, który z powodzeniem zwraca specjalny nag³ówek do³¹czany do statusu 401 w zale¿noœci od wa¿noœci tokenu.
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers["Token_has_expired2"] = hasTokenExpired.ToString();
+                await next.Invoke();
+            });
 
             app.UseSwagger();
             app.UseSwaggerUI(x =>

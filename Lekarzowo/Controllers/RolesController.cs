@@ -11,7 +11,7 @@ namespace Lekarzowo.Controllers
     [Authorize(Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
-    public class RolesController : ControllerBase
+    public class RolesController : BaseController
     {
         private readonly IRolesRepository _repository;
 
