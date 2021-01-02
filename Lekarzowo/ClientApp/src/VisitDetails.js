@@ -57,6 +57,7 @@ class VisitDetails extends React.Component {
 
 
     this.state = {
+      snackbarRef: null,
       refresh: false,
       id: id,
       patientId: "",
@@ -64,6 +65,7 @@ class VisitDetails extends React.Component {
       patientLastname: "",
       startDate: null,
       endDate: null,
+      price: "",
       clear: false,
       clearSick: false,
       clear: {
@@ -124,40 +126,49 @@ class VisitDetails extends React.Component {
     this.patientHistoryLoadMore = this.patientHistoryLoadMore.bind(this);
     this.openSnackbarOnRemove = this.openSnackbarOnRemove.bind(this);
   }
-  snackbarRef = React.createRef();
+
 
   componentDidMount() {
-    if(this.state.id){
-      if(VisitService.checkIfAnyOpenVisit()){
-        if(VisitService.getOpenedVisit().id == this.state.id){
-          this.setState({
-            openedVisit : true
-          });
+    this.setState({
+      snackbarRef: React.createRef()
+    }, () => {
+      if(this.state.id){
+        if(VisitService.checkIfAnyOpenVisit()){
+          if(VisitService.getOpenedVisit().id == this.state.id){
+            this.setState({
+              openedVisit : true
+            });
+          }
         }
+        this.getReservation()
+        .then(response => {
+            this.getSicknessHistory();
+            this.getActiveMedicine();
+        })
+
+
+        this.getVisit();
+        this.getSicknessOnVisit();
+        this.getTreatmentOnVisit();
+        this.getMedicineOnVisit();
+        console.log('Array illness history');
+        console.log(this.state.sicknessHistory);
       }
-      this.getReservation()
-      .then(response => {
-          this.getSicknessHistory();
-          this.getActiveMedicine();
-      })
 
-
-      this.getVisit();
-      this.getSicknessOnVisit();
-      this.getTreatmentOnVisit();
-      this.getMedicineOnVisit();
-      console.log('Array illness history');
-      console.log(this.state.sicknessHistory);
-    }
+    });
 
   }
 
   putDescriptionOnVisit(event){
     VisitService.putDescriptionOnVisit(this.state.id, this.state.description)
     .then(response => {
-      this.snackbarRef.current.openSnackBar('Zaktualizowano notatkę', 'green-snackbar');
+      this.state.snackbarRef.current.openSnackBar('Zaktualizowano notatkę', 'green-snackbar');
     }).catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
     });
 
   }
@@ -185,12 +196,16 @@ class VisitDetails extends React.Component {
       });
     })
     .catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
     });
   }
 
   openSnackbarOnRemove(content, classId, arrayName, item, idColumnName){
-    this.snackbarRef.current.openSnackBar(content, classId);
+    this.state.snackbarRef.current.openSnackBar(content, classId);
     this.setState({
       refresh: true
     });
@@ -257,6 +272,7 @@ class VisitDetails extends React.Component {
     .then(response => {
       this.setState({
         description: response.description,
+        price: response.price
       });
       if(this.state.openedVisit){
         console.log('Visit Exist and opened');
@@ -292,7 +308,11 @@ class VisitDetails extends React.Component {
       console.log(this.state.visitSickness);
     })
     .catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
     });
   }
 
@@ -305,7 +325,11 @@ class VisitDetails extends React.Component {
       console.log(this.state.visitTreatment);
     })
     .catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
     });
   }
 
@@ -318,7 +342,11 @@ class VisitDetails extends React.Component {
       console.log(this.state.visitMedicine);
     })
     .catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
     });
   }
 
@@ -335,7 +363,11 @@ class VisitDetails extends React.Component {
       })
     })
     .catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
     });
   }
 
@@ -347,7 +379,11 @@ class VisitDetails extends React.Component {
       });
     })
     .catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
     });
   }
 
@@ -376,7 +412,11 @@ class VisitDetails extends React.Component {
             VisitService.setVisitOngoing(this.state.id, true);
           })
           .catch(err => {
-              this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+              try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
           });
 
 
@@ -384,7 +424,7 @@ class VisitDetails extends React.Component {
 
       }
       else {
-        this.snackbarRef.current.openSnackBar('Nie mozna otworzyc wizyty', 'red-snackbar');
+        this.state.snackbarRef.current.openSnackBar('Nie mozna otworzyc wizyty', 'red-snackbar');
       }
 
     }else {
@@ -402,7 +442,11 @@ class VisitDetails extends React.Component {
             window.location.reload();
           })
           .catch(err => {
-              this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+              try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
           });
 
 
@@ -528,7 +572,11 @@ class VisitDetails extends React.Component {
 
     })
     .catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
     });
 
 
@@ -568,7 +616,11 @@ class VisitDetails extends React.Component {
       }));
     })
     .catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
     });
     console.log(this.state.visitTreatment);
     Dialog.close("treatment-dialog")(event);
@@ -603,7 +655,11 @@ class VisitDetails extends React.Component {
       }));
     })
     .catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
     });
 
 
@@ -630,6 +686,17 @@ class VisitDetails extends React.Component {
           <b className = "subheadline">{Formater.formatDate(this.state.startDate)}: </b>
           <a className = "subheadline">{Formater.formatHour(this.state.startDate)} - {Formater.formatHour(this.state.endDate)}</a>
           </div>
+          {!this.state.openedVisit ?
+          <div className = 'subheadline-container'>
+          <b className = "subheadline">Cena: </b>
+          <a className = "subheadline">{Formater.formatPrice(this.state.price)}</a>
+          </div>
+          :
+          <div className = 'subheadline-container'>
+          <b className = "subheadline">Cena: </b>
+          <a className = "subheadline">Dostępna po zakończeniu wizyty</a>
+          </div>
+          }
           <div className = 'row-container row-container-small'>
           <div className = "active-treatments basic-container">
 
@@ -885,7 +952,7 @@ class VisitDetails extends React.Component {
           <a className = 'btn-dialog-primary' onClick = {this.handleClickAddSicknessDialogBtn}>Zatwierdź</a>
         </div>
       </Dialog>
-      <Snackbar ref = {this.snackbarRef} />
+      <Snackbar ref = {this.state.snackbarRef} />
       </div>
     );
   }

@@ -26,10 +26,11 @@ constructor(props){
       touched: {
         user: false,
         password: false
-      }
+      },
+      snackbarRef: null
   }
 }
-snackbarRef = React.createRef();
+
 
 handleChange(event) {
   this.setState({
@@ -61,7 +62,7 @@ handleClickUserChange(event){
       console.log(this.state.errors);
       if(Object.keys(this.state.errors).length > 0){
         var message = Validation.handleValidationOutcome(this.state.errors);
-        this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+        this.state.snackbarRef.current.openSnackBar( message ,'red-snackbar');
 
       }else {
         var userObject = {
@@ -75,16 +76,20 @@ handleClickUserChange(event){
         UserService.postUserChangeDetails(userObject)
         .then(response => {
           console.log(response);
-          this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
+          this.state.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
         })
         .catch(err => {
-            this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+            try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
         });
     }
   })
 }
 else {
-  this.snackbarRef.current.openSnackBar( 'Nic nie zostało zmienione' ,'red-snackbar');
+  this.state.snackbarRef.current.openSnackBar( 'Nic nie zostało zmienione' ,'red-snackbar');
 }
 }
 
@@ -101,7 +106,7 @@ handleClickPasswordChange(event){
         console.log(this.state.errors);
         if(Object.keys(this.state.errors).length > 0){
           var message = Validation.handleValidationOutcome(this.state.errors);
-          this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+          this.state.snackbarRef.current.openSnackBar( message ,'red-snackbar');
 
         }else {
       var passwordObject = {
@@ -115,46 +120,59 @@ handleClickPasswordChange(event){
         if(response.status >= 400){
           if(response.status == 400){
             var message = Validation.handleValidationFetchOutcome(response.errors);
-            this.snackbarRef.current.openSnackBar(message, 'red-snackbar');
+            this.state.snackbarRef.current.openSnackBar(message, 'red-snackbar');
           }else {
-            this.snackbarRef.current.openSnackBar('Wystąpił problem, spróbuj ponownie później.', 'red-snackbar');
+            this.state.snackbarRef.current.openSnackBar('Wystąpił problem, spróbuj ponownie później.', 'red-snackbar');
           }
         }else {
-            this.snackbarRef.current.openSnackBar('Zaktualizowano Hasło', 'green-snackbar');
+            this.state.snackbarRef.current.openSnackBar('Zaktualizowano Hasło', 'green-snackbar');
         }
 
       })
       .catch(err => {
-          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
       });
     }
   })
     }
-    else {this.snackbarRef.current.openSnackBar('Wpisane hasła są różne', 'red-snackbar');}
+    else {this.state.snackbarRef.current.openSnackBar('Wpisane hasła są różne', 'red-snackbar');}
 
   }else {
-  this.snackbarRef.current.openSnackBar('Niepełne dane', 'red-snackbar');
+  this.state.snackbarRef.current.openSnackBar('Niepełne dane', 'red-snackbar');
   }
 
 
 }
 
 componentDidMount(){
-  console.log(JSON.parse(AuthService.getLoggedUser()).id);
-  UserService.getUserData()
-  .then(response => {
-      this.setState({
-          email: response.email,
-          name: response.name,
-          lastname: response.lastname,
-          birthdate: response.birthdate.split('T')[0],
-          gender: response.gender,
-          pesel: response.pesel
-      });
-  })
-  .catch(err => {
-      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+  this.setState({
+    snackbarRef: React.createRef()
+  }, () => {
+    console.log(JSON.parse(AuthService.getLoggedUser()).id);
+    UserService.getUserData()
+    .then(response => {
+        this.setState({
+            email: response.email,
+            name: response.name,
+            lastname: response.lastname,
+            birthdate: response.birthdate.split('T')[0],
+            gender: response.gender,
+            pesel: response.pesel
+        });
+    })
+    .catch(err => {
+        try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
+    });
   });
+
 
 }
 
@@ -251,7 +269,7 @@ render() {
       <a>Wypełnienie formularza oznacza wyrażenie zgody na przetwarzanie przez Lekarzowo Systems podanych w formularzu danych osobowych w celu udzielenia odpowiedzi na zadane pytanie i w zależności od treści zapytania przedstawienia oferty. Tutaj dowiesz się kim jesteśmy i jak przetwarzamy Twoje dane.
 Zobacz więcej: https://lekarzowo.pl/o-nas </a>
       </div>
-      <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
+      <Snackbar ref = {this.state.snackbarRef} classes = 'green-snackbar' />
     </div>
   );
 }

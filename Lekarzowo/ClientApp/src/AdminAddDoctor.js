@@ -7,6 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
 import Autocomplete from './components/Autocomplete.js';
+import Validation from './helpers/Validation.js';
 
 class AdminAddDoctor extends React.Component {
 constructor(props){
@@ -47,38 +48,56 @@ onClickSpecializationSearch(value) {
 
 
 handleClickAddDoctor(event){
-  var doctorObject = {
-    name: this.state.name,
-	  lastname: this.state.lastname,
-	  birthdate: this.state.birthdate,
-	  email: this.state.email,
-	  password: {
-		  value: this.state.password
-	  },
-	  gender: this.state.gender,
-	  pesel: this.state.pesel,
-	  specialityId: this.state.specialityId
-  }
+  this.setState ({
+    errors: Validation.validateAdminAddDoctor(this.state.specialityId, this.state.name, this.state.lastname,
+      this.state.birthdate, this.state.email, this.state.password, this.state.gender,
+      this.state.pesel)
+  }, () => {
+    console.log(this.state.errors);
+    if(Object.keys(this.state.errors).length > 0){
+      var message = Validation.handleValidationOutcome(this.state.errors);
+      this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
 
-  AdminService.postDoctor(doctorObject)
-  .then(response => {
-    console.log(response);
-    this.setState({
-      specializationArray: [],
-      name: "",
-      lastname: "",
-      birthdate: "1999-01-01",
-      email: "",
-      password: "",
-      gender: "",
-      pesel: "",
-      specialityId: null
-    });
-    this.snackbarRef.current.openSnackBar('Dodano lekarza', 'green-snackbar');
-  })
-  .catch(err => {
-      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+    }else {
+      var doctorObject = {
+        name: this.state.name,
+    	  lastname: this.state.lastname,
+    	  birthdate: this.state.birthdate,
+    	  email: this.state.email,
+    	  password: {
+    		  value: this.state.password
+    	  },
+    	  gender: this.state.gender,
+    	  pesel: this.state.pesel,
+    	  specialityId: this.state.specialityId
+      }
+
+      AdminService.postDoctor(doctorObject)
+      .then(response => {
+        console.log(response);
+        this.setState({
+          specializationArray: [],
+          name: "",
+          lastname: "",
+          birthdate: "1999-01-01",
+          email: "",
+          password: "",
+          gender: "",
+          pesel: "",
+          specialityId: null
+        });
+        this.snackbarRef.current.openSnackBar('Dodano lekarza', 'green-snackbar');
+      })
+      .catch(err => {
+          try{
+  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
+      });
+    }
   });
+
 }
 
 componentDidMount() {
@@ -96,6 +115,7 @@ render() {
             requestCallback = {DoctorService.getSpecializations}
             title = "Specjalizacja"
             changeCallback = {this.onClickSpecializationSearch}
+            noOptionsText={'Your Customized No Options Text'}
             />
             <br/>
             <TextField id="name" name="name"

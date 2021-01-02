@@ -46,17 +46,26 @@ const useStyles = makeStyles((theme) => ({
 export default function Asynchronous(props) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
-  const loading = open && options.length === 0;
+  const [requesting, setRequesting] = React.useState(true);
+  const loading = open && requesting;
   const classes = useStyles();
 
   async function handleInputChange(event) {
+    //setRequesting(true);
     console.log(event.target.value);
+    console.log('Zmiana focus function');
     if(props.addId != undefined){
-      var requestOptions = (await props.requestCallback(event.target.value, 100, 0, props.addId));
-    }else {
-      var requestOptions = (await props.requestCallback(event.target.value, 100));
-    }
+      var requestOptions = (await props.requestCallback(event.target.value, 8, 0, props.addId).catch(err => {
+        setOptions([]);
 
+      }));
+    }else {
+      var requestOptions = (await props.requestCallback(event.target.value, 8).catch(err => {
+        setOptions([]);
+
+      }));
+    }
+    if(requestOptions){
      requestOptions = requestOptions.reduce(function(acc, curr) {
       if(curr.lastname){
         curr.name = curr.name.concat(" ", curr.lastname);
@@ -68,6 +77,10 @@ export default function Asynchronous(props) {
     console.log('requestOptions');
     console.log(requestOptions);
       setOptions(Object.keys(requestOptions).map((key) => requestOptions[key]));
+    }else {
+      setOptions([]);
+      //setRequesting(false);
+    }
 
   }
 
@@ -83,6 +96,7 @@ export default function Asynchronous(props) {
 
 
   React.useEffect(() => {
+    console.log('Zmiana focus effect');
     let active = true;
 
     if (!loading) {
@@ -90,13 +104,20 @@ export default function Asynchronous(props) {
     }
 
     (async () => {
+      setRequesting(true);
       if(props.addId != undefined){
-        var requestOptions = (await props.requestCallback('', 2, 0, props.addId));
+        var requestOptions = (await props.requestCallback('', 8, 0, props.addId).catch(err => {
+          setOptions([]);
+          setRequesting(false);
+        }));
       }else {
-        var requestOptions = (await props.requestCallback('', 2));
+        var requestOptions = (await props.requestCallback('', 8).catch(err => {
+          setOptions([]);
+          setRequesting(false);
+        }));
       }
 
-
+      if(requestOptions){
         requestOptions = requestOptions.reduce(function(acc, curr) {
           if(curr.lastname){
             curr.name = curr.name.concat(" ", curr.lastname);
@@ -104,14 +125,19 @@ export default function Asynchronous(props) {
           acc[curr.id] = curr;
           return acc;
         }, {});
-
-
-
-      if (active) {
-        //setOptions(Object.keys(requestOptions).map((key) => requestOptions[key].item[0]));
-
-        setOptions(Object.keys(requestOptions).map((key) => requestOptions[key]));
+        if (active) {
+          setOptions(Object.keys(requestOptions).map((key) => requestOptions[key]));
+        }else {
+          setOptions([]);
+        }
+      }else {
+        setOptions([]);
       }
+      setRequesting(false);
+
+
+
+
     })();
 
     return () => {
@@ -121,7 +147,7 @@ export default function Asynchronous(props) {
 
   React.useEffect(() => {
     if (!open) {
-      setOptions([]);
+      //setOptions([]);
     }
   }, [open]);
 

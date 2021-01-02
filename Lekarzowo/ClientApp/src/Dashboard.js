@@ -24,45 +24,59 @@ class Dashboard extends React.Component {
       super(props);
       this.state = {
         visitArray: [],
-        illnesses:[]
+        illnesses:[],
+        snackbarRef: null
       };
     this.getVisits = this.getVisits.bind(this);
     this.onClickBtnVisits = this.onClickBtnVisits.bind(this);
     this.handleClickAddVisit = this.handleClickAddVisit.bind(this);
     this.handleClickShowVisit = this.handleClickShowVisit.bind(this);
   }
-  snackbarRef = React.createRef();
+  //snackbarRef = React.createRef();
 
   componentWillMount() {
-    ReservationService.getUpcomingReservations(4, 0)
-    .then(response => {
-      if(response.status == 401){
-        AuthService.logout();
-        this.props.history.push('/login');
-        window.location.reload();
-        return '';
-      }
-      return response;
-    })
-    .then(response => {
-      this.setState({
-        visitArray: response
+    this.setState({
+      snackbarRef: React.createRef()
+    }, () => {
+      ReservationService.getUpcomingReservations(4, 0)
+      .then(response => {
+        if(response.status == 401){
+          AuthService.logout();
+          this.props.history.push('/login');
+          window.location.reload();
+          return '';
+        }
+        return response;
       })
-    })
-    .catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      .then(response => {
+        this.setState({
+          visitArray: response
+        })
+      })
+      .catch(err => {
+          try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
+      });
+
+      UserService.getUserSicknessHistory()
+      .then(response => {
+        this.setState({
+        illnesses: response.filter(responseObject => responseObject.curedate == null),
+        oldIllnesses: response.filter(responseObject => responseObject.curedate != null)
+        });
+      })
+      .catch(err => {
+          try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
+      });
     });
 
-    UserService.getUserSicknessHistory()
-    .then(response => {
-      this.setState({
-      illnesses: response.filter(responseObject => responseObject.curedate == null),
-      oldIllnesses: response.filter(responseObject => responseObject.curedate != null)
-      });
-    })
-    .catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-    });
   }
 
   onClickBtnVisits(event) {
@@ -163,7 +177,7 @@ class Dashboard extends React.Component {
         </div>
 
       </div>
-      <Snackbar ref = {this.snackbarRef} />
+      <Snackbar ref = {this.state.snackbarRef} />
       </div>
 
     );

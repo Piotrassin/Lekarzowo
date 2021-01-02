@@ -45,6 +45,7 @@ const CssTextField = withStyles({
 class AddVisit extends React.Component {
 constructor(props){
   super(props);
+  this.snackbarRef = React.createRef();
   this.onClickDate = this.onClickDate.bind(this);
   this.onClickCity = this.onClickCity.bind(this);
   this.onClickSpeciality = this.onClickSpeciality.bind(this);
@@ -74,7 +75,7 @@ constructor(props){
     selectedReservation: {}
   }
 }
-snackbarRef = React.createRef();
+
 
 onClickDate(value) {
   this.setState({
@@ -170,7 +171,11 @@ async onSubmitBtnClick(event){
         });
       })
       .catch(err => {
-          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          try{
+  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
       });
     }
   });
@@ -194,7 +199,11 @@ onClickConfimReservation(event){
     Dialog.close("reservation-dialog")(event);
   })
   .catch(err => {
-      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      try{
+  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
   });
 }
 
@@ -222,7 +231,11 @@ onClickLoadMore(event){
     console.log(this.state.reservationsArray);
   })
   .catch(err => {
-      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      try{
+  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
   });
 }
 

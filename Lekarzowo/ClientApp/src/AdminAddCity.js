@@ -35,7 +35,11 @@ handleClickAddCity(event){
     this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
   })
   .catch(err => {
-      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      try{
+  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
   });
 }
 

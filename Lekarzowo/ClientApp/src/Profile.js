@@ -12,10 +12,12 @@ import Snackbar from './helpers/Snackbar.js';
 class Profile extends React.Component {
 constructor(props){
   super(props);
+
   this.onClickEditUser = this.onClickEditUser.bind(this);
   this.onClickSickShow = this.onClickSickShow.bind(this);
   this.onClickMedShow = this.onClickMedShow.bind(this);
   this.state = {
+    snackbarRef: "",
     isEditUser: true,
     isSickShow: false,
     isMedShow: false,
@@ -27,7 +29,7 @@ constructor(props){
     }
   }
 }
-snackbarRef = React.createRef();
+
 
 onClickEditUser(event) {
   event.preventDefault();
@@ -58,20 +60,29 @@ onClickMedShow(event) {
 }
 
 componentDidMount(){
-  UserService.getUserData()
-  .then(response => {
-      this.setState({
-        user: {
-          name: response.name,
-          lastname: response.lastname,
-          birthdate: response.birthdate.split('T')[0],
-          pesel: response.pesel
-        }
-      });
-  })
-  .catch(err => {
-      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+  this.setState({
+    snackbarRef: React.createRef()
+  }, () => {
+    UserService.getUserData()
+    .then(response => {
+        this.setState({
+          user: {
+            name: response.name,
+            lastname: response.lastname,
+            birthdate: response.birthdate.split('T')[0],
+            pesel: response.pesel
+          }
+        });
+    })
+    .catch(err => {
+        try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
+    });
   });
+
 
 }
 
@@ -128,7 +139,7 @@ componentDidMount(){
       {this.state.isSickShow && <ProfileSickness history= {this.props.history} />}
       {this.state.isMedShow && <ProfileMedicine />}
       </div>
-      <Snackbar ref = {this.snackbarRef} />
+      <Snackbar ref = {this.state.snackbarRef} />
       </div>
 
     );

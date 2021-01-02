@@ -61,6 +61,7 @@ class PatientHistory extends React.Component {
     console.log(id);
 
     this.state = {
+      snackbarRef: null,
       refresh: false,
       id: id,
       visitId: visitId,
@@ -105,13 +106,17 @@ class PatientHistory extends React.Component {
     this.handleClickAddSickness = this.handleClickAddSickness.bind(this);
     this.handleClickAddMedicine = this.handleClickAddMedicine.bind(this);
   }
-  snackbarRef = React.createRef();
+
 
   componentDidMount() {
+    this.setState({
+      snackbarRef: React.createRef()
+    }, () => {
+      this.getSicknessHistory();
+      this.getActiveMedicine();
+      this.getReservation();
+    });
 
-    this.getSicknessHistory();
-    this.getActiveMedicine();
-    this.getReservation();
 
   }
 
@@ -160,7 +165,7 @@ class PatientHistory extends React.Component {
       });
     })
     .catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
     });
   }
 
@@ -235,7 +240,7 @@ class PatientHistory extends React.Component {
       })
     })
     .catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
     });
   }
 
@@ -247,7 +252,7 @@ class PatientHistory extends React.Component {
       });
     })
     .catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
     });
   }
 
@@ -267,7 +272,7 @@ class PatientHistory extends React.Component {
           console.log(this.state.errors);
           if(Object.keys(this.state.errors).length > 0){
             var message = Validation.handleValidationOutcome(this.state.errors);
-            this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+            this.state.snackbarRef.current.openSnackBar( message ,'red-snackbar');
 
           }else {
             var oldIllnessHistoryObject = {
@@ -278,11 +283,11 @@ class PatientHistory extends React.Component {
             }
             VisitService.postOldMedicinehistory(oldIllnessHistoryObject)
             .then(response => {
-              this.snackbarRef.current.openSnackBar( 'Dodano' ,'green-snackbar');
+              this.state.snackbarRef.current.openSnackBar( 'Dodano' ,'green-snackbar');
               this.clearMedicineAdd();
             })
             .catch(err => {
-                this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+                this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
             });
           }
         });
@@ -299,7 +304,7 @@ class PatientHistory extends React.Component {
       console.log(this.state.errors);
       if(Object.keys(this.state.errors).length > 0){
         var message = Validation.handleValidationOutcome(this.state.errors);
-        this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+        this.state.snackbarRef.current.openSnackBar( message ,'red-snackbar');
 
       }else {
         var oldIllnessHistoryObject = {
@@ -311,11 +316,11 @@ class PatientHistory extends React.Component {
         }
         VisitService.postOldillnesshistory(oldIllnessHistoryObject)
         .then(response => {
-          this.snackbarRef.current.openSnackBar( 'Dodano' ,'green-snackbar');
+          this.state.snackbarRef.current.openSnackBar( 'Dodano' ,'green-snackbar');
           this.clearSicknessAdd();
         })
         .catch(err => {
-            this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+            this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
         });
       }
     });
@@ -477,7 +482,7 @@ class PatientHistory extends React.Component {
         <div/>
       }
 
-      <Snackbar ref = {this.snackbarRef} />
+      <Snackbar ref = {this.state.snackbarRef} />
       </div>
     );
   }

@@ -32,5 +32,9 @@ class Formater {
     }
   }
 
+  formatPrice(price){
+    return (price / 100).toFixed(2) + " zł"; 
+  }
+
 }
 export default new Formater();

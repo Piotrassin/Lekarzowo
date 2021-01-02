@@ -35,18 +35,22 @@ class Visits extends React.Component {
     this.openConfirmCancelReservationDialog = this.openConfirmCancelReservationDialog.bind(this);
     this.cancelVisit = this.cancelVisit.bind(this);
     this.state = {
+      snackbarRef: null,
       checkedVisit: true,
       upcomingVisits: [],
       recentVisits: [],
       visitToCancel: {}
     };
   }
-  snackbarRef = React.createRef();
+
 
   async componentDidMount() {
-    console.log('Current Role');
-    console.log(currentRole);
-    this.getUppcomingVisit();
+    this.setState({
+      snackbarRef: React.createRef()
+    }, () => {
+        this.getUppcomingVisit();
+    });
+
   }
 
   async getPreviousVisit() {
@@ -62,7 +66,11 @@ class Visits extends React.Component {
         });
       })
       .catch(err => {
-          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
       });
     }
     else if (currentRole == 'patient'){
@@ -73,7 +81,11 @@ class Visits extends React.Component {
         });
       })
       .catch(err => {
-          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
       });
     }
 
@@ -90,7 +102,11 @@ class Visits extends React.Component {
         });
       })
       .catch(err => {
-          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
       });
     }
     else if(currentRole == 'patient') {
@@ -101,7 +117,11 @@ class Visits extends React.Component {
         });
       })
       .catch(err => {
-          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
       });
     }
 
@@ -140,7 +160,7 @@ class Visits extends React.Component {
       console.log('helo');
       ReservationService.cancelReservation(this.state.visitToCancel.reservationId)
       .then(response => {
-        this.snackbarRef.current.openSnackBar('Odwołano wizytę', 'green-snackbar');
+        this.state.snackbarRef.current.openSnackBar('Odwołano wizytę', 'green-snackbar');
         Dialog.close("visit-cancel-dialog")(event);
         this.setState({
           visitToCancel: {}
@@ -148,7 +168,11 @@ class Visits extends React.Component {
         //window.location.reload()
       })
       .catch(err => {
-          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
       });
     }
   }
@@ -258,7 +282,7 @@ class Visits extends React.Component {
           :
           <div/>
         }
-        <Snackbar ref = {this.snackbarRef} />
+        <Snackbar ref = {this.state.snackbarRef} />
         </div>
       );
   }

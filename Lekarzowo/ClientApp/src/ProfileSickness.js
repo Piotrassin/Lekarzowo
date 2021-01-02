@@ -11,28 +11,36 @@ constructor(props){
   this.state = {
     illnesses: [],
     oldIllnesses: [],
-    loading: false
+    loading: false,
+    snackbarRef: null
   };
 }
-snackbarRef = React.createRef();
+
 
 componentDidMount() {
   this.setState({
-    loading: true
-  });
-  UserService.getUserSicknessHistory()
-  .then(response => {
-    this.setState({
-    illnesses: response.filter(responseObject => responseObject.curedate == null),
-    oldIllnesses: response.filter(responseObject => responseObject.curedate != null)
+    loading: true,
+    snackbarRef: React.createRef()
+  }, () => {
+    UserService.getUserSicknessHistory()
+    .then(response => {
+      this.setState({
+      illnesses: response.filter(responseObject => responseObject.curedate == null),
+      oldIllnesses: response.filter(responseObject => responseObject.curedate != null)
+      });
+      this.setState({
+        loading: false
+      });
+    })
+    .catch(err => {
+        try{
+  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
     });
-    this.setState({
-      loading: false
-    });
-  })
-  .catch(err => {
-      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
   });
+
 }
 
 render() {
@@ -97,7 +105,7 @@ render() {
           <LinearProgress />
           </Fade>
         </div>
-        <Snackbar ref = {this.snackbarRef} />
+        <Snackbar ref = {this.state.snackbarRef} />
     </div>
   );
 }

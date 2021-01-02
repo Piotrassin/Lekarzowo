@@ -72,7 +72,11 @@ handleClickAddWorkinghours(event){
     this.snackbarRef.current.openSnackBar('Dodano godziny pracy', 'green-snackbar');
   })
   .catch(err => {
-      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      try{
+  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
   });
 }
 

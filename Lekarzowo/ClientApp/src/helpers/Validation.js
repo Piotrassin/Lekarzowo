@@ -27,6 +27,24 @@ class Validation {
     return message;
   }
 
+  validateAdminAddDoctor(specialityId, name, lastName, dateOfBirth, email, password, gender, pesel){
+    var errorObject = {};
+    this.addErrorToObject(errorObject, 'Imie', this.validateBlank(name));
+    this.addErrorToObject(errorObject, 'Nazwisko', this.validateBlank(lastName));
+    this.addErrorToObject(errorObject, 'Data urodzenia', this.validateBlank(dateOfBirth));
+    this.addErrorToObject(errorObject, 'Data urodzenia', this.validateDateOfBirth(dateOfBirth));
+    this.addErrorToObject(errorObject, 'Płeć', this.validateBlank(gender));
+    this.addErrorToObject(errorObject, 'Płeć', this.validateGender(gender));
+    this.addErrorToObject(errorObject, 'Pesel', this.validateBlank(pesel));
+    this.addErrorToObject(errorObject, 'Pesel', this.validatePesel(pesel));
+    this.addErrorToObject(errorObject, 'Email', this.validateBlank(email));
+    this.addErrorToObject(errorObject, 'Email', this.validateEmail(email));
+    this.addErrorToObject(errorObject, 'Hasło', this.validateBlank(password));
+    this.addErrorToObject(errorObject, 'Specjalizacja', this.validateBlankNumber(specialityId));
+
+    return errorObject;
+  }
+
   validateOldMedicineAdd(medicine, medicineDescription, medicineFinishDate){
     var errorObject = {};
     this.addErrorToObject(errorObject, 'Lek', this.validateBlankObject(medicine));

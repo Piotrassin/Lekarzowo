@@ -13,6 +13,7 @@ import TextField from '@material-ui/core/TextField';
 import DoctorItem from './components/DoctorItem.js';
 import DoctorService from './services/DoctorService.js';
 import Formater from './helpers/Formater.js';
+import Snackbar from './helpers/Snackbar.js';
 
 class FindDoctor extends React.Component {
   constructor(props){
@@ -27,6 +28,7 @@ class FindDoctor extends React.Component {
     this.onChangeDoctorSearch = this.onChangeDoctorSearch.bind(this);
     this.onClickDoctor = this.onClickDoctor.bind(this);
     this.getDayofWeek = this.getDayofWeek.bind(this);
+    this.snackbarRef = React.createRef();
   }
 
   componentDidMount() {
@@ -65,7 +67,11 @@ class FindDoctor extends React.Component {
         }
       })
       .catch(err => {
-          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          try{
+  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
       });
     });
   }
@@ -79,7 +85,11 @@ class FindDoctor extends React.Component {
       });
     })
     .catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        try{
+  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
     });
     DoctorService.getDoctorWorkingHours(id, 7)
     .then(response => {
@@ -88,7 +98,11 @@ class FindDoctor extends React.Component {
       });
     })
     .catch(err => {
-        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        try{
+  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+}catch(erorr){
+  console.log('Missed Reference');
+};
     });
   }
 
@@ -175,6 +189,7 @@ class FindDoctor extends React.Component {
           </div>
           </div>
           <VisitAlert history= {this.props.history}/>
+          <Snackbar ref = {this.snackbarRef} />
         </div>
       );
   }
