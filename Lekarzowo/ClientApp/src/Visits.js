@@ -44,7 +44,8 @@ class Visits extends React.Component {
       daysVisitCountBefore: 7,
       daysVisitCountAfter: 2,
       limitBefore:  10,
-      limitAfter: 10
+      limitAfter: 10,
+      showButton: true
     };
   }
 
@@ -123,10 +124,17 @@ class Visits extends React.Component {
     else if (currentRole == 'patient'){
       return await ReservationService.getRecentReservations(10, this.state.limitBefore)
       .then(response => {
-        this.setState({
-          recentVisits: (this.state.recentVisits).concat(response),
-          limitBefore: this.state.limitBefore + 10
-        });
+        if(response.length == 0 ){
+          this.setState({
+            showButton: false
+          });
+        }
+        else {
+          this.setState({
+            recentVisits: (this.state.recentVisits).concat(response),
+            limitBefore: this.state.limitBefore + 10
+          });
+        }
       })
       .catch(err => {
           try{
@@ -162,7 +170,7 @@ class Visits extends React.Component {
     }
     else if(currentRole == 'patient') {
 
-      await ReservationService.getUpcomingReservations(this.state.limitAfter + 10, this.state.limitAfter)
+      await ReservationService.getUpcomingReservations(10, 0)
       .then(response => {
         this.setState({
           upcomingVisits: response
@@ -203,10 +211,17 @@ class Visits extends React.Component {
     else if(currentRole == 'patient') {
       await ReservationService.getUpcomingReservations(10, this.state.limitAfter)
       .then(response => {
-        this.setState({
-          upcomingVisits: (this.state.upcomingVisit).concat(response),
-          limitAfter: this.state.limitAfter + 10
-        });
+        if(response.length == 0 ){
+          this.setState({
+            showButton: false
+          });
+        }else {
+          this.setState({
+            upcomingVisits: (this.state.upcomingVisit).concat(response),
+            limitAfter: this.state.limitAfter + 10
+          });
+        }
+
       })
       .catch(err => {
           try{
@@ -231,7 +246,8 @@ class Visits extends React.Component {
   onCheckVisitType(event) {
     console.log(event.target.checked);
     this.setState({
-      checkedVisit: event.target.checked
+      checkedVisit: event.target.checked,
+      showButton: true
     }, () => {
       if(this.state.checkedVisit){
         this.getUppcomingVisit();
@@ -268,10 +284,10 @@ class Visits extends React.Component {
       })
       .catch(err => {
           try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+            this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
       });
     }
   }
@@ -326,6 +342,7 @@ class Visits extends React.Component {
                     />
                   ))}
 </div>
+{this.state.showButton ?
 <div className = 'flex-row justify-center' style={{marginTop: '20px'}}>
   <button className = "btn-success-arrow" onClick = {this.onClickLoadMore}>
 {this.state.checkedVisit ?
@@ -334,6 +351,9 @@ class Visits extends React.Component {
   'Załaduj wizyty z poprzednich dni'
 }</button>
 </div>
+:
+<div/>
+}
             </div>
 
           </div>
