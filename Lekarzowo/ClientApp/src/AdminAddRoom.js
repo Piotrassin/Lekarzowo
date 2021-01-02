@@ -7,6 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
 import Autocomplete from './components/Autocomplete.js';
+import Validation from './helpers/Validation.js';
 
 class AdminAddRoom extends React.Component {
 constructor(props){
@@ -48,24 +49,38 @@ onClickLocalSearch(value) {
 }
 
 handleClickAddRoom(event){
-  AdminService.postRoom(this.state.room)
-  .then(response => {
-    console.log(response);
-    this.setState({
-      room: {
-        number: "",
-        localId: ""
-      }
-    });
-    this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
-  })
-  .catch(err => {
-      try{
-  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+  this.setState ({
+    errors: Validation.validateAdminAddRoom(this.state.room.localId,
+    this.state.room.number)
+  }, () => {
+    console.log(this.state.errors);
+    if(Object.keys(this.state.errors).length > 0){
+      var message = Validation.handleValidationOutcome(this.state.errors);
+      this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+
+    }else {
+
+      AdminService.postRoom(this.state.room)
+      .then(response => {
+        console.log(response);
+        this.setState({
+          room: {
+            number: "",
+            localId: ""
+          }
+        });
+        this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
+      })
+      .catch(err => {
+          try{
+            this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
+      });
+    }
   });
+
 }
 
 componentDidMount() {
@@ -89,7 +104,7 @@ render() {
             label="Numer pokoju"
             value = {this.state.room.number}
             onChange = {this.onChangeTextField}
-            type = 'text'
+            type = 'number'
             size="small" fullWidth />
 
           </div>

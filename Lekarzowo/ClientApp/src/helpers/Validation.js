@@ -27,6 +27,56 @@ class Validation {
     return message;
   }
 
+  validateUniversalBlank(stringObject, returnName){
+    var errorObject = {};
+
+    this.addErrorToObject(errorObject, returnName, this.validateBlank(stringObject));
+
+    return errorObject;
+  }
+
+  validateAdminAddSeciality(specialityName, basePrice){
+    var errorObject = {};
+    this.addErrorToObject(errorObject, 'Specjalizacja', this.validateBlank(specialityName));
+    this.addErrorToObject(errorObject, 'Cena bazowa', this.validateBlankNumber(basePrice));
+
+
+    return errorObject;
+  }
+
+  validateAdminAddRoom(localId, roomNumber){
+    var errorObject = {};
+    this.addErrorToObject(errorObject, 'Lokal', this.validateBlankNumber(localId));
+    this.addErrorToObject(errorObject, 'Numer pokoju', this.validateBlankNumber(roomNumber));
+
+
+    return errorObject;
+  }
+
+  validateAdminAddLocal(cityId, localName, streetName, postalCode, streetNumber, blockNumber){
+    var errorObject = {};
+    this.addErrorToObject(errorObject, 'Miasto', this.validateBlankNumber(cityId));
+    this.addErrorToObject(errorObject, 'Lokal', this.validateBlank(localName));
+    this.addErrorToObject(errorObject, 'Ulica', this.validateBlank(streetName));
+    this.addErrorToObject(errorObject, 'Kod Pocztowy', this.validateBlank(postalCode));
+    this.addErrorToObject(errorObject, 'Numer ulicy', this.validateBlankNumber(streetNumber));
+    this.addErrorToObject(errorObject, 'Numer bloku', this.validateBlankNumber(blockNumber));
+
+    return errorObject;
+  }
+
+  validateAdminAddWorkingHours(doctorId, localId, startDate, endDate, startHour, endHour){
+    var errorObject = {};
+    this.addErrorToObject(errorObject, 'Doktor', this.validateBlankNumber(doctorId));
+    this.addErrorToObject(errorObject, 'Lokal', this.validateBlankNumber(localId));
+    this.addErrorToObject(errorObject, 'Data od', this.validateBlankObject(startDate));
+    this.addErrorToObject(errorObject, 'Data do', this.validateBlankObject(endDate));
+    this.addErrorToObject(errorObject, 'Godzina od', this.validateBlankObject(startHour));
+    this.addErrorToObject(errorObject, 'Godzina do', this.validateBlankObject(endHour));
+
+    return errorObject;
+  }
+
   validateAdminAddDoctor(specialityId, name, lastName, dateOfBirth, email, password, gender, pesel){
     var errorObject = {};
     this.addErrorToObject(errorObject, 'Imie', this.validateBlank(name));

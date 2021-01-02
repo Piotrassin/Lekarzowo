@@ -6,6 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
 import Autocomplete from './components/Autocomplete.js';
+import Validation from './helpers/Validation.js';
 
 class AdminAddTreatment extends React.Component {
 constructor(props){
@@ -27,21 +28,33 @@ onChangeTextField(event){
 }
 
 handleClickAddTreatment(event){
-  AdminService.postTreatment(this.state.treatmentName)
-  .then(response => {
-    console.log(response);
-    this.setState({
-      treatmentName: ""
-    });
-    this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
-  })
-  .catch(err => {
-      try{
-  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+  this.setState ({
+    errors: Validation.validateUniversalBlank(this.state.treatmentName, "Pole Nazwa zabiegu")
+  }, () => {
+    console.log(this.state.errors);
+    if(Object.keys(this.state.errors).length > 0){
+      var message = Validation.handleValidationOutcome(this.state.errors);
+      this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+
+    }else {
+      AdminService.postTreatment(this.state.treatmentName)
+      .then(response => {
+        console.log(response);
+        this.setState({
+          treatmentName: ""
+        });
+        this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
+      })
+      .catch(err => {
+          try{
+            this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
+      });
+    }
   });
+
 }
 
 componentDidMount() {

@@ -7,6 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
 import Autocomplete from './components/Autocomplete.js';
+import Validation from './helpers/Validation.js';
 
 class AdminAddLocal extends React.Component {
 constructor(props){
@@ -52,28 +53,42 @@ onClickCitySearch(value) {
 }
 
 handleClickAddCity(event){
-  AdminService.postLocal(this.state.local)
-  .then(response => {
-    console.log(response);
-    this.setState({
-      local: {
-        name: "",
-        cityId: "",
-        streetName: "",
-        postCode: "",
-        streetNumber: "",
-        blockNumber: ""
-      }
-    });
-    this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
-  })
-  .catch(err => {
-      try{
-  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+  this.setState ({
+    errors: Validation.validateAdminAddLocal(this.state.local.cityId, this.state.local.name,
+    this.state.local.streetName, this.state.local.postCode, this.state.local.streetNumber,
+    this.state.local.blockNumber)
+  }, () => {
+    console.log(this.state.errors);
+    if(Object.keys(this.state.errors).length > 0){
+      var message = Validation.handleValidationOutcome(this.state.errors);
+      this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+
+    }else {
+      AdminService.postLocal(this.state.local)
+      .then(response => {
+        console.log(response);
+        this.setState({
+          local: {
+            name: "",
+            cityId: "",
+            streetName: "",
+            postCode: "",
+            streetNumber: "",
+            blockNumber: ""
+          }
+        });
+        this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
+      })
+      .catch(err => {
+          try{
+            this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
+      });
+    }
   });
+
 }
 
 componentDidMount() {

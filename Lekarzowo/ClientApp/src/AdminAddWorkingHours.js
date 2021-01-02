@@ -7,14 +7,16 @@ import TextField from '@material-ui/core/TextField';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
 import Autocomplete from './components/Autocomplete.js';
+import Validation from './helpers/Validation.js';
+import Formater from './helpers/Formater.js';
 
 class AdminAddWorkingHours extends React.Component {
 constructor(props){
   super(props);
   this.state = {
     doctorsArray: [],
-    dateStart: "1999-01-01",
-    dateEnd: "1999-01-01",
+    dateStart: Formater.formatDate(new Date().toISOString()),
+    dateEnd: Formater.formatDate(new Date().toISOString()),
     timeStart: "07:30",
     timeEnd: "22:00",
     loading: false,
@@ -51,33 +53,46 @@ onClickLocalSearch(value) {
 
 
 handleClickAddWorkinghours(event){
+  this.setState ({
+    errors: Validation.validateAdminAddWorkingHours(this.state.doctorId, this.state.localId,
+    this.state.dateStart, this.state.dateEnd, this.state.timeStart, this.state.timeEnd)
+  }, () => {
+    console.log(this.state.errors);
+    if(Object.keys(this.state.errors).length > 0){
+      var message = Validation.handleValidationOutcome(this.state.errors);
+      this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
 
-  var workinghoursObject = {
-    From: this.state.dateStart.concat('T').concat(this.state.timeStart),
-    To: this.state.dateEnd.concat('T').concat(this.state.timeEnd),
-    DoctorId: this.state.doctorSelected,
-    LocalId: this.state.localSelected
-  }
-  AdminService.postWorkinghours(workinghoursObject)
-  .then(response => {
-    console.log(response);
-    this.setState({
-      dateStart: "1999-01-01",
-      dateEnd: "1999-01-01",
-      timeStart: "07:30",
-      timeEnd: "22:00",
-      doctorSelected: null,
-      localSelected: null
-    });
-    this.snackbarRef.current.openSnackBar('Dodano godziny pracy', 'green-snackbar');
-  })
-  .catch(err => {
-      try{
-  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+    }else {
+      var workinghoursObject = {
+        From: this.state.dateStart.concat('T').concat(this.state.timeStart),
+        To: this.state.dateEnd.concat('T').concat(this.state.timeEnd),
+        DoctorId: this.state.doctorSelected,
+        LocalId: this.state.localSelected
+      }
+      AdminService.postWorkinghours(workinghoursObject)
+      .then(response => {
+        console.log(response);
+        this.setState({
+          dateStart: Formater.formatDate(new Date().toISOString()),
+          dateEnd: Formater.formatDate(new Date().toISOString()),
+          timeStart: "07:30",
+          timeEnd: "22:00",
+          doctorSelected: null,
+          localSelected: null
+        });
+        this.snackbarRef.current.openSnackBar('Dodano godziny pracy', 'green-snackbar');
+      })
+      .catch(err => {
+          try{
+            this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
+      });
+    }
   });
+
+
 }
 
 componentDidMount() {

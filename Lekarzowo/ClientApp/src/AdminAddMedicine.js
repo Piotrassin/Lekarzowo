@@ -5,6 +5,7 @@ import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
+import Validation from './helpers/Validation.js';
 
 class AdminAddMedicine extends React.Component {
 constructor(props){
@@ -26,21 +27,34 @@ onChangeTextField(event){
 }
 
 handleClickAddMedicine(event){
-  AdminService.postMedicine(this.state.medicineName)
-  .then(response => {
-    console.log(response);
-    this.setState({
-      medicineName: ""
-    });
-    this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
-  })
-  .catch(err => {
-      try{
-  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+  this.setState ({
+    errors: Validation.validateUniversalBlank(this.state.medicineName, "Pole Nazwa leku")
+  }, () => {
+    console.log(this.state.errors);
+    if(Object.keys(this.state.errors).length > 0){
+      var message = Validation.handleValidationOutcome(this.state.errors);
+      this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+
+    }else {
+      AdminService.postMedicine(this.state.medicineName)
+      .then(response => {
+        console.log(response);
+        this.setState({
+          medicineName: ""
+        });
+        this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
+      })
+      .catch(err => {
+          try{
+            this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
+      });
+    }
   });
+
+
 }
 
 componentDidMount() {
