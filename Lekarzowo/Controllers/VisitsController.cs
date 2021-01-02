@@ -51,6 +51,12 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
+            if (! await IsOwnedByPatientVisit(visit.ReservationId))
+            {
+                return Unauthorized();
+            }
+
+            
             return visit;
         }
 
@@ -66,6 +72,10 @@ namespace Lekarzowo.Controllers
             if (!VisitExists(id))
             {
                 return NotFound();
+            }
+            if (! await CanDoctorAccessGivenVisit(visit.ReservationId))
+            {
+                return Unauthorized();
             }
 
             //TODO PRZETESOWAĆ
@@ -89,6 +99,11 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public async Task<ActionResult<Visit>> PostVisit(Visit visit)
         {
+            if (!await CanDoctorAccessGivenVisit(visit.ReservationId))
+            {
+                return Unauthorized();
+            }
+
             if (VisitExists(visit.ReservationId))
             {
                 return Conflict(new JsonResult("That visit already exists"));
@@ -118,7 +133,10 @@ namespace Lekarzowo.Controllers
             {
                 return NotFound();
             }
-
+            if (!await CanDoctorAccessGivenVisit(visit.ReservationId))
+            {
+                return Unauthorized();
+            }
             try
             {
                 _repository.Delete(visit);
@@ -154,6 +172,11 @@ namespace Lekarzowo.Controllers
             if (visit == null)
             {
                 return NotFound();
+            }
+
+            if (!await CanDoctorAccessGivenVisit(visit.ReservationId))
+            {
+                return Unauthorized();
             }
 
             if (!await CanVisitBeOpened(visitId))
@@ -208,10 +231,31 @@ namespace Lekarzowo.Controllers
 
             return sum;
         }
+        public async Task<bool> IsOwnedByPatientVisit(decimal visitId)
+        {
+            var visit = _repository.GetByID(visitId);
+            if (UserIsPatientAndDoesntHaveAccess(visit.Reservation.PatientId))
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         private bool VisitExists(decimal id)
         {
             return _repository.Exists(id);
+        }
+
+        public async Task<bool> CanDoctorAccessGivenVisit(decimal visitId)
+        {
+            var reservation = await _reservationsRepository.GetById(visitId);
+            if (UserIsDoctorAndDoesntHaveAccess(reservation.DoctorId))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

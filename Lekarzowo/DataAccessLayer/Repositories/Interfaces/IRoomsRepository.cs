@@ -12,5 +12,12 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// <param name="LocalId"></param>
         /// <returns></returns>
         Task<IEnumerable<Room>> GetAllByLocalId(decimal LocalId);
+
+        /// <summary>
+        /// Checks if a room with given local and room number exists. 
+        /// </summary>
+        /// <param name="room"></param>
+        /// <returns></returns>
+        Task<bool> Exists(Room room);
     }
 }

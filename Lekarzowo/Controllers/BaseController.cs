@@ -44,10 +44,19 @@ namespace Lekarzowo.Controllers
         /// </summary>
         /// <param name="patientId"></param>
         /// <returns></returns>
-        protected bool IsPatientAccessingElsesData(decimal patientId)
+        protected bool UserIsPatientAndDoesntHaveAccess(decimal patientId)
         {
             return IsPatient() && patientId != GetUserIdFromToken();
         }
 
+        /// <summary>
+        /// Checks if a logged user is a doctor and if passed doctorId from given endpoint matches id in user's token.
+        /// </summary>
+        /// <param name="doctorId"></param>
+        /// <returns></returns>
+        protected bool UserIsDoctorAndDoesntHaveAccess(decimal doctorId)
+        {
+            return IsDoctor() && doctorId != GetUserIdFromToken();
+        }
     }
 }

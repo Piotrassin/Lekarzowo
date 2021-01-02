@@ -19,13 +19,16 @@ namespace Lekarzowo.Controllers
         private readonly IMedicinesHistoryRepository _repository;
         private readonly IVisitsRepository _visitsRepository;
         private readonly IIllnessesHistoryRepository _illnessesHistoryRepository;
+        private readonly VisitsController _visitsController;
 
 
-        public MedicinehistoriesController(IMedicinesHistoryRepository medicinesHistoryRepository, IIllnessesHistoryRepository illnessesHistoryRepository, IVisitsRepository visitsRepository)
+        public MedicinehistoriesController(IMedicinesHistoryRepository medicinesHistoryRepository, IIllnessesHistoryRepository illnessesHistoryRepository, 
+            IVisitsRepository visitsRepository, VisitsController visitsController)
         {
             _repository = medicinesHistoryRepository;
             _visitsRepository = visitsRepository;
             _illnessesHistoryRepository = illnessesHistoryRepository;
+            _visitsController = visitsController;
         }
 
         /// <summary>
@@ -80,7 +83,7 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> TakenMedicines(decimal patientId, int? limit, int? skip)
         {
-            if (IsPatientAccessingElsesData(patientId))
+            if (UserIsPatientAndDoesntHaveAccess(patientId))
             {
                 return Unauthorized();
             }
@@ -97,7 +100,7 @@ namespace Lekarzowo.Controllers
                 return  NotFound();
             }
 
-            if (await IsOwnedByPatientVisit(visitId))
+            if (await _visitsController.IsOwnedByPatientVisit(visitId))
             {
                 return Unauthorized();
             }
@@ -190,18 +193,7 @@ namespace Lekarzowo.Controllers
         {
             var illnessHistory = await _illnessesHistoryRepository.GetOwner(illnessHistoryId);
 
-            if (IsPatientAccessingElsesData(illnessHistory.Visit.Reservation.PatientId))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private async Task<bool> IsOwnedByPatientVisit(decimal visitId)
-        {
-            var visit = _visitsRepository.GetByID(visitId);
-            if (IsPatientAccessingElsesData(visit.Reservation.PatientId))
+            if (UserIsPatientAndDoesntHaveAccess(illnessHistory.Visit.Reservation.PatientId))
             {
                 return false;
             }

@@ -16,5 +16,10 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         {
             return await _context.Room.Where(r => r.LocalId == LocalId).ToListAsync();
         }
+
+        public async Task<bool> Exists(Room room)
+        {
+            return await _context.Room.AnyAsync(x => x.Number == room.Number && x.LocalId == room.LocalId);
+        }
     }
 }

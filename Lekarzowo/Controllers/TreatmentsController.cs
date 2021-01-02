@@ -34,7 +34,6 @@ namespace Lekarzowo.Controllers
             return Ok(await _repository.GetAllByName(name, limit, skip));
         }
 
-
         // GET: api/Treatments/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Treatment>> GetTreatment(decimal id)
@@ -50,7 +49,7 @@ namespace Lekarzowo.Controllers
         }
 
         // PUT: api/Treatments/5
-        [Authorize(Roles = "doctor,admin")]
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTreatment(decimal id, Treatment treatment)
         {
@@ -77,7 +76,7 @@ namespace Lekarzowo.Controllers
         }
 
         // POST: api/Treatments
-        [Authorize(Roles = "doctor,admin")]
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<ActionResult<Treatment>> PostTreatment(Treatment treatment)
         {
@@ -101,7 +100,7 @@ namespace Lekarzowo.Controllers
         }
 
         // DELETE: api/Treatments/5
-        [Authorize(Roles = "doctor,admin")]
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Treatment>> DeleteTreatment(decimal id)
         {

@@ -32,7 +32,7 @@ namespace Lekarzowo.Controllers
         [HttpGet("{patientId}/{medicineId}")]
         public async Task<ActionResult<Oldmedicinehistory>> GetOldmedicinehistory(decimal patientId, decimal medicineId)
         {
-            if (IsPatientAccessingElsesData(patientId))
+            if (UserIsPatientAndDoesntHaveAccess(patientId))
             {
                 return Unauthorized();
             }

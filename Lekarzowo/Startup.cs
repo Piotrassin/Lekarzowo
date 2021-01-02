@@ -143,6 +143,7 @@ namespace Lekarzowo
 
             services.AddScoped<ICustomUserRolesService, CustomUserRolesService>();
             services.AddScoped<PeopleController, PeopleController>();
+            services.AddScoped<VisitsController, VisitsController>();
 
             services.AddEntityFrameworkOracle()
                 .AddDbContext<ModelContext>(options =>

@@ -18,13 +18,16 @@ namespace Lekarzowo.Controllers
         private readonly IIllnessesHistoryRepository _repository;
         private readonly IVisitsRepository _visitsRepository;
         private readonly IOldIllnessesHistoryRepository _oldIllnessesHistoryRepository;
+        private readonly VisitsController _visitsController;
 
 
-        public IllnesseshistoryController(IIllnessesHistoryRepository context, IVisitsRepository visitsRepository, IOldIllnessesHistoryRepository oldIllnessesHistoryRepository)
+
+        public IllnesseshistoryController(IIllnessesHistoryRepository context, IVisitsRepository visitsRepository, IOldIllnessesHistoryRepository oldIllnessesHistoryRepository, VisitsController visitsController)
         {
             _repository = context;
             _visitsRepository = visitsRepository;
             _oldIllnessesHistoryRepository = oldIllnessesHistoryRepository;
+            _visitsController = visitsController;
         }
 
         // GET: api/Illnesseshistory
@@ -38,9 +41,15 @@ namespace Lekarzowo.Controllers
         // GET: api/Illnesseshistory/Single/5
         [Authorize(Roles = "patient,doctor,admin")]
         [HttpGet("[action]/{illnessHistoryId}")]
-        public ActionResult<Illnesshistory> Single(decimal illnessHistoryId)
+        public async Task<ActionResult<Illnesshistory>> Single(decimal illnessHistoryId)
         {
             if (IsPatient() && _repository.GetAll(GetUserIdFromToken()).All(x => x.Id != illnessHistoryId))
+            {
+                return Unauthorized();
+            }
+
+            //TODO USUNĄĆ PO TESTACH
+            if (!await CanDoctorAccessIllnessHistory(illnessHistoryId))
             {
                 return Unauthorized();
             }
@@ -59,7 +68,7 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> AllByPatientId(decimal patientId, int? limit, int? skip)
         {
-            if (IsPatientAccessingElsesData(patientId))
+            if (UserIsPatientAndDoesntHaveAccess(patientId))
             {
                 return Unauthorized();
             }
@@ -104,7 +113,7 @@ namespace Lekarzowo.Controllers
         {
             var patientId = _visitsRepository.GetByID(visitId).Reservation.PatientId;
 
-            if (IsPatientAccessingElsesData(patientId))
+            if (UserIsPatientAndDoesntHaveAccess(patientId))
             {
                 return Unauthorized();
             }
@@ -117,7 +126,7 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> PatientHistory(decimal patientId, int? limit, int? skip)
         {
-            if (IsPatientAccessingElsesData(patientId))
+            if (UserIsPatientAndDoesntHaveAccess(patientId))
             {
                 return Unauthorized();
             }
@@ -138,7 +147,7 @@ namespace Lekarzowo.Controllers
         // PUT: api/Illnesseshistory/5
         [Authorize(Roles = "doctor,admin")]
         [HttpPut("{illnessHistoryId}")]
-        public IActionResult PutIllnesshistory(decimal illnessHistoryId, Illnesshistory illnesshistory)
+        public async Task<IActionResult> PutIllnesshistory(decimal illnessHistoryId, Illnesshistory illnesshistory)
         {
             if (illnessHistoryId != illnesshistory.Id)
             {
@@ -148,6 +157,11 @@ namespace Lekarzowo.Controllers
             if (!IllnesshistoryExists(illnesshistory.Id))
             {
                 return NotFound();
+            }
+
+            if (! await CanDoctorAccessIllnessHistory(illnesshistory.Id))
+            {
+                return Unauthorized();
             }
 
             try
@@ -214,6 +228,21 @@ namespace Lekarzowo.Controllers
         private bool IllnesshistoryExists(decimal id)
         {
             return _repository.Exists(id);
+        }
+        public async Task<bool> CanDoctorAccessGivenVisit(decimal visitId)
+        {
+            var reservation = _visitsRepository.GetByID(visitId);
+            if (UserIsDoctorAndDoesntHaveAccess(reservation.Reservation.DoctorId))
+            {
+                return false;
+            }
+
+            return true;
+        }
+        private async Task<bool> CanDoctorAccessIllnessHistory(decimal illnessHistoryId)
+        {
+            var illnessHist = _repository.GetByID(illnessHistoryId);
+            return await CanDoctorAccessGivenVisit(illnessHist.VisitId);
         }
 
     }
