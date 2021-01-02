@@ -5,6 +5,7 @@ import bottle from '../images/Bottle.png';
 import UserService from '../services/UserService.js';
 import VisitService from '../services/VisitService.js';
 import ReservationService from '../services/ReservationService.js';
+import DoctorService from '../services/DoctorService.js';
 import AuthService from '../authentication/AuthService.js';
 import DownArrow from '../images/DownArrow.svg';
 import '../Main.css';
@@ -18,9 +19,11 @@ import RoleButton from '../components/RoleButton.js';
 import SicknessItem from '../components/SicknessItem.js';
 import VisitAlert from '../components/VisitAlert.js';
 import Menu from '../Menu.js';
+import Formater from '../helpers/Formater.js';
 
 
 const user = AuthService.getUserName();
+const userId = AuthService.getUserId();
 class Dashboard extends React.Component {
   constructor(props){
       super(props);
@@ -32,9 +35,11 @@ class Dashboard extends React.Component {
     this.onClickBtnVisits = this.onClickBtnVisits.bind(this);
     this.handleClickAddVisit = this.handleClickAddVisit.bind(this);
     this.handleClickShowVisit = this.handleClickShowVisit.bind(this);
+    this.getDoctorWorkingHours = this.getDoctorWorkingHours.bind(this);
   }
 
   componentWillMount() {
+    this.getDoctorWorkingHours();
     var tommorrow = new Date(new Date());
     tommorrow.setDate(tommorrow.getDate());
     ReservationService.getUpcomingDoctorReservations(new Date(), tommorrow)
@@ -67,6 +72,30 @@ class Dashboard extends React.Component {
       illnesses: response.filter(responseObject => responseObject.curedate == null),
       oldIllnesses: response.filter(responseObject => responseObject.curedate != null)
       });
+    })
+    .catch(err => {
+        try{
+          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }catch(erorr){
+          console.log('Missed Reference');
+        };
+    });
+
+  }
+
+  getDoctorWorkingHours(){
+    DoctorService.getDoctorWorkingHours(userId, 7)
+    .then(response => {
+      this.setState({
+        doctorWorkingHoursArray: response
+      });
+    })
+    .catch(err => {
+        try{
+          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }catch(erorr){
+          console.log('Missed Reference');
+        };
     });
   }
 
@@ -75,11 +104,11 @@ class Dashboard extends React.Component {
   }
 
   handleClickAddVisit(event){
-    this.props.history.push('/addVisit');
+    this.props.history.push('/visits');
   }
 
   handleClickShowVisit(event){
-    this.props.history.push('/myProfile');
+    this.props.history.push('/findDoctor');
   }
 
 
@@ -103,8 +132,8 @@ class Dashboard extends React.Component {
         <div className = "hello-container">
           <img src = {med} className = "medicine-hello" />
           <div className = "hello-txt-container">
-          <b className = "big-white">Jak się</b>
-          <b className = "huge-white">dzisiaj czujesz ?</b>
+          <b className = "big-white">Gotowy na</b>
+          <b className = "huge-white">kolejny dzień ?</b>
           </div>
         </div>
         <div className = "visit-dashboard-container">
@@ -128,41 +157,34 @@ class Dashboard extends React.Component {
         <div className = "visit-add-action" onClick={this.handleClickAddVisit}>
           <img src = {writer} className = "writer-img" style={{width: '40px', marginTop: '5px'}}/>
           <div className = "flex-column action-txt">
-          <b className = "small-white" style = {{marginTop: 5}}>Zapisz się na</b>
-          <b className = "big-white" style = {{marginTop: 0}}>Wizytę</b>
+          <b className = "small-white" style = {{marginTop: 5}}>Twoje</b>
+          <b className = "big-white" style = {{marginTop: 0}}>Wizyty</b>
           </div>
         </div>
         <div className = "medicine-add-action" onClick = {this.handleClickShowVisit}>
           <img src = {bottle} className = "bottle-img" style={{width: '30px', marginTop: '15px'}} />
           <div className = "flex-column action-txt">
-          <b className = "small-white" style = {{marginTop: 5}}>Zobacz Twoje</b>
-          <b className = "big-white" style = {{marginTop: 0}}>Lekarstwa</b>
+          <b className = "small-white" style = {{marginTop: 5}}>Wyszukaj</b>
+          <b className = "big-white" style = {{marginTop: 0}}>Grafik Lekarzy</b>
           </div>
         </div>
         <div className = "chart-container">
-        <b className = "big-black">Aktualne choroby</b>
-        <div className = 'flex-column width-100'>
-        <div className = 'sickness-item'>
-          <div className = 'sickness-item-part part-1'>
+        <b className = "big-black">Twoje godziny pracy</b>
+        <br/><br/>
+        <div className = 'workinghours-container'>
+        {this.state.doctorWorkingHoursArray && this.state.doctorWorkingHoursArray.map((local, index ) => (
+        <div>
+          <a className = 'subheading-content-profile'>{local.name} ({local.streetname} {local.streetnumber})</a>
+          <hr style = {{width: '100%'}}/>
+          {local.workinghours.map((workinghours, index) =>
+          <div className = 'profile-data-slot' style = {{width: '300px', color: 'black'}}>
+            <a className = 'profile-data-slot-header' style = {{color: 'black'}}>{Formater.getDayofWeek(workinghours.from)}</a><a>{Formater.formatHour(workinghours.from)} -
+            {Formater.formatHour(workinghours.to)}</a>
           </div>
-          <div className = 'sickness-item-part part-2'>
-            <a className = 'table-header'>Choroba</a>
-          </div>
-          <div className = 'sickness-item-part part-3-4'>
-            <a className = 'table-header'>Opis</a>
-          </div>
-          <div className = 'sickness-item-part part-5'>
-            <a className = 'table-header'>Akcje</a>
-          </div>
+          )}
+
         </div>
-        <div className = 'overflow-y-auto' style = {{height: "300px"}}>
-        {this.state.illnesses && this.state.illnesses.map((illness, index ) => (
-            <SicknessItem
-            sickness={illness}
-            history= {this.props.history}
-            />
-          ))}
-          </div>
+        ))}
         </div>
         </div>
 

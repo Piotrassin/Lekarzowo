@@ -73,6 +73,13 @@ class AuthService {
     return {status: 401};
   }
 
+  getUserId(){
+    if(this.checkifAnyUserData() == true){
+      return JSON.parse(localStorage.getItem("userData")).id;
+    }
+    return '';
+  }
+
   getUserName(){
     if(this.checkifAnyUserData() == true){
       return JSON.parse(localStorage.getItem("userData")).firstName.concat(" ").concat(JSON.parse(localStorage.getItem("userData")).lastName);
