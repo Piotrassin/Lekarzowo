@@ -207,6 +207,7 @@ overflow: scroll;
   width: 100%;
   min-height: 20px;
   overflow: auto;
+  padding: 0px 10px;
 }
 .left-margin-small {
   margin-left: 20px;
@@ -1322,6 +1323,13 @@ align-items: center;
   color: white;
   margin-right: 20px;
   border-radius: 5px;
+}
+.btn-white-filled {
+  background-color: white;
+  border: 0px;
+  color: #1859A6;
+  font-weight: bold;
+
 }
 #reservation-dialog {
   background-color: white;

@@ -1,10 +1,11 @@
 import React from "react"
 import './Main.css';
 import womanAvatar from './images/womanAvatar.jpg';
-import medicine1 from './images/medicine1.png';
+import medicine1 from './images/MedicineSmallRound.svg';
 import plusSign from './images/plusSign.svg';
 import MedicineSmall from './MedicineSmall';
 import { withStyles } from '@material-ui/core/styles';
+import sicknessSign from './images/SicknessSign.svg';
 import MedicineBigger from './MedicineBigger';
 import TreatmenrSmall from './TreatmenrSmall';
 import SicknessSmall from './SicknessSmall';
@@ -356,7 +357,7 @@ class VisitDetails extends React.Component {
   }
 
   getSicknessHistory() {
-    ReservationService.getPastIllnessesPatient(this.state.patientId, 3)
+    ReservationService.getPastIllnessesPatient(this.state.patientId, 4)
     .then(response => {
       this.setState({
         sicknessHistory: response
@@ -372,7 +373,7 @@ class VisitDetails extends React.Component {
   }
 
   getActiveMedicine(){
-    ReservationService.getTakenMedicinePatient(this.state.patientId, 2)
+    ReservationService.getTakenMedicinePatient(this.state.patientId, 4)
     .then(response => {
       this.setState({
         takenMedicine: response
@@ -806,10 +807,11 @@ class VisitDetails extends React.Component {
         {currentUserRole == 'doctor' ?
         <div className = "visit-member">
           <b className = "standard-dashed">Profil Pacjenta</b>
-          <b className = "big-white">{this.state.patientName} {this.state.patientLastname}</b>
-          <img src={womanAvatar} alt="Avatar" className = "avatar"/>
+          <b className = "big-white" style={{marginBottom: '15px'}}>{this.state.patientName} {this.state.patientLastname}</b>
+
           <div className = "medicine-history">
-            <b className = "standard-dashed left-margin-small">Przyjmowane Leki</b>
+            <a className = "left-margin-small" style={{color: '#E4E4E4', fontWeight: 'bold'}}>Przyjmowane Leki</a>
+            <hr style= {{width: '100%'}} />
             {this.state.takenMedicine && this.state.takenMedicine.map((medicine, index ) => (
             <MedicineSmall
               image = {medicine1}
@@ -817,19 +819,26 @@ class VisitDetails extends React.Component {
               dose = {medicine.medicineDosage}
 
               />
+
               ))}
           </div>
-          <div className = "medicine-history">
-            <b className = "standard-dashed left-margin-small">Przebyte Choroby</b>
+          <div className = "medicine-history" style={{marginTop: '15px', height: '42%'}}>
+
+            <a className = "left-margin-small" style={{color: '#E4E4E4', fontWeight: 'bold'}}>Przebyte Choroby</a>
+            <hr style= {{width: '100%'}} />
+            <div className='overflow-y-auto flex-column' style={{height: '100%'}}>
             {this.state.sicknessHistory && this.state.sicknessHistory.map((illness, index ) => (
               <SicknessSmall
               sickness = {illness}
               id = {illness.illnessHistoryId}
+              image = {sicknessSign}
               />
+
             ))}
+            </div>
           </div>
           <div className = 'flex-row' style = {{marginTop: '10px', alignContent: 'flex-end'}}>
-            <button className = 'btn-dialog-primary' onClick = {this.patientHistoryLoadMore}>Rozwiń</button>
+            <button className = 'btn-dialog-primary btn-white-filled' onClick = {this.patientHistoryLoadMore}>Zobacz więcej</button>
           </div>
         </div>
         :

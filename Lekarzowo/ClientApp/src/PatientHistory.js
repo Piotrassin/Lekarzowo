@@ -25,6 +25,7 @@ import Formater from './helpers/Formater.js';
 import SicknessPatientItem from './components/SicknessPatientItem.js';
 import MedicinePatientItem from './components/MedicinePatientItem.js';
 import Validation from './helpers/Validation.js';
+import backArrow from './images/BackArrow.svg';
 
 const currentUserRole = AuthService.getUserCurrentRole();
 const WhiteTextField = withStyles({
@@ -364,7 +365,7 @@ class PatientHistory extends React.Component {
 
         {currentUserRole == 'doctor' ?
         <div className = "visit-member-long">
-        <a style={{color: 'white'}} onClick={this.handleBack}> Powrót</a>
+        <a style={{color: 'white', cursor: 'pointer'}} onClick={this.handleBack}><img src = {backArrow} style={{width: '12px'}}/> Powrót</a>
           <b className = "big-white" style={{marginBottom: '10px'}}>{this.state.patientName} {this.state.patientLastname}</b>
           <a style={{color: '#E4E4E4', fontWeight: 'bold'}}>Przebyte choroby</a>
           <hr style= {{width: '100%'}} />
