@@ -64,7 +64,7 @@ namespace Lekarzowo.Tests
                 //Assert
                 Assert.True(actual != null);
                 Assert.True(!String.IsNullOrEmpty(actual.Password));
-                Assert.True(AuthService.VerifyPassword(password, actual.Password));
+                Assert.True(AuthenticationService.VerifyPassword(password, actual.Password));
             }
         }
 

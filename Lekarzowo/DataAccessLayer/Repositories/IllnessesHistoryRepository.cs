@@ -99,5 +99,10 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             IOrderedQueryable<object> orderedQuery = PaginationService<Illness>.SplitAndLimitQueryable(skip, limit, query);
             return await orderedQuery.ToListAsync();
         }
+
+        public async Task<Illnesshistory> GetOwner(decimal illnessHistoryId)
+        {
+            return await _context.Illnesshistory.Include(x => x.Visit).ThenInclude(x => x.Reservation).FirstOrDefaultAsync(x => x.Id == illnessHistoryId);
+        }
     }
 }

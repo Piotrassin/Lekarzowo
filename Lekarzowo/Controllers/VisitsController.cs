@@ -177,11 +177,6 @@ namespace Lekarzowo.Controllers
             return Ok(new JsonResult(false));
         }
 
-        private bool VisitExists(decimal id)
-        {
-            return _repository.Exists(id);
-        }
-
         private async Task<bool> CanVisitBeOpened(decimal visitId)
         {
             var visit = _repository.GetByID(visitId);
@@ -212,6 +207,11 @@ namespace Lekarzowo.Controllers
             sum += treatments.Sum(treatment => treatment.Treatment.Price);
 
             return sum;
+        }
+
+        private bool VisitExists(decimal id)
+        {
+            return _repository.Exists(id);
         }
     }
 }

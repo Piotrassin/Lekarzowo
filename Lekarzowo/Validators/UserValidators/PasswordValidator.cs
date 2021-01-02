@@ -30,7 +30,7 @@ namespace Lekarzowo.Validators
         public bool BeEqualToAPasswordInDatabase(string email, string pwd)
         {
             var user = repo.GetByEmail(email);
-            return user != null && AuthService.VerifyPassword(pwd, user.Password);
+            return user != null && AuthenticationService.VerifyPassword(pwd, user.Password);
         }
     }
 }

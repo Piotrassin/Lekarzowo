@@ -17,16 +17,13 @@ namespace Lekarzowo.Controllers
     {
         private readonly IIllnessesHistoryRepository _repository;
         private readonly IVisitsRepository _visitsRepository;
-        private readonly IIllnessesRepository _illnessesRepository;
         private readonly IOldIllnessesHistoryRepository _oldIllnessesHistoryRepository;
 
 
-        public IllnesseshistoryController(IIllnessesHistoryRepository context, IVisitsRepository visitsRepository, 
-            IIllnessesRepository illnessesRepository, IOldIllnessesHistoryRepository oldIllnessesHistoryRepository)
+        public IllnesseshistoryController(IIllnessesHistoryRepository context, IVisitsRepository visitsRepository, IOldIllnessesHistoryRepository oldIllnessesHistoryRepository)
         {
             _repository = context;
             _visitsRepository = visitsRepository;
-            _illnessesRepository = illnessesRepository;
             _oldIllnessesHistoryRepository = oldIllnessesHistoryRepository;
         }
 
@@ -45,7 +42,7 @@ namespace Lekarzowo.Controllers
         {
             if (IsPatient() && _repository.GetAll(GetUserIdFromToken()).All(x => x.Id != illnessHistoryId))
             {
-                return BadRequest();
+                return Unauthorized();
             }
 
             var illnesshistory = _repository.GetByID(illnessHistoryId);
@@ -62,7 +59,11 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> AllByPatientId(decimal patientId, int? limit, int? skip)
         {
-            if (IsPatientAskingForElsesData(patientId)) return BadRequest();
+            if (IsPatientAccessingElsesData(patientId))
+            {
+                return Unauthorized();
+            }
+            //if (IsPatientAskingForElsesData(patientId)) return Unauthorized();
 
             var illnesshistory = _repository.GetAllWithAdditionalInfo(patientId); 
             
@@ -83,7 +84,7 @@ namespace Lekarzowo.Controllers
         {
             if (IsPatient() && _repository.GetAll(GetUserIdFromToken()).All(x => x.VisitId != visitId))
             {
-                return BadRequest();
+                return Unauthorized();
             }
 
             var illnesshistory = await _repository.AllByVisitId(visitId, limit, skip);
@@ -102,7 +103,11 @@ namespace Lekarzowo.Controllers
         public async Task<ActionResult<IEnumerable<Illness>>> AllByNameOnAVisit(decimal visitId, string name, int? limit, int? skip)
         {
             var patientId = _visitsRepository.GetByID(visitId).Reservation.PatientId;
-            if (IsPatientAskingForElsesData(patientId)) return Unauthorized();
+
+            if (IsPatientAccessingElsesData(patientId))
+            {
+                return Unauthorized();
+            }
 
             return Ok(await _repository.AllByNameOnVisit(visitId, name, limit, skip));
         }
@@ -112,7 +117,10 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> PatientHistory(decimal patientId, int? limit, int? skip)
         {
-            if (IsPatientAskingForElsesData(patientId)) return BadRequest();
+            if (IsPatientAccessingElsesData(patientId))
+            {
+                return Unauthorized();
+            }
 
             var illnessHistory = await _repository.PatientHistory(patientId);
             var oldillnesshistory = await _oldIllnessesHistoryRepository.GetAllSpecificData(patientId);
@@ -161,15 +169,6 @@ namespace Lekarzowo.Controllers
         public async Task<ActionResult<Illnesshistory>> PostIllnesshistory(Illnesshistory illnesshistory)
         {
             var visit = _visitsRepository.GetByID(illnesshistory.VisitId);
-            if (visit == null)
-            {
-                return BadRequest("Visit doesn't exist.");
-            }
-
-            if (_illnessesRepository.GetByID(illnesshistory.IllnessId) == null)
-            {
-                return BadRequest("Illness doesn't exist.");
-            }
 
             if ((await _repository.GetByVisitId(visit.ReservationId)).Contains(illnesshistory))
             {
@@ -215,11 +214,6 @@ namespace Lekarzowo.Controllers
         private bool IllnesshistoryExists(decimal id)
         {
             return _repository.Exists(id);
-        }
-
-        private bool IsPatientAskingForElsesData(decimal patientId)
-        {
-            return IsPatient() && patientId != GetUserIdFromToken();
         }
 
     }

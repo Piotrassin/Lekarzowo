@@ -31,5 +31,12 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
 
         void Update(Medicinehistory t);
         bool Exists(decimal illnessHistoryId, decimal medicineId, DateTime startDate);
+
+        /// <summary>
+        /// Checks if any MedicineHistory with given illnessHistoryId exists.
+        /// </summary>
+        /// <param name="illnessHistoryId"></param>
+        /// <returns></returns>
+        Task<bool> Exists(decimal illnessHistoryId);
     }
 }

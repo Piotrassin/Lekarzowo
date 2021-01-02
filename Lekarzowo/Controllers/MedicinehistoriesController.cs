@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lekarzowo.DataAccessLayer.Repositories;
 
 namespace Lekarzowo.Controllers
 {
@@ -16,10 +17,15 @@ namespace Lekarzowo.Controllers
     public class MedicinehistoriesController : BaseController
     {
         private readonly IMedicinesHistoryRepository _repository;
+        private readonly IVisitsRepository _visitsRepository;
+        private readonly IIllnessesHistoryRepository _illnessesHistoryRepository;
 
-        public MedicinehistoriesController(IMedicinesHistoryRepository context)
+
+        public MedicinehistoriesController(IMedicinesHistoryRepository medicinesHistoryRepository, IIllnessesHistoryRepository illnessesHistoryRepository, IVisitsRepository visitsRepository)
         {
-            _repository = context;
+            _repository = medicinesHistoryRepository;
+            _visitsRepository = visitsRepository;
+            _illnessesHistoryRepository = illnessesHistoryRepository;
         }
 
         /// <summary>
@@ -27,23 +33,39 @@ namespace Lekarzowo.Controllers
         /// </summary>
         /// <param name="IllnessHistoryId"></param>
         /// <returns></returns>
-        // GET: api/Medicinehistories/1
+        // GET: api/Medicinehistories/ByIllnessId?IllnessHistoryId=1
 
         [HttpGet("[action]")]
-        public ActionResult<IEnumerable<Medicinehistory>> ByIllnessId(decimal IllnessHistoryId)
+        public async Task<ActionResult<IEnumerable<Medicinehistory>>> ByIllnessId(decimal IllnessHistoryId)
         {
-            var list = _repository.GetAll(IllnessHistoryId).ToList();
-            if (list.Count == 0)
+            if (!await _repository.Exists(IllnessHistoryId))
             {
                 return NotFound();
             }
+
+            if (!await IsOwnedByPatientIllnessHistory(IllnessHistoryId))
+            {
+                return Unauthorized();
+            }
+
+            var list = _repository.GetAll(IllnessHistoryId).ToList();
             return list;
         }
 
         // GET: api/medicinehistories?IllnessHistoryId=164&MedicineId=2&startDate=2020-12-21
         [HttpGet]
-        public ActionResult<Medicinehistory> GetMedicinehistory(decimal IllnessHistoryId, decimal MedicineId, DateTime startDate)
+        public async Task<ActionResult<Medicinehistory>> GetMedicinehistory(decimal IllnessHistoryId, decimal MedicineId, DateTime startDate)
         {
+            if (!_repository.Exists(IllnessHistoryId, MedicineId, startDate))
+            {
+                return NotFound();
+            }
+
+            if (!await IsOwnedByPatientIllnessHistory(IllnessHistoryId))
+            {
+                return Unauthorized();
+            }
+
             var medicinehistory = _repository.GetById(IllnessHistoryId, MedicineId, startDate);
 
             if (medicinehistory == null)
@@ -58,6 +80,11 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> TakenMedicines(decimal patientId, int? limit, int? skip)
         {
+            if (IsPatientAccessingElsesData(patientId))
+            {
+                return Unauthorized();
+            }
+
             return Ok(await _repository.TakenMedicines(patientId, limit, skip));
         }
 
@@ -65,6 +92,16 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> PrescribedMedicines(decimal visitId, int? limit, int? skip)
         {
+            if (!_visitsRepository.Exists(visitId))
+            {
+                return  NotFound();
+            }
+
+            if (await IsOwnedByPatientVisit(visitId))
+            {
+                return Unauthorized();
+            }
+
             return Ok(await _repository.PrescribedMedicines(visitId, limit, skip));
         }
 
@@ -147,6 +184,29 @@ namespace Lekarzowo.Controllers
         private bool MedicinehistoryExists(Medicinehistory medHist)
         {
             return _repository.Exists(medHist.IllnesshistoryId, medHist.MedicineId, medHist.Startdate);
+        }
+
+        private async Task<bool> IsOwnedByPatientIllnessHistory(decimal illnessHistoryId)
+        {
+            var illnessHistory = await _illnessesHistoryRepository.GetOwner(illnessHistoryId);
+
+            if (IsPatientAccessingElsesData(illnessHistory.Visit.Reservation.PatientId))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private async Task<bool> IsOwnedByPatientVisit(decimal visitId)
+        {
+            var visit = _visitsRepository.GetByID(visitId);
+            if (IsPatientAccessingElsesData(visit.Reservation.PatientId))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

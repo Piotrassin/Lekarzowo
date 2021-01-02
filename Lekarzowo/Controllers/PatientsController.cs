@@ -53,8 +53,8 @@ namespace Lekarzowo.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPatient(decimal id, Patient patient)
         {
-            if (IsPatientAccessingElsesData(id)) return Unauthorized();
             if (id != patient.Id) return BadRequest();
+            if (IsPatientAccessingElsesData(id)) return Unauthorized();
             if (!PatientExists(id)) return NotFound();
 
             try
@@ -152,9 +152,5 @@ namespace Lekarzowo.Controllers
             return _repository.Exists(id);
         }
 
-        private bool IsPatientAccessingElsesData(decimal accessedPatientId)
-        {
-            return IsPatient() && accessedPatientId != GetUserIdFromToken();
-        }
     }
 }

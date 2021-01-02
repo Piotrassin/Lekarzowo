@@ -38,5 +38,16 @@ namespace Lekarzowo.Controllers
         {
             return GetActiveRoleFromToken() == CustomUserRolesService.PatientRoleName;
         }
+
+        /// <summary>
+        /// Checks if a logged user is a patient and if passed patientId from given endpoint matches id in user's token.
+        /// </summary>
+        /// <param name="patientId"></param>
+        /// <returns></returns>
+        protected bool IsPatientAccessingElsesData(decimal patientId)
+        {
+            return IsPatient() && patientId != GetUserIdFromToken();
+        }
+
     }
 }

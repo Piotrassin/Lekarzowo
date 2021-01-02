@@ -29,10 +29,15 @@ namespace Lekarzowo.Controllers
 
         // GET: api/Oldmedicinehistories/5/5
         [Authorize(Roles = "patient,doctor,admin")]
-        [HttpGet("{PatientId}/{MedicineId}")]
-        public async Task<ActionResult<Oldmedicinehistory>> GetOldmedicinehistory(decimal PatientId, decimal MedicineId)
+        [HttpGet("{patientId}/{medicineId}")]
+        public async Task<ActionResult<Oldmedicinehistory>> GetOldmedicinehistory(decimal patientId, decimal medicineId)
         {
-            var oldmedicinehistory = await _repository.GetByID(MedicineId, PatientId);
+            if (IsPatientAccessingElsesData(patientId))
+            {
+                return Unauthorized();
+            }
+
+            var oldmedicinehistory = await _repository.GetByID(medicineId, patientId);
 
             if (oldmedicinehistory == null)
             {

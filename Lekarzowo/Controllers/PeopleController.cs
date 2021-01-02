@@ -21,6 +21,7 @@ namespace Lekarzowo.Controllers
         private readonly ICustomUserRolesService _customUserRolesService;
 
         private readonly IPeopleRepository _repository;
+
         public PeopleController(IPeopleRepository repository, IJWTService jwtService, ICustomUserRolesService urolesService)
         {
             _jwtService = jwtService;
@@ -44,12 +45,16 @@ namespace Lekarzowo.Controllers
             return Ok(await _repository.GetAllByNameOrLastname(name, limit, skip));
         }
 
-        // GET: api/People/Single
+        // GET: api/People/Single?personId=1 (opcjonalny. Bez niczego pobierze id z tokenu)
         [HttpGet("[action]")]
-        public ActionResult<Person> Single()
+        public ActionResult<Person> Single(decimal? personId)
         {
-            var id = GetUserIdFromToken();
-            var person =  _repository.GetByID(id);
+            if (personId == null || IsPatient())
+            {
+                personId = GetUserIdFromToken();
+            }
+
+            var person =  _repository.GetByID(personId.Value);
 
             if (person == null)
             {
@@ -63,7 +68,7 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public ActionResult RegisterUser(PersonRegistrationDTO newPerson)
         {
-            newPerson.Password.Value = AuthService.CreateHash(newPerson.Password.Value);
+            newPerson.Password.Value = AuthenticationService.CreateHash(newPerson.Password.Value);
 
             if (_repository.Exists(newPerson.Email))
             {
@@ -78,7 +83,6 @@ namespace Lekarzowo.Controllers
             return Created("", null);
         }
 
-        #region role2(rozwiazanie hybrydowe)
         //POST: api/People/Login
         [AllowAnonymous]
         [HttpPost("Login")]
@@ -131,8 +135,6 @@ namespace Lekarzowo.Controllers
             }
             return BadRequest();
         }
-        #endregion
-
 
         //POST: /api/people/changeactiverole?roleToActivateName=1
         [HttpPost("[action]")]
@@ -149,7 +151,7 @@ namespace Lekarzowo.Controllers
 
             if (userById == userByEmail)
             {
-                userByEmail.Password = AuthService.CreateHash(current.NewPassword.Value);
+                userByEmail.Password = AuthenticationService.CreateHash(current.NewPassword.Value);
                 try
                 {
                     _repository.Save();

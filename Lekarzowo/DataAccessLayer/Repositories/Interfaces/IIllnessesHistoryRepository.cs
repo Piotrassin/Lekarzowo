@@ -54,5 +54,11 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         /// <returns></returns>
         Task<IEnumerable<object>> AllByNameOnVisit(decimal visitId, string name, int? limit, int? skip);
 
+        /// <summary>
+        /// Returns IllnessHistory including all related objects necessary to obtain patientId for given object. Used by authorization methods.
+        /// </summary>
+        /// <param name="illnessHistoryId"></param>
+        /// <returns></returns>
+        Task<Illnesshistory> GetOwner(decimal illnessHistoryId);
     }
 }

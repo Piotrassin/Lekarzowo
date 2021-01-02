@@ -32,6 +32,11 @@ namespace Lekarzowo.Controllers
         [HttpGet("{patientId}/{illnessId}")]
         public async Task<ActionResult<Oldillnesshistory>> GetOldillnesshistory(decimal patientId, decimal illnessId)
         {
+            if (IsPatientAccessingElsesData(patientId))
+            {
+                return Unauthorized();
+            }
+
             var oldillnesshistory = await _repository.GetByID(illnessId, patientId);
 
             if (oldillnesshistory == null)

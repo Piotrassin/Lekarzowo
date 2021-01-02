@@ -17,6 +17,10 @@ namespace Lekarzowo.DataAccessLayer.Repositories
         {
             return _context.Medicinehistory.Any(x => x.IllnesshistoryId == illnessHistoryId && x.MedicineId == medicineId && x.Startdate == startDate);
         }
+        public async Task<bool> Exists(decimal illnessHistoryId)
+        {
+            return await _context.Medicinehistory.AnyAsync(x => x.IllnesshistoryId == illnessHistoryId);
+        }
 
         public new IEnumerable<Medicinehistory> GetAll()
         {
