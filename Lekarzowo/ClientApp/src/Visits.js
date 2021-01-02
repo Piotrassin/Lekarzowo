@@ -165,7 +165,7 @@ class Visits extends React.Component {
         this.setState({
           visitToCancel: {}
         });
-        //window.location.reload()
+        window.location.reload()
       })
       .catch(err => {
           try{

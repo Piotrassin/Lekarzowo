@@ -248,6 +248,9 @@ class ReservationService {
     })
     .then(response => {
       MasterService.handleResponseStatus(response, "Nie udało się anulować  rezerwacji. Spróbuj później");
+      if(response.status == 204){
+          return response.text()
+      }
       return response.json()
     }).then(response => {
       if(response.status && response.status == 400){
