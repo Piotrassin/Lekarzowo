@@ -34,12 +34,17 @@ class Visits extends React.Component {
     this.onCheckVisitType = this.onCheckVisitType.bind(this);
     this.openConfirmCancelReservationDialog = this.openConfirmCancelReservationDialog.bind(this);
     this.cancelVisit = this.cancelVisit.bind(this);
+    this.onClickLoadMore = this.onClickLoadMore.bind(this);
     this.state = {
       snackbarRef: null,
       checkedVisit: true,
       upcomingVisits: [],
       recentVisits: [],
-      visitToCancel: {}
+      visitToCancel: {},
+      daysVisitCountBefore: 7,
+      daysVisitCountAfter: 2,
+      limitBefore:  10,
+      limitAfter: 10
     };
   }
 
@@ -54,11 +59,12 @@ class Visits extends React.Component {
   }
 
   async getPreviousVisit() {
+    var daysBefore = new Date(new Date());
+    daysBefore.setDate(daysBefore.getDate() - this.state.daysVisitCountBefore);
+    var daysAfter = new Date(new Date());
+    daysAfter.setDate(daysAfter.getDate() + 2);
+
     if(currentRole == 'doctor'){
-      var daysBefore = new Date(new Date());
-      daysBefore.setDate(daysBefore.getDate() - 7);
-      var daysAfter = new Date(new Date());
-      daysAfter.setDate(daysAfter.getDate() + 2);
       return await ReservationService.getRecentDoctorReservations(daysBefore , daysAfter)
       .then(response => {
         this.setState({
@@ -91,42 +97,135 @@ class Visits extends React.Component {
 
   }
 
-  async getUppcomingVisit() {
-    if(currentRole == 'doctor' ){
-      var tommorrow = new Date(new Date());
-      tommorrow.setDate(tommorrow.getDate() + 20);
-      return await ReservationService.getUpcomingDoctorReservations(new Date(), tommorrow)
+  async getPreviousVisitLoadMore() {
+    var daysBefore = new Date(new Date());
+    daysBefore.setDate(daysBefore.getDate() - this.state.daysVisitCountBefore - 7);
+    var daysAfter = new Date(new Date());
+    daysAfter.setDate(daysAfter.getDate() - this.state.daysVisitCountBefore);
+
+    if(currentRole == 'doctor'){
+
+      return await ReservationService.getRecentDoctorReservations(daysBefore , daysAfter)
       .then(response => {
         this.setState({
-          upcomingVisits: response
+          recentVisits: (this.state.recentVisits).concat(response),
+          daysVisitCountBefore: this.state.daysVisitCountBefore - 7
         });
       })
       .catch(err => {
           try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+            this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
       });
     }
-    else if(currentRole == 'patient') {
-      await ReservationService.getUpcomingReservations(10, 0)
+    else if (currentRole == 'patient'){
+      return await ReservationService.getRecentReservations(10, this.state.limitBefore)
       .then(response => {
         this.setState({
-          upcomingVisits: response
+          recentVisits: (this.state.recentVisits).concat(response),
+          limitBefore: this.state.limitBefore + 10
         });
       })
       .catch(err => {
           try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+            this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
       });
     }
 
   }
 
+  async getUppcomingVisit() {
+    if(currentRole == 'doctor' ){
+      var daysBefore = new Date(new Date());
+      daysBefore.setDate(daysBefore.getDate());
+      var daysAfter = new Date(new Date());
+      daysAfter.setDate(daysAfter.getDate() + 7);
+
+      return await ReservationService.getUpcomingDoctorReservations(daysBefore, daysAfter)
+      .then(response => {
+        this.setState({
+          upcomingVisits: response
+        });
+      })
+      .catch(err => {
+          try{
+            this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
+      });
+    }
+    else if(currentRole == 'patient') {
+
+      await ReservationService.getUpcomingReservations(this.state.limitAfter + 10, this.state.limitAfter)
+      .then(response => {
+        this.setState({
+          upcomingVisits: response
+        });
+      })
+      .catch(err => {
+          try{
+            this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
+      });
+    }
+
+  }
+
+  async getUppcomingVisitLoadMore() {
+    if(currentRole == 'doctor' ){
+      var daysBefore = new Date(new Date());
+      daysBefore.setDate(daysBefore.getDate() - this.state.daysVisitCountAfter);
+      var daysAfter = new Date(new Date());
+      daysAfter.setDate(daysAfter.getDate() - this.state.daysVisitCountAfter + 7);
+      return await ReservationService.getUpcomingDoctorReservations(daysBefore, daysAfter)
+      .then(response => {
+        this.setState({
+          upcomingVisits: (this.state.upcomingVisits).concat(response),
+          daysVisitCountAfter: this.state.daysVisitCountAfter + 7
+        });
+      })
+      .catch(err => {
+          try{
+            this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
+      });
+    }
+    else if(currentRole == 'patient') {
+      await ReservationService.getUpcomingReservations(10, this.state.limitAfter)
+      .then(response => {
+        this.setState({
+          upcomingVisits: (this.state.upcomingVisit).concat(response),
+          limitAfter: this.state.limitAfter + 10
+        });
+      })
+      .catch(err => {
+          try{
+            this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
+      });
+    }
+
+  }
+
+  onClickLoadMore(event){
+    if(this.state.checkedVisit){
+      this.getUppcomingVisitLoadMore();
+    }else {
+      this.getPreviousVisitLoadMore();
+    }
+  }
 
 
   onCheckVisitType(event) {
@@ -208,7 +307,7 @@ class Visits extends React.Component {
                 <div className = 'sickness-item-part part-5'>
                 </div>
               </div>
-              <div className = 'overflow-y-auto' style = {{height: '80vh'}}>
+              <div className = 'overflow-y-auto' style = {{height: '70vh'}}>
               {this.state.checkedVisit && this.state.upcomingVisits.map((visit, index ) => (
                   <VisitItem
                   visit={visit}
@@ -226,6 +325,14 @@ class Visits extends React.Component {
                     upcomingVisit = {false}
                     />
                   ))}
+</div>
+<div className = 'flex-row justify-center' style={{marginTop: '20px'}}>
+  <button className = "btn-success-arrow" onClick = {this.onClickLoadMore}>
+{this.state.checkedVisit ?
+  'Załaduj wizyty z kolejnych dni'
+  :
+  'Załaduj wizyty z poprzednich dni'
+}</button>
 </div>
             </div>
 

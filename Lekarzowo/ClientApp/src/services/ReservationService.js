@@ -35,7 +35,13 @@ class ReservationService {
 
   }
 
-  getUpcomingDoctorReservations(dateStart, dateEnd,limit){
+  getUpcomingDoctorReservations(dateStart, dateEnd, limit, skip){
+    if(limit == undefined){
+      limit = '';
+    }
+    if(skip == undefined){
+      skip = '';
+    }
     if(JSON.parse(AuthService.getLoggedUser())){
       var doctorId = JSON.parse(AuthService.getLoggedUser()).id;
     }
@@ -44,7 +50,8 @@ class ReservationService {
     }
     return fetch(url + 'Reservations/UpcomingByDoctorId?doctorId=' + doctorId +
     '&localId=1' + '&start=' + Formater.formatDate(dateStart.toISOString()) + '&end='
-    + Formater.formatDate(dateEnd.toISOString()) +  '&limit=' + limit, {
+    + Formater.formatDate(dateEnd.toISOString()) +  '&limit=' + limit +
+    '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
       MasterService.handleResponseStatus(response);
@@ -59,6 +66,12 @@ class ReservationService {
   }
 
   getUpcomingReservations(limit, skip){
+    if(limit == undefined){
+      limit = '';
+    }
+    if(skip == undefined){
+      skip = '';
+    }
     if(JSON.parse(AuthService.getLoggedUser())){
       var patientId = JSON.parse(AuthService.getLoggedUser()).id;
     }
@@ -77,13 +90,20 @@ class ReservationService {
     });
   }
 
-  getRecentDoctorReservations(dateStart, dateEnd){
+  getRecentDoctorReservations(dateStart, dateEnd, limit, skip){
+    if(limit == undefined){
+      limit = '';
+    }
+    if(skip == undefined){
+      skip = '';
+    }
     if(JSON.parse(AuthService.getLoggedUser())){
       var doctorId = JSON.parse(AuthService.getLoggedUser()).id;
     }
     return fetch(url + 'Reservations/RecentByDoctorId?doctorId=' + doctorId +
     '&start=' + Formater.formatDate(dateStart.toISOString()) + '&end='
-    + Formater.formatDate(dateEnd.toISOString()), {
+    + Formater.formatDate(dateEnd.toISOString()) + '&limit=' + limit +
+    '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
       MasterService.handleResponseStatus(response);
