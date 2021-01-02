@@ -25,7 +25,7 @@ handleRedirect(){
   switch(role){
     case 'patient': redirectPath = "/"; break;
     case 'doctor': redirectPath = '/dashboardDoctor'; break;
-    case 'admin': redirectPath = '/'; break;
+    case 'admin': redirectPath = '/adminPanel'; break;
   }
   this.props.history.push(redirectPath);
   window.location.reload();

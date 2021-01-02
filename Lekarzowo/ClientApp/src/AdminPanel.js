@@ -21,6 +21,7 @@ import AdminAddRoom from './AdminAddRoom.js';
 import AdminAddTreatment from './AdminAddTreatment.js';
 import AdminAddSpeciality from './AdminAddSpeciality.js';
 import AdminAddDoctor from './AdminAddDoctor.js';
+import RoleButton from './components/RoleButton.js';
 
 class AdminPanel extends React.Component {
   constructor(props){
@@ -83,7 +84,10 @@ class AdminPanel extends React.Component {
         <Menu history= {this.props.history}/>
           <div className = 'doctor-find-container flex-column'>
             <div className = 'doctor-cart-header flex-column'>
+            <div className = 'flex-row justify-content-space'>
               <a className = 'subheader-content-profile'>Panel Admina</a>
+              <RoleButton history= {this.props.history}/>
+              </div>
               <div className = 'admin-btn-container'>
                 <button className = {this.state.currentPage == 'addDoctor' ?
                 'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}

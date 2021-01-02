@@ -86,10 +86,14 @@ class Menu extends React.Component {
         <div className = "side-menu">
           <img src = {logo} className = "imge" style = {{marginTop: '10px'}}/>
           <div className = "icons">
+          {(currentUserRole == 'doctor' || currentUserRole == 'patient') ?
           <div className = "menu-element" onClick={this.onDashboardClick}>
             <img src = {mapIcon} className = "addSign" style = {{width: 35}} />
             <a>Główna</a>
           </div>
+          :
+          <div/>
+          }
 
             {currentUserRole == 'admin' ?
               <div className = "menu-element" onClick={this.onAdminPanelClick}>

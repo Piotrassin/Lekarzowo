@@ -21,6 +21,9 @@ export const AuthorizedRoute = ({ component: Component, roles, ...rest }) => (
               case 'doctor':
                 return <Redirect to={{ pathname: '/dashboardDoctor'}} />
                 break;
+              case 'admin':
+                return <Redirect to={{ pathname: '/adminPanel'}} />
+                break;
             }
             return <Redirect to={{ pathname: '/'}} />
         }
