@@ -80,6 +80,9 @@ class FindDoctorContainer extends React.Component {
 
   onClickDoctor(id) {
     console.log(id);
+    this.setState({
+      doctorWorkingHoursArray: []
+    });
     DoctorService.getDoctor(id)
     .then(response => {
       this.setState({
@@ -88,10 +91,10 @@ class FindDoctorContainer extends React.Component {
     })
     .catch(err => {
         try{
-  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }catch(erorr){
+          console.log('Missed Reference');
+}       ;
     });
     DoctorService.getDoctorWorkingHours(id, 7)
     .then(response => {
@@ -101,10 +104,10 @@ class FindDoctorContainer extends React.Component {
     })
     .catch(err => {
         try{
-  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }catch(erorr){
+          console.log('Missed Reference');
+        };
     });
   }
 
@@ -124,7 +127,7 @@ class FindDoctorContainer extends React.Component {
               onChange = {this.onChangeDoctorSearch}
               size="small" fullWidth />
             </div>
-            <div className = 'flex-row doctor-item-container' style = {{marginTop: '0px'}}>
+            <div className = 'flex-row doctor-item-container overflow-x-auto' style = {{marginTop: '0px'}}>
               {this.state.doctorsArray && this.state.doctorsArray.map((doctor, index ) => (
                 <DoctorPublicItem
                 id = {doctor.id}
@@ -134,8 +137,8 @@ class FindDoctorContainer extends React.Component {
                 />
               ))}
             </div>
-            {this.state.doctorWorkingHoursArray.length > 0 ?
             <div className = 'flex-row doctor-details-container' style={{height: '36vh'}}>
+            {this.state.doctor != null ?
             <div  className = 'doctor-sidebar-profile ' style = {{height: '100%'}}>
               <a className = 'subheader-profile-doctor'>{this.state.doctor.name}
               </a>
@@ -158,6 +161,10 @@ class FindDoctorContainer extends React.Component {
               <a className = 'profile-data-slot-header'>Email</a><a>{this.state.doctor.email}</a>
               </div>
             </div>
+            :
+            <div/>
+            }
+            {this.state.doctorWorkingHoursArray.length > 0 ?
             <div  className = 'doctor-sidebar-details-profile' style = {{height: '100%'}}>
               <a className = 'subheader-content-profile'>Lokale i godziny pracy lekarza</a>
               <br/>
@@ -177,11 +184,12 @@ class FindDoctorContainer extends React.Component {
               ))}
               </div>
             </div>
-            </div>
             :
             <div/>
-          }
-          </div>
+            }
+
+</div>
+</div>
         </div>
       );
   }

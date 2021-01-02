@@ -78,6 +78,9 @@ class FindDoctor extends React.Component {
 
   onClickDoctor(id) {
     console.log(id);
+    this.setState({
+      doctorWorkingHoursArray: []
+    });
     DoctorService.getDoctor(id)
     .then(response => {
       this.setState({
