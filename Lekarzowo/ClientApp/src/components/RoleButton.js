@@ -90,7 +90,7 @@ handleCloseRoleBtn(event) {
 render() {
   const user = AuthService.getUser();
   return(
-    <div>
+    <div className={AuthService.getUserRoles().length > 1 ? '' : 'display-none'}>
       <Button onClick = {this.onchangeUserRole} className = "btn-roles">
         {AuthService.getUserCurrentRole() == 'doctor' ?
           <img src = {DoctorIcon} style = {{width: '30px', marginRight: '10px'}} />
