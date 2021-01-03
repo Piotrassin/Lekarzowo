@@ -1,3 +1,4 @@
+
 import MedicineOnVisitItem from '../../components/MedicineOnVisitItem.js';
 import {shallow, mount, debug} from 'enzyme';
 import {render, fireEvent} from '@testing-library/react';
@@ -29,6 +30,16 @@ it('accepts props', () => {
 });
 
 describe("Component functionality", () => {
+  it('displays medicine details',async () => {
+    const {debug, getByRole} = render(<MedicineOnVisitItem illnessHistoryId = {medicine.illnessHistoryId} medicineId = {medicine.medicineId}
+      startDate = {medicine.startDate} medicineName = {medicine.medicineName}
+      medicineDescription = {medicine.medicineDescription} isOpen = {true} />);
+    var imgBtn = getByRole('img', {src: /RemoveSign.svg/i});
 
+
+    var clicked = await fireEvent.click(imgBtn);
+
+
+  });
 
 });
