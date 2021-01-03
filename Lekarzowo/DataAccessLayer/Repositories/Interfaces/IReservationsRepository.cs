@@ -15,6 +15,14 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         Task<IEnumerable<Reservation>> GetAll(decimal patientId);
 
         /// <summary>
+        /// Checks if given doctor and patient have at least one mutual reservation that wasn't canceled.
+        /// </summary>
+        /// <param name="patientId"></param>
+        /// <param name="doctorId"></param>
+        /// <returns></returns>
+        Task<bool> PatientAndDoctorHaveCommonReservation(decimal patientId, decimal doctorId);
+
+        /// <summary>
         /// Reservation data with included short patient data
         /// </summary>
         /// <param name="reservationId"></param>

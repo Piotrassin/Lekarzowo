@@ -142,6 +142,9 @@ namespace Lekarzowo
             services.AddScoped<IRolesRepository, RolesRepository>();
 
             services.AddScoped<ICustomUserRolesService, CustomUserRolesService>();
+
+            //services.AddScoped<BaseController, BaseController>();
+            services.AddScoped<AuthorizationService, AuthorizationService>();
             services.AddScoped<PeopleController, PeopleController>();
             services.AddScoped<VisitsController, VisitsController>();
 

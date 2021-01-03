@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lekarzowo.Services;
 
 namespace Lekarzowo.Controllers
 {
@@ -15,17 +16,18 @@ namespace Lekarzowo.Controllers
     {
         private readonly ITreatmentsOnVisitRepository _repository;
         private readonly IVisitsRepository _visitsRepository;
-        private readonly VisitsController _visitsController;
+        private readonly AuthorizationService _authorizationService;
 
 
-        public TreatmentonvisitsController(ITreatmentsOnVisitRepository repository, IVisitsRepository visitsRepository, VisitsController visitsController)
+        public TreatmentonvisitsController(ITreatmentsOnVisitRepository repository, IVisitsRepository visitsRepository, AuthorizationService authorizationService)
         {
             _repository = repository;
             _visitsRepository = visitsRepository;
-            _visitsController = visitsController;
+            _authorizationService = authorizationService;
         }
 
         // GET: api/Treatmentonvisits
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Treatmentonvisit>>> GetTreatmentonvisit()
         {
@@ -42,7 +44,7 @@ namespace Lekarzowo.Controllers
             {
                 return NotFound();
             }
-            if (!await _visitsController.IsOwnedByPatientVisit(treatmentonvisit.VisitId))
+            if (! await _authorizationService.CanUserAccessVisit(treatmentonvisit.VisitId, this))
             {
                 return Unauthorized();
             }
@@ -54,7 +56,11 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> PerformedTreatments(decimal visitId, int? limit, int? skip)
         {
-            if (!await _visitsController.IsOwnedByPatientVisit(visitId))
+            if (!_visitsRepository.Exists(visitId))
+            {
+                return NotFound();
+            }
+            if (! await _authorizationService.CanUserAccessVisit(visitId, this))
             {
                 return Unauthorized();
             }
@@ -67,12 +73,6 @@ namespace Lekarzowo.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTreatmentonvisit(decimal id, Treatmentonvisit treatmentonvisit)
         {
-            var visit = _visitsRepository.GetByID(treatmentonvisit.VisitId);
-            if (UserIsDoctorAndDoesntHaveAccess(visit.Reservation.DoctorId))
-            {
-                return Unauthorized();
-            }
-
             if (id != treatmentonvisit.Id)
             {
                 return BadRequest();
@@ -80,6 +80,11 @@ namespace Lekarzowo.Controllers
             if (!TreatmentonvisitExists(id))
             {
                 return NotFound();
+            }
+            var visit = _visitsRepository.GetByID(treatmentonvisit.VisitId);
+            if (! await _authorizationService.CanUserAccessPatientData(visit.Reservation.PatientId, this))
+            {
+                return Unauthorized();
             }
 
             try
@@ -101,10 +106,15 @@ namespace Lekarzowo.Controllers
         public async Task<ActionResult<Treatmentonvisit>> PostTreatmentonvisit(Treatmentonvisit treatmentonvisit)
         {
             var visit = _visitsRepository.GetByID(treatmentonvisit.VisitId);
-            if (UserIsDoctorAndDoesntHaveAccess(visit.Reservation.DoctorId))
+            if (visit == null)
+            {
+                return NotFound();
+            }
+            if (! await _authorizationService.CanUserAccessPatientData(visit.Reservation.PatientId, this))
             {
                 return Unauthorized();
             }
+
             try
             {
                 _repository.Insert(treatmentonvisit);
@@ -129,7 +139,7 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
             var visit = _visitsRepository.GetByID(treatmentonvisit.VisitId);
-            if (UserIsDoctorAndDoesntHaveAccess(visit.Reservation.DoctorId))
+            if (! await _authorizationService.CanUserAccessPatientData(visit.Reservation.PatientId, this))
             {
                 return Unauthorized();
             }

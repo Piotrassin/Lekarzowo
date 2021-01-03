@@ -100,9 +100,5 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return await orderedQuery.ToListAsync();
         }
 
-        public async Task<Illnesshistory> GetOwner(decimal illnessHistoryId)
-        {
-            return await _context.Illnesshistory.Include(x => x.Visit).ThenInclude(x => x.Reservation).FirstOrDefaultAsync(x => x.Id == illnessHistoryId);
-        }
     }
 }

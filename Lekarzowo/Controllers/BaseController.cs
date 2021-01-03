@@ -2,10 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
-using System.Reflection;
 using System.Security.Claims;
-using System.Web.Http.Cors;
-using Microsoft.AspNetCore.Cors;
 
 namespace Lekarzowo.Controllers
 {
@@ -14,27 +11,28 @@ namespace Lekarzowo.Controllers
     [ApiController]
     public abstract class BaseController : ControllerBase
     {
-        protected decimal GetUserIdFromToken()
+
+        public decimal GetUserIdFromToken()
         {
             return decimal.Parse(this.User.Claims.First(x => x.Type == "UserId").Value);
         }
 
-        protected String GetActiveRoleFromToken()
+        public String GetActiveRoleFromToken()
         {
             return User.Claims.First(x => x.Type == ClaimTypes.Role).Value;
         }
 
-        protected bool IsAdmin()
+        public bool IsAdmin()
         {
             return GetActiveRoleFromToken() == "admin";
         }
 
-        protected bool IsDoctor()
+        public bool IsDoctor()
         {
             return GetActiveRoleFromToken() == CustomUserRolesService.DoctorRoleName;
         }
 
-        protected bool IsPatient()
+        public bool IsPatient()
         {
             return GetActiveRoleFromToken() == CustomUserRolesService.PatientRoleName;
         }
@@ -44,7 +42,7 @@ namespace Lekarzowo.Controllers
         /// </summary>
         /// <param name="patientId"></param>
         /// <returns></returns>
-        protected bool UserIsPatientAndDoesntHaveAccess(decimal patientId)
+        public bool UserIsPatientAndDoesntHaveAccess(decimal patientId)
         {
             return IsPatient() && patientId != GetUserIdFromToken();
         }
@@ -54,9 +52,14 @@ namespace Lekarzowo.Controllers
         /// </summary>
         /// <param name="doctorId"></param>
         /// <returns></returns>
-        protected bool UserIsDoctorAndDoesntHaveAccess(decimal doctorId)
+        public bool UserIsDoctorAndDoesntHaveAccess(decimal doctorId)
         {
             return IsDoctor() && doctorId != GetUserIdFromToken();
+        }
+
+        public bool UserIdMatches(decimal personId)
+        {
+            return personId == GetUserIdFromToken();
         }
     }
 }

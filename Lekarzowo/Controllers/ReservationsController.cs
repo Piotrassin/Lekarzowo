@@ -20,7 +20,7 @@ namespace Lekarzowo.Controllers
         private readonly IWorkingHoursRepository _workHoursRepository;
         private readonly IRoomsRepository _roomsRepository;
 
-        public static readonly int chunkSizeMinutes = 15;
+        public const int chunkSizeMinutes = 15;
 
         public ReservationsController(IReservationsRepository repository, 
             IWorkingHoursRepository whRepo, IRoomsRepository roomRepo)

@@ -20,6 +20,11 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return await _context.Reservation.Where(x => x.PatientId == patientId).ToListAsync();
         }
 
+        public async Task<bool> PatientAndDoctorHaveCommonReservation(decimal patientId, decimal doctorId)
+        {
+            return await _context.Reservation.AnyAsync(x => x.PatientId == patientId && x.DoctorId == doctorId && x.Canceled == false);
+        }
+
         public async Task<object> GetByIdWithPatientData(decimal reservationId)
         {
             return await _context.Reservation
