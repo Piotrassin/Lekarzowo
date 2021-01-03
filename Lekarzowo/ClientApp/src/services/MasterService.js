@@ -34,6 +34,7 @@ handleResponseStatus(response, customDefaultMessage){
         throw Error(errorMessage);
       }
   }
+  console.log("Response.ok");
 }
 
 statusErrorHandler(response, customDefaultMessage){
