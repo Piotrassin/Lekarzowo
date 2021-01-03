@@ -21,6 +21,7 @@ constructor(props) {
 
 handleRedirect(){
   var role = AuthService.getUserCurrentRole();
+  console.log(role);
   var redirectPath = "/";
   switch(role){
     case 'patient': redirectPath = "/"; break;
@@ -32,7 +33,7 @@ handleRedirect(){
 }
 
 onchangeUserRole(event){
-  console.log(event.currentTarget);
+
   this.setState({
     value: event.currentTarget
   });
@@ -112,6 +113,7 @@ render() {
           <MenuItem
           onClick={this.handleCloseRoleBtn}
           id = {el}
+          key = {id}
           >
             {this.mapRoleNames(el)}
 
