@@ -23,8 +23,6 @@ it('accepts props', () => {
 describe("Component functionality", () => {
 
   it('displays details', () => {
-    const {debug} = render(<SicknessPatientItem sickness = {sickness} />);
-    debug();
     const wrapper = mount(<SicknessPatientItem sickness = {sickness} />);
     var value = wrapper.find("b").at(0).text();
     expect(value).toEqual("Ból głowy");
