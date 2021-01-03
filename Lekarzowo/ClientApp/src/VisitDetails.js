@@ -67,7 +67,7 @@ class VisitDetails extends React.Component {
       startDate: null,
       endDate: null,
       price: "",
-      clear: false,
+      clearVar: false,
       clearSick: false,
       clear: {
         treatment: "",
@@ -555,11 +555,8 @@ class VisitDetails extends React.Component {
         console.log(medicineVisitObject);
         this.setState(prevState  => ({
           ...prevState,
-          clear: {
-            ...prevState.clear,
-            sicknessOnVisit: "clear",
-            medicine: "clear"
-          },
+          clearVar: !prevState.clearVar
+          ,
           clicked: {
             ...prevState.clicked,
             medicine: null,
@@ -569,6 +566,7 @@ class VisitDetails extends React.Component {
           }
         }));
         Dialog.close("medicine-dialog")(event);
+
       }
 
     })
@@ -606,13 +604,11 @@ class VisitDetails extends React.Component {
       });
       this.setState(prevState => ({
         ...prevState,
-        clear: {
-          ...prevState.clear,
-          treatment: "clear"
-        },
+        clearVar: !prevState.clearVar,
         clicked: {
           ...prevState.clicked,
-          treatment: null
+          treatment: null,
+          descriptionTreatment: ""
         }
       }));
     })
@@ -644,10 +640,7 @@ class VisitDetails extends React.Component {
       });
       this.setState(prevState => ({
         ...prevState,
-        clear: {
-          ...prevState.clear,
-          sickness: "clear"
-        },
+        clearVar: !prevState.clearVar,
         clicked: {
           ...prevState.clicked,
           sickness: null,
@@ -858,7 +851,7 @@ class VisitDetails extends React.Component {
         cssId = 'medicine-search'
         className = 'dialog-margin'
         variant = 'outlined'
-        key={this.state.clear.sicknessOnVisit}
+        clear={this.state.clearVar}
         addId = {this.state.id}
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
@@ -868,7 +861,7 @@ class VisitDetails extends React.Component {
         title = "Lek"
         cssId = 'medicine-search'
         variant = 'outlined'
-        key={this.state.clear.medicine}
+        clear={this.state.clearVar}
         className = 'dialog-margin'
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
@@ -911,7 +904,7 @@ class VisitDetails extends React.Component {
         cssId = 'medicine-search'
         className = 'dialog-margin'
         variant = 'outlined'
-        key={this.state.clear.treatment}
+        clear={this.state.clearVar}
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
         <br/>
@@ -943,7 +936,7 @@ class VisitDetails extends React.Component {
         cssId = 'medicine-search'
         variant = 'outlined'
         className = 'dialog-margin'
-        key={this.state.clear.sickness}
+        clear={this.state.clearVar}
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
         <br/>
