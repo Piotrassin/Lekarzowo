@@ -9,7 +9,7 @@ class Formater {
 
   formatHour(date) {
     if(date != undefined){
-      return date.split('T')[1].slice(0, -3);
+      return (date.split('T')[1]).split('.')[0].slice(0, -3);
     }
     return '';
   }
