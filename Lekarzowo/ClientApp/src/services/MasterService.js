@@ -28,6 +28,7 @@ handle401Logout(response){
 handleResponseStatus(response, customDefaultMessage){
   console.log("HandleRESPPONSESTATUSjet");
   if(!response.ok){
+      console.log("Response not ok");
       var errorMessage = this.statusErrorHandler(response, customDefaultMessage);
       if(errorMessage){
         throw Error(errorMessage);
