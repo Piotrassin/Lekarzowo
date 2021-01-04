@@ -147,6 +147,7 @@ export default function Asynchronous(props) {
 
   return (
     <Autocomplete
+      data-testid = {props.dataTestId}
       id={props.cssId}
       style={props.styles}
       key={props.clear}

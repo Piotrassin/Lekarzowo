@@ -2,6 +2,7 @@ import React from 'react';
 import SicknessItem from './components/SicknessItem.js';
 import AdminService from './services/AdminService.js';
 import DoctorService from './services/DoctorService.js';
+import UserService from './services/UserService.js';
 import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -112,7 +113,7 @@ render() {
         <form className = 'edit-user-form flex-column'>
           <div className = 'flex-column width-100'>
             <Autocomplete
-            requestCallback = {DoctorService.getSpecializations}
+            requestCallback = {UserService.getSpecializations}
             title = "Specjalizacja"
             changeCallback = {this.onClickSpecializationSearch}
             noOptionsText={'Your Customized No Options Text'}

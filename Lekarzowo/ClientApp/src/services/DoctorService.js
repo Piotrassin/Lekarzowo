@@ -63,8 +63,7 @@ class DoctorService {
     if(skip == undefined){
       skip = '';
     }
-    return fetch(url + 'Specialities/AllByName?Name=' + search + '&limit=' + limit
-    + '&skip=' + skip, {
+    return fetch(url + 'Specialities/AllByName?Name=' + search + '&limit=' + limit, {
       header: authHeader()
     }).then(response => {
       MasterService.handleResponseStatus(response);

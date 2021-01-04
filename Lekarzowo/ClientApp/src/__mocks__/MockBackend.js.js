@@ -3,6 +3,7 @@ class MockBackend{
   var splittedUrl = url.split('https://localhost:5001/api')[1].split('?')[0];
   var urlProps = url.split('?')[1];
   console.log(splittedUrl);
+  console.log(config);
   //console.log(config);
    switch (splittedUrl) {
      case '/workinghours/DoctorsUpcomingSchedule': {
@@ -26,6 +27,52 @@ class MockBackend{
          }]),
        }
 
+     }
+     case '/cities/AllByName': {
+       return {
+         ok: true,
+         status: 200,
+         json: () => Promise.resolve([{
+           id: 1,
+           name: 'Warszawa'
+         }, {
+           id: 2,
+           name: 'Poznań'
+         }]),
+       }
+     }
+     case '/Specialities/AllByName': {
+       return {
+         ok: true,
+         status: 200,
+         json: () => Promise.resolve([{
+           id: 1,
+           name: 'Kardiologia'
+         }, {
+           id: 2,
+           name: 'Okulista'
+         }]),
+       }
+     }
+     case '/Doctors/AllByName': {
+       return {
+         ok: true,
+         status: 200,
+         json: () => Promise.resolve([{
+           id: 1,
+           name: 'Andrzej Andrzejewski'
+         }, {
+           id: 2,
+           name: 'Tomasz Tomaszewski'
+         }]),
+       }
+     }
+     case '/reservations/possibleappointments': {
+       return {
+         ok: true,
+         status: 200,
+         json: () => Promise.resolve([]),
+       }
      }
      case '/Illnesseshistory/AllByPatientId': {
        //const user = await users.login(JSON.parse(config.body))

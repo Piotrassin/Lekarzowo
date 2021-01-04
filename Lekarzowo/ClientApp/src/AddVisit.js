@@ -58,6 +58,7 @@ constructor(props){
   this.formatHour = this.formatHour.bind(this);
   this.formatDate = this.formatDate.bind(this);
   var defaultStartDate = new Date();
+  defaultStartDate.setDate(defaultStartDate.getDate() - 1);
   var defaultEndDate = new Date();
   defaultStartDate.setHours(7,30);
   defaultEndDate.setHours(22,0);
@@ -200,10 +201,10 @@ onClickConfimReservation(event){
   })
   .catch(err => {
       try{
-  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      }catch(erorr){
+        console.log('Missed Reference');
+      };
   });
 }
 
@@ -280,22 +281,25 @@ render() {
             id = 'city-search'
             cssId = 'async-cities'
             variant = 'outlined'
+            dataTestId="autocomplete-cities"
             />
             <div className = 'space'/>
             <Autocomplete
             requestCallback = {UserService.getSpecializations}
             title = "Specjalizacja"
             changeCallback = {this.onClickSpeciality}
-            cssId = 'async-cities'
+            cssId = 'async-speciality'
             variant = 'outlined'
+            dataTestId="autocomplete-speciality"
             />
             <div className = 'space'/>
             <Autocomplete
             requestCallback = {UserService.getDoctors}
             title = "Doktor"
             changeCallback = {this.onClickDoctor}
-            cssId = 'async-cities'
+            cssId = 'async-doctors'
             variant = 'outlined'
+            dataTestId="autocomplete-doctor"
             />
             </div>
             <div className = "res-item-container">
