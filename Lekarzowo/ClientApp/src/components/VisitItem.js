@@ -8,13 +8,14 @@ constructor(props) {
   this.onClickVisitDetails = this.onClickVisitDetails.bind(this);
   this.onClickVisitCancel = this.onClickVisitCancel.bind(this);
 }
-                                                                                                                                             
+
 onClickVisitDetails(event) {
   this.props.history.push('/visit/' + this.props.visit.reservationId);
   //window.location.reload();
 }
 
 onClickVisitCancel(event) {
+  event.persist();
   this.props.dialogCallback(this.props.visit, event);
 }
 
