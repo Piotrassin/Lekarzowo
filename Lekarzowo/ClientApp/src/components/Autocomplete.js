@@ -52,12 +52,9 @@ export default function Asynchronous(props) {
 
   async function handleInputChange(event) {
     //setRequesting(true);
-    console.log(event.target.value);
-    console.log('Zmiana focus function');
     if(props.addId != undefined){
       var requestOptions = (await props.requestCallback(event.target.value, 8, 0, props.addId).catch(err => {
         setOptions([]);
-
       }));
     }else {
       var requestOptions = (await props.requestCallback(event.target.value, 8).catch(err => {
@@ -65,6 +62,7 @@ export default function Asynchronous(props) {
 
       }));
     }
+
     if(requestOptions){
      requestOptions = requestOptions.reduce(function(acc, curr) {
       if(curr.lastname){
@@ -74,8 +72,7 @@ export default function Asynchronous(props) {
       return acc;
     }, {});
 
-    console.log('requestOptions');
-    console.log(requestOptions);
+
       setOptions(Object.keys(requestOptions).map((key) => requestOptions[key]));
     }else {
       setOptions([]);
@@ -85,8 +82,6 @@ export default function Asynchronous(props) {
   }
 
   function onChangeAutoComplete(event, value) {
-    console.log("inside");
-    console.log(value);
     if(value != null){
       props.changeCallback(value);
     }else {
@@ -96,7 +91,6 @@ export default function Asynchronous(props) {
 
 
   React.useEffect(() => {
-    console.log('Zmiana focus effect');
     let active = true;
 
     if (!loading) {
