@@ -9,10 +9,13 @@ constructor(props) {
 }
 
 onClickRedirect(event){
-  if(VisitService.checkIfAnyOpenVisit()){
-    this.props.history.push('/visit/' + VisitService.getOpenedVisit().id);
-  }
-  
+  VisitService.checkIfAnyOpenVisit()
+  .then(result => {
+    if(result == true){
+      this.props.history.push('/visit/' + VisitService.getOpenedVisit().id);
+    }
+  });
+
 }
 
 
@@ -20,7 +23,7 @@ onClickRedirect(event){
 render() {
   return(
     <div className = {VisitService.checkIfAnyOpenVisitLocal() ? 'visit-alert' : 'visit-alert visible-none'}>
-      <b style = {{fontSize: "18px"}} class = 'flash-text '>Masz otwartą wizytę</b>
+      <b style = {{fontSize: "18px"}} className = 'flash-text '>Masz otwartą wizytę</b>
       <a style = {{textDecoration: "underline", cursor: "pointer"}} onClick = {this.onClickRedirect}>Kliknij tu aby powrócic</a>
     </div>
 
