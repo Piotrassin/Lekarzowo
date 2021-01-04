@@ -20,6 +20,8 @@ import SicknessItem from '../components/SicknessItem.js';
 import VisitAlert from '../components/VisitAlert.js';
 import Menu from '../Menu.js';
 import Formater from '../helpers/Formater.js';
+import Snackbar from '../helpers/Snackbar.js';
+
 
 
 const user = AuthService.getUserName();
@@ -29,7 +31,8 @@ class Dashboard extends React.Component {
       super(props);
       this.state = {
         visitArray: [],
-        illnesses:[]
+        illnesses:[],
+        doctorWorkingHoursArray: []
       };
     this.getVisits = this.getVisits.bind(this);
     this.onClickBtnVisits = this.onClickBtnVisits.bind(this);
@@ -37,54 +40,33 @@ class Dashboard extends React.Component {
     this.handleClickShowVisit = this.handleClickShowVisit.bind(this);
     this.getDoctorWorkingHours = this.getDoctorWorkingHours.bind(this);
   }
+  snackbarRef = React.createRef();
 
-  componentWillMount() {
+  componentDidMount() {
     this.getDoctorWorkingHours();
     var tommorrow = new Date(new Date());
     tommorrow.setDate(tommorrow.getDate());
     ReservationService.getUpcomingDoctorReservations(new Date(), tommorrow)
-    .then(response => {
-      if(response.status == 401){
-        AuthService.logout();
-        this.props.history.push('/login');
-        window.location.reload();
-        return '';
-      }
-      return response;
-    })
     .then(response => {
       this.setState({
         visitArray: response
       })
     })
     .catch(err => {
-      if(err.message == 401){
-        AuthService.logout();
-        this.props.history.push('/login');
-        window.location.reload();
-
-      }
+      console.log(err.message);
+      try{
+        this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      }catch(erorr){
+        console.log('Missed Reference');
+      };
     });
 
-    UserService.getUserSicknessHistory()
-    .then(response => {
-      this.setState({
-      illnesses: response.filter(responseObject => responseObject.curedate == null),
-      oldIllnesses: response.filter(responseObject => responseObject.curedate != null)
-      });
-    })
-    .catch(err => {
-        try{
-          this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-        }catch(erorr){
-          console.log('Missed Reference');
-        };
-    });
+    
 
   }
 
   getDoctorWorkingHours(){
-    DoctorService.getDoctorWorkingHours(userId, 7)
+    DoctorService.getDoctorWorkingHours(AuthService.getUserId(), 7)
     .then(response => {
       this.setState({
         doctorWorkingHoursArray: response
@@ -145,8 +127,7 @@ class Dashboard extends React.Component {
           {this.state.visitArray.length > 0 && this.state.visitArray.map((visit, index ) => (
             <div className = "visit-item">
               <b className = "standarder-black">{visit.reservationStartTime.split("T")[0]}</b>
-              <a className = "small-dash">{visit.reservationStartTime.split("T")[1]} -
-              {visit.reservationEndTime.split("T")[1]}
+              <a className = "small-dash">{visit.reservationStartTime.split("T")[1]} - {visit.reservationEndTime.split("T")[1]}
               </a>
               <a className = "small-dash">{visit.patientName} {visit.patientLastname}</a>
               <a className = 'status-info status-info-green'>{visit.doctorSpecialization}</a>
@@ -172,7 +153,7 @@ class Dashboard extends React.Component {
         <b className = "big-black">Twoje godziny pracy</b>
         <br/><br/>
         <div className = 'workinghours-container'>
-        {this.state.doctorWorkingHoursArray && this.state.doctorWorkingHoursArray.map((local, index ) => (
+        {this.state.doctorWorkingHoursArray.length > 0 && this.state.doctorWorkingHoursArray.map((local, index ) => (
         <div>
           <a className = 'subheading-content-profile'>{local.name} ({local.streetname} {local.streetnumber})</a>
           <hr style = {{width: '100%'}}/>
@@ -191,6 +172,7 @@ class Dashboard extends React.Component {
       </div>
       </div>
       <VisitAlert history= {this.props.history}/>
+      <Snackbar ref = {this.snackbarRef} />
 </div>
     );
   }
