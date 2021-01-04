@@ -56,7 +56,8 @@ namespace Lekarzowo.Validators
 
         public static bool BeOfAProperDuration(DateTime start, DateTime end)
         {
-            return start.TimeOfDay.TotalMinutes % chunkSizeMinutes == 0
+            return end > start 
+                   && start.TimeOfDay.TotalMinutes % chunkSizeMinutes == 0
                    && end.TimeOfDay.TotalMinutes % chunkSizeMinutes == 0
                    && (end - start).TotalMinutes >= chunkSizeMinutes;
         }

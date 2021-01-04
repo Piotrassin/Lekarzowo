@@ -24,10 +24,33 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
         public new IEnumerable<Medicinehistory> GetAll()
         {
-            return _context.Medicinehistory.ToList().OrderBy(x => x.Startdate);
+            return _context.Medicinehistory.ToList().OrderByDescending(x => x.Startdate);
         }
 
-        public IEnumerable<Medicinehistory> GetAll(decimal illnessHistoryId)
+        public async Task<IEnumerable<Medicinehistory>> GetAll(decimal patientId)
+        {
+            return await _context.Medicinehistory
+                .Where(x => x.Illnesshistory.Visit.Reservation.PatientId == patientId)
+                .OrderByDescending(x => x.Startdate)
+                .Select(x => new Medicinehistory()
+                {
+                    MedicineId = x.MedicineId,
+                    IllnesshistoryId = x.IllnesshistoryId,
+                    Startdate = x.Startdate,
+                    Finishdate = x.Finishdate,
+                    Description = x.Description,
+                    Illnesshistory = null,
+                    Medicine = new Medicine()
+                    {
+                        Id = x.Medicine.Id,
+                        Name = x.Medicine.Name,
+                        Medicinehistory = null,
+                        Oldmedicinehistory = null
+                    }
+                }).ToListAsync();
+        }
+
+        public IEnumerable<Medicinehistory> GetAllByIllnessHistory(decimal illnessHistoryId)
         {
             return _context.Medicinehistory.Where(x => x.IllnesshistoryId == illnessHistoryId).ToList();
         }
@@ -81,5 +104,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
             return await orderedQuery.ToListAsync();
         }
+
     }
 }

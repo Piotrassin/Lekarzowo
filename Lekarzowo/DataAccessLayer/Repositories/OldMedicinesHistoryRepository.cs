@@ -29,12 +29,29 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
         public async Task<IEnumerable<Oldmedicinehistory>> GetAll()
         {
-            return await _context.Oldmedicinehistory.ToListAsync();
+            return await _context.Oldmedicinehistory.OrderByDescending(x => x.Date).ToListAsync();
         }
 
+        //TODO dopisać obiekt lek
         public async Task<IEnumerable<Oldmedicinehistory>> GetAll(decimal PatientId)
         {
-            return await _context.Oldmedicinehistory.Where(x => x.PatientId == PatientId).ToListAsync();
+            return await _context.Oldmedicinehistory
+                .Where(x => x.PatientId == PatientId)
+                .OrderByDescending(x => x.Date)
+                .Select(x => new Oldmedicinehistory()
+                {
+                    MedicineId = x.MedicineId,
+                    PatientId = x.PatientId,
+                    Date = x.Date,
+                    Description = x.Description,
+                    Medicine = new Medicine()
+                    {
+                        Id = x.Medicine.Id,
+                        Name = x.Medicine.Name,
+                        Medicinehistory = null,
+                        Oldmedicinehistory = null
+                    }
+                }).ToListAsync();
         }
 
         public async Task<Oldmedicinehistory> GetByID(decimal MedicineId, decimal PatientId)

@@ -8,7 +8,8 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
     public interface IMedicinesHistoryRepository : IBaseCRUDRepository<Medicinehistory>
     {
         new IEnumerable<Medicinehistory> GetAll();
-        IEnumerable<Medicinehistory> GetAll(decimal illnessHistoryId);
+        Task<IEnumerable<Medicinehistory>> GetAll(decimal patientId);
+        IEnumerable<Medicinehistory> GetAllByIllnessHistory(decimal illnessHistoryId);
         Medicinehistory GetById(decimal illnessHistoryId, decimal medicineId, DateTime startDate);
 
         /// <summary>

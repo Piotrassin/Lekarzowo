@@ -17,13 +17,15 @@ namespace Lekarzowo.Controllers
     public class MedicinehistoriesController : BaseController
     {
         private readonly IMedicinesHistoryRepository _repository;
-        private readonly IVisitsRepository _visitsRepository;
+        private readonly IVisitsRepository _visitsRepository; 
+        private readonly IOldMedicinesHistoryRepository _oldMedicinesHistoryRepository;
         private readonly AuthorizationService _authorizationService;
 
-        public MedicinehistoriesController(IMedicinesHistoryRepository medicinesHistoryRepository, IVisitsRepository visitsRepository, AuthorizationService authorizationService)
+        public MedicinehistoriesController(IMedicinesHistoryRepository medicinesHistoryRepository, IVisitsRepository visitsRepository, IOldMedicinesHistoryRepository oldMedicinesHistoryRepository, AuthorizationService authorizationService)
         {
             _repository = medicinesHistoryRepository;
             _visitsRepository = visitsRepository;
+            _oldMedicinesHistoryRepository = oldMedicinesHistoryRepository;
             _authorizationService = authorizationService;
         }
 
@@ -51,7 +53,7 @@ namespace Lekarzowo.Controllers
                 return Unauthorized();
             }
 
-            var list = _repository.GetAll(IllnessHistoryId).ToList();
+            var list = _repository.GetAllByIllnessHistory(IllnessHistoryId).ToList();
             return list;
         }
 
@@ -77,6 +79,22 @@ namespace Lekarzowo.Controllers
             }
 
             return medicinehistory;
+        }
+
+        // GET: api/Medicinehistories/PatientHistory?patientId=1&limit=10&skip=2
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> PatientHistory(decimal patientId, int? limit, int? skip)
+        {
+            if (!await _authorizationService.CanUserAccessPatientData(patientId, this))
+            {
+                return Unauthorized();
+            }
+
+            List<object> patientsHistory = new List<object>();
+            patientsHistory.AddRange(await _repository.GetAll(patientId));
+            patientsHistory.AddRange(await _oldMedicinesHistoryRepository.GetAll(patientId));
+            
+            return Ok(PaginationService<object>.SplitAndLimitIEnumerable(skip, limit, patientsHistory));
         }
 
         // GET: api/Medicinehistories/TakenMedicines?patientId=1&limit=10&skip=2
