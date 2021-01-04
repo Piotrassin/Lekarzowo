@@ -86,3 +86,64 @@ describe('site functionality with fetch status 200', () => {
   });
 
 });
+
+
+describe('site functionality with fetch status 500', () => {
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    cleanup;
+  });
+
+  it('should display message when there is a problem woth fetching data', async () => {
+    const spyGlobalFetch = jest.spyOn(window, 'fetch')
+    .mockImplementation((url, options) => {
+      return Promise.resolve(MockBackend.mockFetch(url, options));
+    });
+    const {debug, getAllByRole, getByLabelText, getByRole, getByTestId} = render(<AddVisit  />)
+    var comboBoxInput = getByTestId('autocomplete-cities');
+    var inputCity = getByLabelText('Miasto');
+    comboBoxInput.focus();
+    fireEvent.change(inputCity, { target: { value: "W" }});
+    await wait(() => expect(spyGlobalFetch).toHaveBeenCalledTimes(2))
+    fireEvent.keyDown(comboBoxInput, { key: 'ArrowDown' });
+    await wait();
+    fireEvent.keyDown(comboBoxInput, { key: 'Enter' });
+    await wait();
+    expect(inputCity.value).toEqual('Warszawa');
+    var comboBoxSpec = getByTestId('autocomplete-speciality');
+    var inputSpec = getByLabelText('Specjalizacja');
+    comboBoxSpec.focus();
+    fireEvent.change(inputSpec, { target: { value: "K" }});
+    await wait(() => expect(spyGlobalFetch).toHaveBeenCalled());
+    fireEvent.keyDown(comboBoxSpec, { key: 'ArrowDown' });
+    await wait();
+    fireEvent.keyDown(comboBoxSpec, { key: 'Enter' });
+    await wait();
+    expect(inputSpec.value).toEqual('Kardiologia');
+    var comboBoxDoctor = getByTestId('autocomplete-doctor');
+    var inputDoctor = getByLabelText('Doktor');
+    comboBoxDoctor.focus();
+    fireEvent.change(inputDoctor, { target: { value: "A" }});
+    await wait(() => expect(spyGlobalFetch).toHaveBeenCalled());
+    fireEvent.keyDown(comboBoxDoctor, { key: 'ArrowDown' });
+    await wait();
+    fireEvent.keyDown(comboBoxDoctor, { key: 'Enter' });
+    await wait();
+    expect(inputDoctor.value).toEqual('Andrzej Andrzejewski');
+    var startDateBtn = getByRole('button', {name: 'January 2, 2021'});
+    fireEvent.click(startDateBtn);
+    var endDateBtn = getByRole('button', {name: 'January 4, 2021'});
+    fireEvent.click(endDateBtn);
+    jest.clearAllMocks();
+    const spyGlobalFetchEror = jest.spyOn(window, 'fetch')
+    .mockImplementation((url, options) => {
+      return Promise.resolve(MockBackend.mockFetchWithError(url, options));
+    });
+    var searchBtn = getByRole('button', {name: 'Szukaj'});
+    fireEvent.click(searchBtn);
+    await wait(() => alert = getByRole('alert'));
+    expect(alert.classList).toContain('show');
+  });
+
+});
