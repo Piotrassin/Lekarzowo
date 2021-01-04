@@ -67,6 +67,19 @@ class MockBackend{
          }]),
        }
      }
+     case '/locals/AllByName': {
+       return {
+         ok: true,
+         status: 200,
+         json: () => Promise.resolve([{
+           id: 1,
+           name: 'Szpital kliniczny'
+         }, {
+           id: 2,
+           name: 'Przychodnia'
+         }]),
+       }
+     }
      case '/reservations/possibleappointments': {
        return {
          ok: true,
@@ -97,6 +110,13 @@ class MockBackend{
        }
      }
      case '/Medicines': {
+       return {
+         ok: true,
+         status: 200,
+         json: () => Promise.resolve({}),
+       }
+     }
+     case '/Rooms': {
        return {
          ok: true,
          status: 200,

@@ -98,6 +98,7 @@ render() {
             requestCallback = {AdminService.getLocals}
             title = "Lokal"
             changeCallback = {this.onClickLocalSearch}
+            dataTestId = 'autocomplete-local'
             />
             <br/>
             <TextField id="number" name="number"
