@@ -106,6 +106,7 @@ render() {
             requestCallback = {UserService.getCities}
             title = "Miasto"
             changeCallback = {this.onClickCitySearch}
+            dataTestId = 'autocomplete-cities'
             />
             <br/>
             <TextField id="name" name="name"
