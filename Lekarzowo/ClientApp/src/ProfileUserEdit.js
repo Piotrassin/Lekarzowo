@@ -10,9 +10,7 @@ import Validation from './helpers/Validation.js';
 class ProfileUserEdit extends React.Component {
 constructor(props){
   super(props);
-  this.handleChange = this.handleChange.bind(this);
-  this.handleClickUserChange = this.handleClickUserChange.bind(this);
-  this.handleClickPasswordChange = this.handleClickPasswordChange.bind(this);
+
   this.state = {
       email: "",
       name: "",
@@ -29,8 +27,35 @@ constructor(props){
       },
       snackbarRef: null
   }
+  this.handleChange = this.handleChange.bind(this);
+  this.handleClickUserChange = this.handleClickUserChange.bind(this);
+  this.handleClickPasswordChange = this.handleClickPasswordChange.bind(this);
 }
 
+componentDidMount(){
+  this.setState({
+    snackbarRef: React.createRef()
+  }, () => {
+    UserService.getUserData()
+    .then(response => {
+        this.setState({
+            email: response.email,
+            name: response.name,
+            lastname: response.lastname,
+            birthdate: response.birthdate.split('T')[0],
+            gender: response.gender,
+            pesel: response.pesel
+        });
+    })
+    .catch(err => {
+        try{
+          this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }catch(erorr){
+          console.log('Missed Reference');
+        };
+    });
+  });
+}
 
 handleChange(event) {
   this.setState({
@@ -59,11 +84,9 @@ handleClickUserChange(event){
       errors: Validation.validateUserChange(this.state.name, this.state.lastname, this.state.birthdate,
         this.state.gender, this.state.pesel, this.state.email)
     }, () => {
-      console.log(this.state.errors);
       if(Object.keys(this.state.errors).length > 0){
         var message = Validation.handleValidationOutcome(this.state.errors);
         this.state.snackbarRef.current.openSnackBar( message ,'red-snackbar');
-
       }else {
         var userObject = {
           email: this.state.email,
@@ -75,39 +98,36 @@ handleClickUserChange(event){
         }
         UserService.postUserChangeDetails(userObject)
         .then(response => {
-          console.log(response);
           this.state.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
         })
         .catch(err => {
             try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+              this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+            }catch(erorr){
+              console.log('Missed Reference');
+            };
         });
-    }
-  })
-}
-else {
-  this.state.snackbarRef.current.openSnackBar( 'Nic nie zostało zmienione' ,'red-snackbar');
+      }
+    })
+  }
+  else {
+    try{
+      this.state.snackbarRef.current.openSnackBar( 'Dane nie zostały zmienione.' ,'red-snackbar');
+    }catch(erorr){
+      console.log('Missed Reference');
+  }
 }
 }
 
 handleClickPasswordChange(event){
-
   if(this.state.touched.password){
     if(this.state.password == this.state.passwordValid){
-      console.log(this.state.errors);
-      console.log(this.state.password);
       this.setState ({
         errors: Validation.validatePasswordChange(this.state.password, this.state.passwordValid)
       }, () => {
-        console.log('Zmieniono errors');
-        console.log(this.state.errors);
         if(Object.keys(this.state.errors).length > 0){
           var message = Validation.handleValidationOutcome(this.state.errors);
-          this.state.snackbarRef.current.openSnackBar( message ,'red-snackbar');
-
+          this.state.snackbarRef.current.openSnackBar( message ,'red-snackbar')
         }else {
       var passwordObject = {
         currentPassword: this.state.oldPassword,
@@ -116,66 +136,43 @@ handleClickPasswordChange(event){
       }
       UserService.changePassword(passwordObject)
       .then(response => {
-        console.log(response);
-        if(response.status >= 400){
-          if(response.status == 400){
-            var message = Validation.handleValidationFetchOutcome(response.errors);
-            this.state.snackbarRef.current.openSnackBar(message, 'red-snackbar');
-          }else {
-            this.state.snackbarRef.current.openSnackBar('Wystąpił problem, spróbuj ponownie później.', 'red-snackbar');
+        this.setState({
+          oldPassword: "",
+          password: "",
+          passwordValid: "",
+          touched: {
+            password: false
           }
-        }else {
-            this.state.snackbarRef.current.openSnackBar('Zaktualizowano Hasło', 'green-snackbar');
-        }
-
+        })
+        this.state.snackbarRef.current.openSnackBar('Zaktualizowano Hasło', 'green-snackbar');
       })
       .catch(err => {
           try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+            this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
       });
+      }})
     }
-  })
+    else {
+      try{
+        this.state.snackbarRef.current.openSnackBar('Pola Nowe Hasło oraz Powtórz Hasło są różne.', 'red-snackbar');
+      }catch(erorr){
+        console.log('Missed Reference');
+      };
     }
-    else {this.state.snackbarRef.current.openSnackBar('Wpisane hasła są różne', 'red-snackbar');}
-
-  }else {
-  this.state.snackbarRef.current.openSnackBar('Niepełne dane', 'red-snackbar');
+  }
+  else {
+  try{
+    this.state.snackbarRef.current.openSnackBar('Pola do zmiany hasła nie zostały wypełnione.', 'red-snackbar');
+  }catch(erorr){
+    console.log('Missed Reference');
+  };
   }
 
 
 }
-
-componentDidMount(){
-  this.setState({
-    snackbarRef: React.createRef()
-  }, () => {
-    console.log(JSON.parse(AuthService.getLoggedUser()).id);
-    UserService.getUserData()
-    .then(response => {
-        this.setState({
-            email: response.email,
-            name: response.name,
-            lastname: response.lastname,
-            birthdate: response.birthdate.split('T')[0],
-            gender: response.gender,
-            pesel: response.pesel
-        });
-    })
-    .catch(err => {
-        try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
-    });
-  });
-
-
-}
-
 
 render() {
   return(
@@ -266,8 +263,8 @@ render() {
       </div>
       <br/><br/>
       <div className = 'rodo'>
-      <a>Wypełnienie formularza oznacza wyrażenie zgody na przetwarzanie przez Lekarzowo Systems podanych w formularzu danych osobowych w celu udzielenia odpowiedzi na zadane pytanie i w zależności od treści zapytania przedstawienia oferty. Tutaj dowiesz się kim jesteśmy i jak przetwarzamy Twoje dane.
-Zobacz więcej: https://lekarzowo.pl/o-nas </a>
+        <a>Wypełnienie formularza oznacza wyrażenie zgody na przetwarzanie przez Lekarzowo Systems podanych w formularzu danych osobowych w celu udzielenia odpowiedzi na zadane pytanie i w zależności od treści zapytania przedstawienia oferty. Tutaj dowiesz się kim jesteśmy i jak przetwarzamy Twoje dane.
+        Zobacz więcej: https://lekarzowo.pl/o-nas </a>
       </div>
       <Snackbar ref = {this.state.snackbarRef} classes = 'green-snackbar' />
     </div>
