@@ -1,6 +1,6 @@
 import React from 'react';
 import Dashboard from './Dashboard';
-import MainContainer from './MainContainer';
+import DashboardContainer from './DashboardContainer';
 import LoginContainer from './LoginContainer';
 import RegisterContainer from './RegisterContainer';
 import FindDoctorContainer from './FindDoctorContainer';
@@ -34,7 +34,7 @@ class App extends React.Component {
         <Route exact path="/signup" component={RegisterContainer}/>
         <Route exact path='/findDoctorPublic' component={FindDoctorContainer} />
         <AuthorizedRoute exact path="/visits" component={Visits} roles={['patient', 'doctor']}/>
-        <AuthorizedRoute exact path="/" component={MainContainer} roles={['patient', 'doctor', 'admin']}/>
+        <AuthorizedRoute exact path="/" component={DashboardContainer} roles={['patient', 'doctor', 'admin']}/>
         <AuthorizedRoute exact path="/addVisit" component={AddVisit} roles={'patient'} />
         <AuthorizedRoute exact path="/myProfile" component={Profile} roles={['patient', 'doctor', 'admin']}/>
         <AuthorizedRoute exact path="/findDoctor" component={FindDoctor} roles={['patient', 'doctor', 'admin']}/>
