@@ -44,6 +44,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Asynchronous(props) {
+  const [def, setDef] = React.useState(null);
+  const [touched, setTouched] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const [requesting, setRequesting] = React.useState(true);
@@ -84,9 +86,13 @@ export default function Asynchronous(props) {
   function onChangeAutoComplete(event, value) {
     if(value != null){
       props.changeCallback(value);
+
     }else {
       props.changeCallback("");
     }
+    setDef(value);
+    setTouched(true);
+
   }
 
 
@@ -140,8 +146,15 @@ export default function Asynchronous(props) {
   }, [loading]);
 
   React.useEffect(() => {
+    if(props.selectedCustomValue && props.selectedCustomValue != null && touched == false){
+      const customTab = [props.selectedCustomValue];
+      setOptions(customTab);
+      setDef(customTab[0]);
+    }
     if (!open) {
       //setOptions([]);
+
+
     }
   }, [open]);
 
@@ -164,10 +177,12 @@ export default function Asynchronous(props) {
       getOptionLabel={(option) => option.name}
       options={options}
       loading={loading}
+      value={def}
       renderInput={(params) => (
         <TextField
           {...params}
           label={props.title}
+          value={def}
           className={classes.input}
           variant={props.variant}
           size="small"
