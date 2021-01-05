@@ -1,14 +1,11 @@
 import React from 'react';
-import SicknessItem from './components/SicknessItem.js';
 import AdminService from './services/AdminService.js';
 import DoctorService from './services/DoctorService.js';
-import Fade from '@material-ui/core/Fade';
-import TextField from '@material-ui/core/TextField';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
-import Autocomplete from './components/Autocomplete.js';
 import Validation from './helpers/Validation.js';
 import Formater from './helpers/Formater.js';
+import Autocomplete from './components/Autocomplete.js';
+import TextField from '@material-ui/core/TextField';
 
 class AdminAddWorkingHours extends React.Component {
 constructor(props){
@@ -41,14 +38,12 @@ onClickDoctorSearch(value) {
   this.setState({
     doctorSelected: value.id
   });
-  console.log(value.id);
 }
 
 onClickLocalSearch(value) {
   this.setState({
     localSelected: value.id
   });
-  console.log(value.id);
 }
 
 
@@ -61,7 +56,6 @@ handleClickAddWorkinghours(event){
     if(Object.keys(this.state.errors).length > 0){
       var message = Validation.handleValidationOutcome(this.state.errors);
       this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
-
     }else {
       var workinghoursObject = {
         From: this.state.dateStart.concat('T').concat(this.state.timeStart),
@@ -71,7 +65,6 @@ handleClickAddWorkinghours(event){
       }
       AdminService.postWorkinghours(workinghoursObject)
       .then(response => {
-        console.log(response);
         this.setState({
           dateStart: Formater.formatDate(new Date().toISOString()),
           dateEnd: Formater.formatDate(new Date().toISOString()),
@@ -95,10 +88,6 @@ handleClickAddWorkinghours(event){
 
 }
 
-componentDidMount() {
-
-}
-
 render() {
   return(
     <div className = 'admin-content-holder flex-column' >
@@ -113,17 +102,13 @@ render() {
             dataTestId = 'autocomplete-doctor'
             />
             <br/>
-            {this.state.doctorSelected != undefined ?
             <Autocomplete
-            requestCallback = {AdminService.getLocalsByDoctorId}
+            requestCallback = {AdminService.getLocals}
             title = "Lokal"
             dataTestId  = 'autocomplete-local'
             changeCallback = {this.onClickLocalSearch}
             addId = {this.state.doctorSelected == undefined ? -1 : this.state.doctorSelected}
             />
-            :
-            <div/>
-          }
             <br/>
             <TextField id="dateStart" name="dateStart"
             label="Data Od"
