@@ -1,7 +1,6 @@
 import React from 'react';
 import Dashboard from './Dashboard'
 import Login from './Login'
-import DetailVisit from './DetailVisit'
 import Visits from './Visits'
 import AuthService from './authentication/AuthService.js'
 import Registration from './Registration.js'
