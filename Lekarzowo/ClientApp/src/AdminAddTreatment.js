@@ -1,12 +1,9 @@
 import React from 'react';
-import SicknessItem from './components/SicknessItem.js';
 import AdminService from './services/AdminService.js';
-import Fade from '@material-ui/core/Fade';
-import TextField from '@material-ui/core/TextField';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
-import Autocomplete from './components/Autocomplete.js';
 import Validation from './helpers/Validation.js';
+import Autocomplete from './components/Autocomplete.js';
+import TextField from '@material-ui/core/TextField';
 
 class AdminAddTreatment extends React.Component {
 constructor(props){
@@ -31,15 +28,12 @@ handleClickAddTreatment(event){
   this.setState ({
     errors: Validation.validateUniversalBlank(this.state.treatmentName, "Pole Nazwa zabiegu")
   }, () => {
-    console.log(this.state.errors);
     if(Object.keys(this.state.errors).length > 0){
       var message = Validation.handleValidationOutcome(this.state.errors);
       this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
-
     }else {
       AdminService.postTreatment(this.state.treatmentName)
       .then(response => {
-        console.log(response);
         this.setState({
           treatmentName: ""
         });
@@ -57,10 +51,6 @@ handleClickAddTreatment(event){
 
 }
 
-componentDidMount() {
-
-}
-
 render() {
   return(
     <div className = 'admin-content-holder flex-column' >
@@ -75,14 +65,13 @@ render() {
             type = 'text'
             size="small" fullWidth />
           </div>
-
           <br/><br/>
           <div>
-          <a className = 'button-green' onClick = {this.handleClickAddTreatment}>Dodaj</a>
+            <a className = 'button-green' onClick = {this.handleClickAddTreatment}>Dodaj</a>
           </div>
-          </form>
-          </div>
-        <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
+        </form>
+      </div>
+      <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
     </div>
   );
 }
