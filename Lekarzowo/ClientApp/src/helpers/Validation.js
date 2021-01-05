@@ -35,6 +35,14 @@ class Validation {
     return errorObject;
   }
 
+  validateUniversalNumberBlank(stringObject, returnName){
+    var errorObject = {};
+
+    this.addErrorToObject(errorObject, returnName, this.validateBlankNumber(stringObject));
+
+    return errorObject;
+  }
+
   validateAdminAddSeciality(specialityName, basePrice){
     var errorObject = {};
     this.addErrorToObject(errorObject, 'Specjalizacja', this.validateBlank(specialityName));

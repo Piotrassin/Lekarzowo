@@ -61,6 +61,41 @@ class AdminService {
     });
   }
 
+  putCity(cityId, cityName){
+    return fetch(url + 'Cities/' + cityId, {
+    method: 'PUT',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "Id": cityId,
+      "Name": cityName
+    })})
+    .then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
+  deleteCity(cityId){
+    return fetch(url + 'Cities/' + cityId, {
+    method: 'DELETE',
+    headers: authHeader({'Content-Type': 'application/json'})
+    })
+    .then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
   postLocal(local){
     return fetch(url + 'Locals', {
     method: 'POST',

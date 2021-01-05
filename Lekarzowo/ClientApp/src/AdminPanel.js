@@ -2,7 +2,7 @@ import React from 'react';
 import Menu from './Menu.js';
 import AdminAddMedicine from './AdminAddMedicine.js';
 import AdminAddSickness from './AdminAddSickness.js';
-import AdminAddCity from './AdminAddCity.js';
+import AdminCity from './AdminCity.js';
 import AdminAddWorkingHours from './AdminAddWorkingHours.js';
 import AdminAddLocal from './AdminAddLocal.js';
 import AdminAddRoom from './AdminAddRoom.js';
@@ -39,7 +39,7 @@ class AdminPanel extends React.Component {
         return <AdminAddWorkingHours />
         break;
       case 'addCity':
-        return <AdminAddCity />
+        return <AdminCity />
         break;
       case 'addLocal':
         return <AdminAddLocal />
