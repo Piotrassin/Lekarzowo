@@ -99,7 +99,7 @@ class Validation {
     var errorObject = {};
     this.addErrorToObject(errorObject, 'Lek', this.validateBlankObject(medicine));
     this.addErrorToObject(errorObject, 'Opis', this.validateBlank(medicineDescription));
-
+    this.addErrorToObject(errorObject, 'Data Zakończenia', this.validateBlank(medicineFinishDate));
 
     return errorObject;
   }
@@ -108,7 +108,8 @@ class Validation {
     var errorObject = {};
     this.addErrorToObject(errorObject, 'Choroba', this.validateBlankObject(illnessName));
     this.addErrorToObject(errorObject, 'Opis', this.validateBlank(illnessDescription));
-
+    this.addErrorToObject(errorObject, 'Data diagnozy', this.validateBlank(diagnoseDate));
+    this.addErrorToObject(errorObject, 'Data wyleczenia', this.validateBlank(cureDate));
 
     return errorObject;
   }

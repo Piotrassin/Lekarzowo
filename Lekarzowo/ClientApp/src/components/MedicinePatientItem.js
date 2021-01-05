@@ -13,10 +13,10 @@ onClickChangeMedicine(event){
 
   UserService.medicineNoLongerTaken(this.props.medicine)
   .then(response => {
-    console.log(response);
     window.location.reload();
   })
   .catch(err => {
+    this.props.snackbarCallback(err.message, 'red-snackbar');
     console.log(err.message);
   })
 }
