@@ -24,6 +24,40 @@ class AdminService {
       return response;
     });
   }
+  putMedicine(id, medicineName){
+    return fetch(url + 'Medicines/' + id, {
+    method: 'PUT',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "Id": id,
+      "Name": medicineName
+    })})
+    .then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
+  deleteMedicine(id){
+    return fetch(url + 'Medicines/' + id, {
+    method: 'DELETE',
+    headers: authHeader({'Content-Type': 'application/json'})
+    })
+    .then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
 
   postIllness(illness){
     return fetch(url + 'Illnesses', {

@@ -1,6 +1,6 @@
 import React from 'react';
 import Menu from './Menu.js';
-import AdminAddMedicine from './AdminAddMedicine.js';
+import AdminMedicine from './AdminMedicine.js';
 import AdminAddSickness from './AdminAddSickness.js';
 import AdminCity from './AdminCity.js';
 import AdminAddWorkingHours from './AdminAddWorkingHours.js';
@@ -30,7 +30,7 @@ class AdminPanel extends React.Component {
   showContent(){
     switch(this.state.currentPage){
       case 'addMedicine':
-        return <AdminAddMedicine />
+        return <AdminMedicine />
         break;
       case 'addSickness':
         return <AdminAddSickness />
