@@ -1,18 +1,15 @@
 import React from 'react';
-import SicknessItem from './components/SicknessItem.js';
 import AdminService from './services/AdminService.js';
-import DoctorService from './services/DoctorService.js';
 import UserService from './services/UserService.js';
-import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
-import Autocomplete from './components/Autocomplete.js';
 import Validation from './helpers/Validation.js';
+import Autocomplete from './components/Autocomplete.js';
 
 class AdminAddDoctor extends React.Component {
 constructor(props){
   super(props);
+
   this.state = {
     specializationArray: [],
     name: "",
@@ -24,6 +21,7 @@ constructor(props){
     pesel: "",
     specialityId: null
   };
+
   this.onChangeTextField = this.onChangeTextField.bind(this);
   this.handleClickAddDoctor = this.handleClickAddDoctor.bind(this);
   this.onClickSpecializationSearch = this.onClickSpecializationSearch.bind(this);
@@ -35,7 +33,7 @@ snackbarRef = React.createRef();
 onChangeTextField(event){
   this.setState({
       [event.target.name]: event.target.value
-  });
+  });;
 }
 
 
@@ -44,7 +42,6 @@ onClickSpecializationSearch(value) {
   this.setState({
     specialityId: value.id
   });
-  console.log(value.id);
 }
 
 
@@ -54,11 +51,9 @@ handleClickAddDoctor(event){
       this.state.birthdate, this.state.email, this.state.password, this.state.gender,
       this.state.pesel)
   }, () => {
-    console.log(this.state.errors);
     if(Object.keys(this.state.errors).length > 0){
       var message = Validation.handleValidationOutcome(this.state.errors);
       this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
-
     }else {
       var doctorObject = {
         name: this.state.name,
@@ -91,19 +86,16 @@ handleClickAddDoctor(event){
       })
       .catch(err => {
           try{
-  this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+            this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
       });
     }
   });
 
 }
 
-componentDidMount() {
-
-}
 
 render() {
   return(
@@ -167,16 +159,14 @@ render() {
             onChange = {this.onChangeTextField}
             type = 'number'
             size="small" fullWidth />
-
           </div>
-
           <br/><br/>
           <div>
-          <a className = 'button-green' onClick = {this.handleClickAddDoctor}>Dodaj</a>
+            <a className = 'button-green' onClick = {this.handleClickAddDoctor}>Dodaj</a>
           </div>
-          </form>
-          </div>
-        <Snackbar ref = {this.snackbarRef} />
+        </form>
+      </div>
+      <Snackbar ref = {this.snackbarRef} />
     </div>
   );
 }
