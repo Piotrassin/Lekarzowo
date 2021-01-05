@@ -105,7 +105,7 @@ class UserService {
       skip = '';
     }
     var patientId = JSON.parse(AuthService.getLoggedUser()).id;
-    return fetch(url + 'Medicinehistories/TakenMedicines?patientId=' + patientId
+    return fetch(url + 'Medicinehistories/patientHistory?patientId=' + patientId
     + '&limit=' + limit + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
