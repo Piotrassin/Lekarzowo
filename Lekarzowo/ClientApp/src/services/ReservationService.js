@@ -14,6 +14,9 @@ class ReservationService {
     if(!skip){
       skip = "";
     }
+    if(reservationRequestObject.doctorId == undefined){
+      reservationRequestObject.doctorId = "";
+    }
 
     return fetch(url + 'reservations/possibleappointments?CityId=' + reservationRequestObject.cityId
     + '&SpecId=' + reservationRequestObject.specialityId + '&DoctorId=' + reservationRequestObject.doctorId
