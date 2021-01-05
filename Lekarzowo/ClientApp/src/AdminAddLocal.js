@@ -1,13 +1,10 @@
 import React from 'react';
-import SicknessItem from './components/SicknessItem.js';
 import AdminService from './services/AdminService.js';
 import UserService from './services/UserService.js';
-import Fade from '@material-ui/core/Fade';
-import TextField from '@material-ui/core/TextField';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
-import Autocomplete from './components/Autocomplete.js';
 import Validation from './helpers/Validation.js';
+import Autocomplete from './components/Autocomplete.js';
+import TextField from '@material-ui/core/TextField';
 
 class AdminAddLocal extends React.Component {
 constructor(props){
@@ -21,7 +18,6 @@ constructor(props){
       streetNumber: "",
       blockNumber: ""
     },
-
     loading: false
   };
   this.onChangeTextField = this.onChangeTextField.bind(this);
@@ -49,7 +45,6 @@ onClickCitySearch(value) {
       cityId: value.id
     }
   }));
-  console.log(value.id);
 }
 
 handleClickAddCity(event){
@@ -58,11 +53,9 @@ handleClickAddCity(event){
     this.state.local.streetName, this.state.local.postCode, this.state.local.streetNumber,
     this.state.local.blockNumber)
   }, () => {
-    console.log(this.state.errors);
     if(Object.keys(this.state.errors).length > 0){
       var message = Validation.handleValidationOutcome(this.state.errors);
       this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
-
     }else {
       AdminService.postLocal(this.state.local)
       .then(response => {
@@ -88,10 +81,6 @@ handleClickAddCity(event){
       });
     }
   });
-
-}
-
-componentDidMount() {
 
 }
 
@@ -143,16 +132,14 @@ render() {
             onChange = {this.onChangeTextField}
             type = 'number'
             size="small" fullWidth />
-
           </div>
-
           <br/><br/>
           <div>
-          <a className = 'button-green' onClick = {this.handleClickAddCity}>Dodaj</a>
+            <a className = 'button-green' onClick = {this.handleClickAddCity}>Dodaj</a>
           </div>
-          </form>
-          </div>
-        <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
+        </form>
+      </div>
+      <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
     </div>
   );
 }
