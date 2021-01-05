@@ -13,8 +13,6 @@ import AdminPanel from './AdminPanel';
 import DashboardDoctor from './doctorView/DashboardDoctor.js';
 import PatientHistory from './PatientHistory.js';
 import  { AuthorizedRoute } from './AuthorizedRoute.js';
-
-
 import {
   Route,
   NavLink,
