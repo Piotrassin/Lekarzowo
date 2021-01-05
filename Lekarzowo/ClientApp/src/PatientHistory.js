@@ -5,7 +5,6 @@ import medicine1 from './images/medicine1.png';
 import plusSign from './images/plusSign.svg';
 import MedicineSmall from './MedicineSmall';
 import { withStyles } from '@material-ui/core/styles';
-import MedicineBigger from './MedicineBigger';
 import TreatmenrSmall from './TreatmenrSmall';
 import SicknessSmall from './SicknessSmall';
 import Menu from './Menu.js';
