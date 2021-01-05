@@ -1,7 +1,7 @@
 import React from 'react';
 import Menu from './Menu.js';
 import AdminMedicine from './AdminMedicine.js';
-import AdminAddSickness from './AdminAddSickness.js';
+import AdminSickness from './AdminSickness.js';
 import AdminCity from './AdminCity.js';
 import AdminAddWorkingHours from './AdminAddWorkingHours.js';
 import AdminLocal from './AdminLocal.js';
@@ -33,7 +33,7 @@ class AdminPanel extends React.Component {
         return <AdminMedicine />
         break;
       case 'addSickness':
-        return <AdminAddSickness />
+        return <AdminSickness />
         break;
       case 'addWorkingHours':
         return <AdminAddWorkingHours />
