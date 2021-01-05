@@ -211,6 +211,39 @@ class AdminService {
 
   }
 
+  getLocal(id){
+    return fetch(url + 'locals/' + id, {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+
+  }
+
+  deleteLocal(id){
+    return fetch(url + 'locals/' + id, {
+      method: 'DELETE',
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+
+  }
+
+
+
   deleteDoctor(id){
     return fetch(url + 'Doctors/' + id, {
       method: 'DELETE',
