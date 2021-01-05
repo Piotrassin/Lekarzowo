@@ -130,6 +130,13 @@ class MockBackend{
          json: () => Promise.resolve({}),
        }
      }
+     case '/Specialities': {
+       return {
+         ok: true,
+         status: 200,
+         json: () => Promise.resolve({}),
+       }
+     }
      default: {
        throw new Error(`Unhandled request: ${splittedUrl}`)
      }
