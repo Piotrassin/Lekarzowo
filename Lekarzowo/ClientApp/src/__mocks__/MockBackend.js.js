@@ -95,6 +95,19 @@ class MockBackend{
          json: () => Promise.resolve([]),
        }
      }
+     case '/workinghours/DoctorsWorkplacesByName': {
+       return {
+         ok: true,
+         status: 200,
+         json: () => Promise.resolve([{
+           id: 1,
+           name: 'Szpital kliniczny'
+         }, {
+           id: 2,
+           name: 'Przychodnia'
+         }]),
+       }
+     }
      case '/Cities': {
        return {
          ok: true,

@@ -110,13 +110,14 @@ render() {
             requestCallback = {DoctorService.getDoctors}
             title = "Doktor"
             changeCallback = {this.onClickDoctorSearch}
-
+            dataTestId = 'autocomplete-doctor'
             />
             <br/>
             {this.state.doctorSelected != undefined ?
             <Autocomplete
             requestCallback = {AdminService.getLocalsByDoctorId}
             title = "Lokal"
+            dataTestId  = 'autocomplete-local'
             changeCallback = {this.onClickLocalSearch}
             addId = {this.state.doctorSelected == undefined ? -1 : this.state.doctorSelected}
             />
@@ -139,14 +140,14 @@ render() {
             size="small" fullWidth />
             <br/>
             <TextField id="timeStart" name="timeStart"
-            label="Data Od"
+            label="Czas Od"
             value = {this.state.timeStart}
             onChange = {this.onChangeTextField}
             type = 'time'
             size="small" fullWidth />
             <br/>
             <TextField id="timeEnd" name="timeEnd"
-            label="Data Do"
+            label="Czas Do"
             value = {this.state.timeEnd}
             onChange = {this.onChangeTextField}
             type = 'time'
