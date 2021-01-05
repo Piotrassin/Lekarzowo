@@ -1,9 +1,6 @@
 import React from 'react';
-import SicknessItem from './components/SicknessItem.js';
 import AdminService from './services/AdminService.js';
-import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
 import Validation from './helpers/Validation.js';
 
@@ -17,7 +14,6 @@ constructor(props){
   this.onChangeTextField = this.onChangeTextField.bind(this);
   this.handleClickAddCity = this.handleClickAddCity.bind(this);
 }
-
 snackbarRef = React.createRef();
 
 onChangeTextField(event){
@@ -56,10 +52,6 @@ handleClickAddCity(event){
 
 }
 
-componentDidMount() {
-
-}
-
 render() {
   return(
     <div className = 'admin-content-holder flex-column' >
@@ -74,14 +66,13 @@ render() {
             type = 'text'
             size="small" fullWidth />
           </div>
-
           <br/><br/>
           <div>
-          <a className = 'button-green' onClick = {this.handleClickAddCity}>Dodaj</a>
+            <a className = 'button-green' onClick = {this.handleClickAddCity}>Dodaj</a>
           </div>
-          </form>
-          </div>
-        <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
+        </form>
+      </div>
+      <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
     </div>
   );
 }
