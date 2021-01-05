@@ -3,7 +3,7 @@ import Menu from './Menu.js';
 import AdminMedicine from './AdminMedicine.js';
 import AdminSickness from './AdminSickness.js';
 import AdminCity from './AdminCity.js';
-import AdminAddWorkingHours from './AdminAddWorkingHours.js';
+import AdminWorkinghours from './AdminWorkinghours.js';
 import AdminLocal from './AdminLocal.js';
 import AdminRoom from './AdminRoom.js';
 import AdminTreatment from './AdminTreatment.js';
@@ -36,7 +36,7 @@ class AdminPanel extends React.Component {
         return <AdminSickness />
         break;
       case 'addWorkingHours':
-        return <AdminAddWorkingHours />
+        return <AdminWorkinghours />
         break;
       case 'addCity':
         return <AdminCity />
@@ -73,49 +73,49 @@ class AdminPanel extends React.Component {
                 <button className = {this.state.currentPage == 'addDoctor' ?
                 'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
                 name = 'addDoctor' onClick = {this.handleClickBtn}>
-                Dodaj lekarza
+                Lekarze
                 </button>
                 <button className = {this.state.currentPage == 'addSickness' ?
                 'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
                 name = 'addSickness' onClick = {this.handleClickBtn}>
-                Dodaj chorobę
+                Choroby
                 </button>
                 <button className = {this.state.currentPage == 'addMedicine' ?
                 'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
                 name = 'addMedicine' onClick = {this.handleClickBtn}>
-                Dodaj lek
+                Leki
                 </button>
                 <button className = {this.state.currentPage == 'addWorkingHours' ?
                 'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
                 name = 'addWorkingHours' onClick = {this.handleClickBtn}>
-                Dodaj godziny pracy
+                Godziny pracy
                 </button>
               </div>
               <div className = 'admin-btn-container'>
                 <button className = {this.state.currentPage == 'addCity' ?
                 'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
                 name = 'addCity' onClick = {this.handleClickBtn}>
-                Wprowadź miasto
+                Miasta
                 </button>
                 <button className = {this.state.currentPage == 'addLocal' ?
                 'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
                 name = 'addLocal' onClick = {this.handleClickBtn}>
-                Wprowadź lokal
+                Lokale
                 </button>
                 <button className = {this.state.currentPage == 'addRoom' ?
                 'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
                 name = 'addRoom' onClick = {this.handleClickBtn} >
-                Wprowadź pokój
+                Pokoje
                 </button>
                 <button className = {this.state.currentPage == 'addTreatment' ?
                 'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
                 name = 'addTreatment' onClick = {this.handleClickBtn}>
-                Dodaj zabieg
+                Zabiegi
                 </button>
                 <button className = {this.state.currentPage == 'addSpeciality' ?
                 'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
                 name = 'addSpeciality' onClick = {this.handleClickBtn}>
-                Dodaj specjalizację
+                Specjalizacje
                 </button>
               </div>
             </div>
