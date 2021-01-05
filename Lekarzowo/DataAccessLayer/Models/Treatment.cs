@@ -14,7 +14,6 @@ namespace Lekarzowo.DataAccessLayer.Models
         public decimal Id { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
-        public DateTime Time { get; set; }
 
         public virtual ICollection<Referral> Referral { get; set; }
         public virtual ICollection<Treatmentonvisit> Treatmentonvisit { get; set; }

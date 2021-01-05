@@ -60,12 +60,13 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 .AnyAsync();
         }
 
-        public IEnumerable<Reservation> AllByOptionalCriteria(decimal? CityId, decimal? SpecId, decimal? DoctorId,
+        public IEnumerable<Reservation> AllReservationsForPossibleAppointments(decimal? CityId, decimal? SpecId, decimal? DoctorId,
             DateTime? start, DateTime? end)
         {
             var query = _context.Reservation
                 .Include(x => x.Room).ThenInclude(x => x.Local)
                 .Include(x => x.Doctor)
+                .Where(x => x.Canceled == false)
                 .Where(x => !CityId.HasValue || x.Room.Local.CityId == CityId)
                 .Where(x => !SpecId.HasValue || x.Doctor.SpecialityId == SpecId)
                 .Where(x => !DoctorId.HasValue || x.DoctorId == DoctorId);

@@ -42,7 +42,7 @@ namespace Lekarzowo.Controllers
 
             if (treatment == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             return treatment;
@@ -55,11 +55,11 @@ namespace Lekarzowo.Controllers
         {
             if (id != treatment.Id)
             {
-                return BadRequest();
+                return BadRequest(new JsonResult(""));
             }
             if (!TreatmentExists(id))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             try
@@ -72,7 +72,7 @@ namespace Lekarzowo.Controllers
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
-            return NoContent();
+            return Ok(new JsonResult(""));
         }
 
         // POST: api/Treatments
@@ -107,7 +107,7 @@ namespace Lekarzowo.Controllers
             var treatment = _repository.GetByID(id);
             if (treatment == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             try

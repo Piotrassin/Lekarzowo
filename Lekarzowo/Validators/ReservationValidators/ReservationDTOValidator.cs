@@ -16,7 +16,8 @@ namespace Lekarzowo.Validators
                 .Cascade(CascadeMode.Stop)
                 .SetValidator(baseReservationValidator)
                 .MustAsync((x, cancellation) => baseReservationValidator.BeOnAWorkDay(x)).WithMessage("Rezerwacja nie znajduje się wewnątrz godzin pracy lekarza.")
-                .MustAsync((x, cancellation) => baseReservationValidator.NotOverlapWithAnother(x.LocalId, x.DoctorId, x.Starttime, x.Endtime)).WithMessage("Rezerwacja nie jest możliwa w wybranym terminie.");
+                .MustAsync((x, cancellation) => baseReservationValidator.NotOverlapWithAnother(x.LocalId, x.DoctorId, x.Starttime, x.Endtime))
+                .WithMessage("Rezerwacja nie jest możliwa w wybranym terminie.");
 
             RuleFor(x => x.LocalId)
                 .SetValidator(new BaseIdValidator<Local>(locRepo, "Niepoprawne dane lokalu"));

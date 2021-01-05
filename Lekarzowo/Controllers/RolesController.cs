@@ -44,7 +44,7 @@ namespace Lekarzowo.Controllers
 
             if (role == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             return role;
@@ -56,12 +56,12 @@ namespace Lekarzowo.Controllers
         {
             if (id != role.Id)
             {
-                return BadRequest();
+                return BadRequest(new JsonResult(""));
             }
 
             if (!RoleExists(id))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             var storedRole = _repository.GetByID(role.Id);
@@ -77,7 +77,7 @@ namespace Lekarzowo.Controllers
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
-            return NotFound();
+            return NotFound(new JsonResult(""));
         }
 
         // POST: api/Roles
@@ -110,7 +110,7 @@ namespace Lekarzowo.Controllers
             var role = _repository.GetByID(id);
             if(role == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             try

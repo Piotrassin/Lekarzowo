@@ -39,39 +39,39 @@ namespace Lekarzowo.Controllers
         {
             if (!_patientsRepository.Exists(patientId))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (! await _authorizationService.CanUserAccessPatientData(patientId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             var oldillnesshistory = await _repository.GetByID(illnessId, patientId);
 
             if (oldillnesshistory == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             return oldillnesshistory;
         }
 
-        // PUT: api/Oldillnesshistories/5
+        // PUT: api/Oldillnesshistories/5/1
         [Authorize(Roles = "doctor,admin")]
         [HttpPut("{patientId}/{illnessId}")]
         public async Task<IActionResult> PutOldillnesshistory(decimal patientId, decimal illnessId, Oldillnesshistory oldillnesshistory)
         {
             if (illnessId != oldillnesshistory.IllnessId || patientId != oldillnesshistory.PatientId)
             {
-                return BadRequest();
+                return BadRequest(new JsonResult(""));
             }
             if (! await OldillnesshistoryExists(oldillnesshistory.IllnessId, oldillnesshistory.PatientId))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (!await _authorizationService.CanUserAccessPatientData(patientId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             try
@@ -84,7 +84,7 @@ namespace Lekarzowo.Controllers
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
-            return NoContent();
+            return Ok(new JsonResult(""));
         }
 
         // POST: api/Oldillnesshistories
@@ -94,15 +94,15 @@ namespace Lekarzowo.Controllers
         {
             if (!_patientsRepository.Exists(oldillnesshistory.PatientId))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (!await _authorizationService.CanUserAccessPatientData(oldillnesshistory.PatientId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
             if (await OldillnesshistoryExists(oldillnesshistory.IllnessId, oldillnesshistory.PatientId))
             {
-                return Conflict(new JsonResult("Old illness history with that name already exists"));
+                return Conflict(new JsonResult("Old illness history with that illness and patient already exists"));
             }
 
             try
@@ -126,11 +126,11 @@ namespace Lekarzowo.Controllers
             var oldillnesshistory = await _repository.GetByID(illnessId, patientId);
             if (oldillnesshistory == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (!await _authorizationService.CanUserAccessPatientData(oldillnesshistory.PatientId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             try

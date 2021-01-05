@@ -58,7 +58,7 @@ namespace Lekarzowo.Controllers
 
             if (person == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             return person;
         }
@@ -80,7 +80,7 @@ namespace Lekarzowo.Controllers
             _repository.Insert(newPerson);
             _repository.Save();
             
-            return Created("", null);
+            return Created("", new JsonResult(""));
         }
 
         //POST: api/People/Login
@@ -91,7 +91,7 @@ namespace Lekarzowo.Controllers
             var storedPerson = _repository.GetByEmail(current.Email);
             if (storedPerson == null)
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
             try
             {
@@ -133,7 +133,7 @@ namespace Lekarzowo.Controllers
                 var newToken = await _jwtService.GenerateAccessToken(storedPerson, roleToActivateName);
                 return Ok(new { Token = newToken });
             }
-            return BadRequest();
+            return BadRequest(new JsonResult(""));
         }
 
         //POST: /api/people/changeactiverole?roleToActivateName=1
@@ -143,7 +143,7 @@ namespace Lekarzowo.Controllers
             var id = GetIdFromProperSource(userId);
             if (id <= 1)
             {
-                return BadRequest();
+                return BadRequest(new JsonResult(""));
             }
 
             var userById = _repository.GetByID(id);
@@ -162,7 +162,7 @@ namespace Lekarzowo.Controllers
                     return StatusCode(503, new JsonResult(e.Message));
                 }
             }
-            return BadRequest();
+            return BadRequest(new JsonResult(""));
         }
 
         // PUT: api/People
@@ -172,12 +172,12 @@ namespace Lekarzowo.Controllers
             var id = GetIdFromProperSource(userId);
             if (id <= 1)
             {
-                return BadRequest();
+                return BadRequest(new JsonResult(""));
             }
 
             if (!_repository.Exists(id))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             var userToEdit = _repository.GetByID(id);
@@ -198,7 +198,7 @@ namespace Lekarzowo.Controllers
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
-            return Ok();
+            return Ok(new JsonResult(""));
         }
 
         //TODO: usuwanie osoby powinno kaskadowo usuwać wszystko z nią związane
@@ -209,13 +209,13 @@ namespace Lekarzowo.Controllers
             var id = GetIdFromProperSource(userId);
             if (id <= 1)
             {
-                return BadRequest();
+                return BadRequest(new JsonResult(""));
             }
 
             var person = _repository.GetByID(id);
             if (person == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             try

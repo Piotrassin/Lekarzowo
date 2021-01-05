@@ -13,13 +13,13 @@ namespace Lekarzowo.Validators
             IDoctorsRepository docRepo, IHttpContextAccessor httpContext)
         {
 
-            var baseIdValidator = new BaseIdValidator<Doctor>(docRepo, "Osoba już jest lekarzem.");
+            var baseIdValidator = new BaseIdValidator<Doctor>(docRepo, "");
             RuleFor(x => x.Id)
                 .Cascade(CascadeMode.Stop)
+                .NotEmpty().WithMessage("Pole nie może być puste.")
                 .SetValidator(new BaseIdValidator<Person>(pepRepo, "Osoba nie istnieje."))
                     .When(x => x.Id > 0)
-                .Must(x => baseIdValidator.NotExist(x))
-                    .WithMessage("Osoba jest już lekarzem.")
+                .Must(x => baseIdValidator.NotExist(x)).WithMessage("Osoba jest już lekarzem.")
                     .When(x => x.Id > 0 && httpContext.HttpContext.Request.Method.ToUpper() == "POST");
 
             RuleFor(x => x.SpecialityId)

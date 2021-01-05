@@ -33,12 +33,12 @@ namespace Lekarzowo.Validators
             RuleFor(x => x.Starttime)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("Pole nie może być puste.")
-                .Must(DateTimeValidator.BeInTheFuture);
+                .Must(DateTimeValidator.BeInTheFuture).WithMessage("Rezerwacja musi zaczynać sie w przyszłości.");
 
             RuleFor(x => x.Endtime)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("Pole nie może być puste.")
-                .Must(DateTimeValidator.BeInTheFuture);
+                .Must(DateTimeValidator.BeInTheFuture).WithMessage("Rezerwacja musi kończyć sie w przyszłości.");
 
             RuleFor(x => x)
                 .Cascade(CascadeMode.Stop)

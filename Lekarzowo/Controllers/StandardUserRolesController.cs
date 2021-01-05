@@ -54,7 +54,7 @@ namespace Lekarzowo.Controllers
 
             if (userroles == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             return userroles;
@@ -75,7 +75,7 @@ namespace Lekarzowo.Controllers
         //{
         //    if (PersonId != inputUserRole.PersonId)
         //    {
-        //        return BadRequest();
+        //        return BadRequest(new JsonResult(""));
         //    }
         //    if (UserrolesExists(PersonId, RoleId))
         //    {
@@ -85,7 +85,7 @@ namespace Lekarzowo.Controllers
         //        try
         //        {
         //            _repository.Save();
-        //            return Ok();
+        //            return Ok(new JsonResult(""));
         //        }
         //        catch (DbUpdateConcurrencyException e)
         //        {
@@ -94,7 +94,7 @@ namespace Lekarzowo.Controllers
         //        }
         //    }
 
-        //    return NotFound();
+        //    return NotFound(new JsonResult(""));
         //}
 
         // POST: api/Userroles
@@ -130,7 +130,7 @@ namespace Lekarzowo.Controllers
             var userroles = _repository.GetByID(PersonId, RoleId);
             if (userroles == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             try

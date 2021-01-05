@@ -53,12 +53,12 @@ namespace Lekarzowo.Controllers
 
             if (visit == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             if (! await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             return visit;
@@ -71,18 +71,17 @@ namespace Lekarzowo.Controllers
         {
             if (id != visit.ReservationId)
             {
-                return BadRequest();
+                return BadRequest(new JsonResult(""));
             }
             if (!VisitExists(id))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (! await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
-            //TODO PRZETESOWAĆ
             visit.Price = await UpdateVisitPrice(visit.ReservationId);
             
             try
@@ -95,7 +94,7 @@ namespace Lekarzowo.Controllers
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
-            return NoContent();
+            return Ok(new JsonResult(""));
         }
 
         // POST: api/Visits
@@ -105,11 +104,11 @@ namespace Lekarzowo.Controllers
         {
             if (!_reservationsRepository.Exists(visit.ReservationId))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (! await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             if (VisitExists(visit.ReservationId))
@@ -118,6 +117,7 @@ namespace Lekarzowo.Controllers
             }
 
             visit.OnGoing = true;
+            visit.Price = await UpdateVisitPrice(visit.ReservationId);
             try
             {
                 _repository.Insert(visit);
@@ -139,11 +139,11 @@ namespace Lekarzowo.Controllers
             var visit = _repository.GetByID(id);
             if (visit == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (! await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
             try
             {
@@ -165,13 +165,13 @@ namespace Lekarzowo.Controllers
         {
             if (UserIsDoctorAndDoesntHaveAccess(doctorId))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             var visit = await _repository.OnGoingVisit(doctorId);
             if (visit == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             return Ok(visit);
@@ -185,16 +185,16 @@ namespace Lekarzowo.Controllers
             var visit = _repository.GetByID(visitId);
             if (visit == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (! await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             if (!await CanVisitBeOpened(visitId))
             {
-                return BadRequest();
+                return BadRequest(new JsonResult(""));
             }
 
             visit.OnGoing = isOnGoing;
@@ -209,11 +209,11 @@ namespace Lekarzowo.Controllers
             var visit = _repository.GetByID(visitId);
             if (visit == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (!await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             if (await CanVisitBeOpened(visitId))

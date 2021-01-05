@@ -45,13 +45,13 @@ namespace Lekarzowo.Controllers
         [HttpGet("{reservationId}")]
         public async Task<ActionResult<Reservation>> GetReservation(decimal reservationId)
         {
-            if (await IsPatientAccessingDataOwnedByOtherUser(reservationId)) return Unauthorized();
+            if (await IsPatientAccessingDataOwnedByOtherUser(reservationId)) return Unauthorized(new JsonResult(""));
 
             var reservation = await _repository.GetById(reservationId);
 
             if (reservation == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             return reservation;
         }
@@ -61,13 +61,13 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]/{reservationId}")]
         public async Task<ActionResult<object>> WithPatientData(decimal reservationId)
         {
-            if (await IsPatientAccessingDataOwnedByOtherUser(reservationId)) return Unauthorized();
+            if (await IsPatientAccessingDataOwnedByOtherUser(reservationId)) return Unauthorized(new JsonResult(""));
 
             var reservation = await _repository.GetByIdWithPatientData(reservationId);
 
             if (reservation == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             return reservation;
         }
@@ -84,9 +84,9 @@ namespace Lekarzowo.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutReservation(decimal id, Reservation reservation)
         {
-            if (!_repository.Exists(id)) return NotFound();
-            if (id != reservation.Id) return BadRequest();
-            if(await IsPatientAccessingDataOwnedByOtherUser(id)) return Unauthorized();
+            if (!_repository.Exists(id)) return NotFound(new JsonResult(""));
+            if (id != reservation.Id) return BadRequest(new JsonResult(""));
+            if(await IsPatientAccessingDataOwnedByOtherUser(id)) return Unauthorized(new JsonResult(""));
 
             try
             {
@@ -97,7 +97,7 @@ namespace Lekarzowo.Controllers
             {
                 return StatusCode(500, new JsonResult(e.Message));
             }
-            return NoContent();
+            return Ok(new JsonResult(""));
         }
 
         // POST: api/Reservations
@@ -105,7 +105,7 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public async Task<ActionResult<Reservation>> PostReservation(ReservationDTO input)
         {
-            if (UserIsPatientAndDoesntHaveAccess(input.PatientId)) return Unauthorized();
+            if (UserIsPatientAndDoesntHaveAccess(input.PatientId)) return Unauthorized(new JsonResult(""));
 
             var room = await FindAvailableRoom(input);
             if (room == null) return BadRequest(new JsonResult("No rooms available in that local."));
@@ -139,7 +139,7 @@ namespace Lekarzowo.Controllers
         public async Task<ActionResult<Reservation>> DeleteReservation(decimal id)
         {
             var reservation = await _repository.GetById(id);
-            if (reservation == null) return NotFound();
+            if (reservation == null) return NotFound(new JsonResult(""));
             if (reservation.Visit != null && reservation.Visit.OnGoing) return BadRequest(new JsonResult("Na tej rezerwacji odbywa się właśnie wizyta."));
 
             try
@@ -164,7 +164,7 @@ namespace Lekarzowo.Controllers
         {
             if (UserIsDoctorAndDoesntHaveAccess(doctorId))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             if (start == null || start > end || start > DateTime.Now)
@@ -186,7 +186,7 @@ namespace Lekarzowo.Controllers
         {
             if (UserIsDoctorAndDoesntHaveAccess(doctorId))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             if (start == null || start > end || start < DateTime.Now)
@@ -210,7 +210,7 @@ namespace Lekarzowo.Controllers
             {
                 if (patientId != GetUserIdFromToken())
                 {
-                    return Unauthorized();
+                    return Unauthorized(new JsonResult(""));
                 }
                 return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, true, true, doctorId, from, to, limit, skip));
             }
@@ -226,7 +226,7 @@ namespace Lekarzowo.Controllers
             {
                 if (patientId != GetUserIdFromToken())
                 {
-                    return Unauthorized();
+                    return Unauthorized(new JsonResult(""));
                 }
                 return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, false, true, doctorId, from, to, limit, skip));
             }
@@ -247,7 +247,7 @@ namespace Lekarzowo.Controllers
                 return BadRequest(new JsonResult("Niepoprawne kryteria wyszukiwania"));
             }
 
-            IEnumerable<Reservation> allReservations = _repository.AllByOptionalCriteria(cityId, specId, doctorId, startDate, endDate);
+            IEnumerable<Reservation> allReservations = _repository.AllReservationsForPossibleAppointments(cityId, specId, doctorId, startDate, endDate);
             IEnumerable<Workinghours> workinghours = _workHoursRepository.GetAllFutureWorkHours(cityId, specId, doctorId, startDate, endDate);
 
             var slotList = CalcPossibleAppointments(allReservations, workinghours);
@@ -271,12 +271,12 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]/{reservationId}")]
         public async Task<IActionResult> Cancel(decimal reservationId)
         {
-            if (await IsPatientAccessingDataOwnedByOtherUser(reservationId)) return Unauthorized();
+            if (await IsPatientAccessingDataOwnedByOtherUser(reservationId)) return Unauthorized(new JsonResult(""));
 
             var result = await GetReservation(reservationId);
             if (result.Value == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             var reservation = result.Value;
             reservation.Canceled = true;

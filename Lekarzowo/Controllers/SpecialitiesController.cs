@@ -44,7 +44,7 @@ namespace Lekarzowo.Controllers
 
             if (speciality == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             return speciality;
@@ -57,16 +57,17 @@ namespace Lekarzowo.Controllers
         {
             if (id != speciality.Id)
             {
-                return BadRequest();
+                return BadRequest(new JsonResult(""));
             }
             if (!SpecialityExists(id))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
-            if (_repository.Exists(speciality.Name))
-            {
-                return Conflict(new JsonResult("Specialization with that name already exists"));
-            }
+            //TODO jeśli już to jeśli istnieje specka o tej nazwie i ma inne id niż wstawiana
+            //if (_repository.Exists(speciality.Name))
+            //{
+            //    return Conflict(new JsonResult("Specialization with that name already exists"));
+            //}
 
             try
             {
@@ -78,7 +79,7 @@ namespace Lekarzowo.Controllers
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
-            return NoContent();
+            return Ok(new JsonResult(""));
         }
 
         // POST: api/Specialities
@@ -86,11 +87,6 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public async Task<ActionResult<Speciality>> PostSpeciality(Speciality speciality)
         {
-            if (SpecialityExists(speciality.Id))
-            {
-                return Conflict(new JsonResult("That specialization already exists"));
-            }
-
             try
             {
                 _repository.Insert(speciality);
@@ -112,7 +108,7 @@ namespace Lekarzowo.Controllers
             var speciality = _repository.GetByID(id);
             if (speciality == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             try

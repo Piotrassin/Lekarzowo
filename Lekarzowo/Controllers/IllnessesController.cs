@@ -43,7 +43,7 @@ namespace Lekarzowo.Controllers
 
             if (illness == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             return illness;
@@ -56,12 +56,12 @@ namespace Lekarzowo.Controllers
         {
             if (id != illness.Id)
             {
-                return BadRequest();
+                return BadRequest(new JsonResult(""));
             }
 
             if (!IllnessExists(illness.Id))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             try
@@ -74,7 +74,7 @@ namespace Lekarzowo.Controllers
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
-            return NoContent();
+            return Ok(new JsonResult(""));
         }
 
         // POST: api/Illnesses
@@ -108,7 +108,7 @@ namespace Lekarzowo.Controllers
             var illness = _repository.GetByID(id);
             if (illness == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             try

@@ -37,6 +37,11 @@ namespace Lekarzowo.Validators.UserValidators
                 .Length(11).WithMessage("Długość musi wynosić {MinLength} cyfr. Wpisano {TotalLength}").WithName("PESEL")
                 .Must(BeAValidNumber).WithMessage("{PropertyName} zawiera niedozwolone znaki");
 
+            RuleFor(x => x)
+                .Cascade(CascadeMode.Stop)
+                .Must(x => BeAValidPESEL(x.Pesel, x.Birthdate)).WithMessage("{PropertyName} PESEL nie zgadza się z datą urodzenia")
+                .When(x => x.Pesel != null);
+
             RuleFor(x => x.Gender)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("{PropertyName} musi mieć wartość").WithName("Płeć")
@@ -61,6 +66,22 @@ namespace Lekarzowo.Validators.UserValidators
         public bool BeAValidNumber(string text)
         {
             return text.All(char.IsDigit);
+        }
+
+        public bool BeAValidPESEL(string pesel, DateTime bday)
+        {
+            var yearPesel = Int16.Parse(pesel.Substring(0, 2));
+            var monthPesel = Int16.Parse(pesel.Substring(2, 2));
+            var dayPesel = Int16.Parse(pesel.Substring(4, 2));
+
+            if (bday.Year.ToString().EndsWith(yearPesel.ToString()) 
+                && monthPesel == bday.Month 
+                && dayPesel == bday.Day)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

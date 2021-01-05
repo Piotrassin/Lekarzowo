@@ -43,7 +43,7 @@ namespace Lekarzowo.Controllers
 
             if (local == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             return local;
@@ -56,12 +56,12 @@ namespace Lekarzowo.Controllers
         {
             if (id != local.Id)
             {
-                return BadRequest();
+                return BadRequest(new JsonResult(""));
             }
 
             if (!LocalExists(local.Id))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             if (_repository.Exists(local.Name))
@@ -79,7 +79,7 @@ namespace Lekarzowo.Controllers
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
-            return NoContent();
+            return Ok(new JsonResult(""));
         }
 
         // POST: api/Locals
@@ -113,7 +113,7 @@ namespace Lekarzowo.Controllers
             var city = _repository.GetByID(id);
             if (city == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             try
