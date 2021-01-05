@@ -1,12 +1,9 @@
 import React from 'react';
-import SicknessItem from './components/SicknessItem.js';
 import AdminService from './services/AdminService.js';
-import Fade from '@material-ui/core/Fade';
-import TextField from '@material-ui/core/TextField';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
-import Autocomplete from './components/Autocomplete.js';
 import Validation from './helpers/Validation.js';
+import Autocomplete from './components/Autocomplete.js';
+import TextField from '@material-ui/core/TextField';
 
 class AdminAddSpeciality extends React.Component {
 constructor(props){
@@ -40,15 +37,12 @@ handleClickAddSpeciality(event){
     errors: Validation.validateAdminAddSeciality(this.state.speciality.name,
     this.state.speciality.price)
   }, () => {
-    console.log(this.state.errors);
     if(Object.keys(this.state.errors).length > 0){
       var message = Validation.handleValidationOutcome(this.state.errors);
       this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
-
     }else {
       AdminService.postSpeciality(this.state.speciality)
       .then(response => {
-        console.log(response);
         this.setState({
           speciality: {
             name: "",
@@ -66,12 +60,6 @@ handleClickAddSpeciality(event){
       });
     }
   });
-
-
-}
-
-componentDidMount() {
-
 }
 
 render() {
@@ -83,26 +71,25 @@ render() {
           <div className = 'flex-column width-100'>
             <TextField id="name" name="name"
             label="Nazwa specializacji"
-            value = {this.state.name}
+            value = {this.state.speciality.name}
             onChange = {this.onChangeTextField}
             type = 'text'
             size="small" fullWidth />
             <br/>
             <TextField id="price" name="price"
             label="Cena bazowa za wizytę"
-            value = {this.state.price}
+            value = {this.state.speciality.price}
             onChange = {this.onChangeTextField}
             type = 'number'
             size="small" fullWidth />
           </div>
-
           <br/><br/>
           <div>
-          <a className = 'button-green' onClick = {this.handleClickAddSpeciality}>Dodaj</a>
+            <a className = 'button-green' onClick = {this.handleClickAddSpeciality}>Dodaj</a>
           </div>
-          </form>
-          </div>
-        <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
+        </form>
+      </div>
+      <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
     </div>
   );
 }
