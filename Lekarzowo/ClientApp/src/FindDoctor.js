@@ -2,7 +2,6 @@ import React from 'react';
 import Dashboard from './Dashboard'
 import Menu from './Menu.js';
 import { withStyles } from '@material-ui/core/styles';
-import DateStepper from './DateStepper'
 import VisitItem from './components/VisitItem.js';
 import Switch from '@material-ui/core/Switch';
 import ReservationService from './services/ReservationService.js';
