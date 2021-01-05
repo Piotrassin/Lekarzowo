@@ -35,6 +35,24 @@ class Validation {
     return errorObject;
   }
 
+  validateUniversalBlankTwoinputs(stringObject1,stringObject2, returnName1, returnName2){
+    var errorObject = {};
+
+    this.addErrorToObject(errorObject, returnName1, this.validateBlank(stringObject1));
+    this.addErrorToObject(errorObject, returnName2, this.validateBlank(stringObject2));
+
+    return errorObject;
+  }
+
+  validateUniversalBlankTwoinputsNumber(stringObject1,stringObject2, returnName1, returnName2){
+    var errorObject = {};
+
+    this.addErrorToObject(errorObject, returnName1, this.validateBlankNumber(stringObject1));
+    this.addErrorToObject(errorObject, returnName2, this.validateBlankNumber(stringObject2));
+
+    return errorObject;
+  }
+
   validateUniversalNumberBlank(stringObject, returnName){
     var errorObject = {};
 

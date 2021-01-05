@@ -78,6 +78,22 @@ class AdminService {
     });
   }
 
+  deleteUserRoles(roleId, userId){
+    return fetch(url + 'Userroles/' + userId + '/' + roleId, {
+    method: 'DELETE',
+    headers: authHeader({'Content-Type': 'application/json'})
+    })
+    .then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
 
   deleteMedicine(id){
     return fetch(url + 'Medicines/' + id, {
@@ -208,6 +224,25 @@ class AdminService {
       return response;
     });
 
+  }
+
+  postUserAddRole(roleId, userId){
+    return fetch(url + 'Userroles', {
+    method: 'POST',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "UserId": userId,
+      "RoleId": roleId
+    })})
+    .then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
   }
 
   postTreatment(treatment){
@@ -414,6 +449,58 @@ class AdminService {
     });
 
   }
+
+  getUsers(search, limit ){
+    if (search === undefined)
+    {
+      search  = ''
+    }
+    return fetch(url + 'people/allbyname?Name=' + search + '&limit=' + limit, {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
+  getRoles(search, limit){
+    if (search === undefined)
+    {
+      search  = ''
+    }
+    return fetch(url + 'Roles/allbyname?Name=' + search + '&limit=' + limit, {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
+  getUserRoles(userId){
+    return fetch(url + 'Userroles/' + userId, {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
+
 
   getLocalsByDoctorId(search, limit, skip, doctorId){
     if (search === undefined)

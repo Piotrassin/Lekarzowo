@@ -9,6 +9,7 @@ import AdminRoom from './AdminRoom.js';
 import AdminTreatment from './AdminTreatment.js';
 import AdminSpeciality from './AdminSpeciality.js';
 import AdminDoctor from './AdminDoctor.js';
+import AdminRoles from './AdminRoles.js';
 import RoleButton from './components/RoleButton.js';
 
 class AdminPanel extends React.Component {
@@ -56,6 +57,9 @@ class AdminPanel extends React.Component {
       case 'addDoctor':
         return <AdminDoctor />
         break;
+      case 'addRoles':
+        return <AdminRoles />
+        break;
     }
   }
 
@@ -89,6 +93,11 @@ class AdminPanel extends React.Component {
                 'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
                 name = 'addWorkingHours' onClick = {this.handleClickBtn}>
                 Godziny pracy
+                </button>
+                <button className = {this.state.currentPage == 'addRoles' ?
+                'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
+                name = 'addRoles' onClick = {this.handleClickBtn}>
+                Role
                 </button>
               </div>
               <div className = 'admin-btn-container'>
