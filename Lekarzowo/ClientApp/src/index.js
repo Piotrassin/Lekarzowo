@@ -4,8 +4,6 @@ import history from './History.js';
 import './index.css';
 import App from './App';
 import { Router } from 'react-router-dom'
-import VisitDetails from './VisitDetails'
-import Dashboard from './Dashboard'
 import './Main.css';
 import * as serviceWorker from './serviceWorker';
 
