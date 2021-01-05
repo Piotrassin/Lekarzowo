@@ -1,5 +1,5 @@
 import React from 'react';
-import './Main.css';
+import '../Main.css';
 
 class MedicineSmall extends React.Component {
   constructor(props){

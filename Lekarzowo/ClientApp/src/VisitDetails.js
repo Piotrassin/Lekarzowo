@@ -3,7 +3,7 @@ import './Main.css';
 import womanAvatar from './images/womanAvatar.jpg';
 import medicine1 from './images/MedicineSmallRound.svg';
 import plusSign from './images/plusSign.svg';
-import MedicineSmall from './MedicineSmall';
+import MedicineSmall from './components/MedicineSmall.js';
 import { withStyles } from '@material-ui/core/styles';
 import sicknessSign from './images/SicknessSign.svg';
 import TreatmenrSmall from './TreatmenrSmall';
