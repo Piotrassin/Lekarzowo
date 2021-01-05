@@ -1,17 +1,5 @@
 import React from 'react';
-import Dashboard from './Dashboard'
 import Menu from './Menu.js';
-import { withStyles } from '@material-ui/core/styles';
-import DateStepper from './DateStepper'
-import VisitItem from './components/VisitItem.js';
-import Switch from '@material-ui/core/Switch';
-import ReservationService from './services/ReservationService.js';
-import VisitService from './services/VisitService.js';
-import AuthService from './authentication/AuthService';
-import VisitAlert from './components/VisitAlert.js';
-import TextField from '@material-ui/core/TextField';
-import DoctorItem from './components/DoctorItem.js';
-import DoctorService from './services/DoctorService.js';
 import AdminAddMedicine from './AdminAddMedicine.js';
 import AdminAddSickness from './AdminAddSickness.js';
 import AdminAddCity from './AdminAddCity.js';
@@ -26,7 +14,6 @@ import RoleButton from './components/RoleButton.js';
 class AdminPanel extends React.Component {
   constructor(props){
     super(props);
-
     this.state = {
       currentPage:  "addDoctor"
     };
@@ -72,21 +59,15 @@ class AdminPanel extends React.Component {
     }
   }
 
-  componentDidMount() {
-
-  }
-
-
-
   render() {
       return(
         <div className = 'container'>
         <Menu history= {this.props.history}/>
           <div className = 'doctor-find-container flex-column'>
             <div className = 'doctor-cart-header flex-column'>
-            <div className = 'flex-row justify-content-space'>
-              <a className = 'subheader-content-profile'>Panel Admina</a>
-              <RoleButton history= {this.props.history}/>
+              <div className = 'flex-row justify-content-space'>
+                <a className = 'subheader-content-profile'>Panel Admina</a>
+                <RoleButton history= {this.props.history}/>
               </div>
               <div className = 'admin-btn-container'>
                 <button className = {this.state.currentPage == 'addDoctor' ?
@@ -136,7 +117,6 @@ class AdminPanel extends React.Component {
                 name = 'addSpeciality' onClick = {this.handleClickBtn}>
                 Dodaj specjalizację
                 </button>
-
               </div>
             </div>
             {this.showContent()}
