@@ -52,7 +52,7 @@ namespace Lekarzowo.Controllers
 
             if (doctor == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             return doctor;
@@ -67,7 +67,7 @@ namespace Lekarzowo.Controllers
 
             if (doctor == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             return doctor;
@@ -80,11 +80,11 @@ namespace Lekarzowo.Controllers
         {
             if (id != doctor.Id)
             {
-                return BadRequest();
+                return BadRequest(new JsonResult(""));
             }
             if (!_repository.Exists(doctor.Id))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             try
@@ -96,7 +96,7 @@ namespace Lekarzowo.Controllers
             {
                 return StatusCode(500, new JsonResult(e.Message));
             }
-            return NoContent();
+            return Ok(new JsonResult(""));
 
         }
 
@@ -133,7 +133,7 @@ namespace Lekarzowo.Controllers
             {
                 if (!(_peopleController.RegisterUser(person) is CreatedResult result))
                 {
-                    return BadRequest();
+                    return BadRequest(new JsonResult(""));
                 }
 
                 addedUser = _peopleRepository.GetByEmail(person.Email);
@@ -141,7 +141,7 @@ namespace Lekarzowo.Controllers
 
                 if (!(PostDoctor(doctor) is CreatedResult resultDoctor))
                 {
-                    return BadRequest();
+                    return BadRequest(new JsonResult(""));
                 }
 
                 transaction.Complete();
@@ -158,7 +158,7 @@ namespace Lekarzowo.Controllers
             var doctor = _repository.GetByID(doctorId);
             if (doctor == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             try

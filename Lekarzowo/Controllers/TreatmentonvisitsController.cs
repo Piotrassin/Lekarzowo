@@ -42,11 +42,11 @@ namespace Lekarzowo.Controllers
 
             if (treatmentonvisit == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (! await _authorizationService.CanUserAccessVisit(treatmentonvisit.VisitId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             return treatmentonvisit;
@@ -58,11 +58,11 @@ namespace Lekarzowo.Controllers
         {
             if (!_visitsRepository.Exists(visitId))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (! await _authorizationService.CanUserAccessVisit(visitId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             return Ok(await _repository.PerformedTreatments(visitId, limit, skip));
@@ -75,16 +75,16 @@ namespace Lekarzowo.Controllers
         {
             if (id != treatmentonvisit.Id)
             {
-                return BadRequest();
+                return BadRequest(new JsonResult(""));
             }
             if (!TreatmentonvisitExists(id))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             var visit = _visitsRepository.GetByID(treatmentonvisit.VisitId);
             if (! await _authorizationService.CanUserAccessPatientData(visit.Reservation.PatientId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             try
@@ -97,7 +97,7 @@ namespace Lekarzowo.Controllers
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
-            return NoContent();
+            return Ok(new JsonResult(""));
         }
 
         // POST: api/Treatmentonvisits
@@ -108,11 +108,11 @@ namespace Lekarzowo.Controllers
             var visit = _visitsRepository.GetByID(treatmentonvisit.VisitId);
             if (visit == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (! await _authorizationService.CanUserAccessPatientData(visit.Reservation.PatientId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             try
@@ -136,12 +136,12 @@ namespace Lekarzowo.Controllers
             var treatmentonvisit = _repository.GetByID(id);
             if (treatmentonvisit == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             var visit = _visitsRepository.GetByID(treatmentonvisit.VisitId);
             if (! await _authorizationService.CanUserAccessPatientData(visit.Reservation.PatientId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             try

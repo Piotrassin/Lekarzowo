@@ -11,27 +11,31 @@ namespace Lekarzowo.Controllers
     [ApiController]
     public abstract class BaseController : ControllerBase
     {
-
+        [HttpOptions]
         public decimal GetUserIdFromToken()
         {
             return decimal.Parse(this.User.Claims.First(x => x.Type == "UserId").Value);
         }
 
+        [HttpOptions]
         public String GetActiveRoleFromToken()
         {
             return User.Claims.First(x => x.Type == ClaimTypes.Role).Value;
         }
 
+        [HttpOptions]
         public bool IsAdmin()
         {
             return GetActiveRoleFromToken() == "admin";
         }
 
+        [HttpOptions]
         public bool IsDoctor()
         {
             return GetActiveRoleFromToken() == CustomUserRolesService.DoctorRoleName;
         }
 
+        [HttpOptions]
         public bool IsPatient()
         {
             return GetActiveRoleFromToken() == CustomUserRolesService.PatientRoleName;
@@ -42,6 +46,7 @@ namespace Lekarzowo.Controllers
         /// </summary>
         /// <param name="patientId"></param>
         /// <returns></returns>
+        [HttpOptions]
         public bool UserIsPatientAndDoesntHaveAccess(decimal patientId)
         {
             return IsPatient() && patientId != GetUserIdFromToken();
@@ -52,11 +57,13 @@ namespace Lekarzowo.Controllers
         /// </summary>
         /// <param name="doctorId"></param>
         /// <returns></returns>
+        [HttpOptions]
         public bool UserIsDoctorAndDoesntHaveAccess(decimal doctorId)
         {
             return IsDoctor() && doctorId != GetUserIdFromToken();
         }
 
+        [HttpOptions]
         public bool UserIdMatches(decimal personId)
         {
             return personId == GetUserIdFromToken();

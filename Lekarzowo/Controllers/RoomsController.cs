@@ -36,7 +36,7 @@ namespace Lekarzowo.Controllers
 
             if (room == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             return room;
@@ -49,11 +49,11 @@ namespace Lekarzowo.Controllers
         {
             if (id != room.Id)
             {
-                return BadRequest();
+                return BadRequest(new JsonResult(""));
             }
             if (!RoomExists(id))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             try
@@ -66,7 +66,7 @@ namespace Lekarzowo.Controllers
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
-            return NoContent();
+            return Ok(new JsonResult(""));
         }
 
         // POST: api/Rooms
@@ -100,7 +100,7 @@ namespace Lekarzowo.Controllers
             var room = _repository.GetByID(id);
             if (room == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             try

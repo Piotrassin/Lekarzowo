@@ -39,18 +39,18 @@ namespace Lekarzowo.Controllers
         {
             if (!_patientsRepository.Exists(patientId))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (! await _authorizationService.CanUserAccessPatientData(patientId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             var oldmedicinehistory = await _repository.GetByID(medicineId, patientId);
 
             if (oldmedicinehistory == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             return oldmedicinehistory;
@@ -63,15 +63,15 @@ namespace Lekarzowo.Controllers
         {
             if (patientId != oldmedicinehistory.PatientId || medicineId != oldmedicinehistory.MedicineId)
             {
-                return BadRequest();
+                return BadRequest(new JsonResult(""));
             }
             if (!await OldmedicinehistoryExists(oldmedicinehistory.MedicineId, oldmedicinehistory.PatientId))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (!await _authorizationService.CanUserAccessPatientData(patientId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
 
@@ -85,7 +85,7 @@ namespace Lekarzowo.Controllers
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
-            return NoContent();
+            return Ok(new JsonResult(""));
         }
 
         // POST: api/Oldmedicinehistories
@@ -95,11 +95,11 @@ namespace Lekarzowo.Controllers
         {
             if (!_patientsRepository.Exists(oldmedicinehistory.PatientId))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (!await _authorizationService.CanUserAccessPatientData(oldmedicinehistory.PatientId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
             if (await OldmedicinehistoryExists(oldmedicinehistory.MedicineId, oldmedicinehistory.PatientId))
             {
@@ -127,11 +127,11 @@ namespace Lekarzowo.Controllers
             var oldmedicinehistory = await _repository.GetByID(medicineId, patientId);
             if (oldmedicinehistory == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (!await _authorizationService.CanUserAccessPatientData(oldmedicinehistory.PatientId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             try

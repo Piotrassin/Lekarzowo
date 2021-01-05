@@ -40,10 +40,10 @@ namespace Lekarzowo.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Patient>> GetPatient(decimal id)
         {
-            if (UserIsPatientAndDoesntHaveAccess(id)) return Unauthorized();
+            if (UserIsPatientAndDoesntHaveAccess(id)) return Unauthorized(new JsonResult(""));
 
             var patient = _repository.GetByID(id);
-            if (patient == null) return NotFound();
+            if (patient == null) return NotFound(new JsonResult(""));
 
             return patient;
         }
@@ -53,9 +53,9 @@ namespace Lekarzowo.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPatient(decimal id, Patient patient)
         {
-            if (id != patient.Id) return BadRequest();
-            if (UserIsPatientAndDoesntHaveAccess(id)) return Unauthorized();
-            if (!PatientExists(id)) return NotFound();
+            if (id != patient.Id) return BadRequest(new JsonResult(""));
+            if (UserIsPatientAndDoesntHaveAccess(id)) return Unauthorized(new JsonResult(""));
+            if (!PatientExists(id)) return NotFound(new JsonResult(""));
 
             try
             {
@@ -67,7 +67,7 @@ namespace Lekarzowo.Controllers
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
-            return NoContent();
+            return Ok(new JsonResult(""));
         }
 
         // POST: api/Patients
@@ -103,7 +103,7 @@ namespace Lekarzowo.Controllers
             {
                 if (!(_peopleController.RegisterUser(person) is CreatedResult result))
                 {
-                    return BadRequest();
+                    return BadRequest(new JsonResult(""));
                 }
 
                 Person user = _peopleRepository.GetByEmail(person.Email);
@@ -112,7 +112,7 @@ namespace Lekarzowo.Controllers
 
                 if (!(await PostPatient(newPatient) is CreatedResult resultDoctor))
                 {
-                    return BadRequest();
+                    return BadRequest(new JsonResult(""));
                 }
                 //_repository.Insert(newPatient);
                 //_repository.Save();
@@ -129,10 +129,10 @@ namespace Lekarzowo.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Patient>> DeletePatient(decimal id)
         {
-            if (UserIsPatientAndDoesntHaveAccess(id)) return Unauthorized();
+            if (UserIsPatientAndDoesntHaveAccess(id)) return Unauthorized(new JsonResult(""));
 
             var patient = _repository.GetByID(id);
-            if (patient == null) return NotFound();
+            if (patient == null) return NotFound(new JsonResult(""));
 
             try
             {

@@ -57,7 +57,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// Returns all reservations in db meeting given criteria. AllByPatientId criteria are optional.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<Reservation> AllByOptionalCriteria(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end);
+        IEnumerable<Reservation> AllReservationsForPossibleAppointments(decimal? CityId, decimal? SpecId, decimal? DoctorId, DateTime? start, DateTime? end);
 
         /// <summary>
         /// Returns all reservations in a given LOCAL that are in-progress in a time frame given between dates START and END.

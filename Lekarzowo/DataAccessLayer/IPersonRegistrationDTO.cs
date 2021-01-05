@@ -1,5 +1,4 @@
 ﻿using Lekarzowo.DataAccessLayer.DTO;
-using System;
 
 namespace Lekarzowo.DataAccessLayer
 {

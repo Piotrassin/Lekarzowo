@@ -46,11 +46,11 @@ namespace Lekarzowo.Controllers
             var illnesshistory = _repository.GetByID(illnessHistoryId);
             if(illnesshistory == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (! await _authorizationService.CanUserAccessIllnessHistory(illnessHistoryId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             return illnesshistory;
@@ -65,11 +65,11 @@ namespace Lekarzowo.Controllers
             
             if (illnesshistoryList == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (! await _authorizationService.CanUserAccessPatientData(patientId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             var enumerableHistory = PaginationService<object>.SplitAndLimitIEnumerable(skip, limit, illnesshistoryList);
@@ -84,11 +84,11 @@ namespace Lekarzowo.Controllers
         {
             if (!_visitsRepository.Exists(visitId))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (! await _authorizationService.CanUserAccessVisit(visitId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             var illnesshistoryList = await _repository.AllByVisitId(visitId, limit, skip);
@@ -104,11 +104,11 @@ namespace Lekarzowo.Controllers
             var visit = _visitsRepository.GetByID(visitId);
             if (visit == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (! await _authorizationService.CanUserAccessPatientData(visit.Reservation.PatientId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             return Ok(await _repository.AllByNameOnVisit(visitId, name, limit, skip));
@@ -121,7 +121,7 @@ namespace Lekarzowo.Controllers
         {
             if (! await _authorizationService.CanUserAccessPatientData(patientId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             var illnessHistory = await _repository.PatientHistory(patientId);
@@ -144,17 +144,17 @@ namespace Lekarzowo.Controllers
         {
             if (illnessHistoryId != illnesshistory.Id)
             {
-                return BadRequest();
+                return BadRequest(new JsonResult(""));
             }
 
             if (!IllnesshistoryExists(illnesshistory.Id))
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             if (! await _authorizationService.CanUserAccessIllnessHistory(illnessHistoryId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             try
@@ -167,7 +167,7 @@ namespace Lekarzowo.Controllers
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
-            return NoContent();
+            return Ok(new JsonResult(""));
         }
 
         // POST: api/Illnesseshistory
@@ -178,11 +178,11 @@ namespace Lekarzowo.Controllers
             var visit = _visitsRepository.GetByID(illnesshistory.VisitId);
             if (visit == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (!await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             if ((await _repository.GetByVisitId(visit.ReservationId)).Contains(illnesshistory))
@@ -210,11 +210,11 @@ namespace Lekarzowo.Controllers
             var illnesshistory = _repository.GetByID(illnessHistoryId);
             if (illnesshistory == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
             if (! await _authorizationService.CanUserAccessIllnessHistory(illnessHistoryId, this))
             {
-                return Unauthorized();
+                return Unauthorized(new JsonResult(""));
             }
 
             try

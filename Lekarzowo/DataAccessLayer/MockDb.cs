@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Lekarzowo.DataAccessLayer
 {
     /// <summary>
-    /// TODO: Zrobić bazę danych w pamięci do testów
+    /// TODO: Zrobić bazę danych w pamięci dla łatwiejszej implementacji
     /// </summary>
     public class MockDb
     {
@@ -27,19 +27,19 @@ namespace Lekarzowo.DataAccessLayer
 
         private void Seed()
         {
-            using (var context = new ModelContext(options))
-            {
-                context.Person.Add(new Person
-                {
-                    Name = "Adam",
-                    Lastname = "Testowy",
-                    Birthdate = new DateTime(1980, 2, 13),
-                    Pesel = "80021312345",
-                    Gender = "M",
-                    Email = "a.testowy@abc.com",
-                    Password = "hasło123"
-                });
-            }
+            //using (var context = new ModelContext(options))
+            //{
+            //    context.Person.Add(new Person
+            //    {
+            //        Name = "Adam",
+            //        Lastname = "Testowy",
+            //        Birthdate = new DateTime(1980, 2, 13),
+            //        Pesel = "80021312345",
+            //        Gender = "M",
+            //        Email = "a.testowy@abc.com",
+            //        Password = "hasło123"
+            //    });s
+            //}
         }
     }
 }

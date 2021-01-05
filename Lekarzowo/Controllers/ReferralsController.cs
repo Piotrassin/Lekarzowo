@@ -34,7 +34,7 @@ namespace Lekarzowo.Controllers
 
             if (referral == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             return referral;
@@ -46,7 +46,7 @@ namespace Lekarzowo.Controllers
         {
             if (id != referral.Id)
             {
-                return BadRequest();
+                return BadRequest(new JsonResult(""));
             }
 
             if (_repository.GetByID(referral.Id) != null)
@@ -62,13 +62,13 @@ namespace Lekarzowo.Controllers
             {
                 if (!ReferralExists(id))
                 {
-                    return NotFound();
+                    return NotFound(new JsonResult(""));
                 }
 
                 return StatusCode(500, new JsonResult(e.Message));
             }
 
-            return NoContent();
+            return Ok(new JsonResult(""));
         }
 
         // POST: api/Referrals
@@ -92,7 +92,7 @@ namespace Lekarzowo.Controllers
             var referral = _repository.GetByID(id);
             if (referral == null)
             {
-                return NotFound();
+                return NotFound(new JsonResult(""));
             }
 
             try
