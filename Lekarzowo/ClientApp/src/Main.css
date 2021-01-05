@@ -434,6 +434,7 @@ border-radius: 20px;
   background-color: red;
   border-radius: 20px;
   background-color: #97BCDE;
+  cursor: pointer;
 }
 .chart-container {
   background-color: white;
