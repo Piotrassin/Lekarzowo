@@ -6,8 +6,8 @@ import StepContent from '@material-ui/core/StepContent';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import AppontmentSmall from "./AppointmentSmall"
 import RedirectButton from "./RedirectButton";
+import Snackbar from './helpers/Snackbar.js';
 
 class DateStepper extends React.Component {
   constructor(props){
@@ -83,16 +83,7 @@ class DateStepper extends React.Component {
           key = {label.reservationId} >
             <StepLabel>{label.reservationStartTime.split("T")[0]}</StepLabel>
 
-            <AppontmentSmall
-              name = {label.doctorName}
-              surname = {label.doctorLastname}
-                    specialty={label.specialityName}
-                    index = {label.reservationId}
-                    class = {this.props.class}
-                >
-
-              </AppontmentSmall>
-
+            
 
 
           </Step>
