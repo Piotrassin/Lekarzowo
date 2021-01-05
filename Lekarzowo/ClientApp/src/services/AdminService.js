@@ -231,7 +231,7 @@ class AdminService {
     method: 'POST',
     headers: authHeader({'Content-Type': 'application/json'}),
     body: JSON.stringify({
-      "UserId": userId,
+      "PersonId": userId,
       "RoleId": roleId
     })})
     .then(response => {

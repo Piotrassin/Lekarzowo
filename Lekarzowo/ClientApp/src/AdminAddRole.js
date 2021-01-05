@@ -14,7 +14,8 @@ constructor(props){
     userId: "",
     userRoles: "",
     loading: false,
-    clear: false
+    clear1: 1,
+    clear2: 2,
   };
   this.onChangeTextField = this.onChangeTextField.bind(this);
   this.handleClickAddRole = this.handleClickAddRole.bind(this);
@@ -61,7 +62,8 @@ handleClickAddRole(event){
         this.setState({
           roleId: "",
           userId: "",
-          clear: !this.state.clear
+          clear1: this.state.clear1 - 1,
+          clear2: this.state.clear2 + 1
         });
         this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
       })
@@ -89,7 +91,7 @@ render() {
             title = "Użytkownik"
             changeCallback = {this.onClickUserSearch}
             dataTestId = 'autocomplete-local'
-            clear = {this.state.clear}
+            key = {this.state.clear1}
             />
             <br/>
             <Autocomplete
@@ -97,7 +99,7 @@ render() {
             title = "Rola"
             changeCallback = {this.onClickRoleSearch}
             dataTestId = 'autocomplete-local'
-            clear = {this.state.clear}
+            key = {this.state.clear2}
             />
             <br/>
 
