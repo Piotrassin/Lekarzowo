@@ -196,6 +196,37 @@ class AdminService {
 
   }
 
+  getDoctor(id){
+    return fetch(url + 'Doctors/' + id, {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+
+  }
+
+  deleteDoctor(id){
+    return fetch(url + 'Doctors/' + id, {
+      method: 'DELETE',
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+
+  }
+
   postWorkinghours(workinghours){
     return fetch(url + 'Workinghours', {
     method: 'POST',

@@ -47,7 +47,7 @@ button:focus {
   display: flex;
   flex-direction: row;
   min-height: 100vh;
-  height: 100%;
+  height: 100vh;
 font-family: roboto;
 }
 .containerLogin{
@@ -910,11 +910,10 @@ padding-right: 15px;
 .admin-content-holder {
   margin-top: 5px;
   background-color: white;
-  height: 100%;
   width: 97%;
   border-radius: 10px;
   padding: 15px;
-  overflow-y: auto;
+  height: 75vh;
 
 }
 .profile-right-holder {

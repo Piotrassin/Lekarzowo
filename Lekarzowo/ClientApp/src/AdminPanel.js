@@ -8,7 +8,7 @@ import AdminAddLocal from './AdminAddLocal.js';
 import AdminAddRoom from './AdminAddRoom.js';
 import AdminAddTreatment from './AdminAddTreatment.js';
 import AdminAddSpeciality from './AdminAddSpeciality.js';
-import AdminAddDoctor from './AdminAddDoctor.js';
+import AdminDoctor from './AdminDoctor.js';
 import RoleButton from './components/RoleButton.js';
 
 class AdminPanel extends React.Component {
@@ -54,7 +54,7 @@ class AdminPanel extends React.Component {
         return <AdminAddSpeciality />
         break;
       case 'addDoctor':
-        return <AdminAddDoctor />
+        return <AdminDoctor />
         break;
     }
   }
