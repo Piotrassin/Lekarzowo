@@ -249,6 +249,42 @@ class AdminService {
 
   }
 
+  putSpeciality(specialityId, specialityName, specialityPrice){
+    return fetch(url + 'Specialities/' + specialityId, {
+    method: 'PUT',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "Id": specialityId,
+      "Name": specialityName,
+      "Price": specialityPrice
+    })})
+    .then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+
+  }
+
+  deleteSpeciality(id){
+    return fetch(url + 'Specialities/' + id, {
+      method: 'DELETE',
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
   postDoctor(doctor){
     return fetch(url + 'doctors/PostPersonAsDoctor', {
     method: 'POST',
@@ -279,6 +315,20 @@ class AdminService {
       return response;
     });
 
+  }
+
+  getSpeciality(id){
+    return fetch(url + 'Specialities/' + id, {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
   }
 
   getLocal(id){
