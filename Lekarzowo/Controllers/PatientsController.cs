@@ -40,7 +40,7 @@ namespace Lekarzowo.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Patient>> GetPatient(decimal id)
         {
-            if (IsPatientAccessingElsesData(id)) return Unauthorized();
+            if (UserIsPatientAndDoesntHaveAccess(id)) return Unauthorized();
 
             var patient = _repository.GetByID(id);
             if (patient == null) return NotFound();
@@ -53,8 +53,8 @@ namespace Lekarzowo.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPatient(decimal id, Patient patient)
         {
-            if (IsPatientAccessingElsesData(id)) return Unauthorized();
             if (id != patient.Id) return BadRequest();
+            if (UserIsPatientAndDoesntHaveAccess(id)) return Unauthorized();
             if (!PatientExists(id)) return NotFound();
 
             try
@@ -129,7 +129,7 @@ namespace Lekarzowo.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Patient>> DeletePatient(decimal id)
         {
-            if (IsPatientAccessingElsesData(id)) return Unauthorized();
+            if (UserIsPatientAndDoesntHaveAccess(id)) return Unauthorized();
 
             var patient = _repository.GetByID(id);
             if (patient == null) return NotFound();
@@ -152,9 +152,5 @@ namespace Lekarzowo.Controllers
             return _repository.Exists(id);
         }
 
-        private bool IsPatientAccessingElsesData(decimal accessedPatientId)
-        {
-            return IsPatient() && accessedPatientId != GetUserIdFromToken();
-        }
     }
 }

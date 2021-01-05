@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lekarzowo.Services;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Lekarzowo.Controllers
@@ -13,10 +14,14 @@ namespace Lekarzowo.Controllers
     public class OldillnesshistoriesController : BaseController
     {
         private readonly IOldIllnessesHistoryRepository _repository;
+        private readonly IPatientsRepository _patientsRepository;
+        private readonly AuthorizationService _authorizationService;
 
-        public OldillnesshistoriesController(IOldIllnessesHistoryRepository repository)
+        public OldillnesshistoriesController(IOldIllnessesHistoryRepository repository, IPatientsRepository patientsRepository, AuthorizationService authorizationService)
         {
             _repository = repository;
+            _patientsRepository = patientsRepository;
+            _authorizationService = authorizationService;
         }
 
         // GET: api/Oldillnesshistories
@@ -32,6 +37,15 @@ namespace Lekarzowo.Controllers
         [HttpGet("{patientId}/{illnessId}")]
         public async Task<ActionResult<Oldillnesshistory>> GetOldillnesshistory(decimal patientId, decimal illnessId)
         {
+            if (!_patientsRepository.Exists(patientId))
+            {
+                return NotFound();
+            }
+            if (! await _authorizationService.CanUserAccessPatientData(patientId, this))
+            {
+                return Unauthorized();
+            }
+
             var oldillnesshistory = await _repository.GetByID(illnessId, patientId);
 
             if (oldillnesshistory == null)
@@ -44,18 +58,20 @@ namespace Lekarzowo.Controllers
 
         // PUT: api/Oldillnesshistories/5
         [Authorize(Roles = "doctor,admin")]
-        [HttpPut("{PatientId}/{IlnessId}")]
-        public async Task<IActionResult> PutOldillnesshistory(decimal PatientId, decimal IllnessId, Oldillnesshistory oldillnesshistory)
+        [HttpPut("{patientId}/{illnessId}")]
+        public async Task<IActionResult> PutOldillnesshistory(decimal patientId, decimal illnessId, Oldillnesshistory oldillnesshistory)
         {
-            if (IllnessId != oldillnesshistory.IllnessId || PatientId != oldillnesshistory.PatientId)
+            if (illnessId != oldillnesshistory.IllnessId || patientId != oldillnesshistory.PatientId)
             {
                 return BadRequest();
             }
-
             if (! await OldillnesshistoryExists(oldillnesshistory.IllnessId, oldillnesshistory.PatientId))
             {
                 return NotFound();
-                
+            }
+            if (!await _authorizationService.CanUserAccessPatientData(patientId, this))
+            {
+                return Unauthorized();
             }
 
             try
@@ -76,6 +92,14 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public async Task<ActionResult<Oldillnesshistory>> PostOldillnesshistory(Oldillnesshistory oldillnesshistory)
         {
+            if (!_patientsRepository.Exists(oldillnesshistory.PatientId))
+            {
+                return NotFound();
+            }
+            if (!await _authorizationService.CanUserAccessPatientData(oldillnesshistory.PatientId, this))
+            {
+                return Unauthorized();
+            }
             if (await OldillnesshistoryExists(oldillnesshistory.IllnessId, oldillnesshistory.PatientId))
             {
                 return Conflict(new JsonResult("Old illness history with that name already exists"));
@@ -96,13 +120,17 @@ namespace Lekarzowo.Controllers
 
         // DELETE: api/Oldillnesshistories/5
         [Authorize(Roles = "doctor,admin")]
-        [HttpDelete("{PatientId}/{IlnessId}")]
-        public async Task<ActionResult<Oldillnesshistory>> DeleteOldillnesshistory(decimal PatientId, decimal IlnessId)
+        [HttpDelete("{patientId}/{illnessId}")]
+        public async Task<ActionResult<Oldillnesshistory>> DeleteOldillnesshistory(decimal patientId, decimal illnessId)
         {
-            var oldillnesshistory = await _repository.GetByID(IlnessId, PatientId);
+            var oldillnesshistory = await _repository.GetByID(illnessId, patientId);
             if (oldillnesshistory == null)
             {
                 return NotFound();
+            }
+            if (!await _authorizationService.CanUserAccessPatientData(oldillnesshistory.PatientId, this))
+            {
+                return Unauthorized();
             }
 
             try
@@ -118,9 +146,9 @@ namespace Lekarzowo.Controllers
             return oldillnesshistory;
         }
 
-        private Task<bool> OldillnesshistoryExists(decimal IlnessId, decimal PatientId)
+        private Task<bool> OldillnesshistoryExists(decimal ilnessId, decimal patientId)
         {
-            return _repository.Exists(IlnessId, PatientId);
+            return _repository.Exists(ilnessId, patientId);
         }
     }
 }

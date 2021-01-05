@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lekarzowo.Services;
 
 namespace Lekarzowo.Controllers
 {
@@ -14,13 +15,19 @@ namespace Lekarzowo.Controllers
     public class TreatmentonvisitsController : BaseController
     {
         private readonly ITreatmentsOnVisitRepository _repository;
+        private readonly IVisitsRepository _visitsRepository;
+        private readonly AuthorizationService _authorizationService;
 
-        public TreatmentonvisitsController(ITreatmentsOnVisitRepository repository)
+
+        public TreatmentonvisitsController(ITreatmentsOnVisitRepository repository, IVisitsRepository visitsRepository, AuthorizationService authorizationService)
         {
             _repository = repository;
+            _visitsRepository = visitsRepository;
+            _authorizationService = authorizationService;
         }
 
         // GET: api/Treatmentonvisits
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Treatmentonvisit>>> GetTreatmentonvisit()
         {
@@ -37,6 +44,10 @@ namespace Lekarzowo.Controllers
             {
                 return NotFound();
             }
+            if (! await _authorizationService.CanUserAccessVisit(treatmentonvisit.VisitId, this))
+            {
+                return Unauthorized();
+            }
 
             return treatmentonvisit;
         }
@@ -45,6 +56,15 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> PerformedTreatments(decimal visitId, int? limit, int? skip)
         {
+            if (!_visitsRepository.Exists(visitId))
+            {
+                return NotFound();
+            }
+            if (! await _authorizationService.CanUserAccessVisit(visitId, this))
+            {
+                return Unauthorized();
+            }
+
             return Ok(await _repository.PerformedTreatments(visitId, limit, skip));
         }
 
@@ -60,6 +80,11 @@ namespace Lekarzowo.Controllers
             if (!TreatmentonvisitExists(id))
             {
                 return NotFound();
+            }
+            var visit = _visitsRepository.GetByID(treatmentonvisit.VisitId);
+            if (! await _authorizationService.CanUserAccessPatientData(visit.Reservation.PatientId, this))
+            {
+                return Unauthorized();
             }
 
             try
@@ -80,11 +105,16 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public async Task<ActionResult<Treatmentonvisit>> PostTreatmentonvisit(Treatmentonvisit treatmentonvisit)
         {
-            //TODO: poprawić sprawdzanie po zawartości, albo wcale.
-            //if (TreatmentonvisitExists(treatmentonvisit.Id))
-            //{
-            //    return Conflict("That treatment on visit already exists");
-            //} 
+            var visit = _visitsRepository.GetByID(treatmentonvisit.VisitId);
+            if (visit == null)
+            {
+                return NotFound();
+            }
+            if (! await _authorizationService.CanUserAccessPatientData(visit.Reservation.PatientId, this))
+            {
+                return Unauthorized();
+            }
+
             try
             {
                 _repository.Insert(treatmentonvisit);
@@ -107,6 +137,11 @@ namespace Lekarzowo.Controllers
             if (treatmentonvisit == null)
             {
                 return NotFound();
+            }
+            var visit = _visitsRepository.GetByID(treatmentonvisit.VisitId);
+            if (! await _authorizationService.CanUserAccessPatientData(visit.Reservation.PatientId, this))
+            {
+                return Unauthorized();
             }
 
             try

@@ -29,12 +29,12 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
         public async Task<IEnumerable<Oldillnesshistory>> GetAll()
         {
-            return await _context.Oldillnesshistory.ToListAsync();
+            return await _context.Oldillnesshistory.OrderByDescending(x => x.Date).ToListAsync();
         }
 
         public async Task<IEnumerable<Oldillnesshistory>> GetAll(decimal PatientId)
         {
-            return await _context.Oldillnesshistory.Where(x => x.PatientId == PatientId).OrderBy(x => x.Date).ToListAsync();
+            return await _context.Oldillnesshistory.Where(x => x.PatientId == PatientId).OrderByDescending(x => x.Date).ToListAsync();
         }
 
         public async Task<IEnumerable<object>> GetAllSpecificData(decimal PatientId)
@@ -47,7 +47,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                     description = x.Description,
                     diagnoseDate = x.Date,
                     illnessName = x.Illness.Name
-            }).OrderBy(x => x.diagnoseDate).ToListAsync();
+            }).OrderByDescending(x => x.diagnoseDate).ToListAsync();
         }
 
         public async Task<Oldillnesshistory> GetByID(decimal IllnessId, decimal PatientId)

@@ -1,10 +1,10 @@
 ﻿namespace Lekarzowo.Services
 {
-    public class AuthService
+    public class AuthenticationService
     {
         private static readonly int workFactor = 10;
 
-        public AuthService() { }
+        public AuthenticationService() { }
 
         public static string CreateHash(string password)
         {

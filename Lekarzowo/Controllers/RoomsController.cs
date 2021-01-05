@@ -74,13 +74,20 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public async Task<ActionResult<Room>> PostRoom(Room room)
         {
-            //TODO: powinno sprawdzać numer pokoju i lokal, a nie id
-            if (RoomExists(room.Id))
+            if (await _repository.Exists(room))
             {
                 return Conflict(new JsonResult("That room already exists"));
             }
-            _repository.Insert(room);
-            _repository.Save();
+
+            try
+            {
+                _repository.Insert(room);
+                _repository.Save();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                return StatusCode(500, new JsonResult(e.Message));
+            }
 
             return Created("", room);
         }

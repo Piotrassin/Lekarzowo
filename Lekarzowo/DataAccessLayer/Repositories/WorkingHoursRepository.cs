@@ -81,16 +81,16 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
             if (start.HasValue && start.Value.Date > DateTime.Now.Date)
             {
-                query = query.Where(x => x.From >= start.Value.Date);
+                query = query.Where(x => x.From.Date >= start.Value.Date);
             }
             else
             {
-                query = query.Where(x => x.From >= DateTime.Now);
+                query = query.Where(x => x.From.Date >= DateTime.Now.Date);
             }
 
             if (end.HasValue)
             {
-                query = query.Where(x => x.From <= end.Value.Date);
+                query = query.Where(x => x.From.Date <= end.Value.Date);
             }
 
             return query.OrderBy(x => x.From).ToList();

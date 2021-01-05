@@ -99,5 +99,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             IOrderedQueryable<object> orderedQuery = PaginationService<Illness>.SplitAndLimitQueryable(skip, limit, query);
             return await orderedQuery.ToListAsync();
         }
+
     }
 }

@@ -15,7 +15,7 @@ namespace Lekarzowo.Validators
                 .NotEmpty().WithMessage("Pole nie może być puste.")
                 .SetValidator(new BaseIdValidator<Illness>(illnessesRepository, "Choroba nie istnieje."));
 
-            RuleFor(x => x.Patient)
+            RuleFor(x => x.PatientId)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("Pole nie może być puste.")
                 .SetValidator(new BaseIdValidator<Patient>(patientsRepository, "Pacjent nie istnieje."));

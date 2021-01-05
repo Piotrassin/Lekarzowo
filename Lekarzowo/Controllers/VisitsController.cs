@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lekarzowo.DataAccessLayer.Repositories;
+using Lekarzowo.Services;
 
 
 namespace Lekarzowo.Controllers
@@ -21,18 +22,22 @@ namespace Lekarzowo.Controllers
         private readonly ITreatmentsOnVisitRepository _treatmentsOnVisitRepository;
         private readonly IDoctorsRepository _doctorsRepository;
         private readonly IReservationsRepository _reservationsRepository;
-        private static readonly int visitStatusChangeTimeOffsetMinutes = 30;
+        private readonly AuthorizationService _authorizationService;
 
-        public VisitsController(IVisitsRepository repository, ITreatmentsOnVisitRepository treatmentsOnVisitRepository, IDoctorsRepository doctorsRepository, IReservationsRepository reservationsRepository)
+        private const int visitStatusChangeTimeOffsetMinutes = 30;
+
+        public VisitsController(IVisitsRepository repository, ITreatmentsOnVisitRepository treatmentsOnVisitRepository, 
+            IDoctorsRepository doctorsRepository, IReservationsRepository reservationsRepository, AuthorizationService authorizationService)
         {
             _repository = repository;
             _treatmentsOnVisitRepository = treatmentsOnVisitRepository;
             _doctorsRepository = doctorsRepository;
             _reservationsRepository = reservationsRepository;
+            _authorizationService = authorizationService;
         }
 
         // GET: api/Visits
-        [Authorize(Roles = "doctor,admin")]
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Visit>>> GetVisit()
         {
@@ -51,6 +56,11 @@ namespace Lekarzowo.Controllers
                 return NotFound();
             }
 
+            if (! await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
+            {
+                return Unauthorized();
+            }
+
             return visit;
         }
 
@@ -66,6 +76,10 @@ namespace Lekarzowo.Controllers
             if (!VisitExists(id))
             {
                 return NotFound();
+            }
+            if (! await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
+            {
+                return Unauthorized();
             }
 
             //TODO PRZETESOWAĆ
@@ -89,6 +103,15 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public async Task<ActionResult<Visit>> PostVisit(Visit visit)
         {
+            if (!_reservationsRepository.Exists(visit.ReservationId))
+            {
+                return NotFound();
+            }
+            if (! await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
+            {
+                return Unauthorized();
+            }
+
             if (VisitExists(visit.ReservationId))
             {
                 return Conflict(new JsonResult("That visit already exists"));
@@ -118,7 +141,10 @@ namespace Lekarzowo.Controllers
             {
                 return NotFound();
             }
-
+            if (! await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
+            {
+                return Unauthorized();
+            }
             try
             {
                 _repository.Delete(visit);
@@ -137,11 +163,17 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]/{doctorId}")]
         public async Task<IActionResult> OnGoing(decimal doctorId)
         {
+            if (UserIsDoctorAndDoesntHaveAccess(doctorId))
+            {
+                return Unauthorized();
+            }
+
             var visit = await _repository.OnGoingVisit(doctorId);
             if (visit == null)
             {
                 return NotFound();
             }
+
             return Ok(visit);
         }
 
@@ -154,6 +186,10 @@ namespace Lekarzowo.Controllers
             if (visit == null)
             {
                 return NotFound();
+            }
+            if (! await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
+            {
+                return Unauthorized();
             }
 
             if (!await CanVisitBeOpened(visitId))
@@ -170,16 +206,21 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]/{visitId}")]
         public async Task<IActionResult> CanBeOpened(decimal visitId)
         {
-            if(await CanVisitBeOpened(visitId))
+            var visit = _repository.GetByID(visitId);
+            if (visit == null)
+            {
+                return NotFound();
+            }
+            if (!await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
+            {
+                return Unauthorized();
+            }
+
+            if (await CanVisitBeOpened(visitId))
             {
                 return Ok(new JsonResult(true));
             }
             return Ok(new JsonResult(false));
-        }
-
-        private bool VisitExists(decimal id)
-        {
-            return _repository.Exists(id);
         }
 
         private async Task<bool> CanVisitBeOpened(decimal visitId)
@@ -213,5 +254,11 @@ namespace Lekarzowo.Controllers
 
             return sum;
         }
+
+        private bool VisitExists(decimal id)
+        {
+            return _repository.Exists(id);
+        }
+
     }
 }

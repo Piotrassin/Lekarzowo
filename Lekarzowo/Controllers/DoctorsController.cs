@@ -143,8 +143,6 @@ namespace Lekarzowo.Controllers
                 {
                     return BadRequest();
                 }
-                //_repository.Insert(doctor);
-                //_repository.Save();
 
                 transaction.Complete();
             }

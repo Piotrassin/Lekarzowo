@@ -20,7 +20,7 @@ namespace Lekarzowo.Controllers
         private readonly IWorkingHoursRepository _workHoursRepository;
         private readonly IRoomsRepository _roomsRepository;
 
-        public static readonly int chunkSizeMinutes = 15;
+        public const int chunkSizeMinutes = 15;
 
         public ReservationsController(IReservationsRepository repository, 
             IWorkingHoursRepository whRepo, IRoomsRepository roomRepo)
@@ -105,7 +105,7 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public async Task<ActionResult<Reservation>> PostReservation(ReservationDTO input)
         {
-            if (IsPatient() && input.PatientId != GetUserIdFromToken()) return Unauthorized();
+            if (UserIsPatientAndDoesntHaveAccess(input.PatientId)) return Unauthorized();
 
             var room = await FindAvailableRoom(input);
             if (room == null) return BadRequest(new JsonResult("No rooms available in that local."));
@@ -162,7 +162,7 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> RecentByDoctorId(decimal doctorId, DateTime? start, DateTime? end, int? limit, int? skip)
         {
-            if (IsDoctor() && doctorId != GetUserIdFromToken())
+            if (UserIsDoctorAndDoesntHaveAccess(doctorId))
             {
                 return Unauthorized();
             }
@@ -184,7 +184,7 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> UpcomingByDoctorId(decimal doctorId, DateTime? start, DateTime? end, int? limit, int? skip)
         {
-            if (IsDoctor() && doctorId != GetUserIdFromToken())
+            if (UserIsDoctorAndDoesntHaveAccess(doctorId))
             {
                 return Unauthorized();
             }

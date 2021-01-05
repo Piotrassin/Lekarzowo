@@ -20,6 +20,11 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             return await _context.Reservation.Where(x => x.PatientId == patientId).ToListAsync();
         }
 
+        public async Task<bool> PatientAndDoctorHaveCommonReservation(decimal patientId, decimal doctorId)
+        {
+            return await _context.Reservation.AnyAsync(x => x.PatientId == patientId && x.DoctorId == doctorId && x.Canceled == false);
+        }
+
         public async Task<object> GetByIdWithPatientData(decimal reservationId)
         {
             return await _context.Reservation
@@ -67,16 +72,16 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
             if (start.HasValue && start.Value.Date > DateTime.Now.Date)
             {
-                query = query.Where(x => x.Starttime >= start.Value.Date);
+                query = query.Where(x => x.Starttime.Date >= start.Value.Date);
             }
             else
             {
-                query = query.Where(x => x.Starttime >= DateTime.Now);
+                query = query.Where(x => x.Starttime.Date >= DateTime.Now.Date);
             }
 
             if (end.HasValue)
             {
-                query = query.Where(x => x.Starttime <= end.Value.Date);
+                query = query.Where(x => x.Starttime.Date <= end.Value.Date);
             }
 
             return query.OrderBy(x => x.Starttime).ToList();
@@ -101,8 +106,8 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 .Where(x => x.Starttime.Date >= start.Value.Date && x.Endtime.Date <= end.Value.Date);
 
             query = showRecent
-                ? query.Where(x => x.Visit != null && x.Canceled == false)
-                : query.Where(x => x.Visit == null);
+                ? query.Where(x => x.Visit != null && x.Canceled == false).Where(x => x.Starttime < DateTime.Now)
+                : query.Where(x => x.Visit == null).Where(x => x.Starttime.AddMinutes(30) >= DateTime.Now);
 
             var anonymousQuery = query.Select(s => new
             {
@@ -119,15 +124,16 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             });
 
             IOrderedQueryable<object> orderedQuery = showRecent
-                ? anonymousQuery.Where(x => x.reservationStartTime < DateTime.Now).OrderByDescending(x => x.reservationStartTime)
-                : anonymousQuery.Where(x => x.reservationStartTime >= DateTime.Now).OrderBy(x => x.reservationStartTime);
+                ? anonymousQuery.OrderByDescending(x => x.reservationStartTime)
+                : anonymousQuery.OrderBy(x => x.reservationStartTime);
 
             var trimmedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, orderedQuery);
 
             return await trimmedQuery.ToListAsync();
         }
 
-        public async Task<IEnumerable<object>> RecentOrUpcomingByPatientId(decimal patientId, bool showUpcomingInstead, bool hideCanceledReservations, decimal? doctorId, DateTime? from, DateTime? to, int? limit, int? skip)
+        public async Task<IEnumerable<object>> RecentOrUpcomingByPatientId(decimal patientId, bool showUpcomingInstead, 
+            bool hideCanceledReservations, decimal? doctorId, DateTime? from, DateTime? to, int? limit, int? skip)
         {
             var reservationTypeQuery = _context.Reservation
                 .Where(x => x.PatientId == patientId)
@@ -141,8 +147,13 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             }
 
             reservationTypeQuery = showUpcomingInstead
-                ? reservationTypeQuery.Where(x => x.Visit == null)
-                : reservationTypeQuery.Where(x => x.Visit != null);
+                ? reservationTypeQuery
+                    .Where(x => x.Visit == null)
+                    .Where(x => x.Starttime.AddMinutes(30) >= DateTime.Now)
+                : reservationTypeQuery
+                    .Where(x => x.Visit != null)
+                    .Where(x => x.Visit.OnGoing == false)
+                    .Where(x => x.Starttime < DateTime.Now);
 
             var anonymousTypeQuery = reservationTypeQuery.Select(x => new
             {
@@ -165,8 +176,8 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             });
 
             IOrderedQueryable<object> orderedQuery = showUpcomingInstead
-                ? anonymousTypeQuery.Where(x => x.reservationStartTime >= DateTime.Now).OrderBy(x => x.reservationStartTime)
-                : anonymousTypeQuery.Where(x => x.reservationStartTime < DateTime.Now).OrderByDescending(x => x.reservationStartTime);
+                ? anonymousTypeQuery.OrderBy(x => x.reservationStartTime)
+                : anonymousTypeQuery.OrderByDescending(x => x.reservationStartTime);
 
             var trimmedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, orderedQuery);
 
