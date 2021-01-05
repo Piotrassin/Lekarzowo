@@ -2,7 +2,7 @@ import React  from "react"
 import Sidebar from "react-sidebar"
 import './Main.css';
 import AuthService from './authentication/AuthService.js'
-import logo from './Logo.png';
+import logo from './images/Logo.png';
 import addSign from './images/AddSign.svg'
 import zapisy from './images/Zapisy.svg'
 import lekarzSign from './images/LekarzSign.svg'
