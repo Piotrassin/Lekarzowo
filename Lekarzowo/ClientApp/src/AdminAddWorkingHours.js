@@ -54,7 +54,7 @@ onClickLocalSearch(value) {
 
 handleClickAddWorkinghours(event){
   this.setState ({
-    errors: Validation.validateAdminAddWorkingHours(this.state.doctorId, this.state.localId,
+    errors: Validation.validateAdminAddWorkingHours(this.state.doctorSelected, this.state.localSelected,
     this.state.dateStart, this.state.dateEnd, this.state.timeStart, this.state.timeEnd)
   }, () => {
     console.log(this.state.errors);
