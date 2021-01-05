@@ -62,7 +62,16 @@ class AuthService {
         gender: gender,
         pesel: pesel
       })
-    }).then(response => response.json());
+    })
+    .then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
   }
 
   checkifAnyUserData(){
