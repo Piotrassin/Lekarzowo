@@ -1,6 +1,7 @@
-const url = 'https://localhost:5001/api/';
+import MasterService  from  '../services/MasterService.js';
+import Validation from '../helpers/Validation.js';
 
-
+const url = MasterService.url();
 class AuthService {
 
 
@@ -18,12 +19,21 @@ class AuthService {
           "Value": password
         }
       })
-    }).then(response => response.json())
+    })
     .then(response => {
+      MasterService.handleResponseStatus(response);
       if(response.token){
         response.currentRole = response.roles[0];
         localStorage.setItem("userData", JSON.stringify(response));
-        console.log(response.token);
+      }
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.token){
+        response.currentRole = response.roles[0];
+        localStorage.setItem("userData", JSON.stringify(response));
       }
       return response;
     });
