@@ -26,18 +26,19 @@ componentDidMount() {
     .then(response => {
       this.setState({
       illnesses: response.filter(responseObject => responseObject.curedate == null),
-      oldIllnesses: response.filter(responseObject => responseObject.curedate != null)
-      });
-      this.setState({
-        loading: false
+      oldIllnesses: response.filter(responseObject => responseObject.curedate != null),
+      loading: false
       });
     })
     .catch(err => {
+        this.setState({
+          loading: false
+        });
         try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+          this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }catch(erorr){
+          console.log('Missed Reference');
+        };
     });
   });
 
@@ -49,51 +50,50 @@ render() {
       <a className = 'subheader-content-profile'>Choroby Pacjenta</a>
       <a className = 'subheading-content-profile'>Aktualne</a>
       <div className = 'flex-column width-100'>
-      <div className = 'sickness-item'>
-        <div className = 'sickness-item-part part-1'>
+        <div className = 'sickness-item'>
+          <div className = 'sickness-item-part part-1'>
+          </div>
+          <div className = 'sickness-item-part part-2'>
+            <a className = 'table-header'>Choroba</a>
+          </div>
+          <div className = 'sickness-item-part part-3-4'>
+            <a className = 'table-header'>Opis</a>
+          </div>
+          <div className = 'sickness-item-part part-5'>
+            <a className = 'table-header'>Akcje</a>
+          </div>
         </div>
-        <div className = 'sickness-item-part part-2'>
-          <a className = 'table-header'>Choroba</a>
-        </div>
-        <div className = 'sickness-item-part part-3-4'>
-          <a className = 'table-header'>Opis</a>
-        </div>
-        <div className = 'sickness-item-part part-5'>
-          <a className = 'table-header'>Akcje</a>
-        </div>
-      </div>
-      <div className = 'overflow-y-auto' style = {{height: '25vh'}}>
-{this.state.illnesses && this.state.illnesses.map((illness, index ) => (
-    <SicknessItem
-    sickness={illness}
-    history= {this.props.history}
-    />
-  ))}
-  </div>
-
-      </div>
-      <a className = 'subheading-content-profile'>Przebyte</a>
-      <div className = 'flex-column width-100'>
-      <div className = 'sickness-item'>
-        <div className = 'sickness-item-part part-1'>
-        </div>
-        <div className = 'sickness-item-part part-2'>
-          <a className = 'table-header'>Choroba</a>
-        </div>
-        <div className = 'sickness-item-part part-3-4'>
-          <a className = 'table-header'>Opis</a>
-        </div>
-        <div className = 'sickness-item-part part-5'>
-          <a className = 'table-header'>Akcje</a>
-        </div>
-      </div>
-      <div className = 'overflow-y-auto' style = {{height: '25vh'}}>
-      {this.state.oldIllnesses && this.state.oldIllnesses.map((illness, index ) => (
+        <div className = 'overflow-y-auto' style = {{height: '25vh'}}>
+          {this.state.illnesses && this.state.illnesses.map((illness, index ) => (
           <SicknessItem
           sickness={illness}
           history= {this.props.history}
           />
-        ))}
+          ))}
+        </div>
+      </div>
+      <a className = 'subheading-content-profile'>Przebyte</a>
+      <div className = 'flex-column width-100'>
+        <div className = 'sickness-item'>
+          <div className = 'sickness-item-part part-1'>
+          </div>
+          <div className = 'sickness-item-part part-2'>
+            <a className = 'table-header'>Choroba</a>
+          </div>
+          <div className = 'sickness-item-part part-3-4'>
+            <a className = 'table-header'>Opis</a>
+          </div>
+          <div className = 'sickness-item-part part-5'>
+            <a className = 'table-header'>Akcje</a>
+          </div>
+        </div>
+        <div className = 'overflow-y-auto' style = {{height: '25vh'}}>
+          {this.state.oldIllnesses && this.state.oldIllnesses.map((illness, index ) => (
+          <SicknessItem
+          sickness={illness}
+          history= {this.props.history}
+          />
+          ))}
         </div>
       </div>
       <br/>
@@ -103,9 +103,9 @@ render() {
           unmountOnExit
         >
           <LinearProgress />
-          </Fade>
-        </div>
-        <Snackbar ref = {this.state.snackbarRef} />
+        </Fade>
+      </div>
+      <Snackbar ref = {this.state.snackbarRef} />
     </div>
   );
 }
