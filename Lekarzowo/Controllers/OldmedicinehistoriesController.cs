@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,6 @@ using Lekarzowo.Services;
 
 namespace Lekarzowo.Controllers
 {
-    //TODO data również jest częścią klucza głównego
     [Route("api/[controller]")]
     [ApiController]
     public class OldmedicinehistoriesController : BaseController
@@ -28,15 +28,15 @@ namespace Lekarzowo.Controllers
         // GET: api/Oldmedicinehistories
         [Authorize(Roles = "admin")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Oldmedicinehistory>>> GetOldmedicinehistory()
+        public async Task<ActionResult<IEnumerable<Oldmedicinehistory>>> GetOldmedicinehistory(int? limit, int? skip)
         {
-            return Ok(await _repository.GetAll());
+            return Ok(await _repository.GetAll(limit, skip));
         }
 
         // GET: api/Oldmedicinehistories/5/5
         [Authorize(Roles = "patient,doctor,admin")]
         [HttpGet("{patientId}/{medicineId}")]
-        public async Task<ActionResult<Oldmedicinehistory>> GetOldmedicinehistory(decimal patientId, decimal medicineId)
+        public async Task<ActionResult<Oldmedicinehistory>> GetOldmedicinehistory(decimal patientId, decimal medicineId, DateTime date)
         {
             if (!_patientsRepository.Exists(patientId))
             {
@@ -47,7 +47,7 @@ namespace Lekarzowo.Controllers
                 return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
-            var oldmedicinehistory = await _repository.GetByID(medicineId, patientId);
+            var oldmedicinehistory = await _repository.GetByID(medicineId, patientId, date);
 
             if (oldmedicinehistory == null)
             {
@@ -60,13 +60,13 @@ namespace Lekarzowo.Controllers
         // PUT: api/Oldmedicinehistories/5
         [Authorize(Roles = "doctor,admin")]
         [HttpPut("{patientId}/{medicineId}")]
-        public async Task<IActionResult> PutOldmedicinehistory(decimal patientId, decimal medicineId, Oldmedicinehistory oldmedicinehistory)
+        public async Task<IActionResult> PutOldmedicinehistory(decimal patientId, decimal medicineId, DateTime date, Oldmedicinehistory oldmedicinehistory)
         {
-            if (patientId != oldmedicinehistory.PatientId || medicineId != oldmedicinehistory.MedicineId)
+            if (patientId != oldmedicinehistory.PatientId || medicineId != oldmedicinehistory.MedicineId && date != oldmedicinehistory.Date)
             {
                 return BadRequest(BadRequestEmptyJsonResult);
             }
-            if (!await OldmedicinehistoryExists(oldmedicinehistory.MedicineId, oldmedicinehistory.PatientId))
+            if (!await OldmedicinehistoryExists(oldmedicinehistory.MedicineId, oldmedicinehistory.PatientId, oldmedicinehistory.Date))
             {
                 return NotFound(NotFoundEmptyJsonResult);
             }
@@ -74,7 +74,6 @@ namespace Lekarzowo.Controllers
             {
                 return Unauthorized(UnauthorizedEmptyJsonResult);
             }
-
 
             try
             {
@@ -102,7 +101,7 @@ namespace Lekarzowo.Controllers
             {
                 return Unauthorized(UnauthorizedEmptyJsonResult);
             }
-            if (await OldmedicinehistoryExists(oldmedicinehistory.MedicineId, oldmedicinehistory.PatientId))
+            if (await OldmedicinehistoryExists(oldmedicinehistory.MedicineId, oldmedicinehistory.PatientId, oldmedicinehistory.Date))
             {
                 return Conflict();
             }
@@ -123,9 +122,9 @@ namespace Lekarzowo.Controllers
         // DELETE: api/Oldmedicinehistories/5
         [Authorize(Roles = "doctor,admin")]
         [HttpDelete("{patientId}/{medicineId}")]
-        public async Task<ActionResult<Oldmedicinehistory>> DeleteOldmedicinehistory(decimal patientId, decimal medicineId)
+        public async Task<ActionResult<Oldmedicinehistory>> DeleteOldmedicinehistory(decimal patientId, decimal medicineId, DateTime date)
         {
-            var oldmedicinehistory = await _repository.GetByID(medicineId, patientId);
+            var oldmedicinehistory = await _repository.GetByID(medicineId, patientId, date);
             if (oldmedicinehistory == null)
             {
                 return NotFound(NotFoundEmptyJsonResult);
@@ -148,9 +147,9 @@ namespace Lekarzowo.Controllers
             return oldmedicinehistory;
         }
 
-        private Task<bool> OldmedicinehistoryExists(decimal medicineId, decimal patientId)
+        private Task<bool> OldmedicinehistoryExists(decimal medicineId, decimal patientId, DateTime date)
         {
-            return _repository.Exists(medicineId, patientId);
+            return _repository.Exists(medicineId, patientId, date);
         }
     }
 }
