@@ -6,7 +6,6 @@ namespace Lekarzowo.DataAccessLayer.Models
     {
         public Doctor()
         {
-            Referral = new HashSet<Referral>();
             Reservation = new HashSet<Reservation>();
             Workinghours = new HashSet<Workinghours>();
         }
@@ -16,7 +15,6 @@ namespace Lekarzowo.DataAccessLayer.Models
 
         public virtual Person IdNavigation { get; set; }
         public virtual Speciality Speciality { get; set; }
-        public virtual ICollection<Referral> Referral { get; set; }
         public virtual ICollection<Reservation> Reservation { get; set; }
         public virtual ICollection<Workinghours> Workinghours { get; set; }
     }

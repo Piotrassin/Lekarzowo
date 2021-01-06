@@ -24,7 +24,6 @@ namespace Lekarzowo.DataAccessLayer.Models
         public virtual DbSet<Oldmedicinehistory> Oldmedicinehistory { get; set; }
         public virtual DbSet<Patient> Patient { get; set; }
         public virtual DbSet<Person> Person { get; set; }
-        public virtual DbSet<Referral> Referral { get; set; }
         public virtual DbSet<Reservation> Reservation { get; set; }
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<Room> Room { get; set; }
@@ -412,59 +411,6 @@ namespace Lekarzowo.DataAccessLayer.Models
                 entity.Property(e => e.Pesel)
                     .HasColumnName("PESEL")
                     .HasColumnType("VARCHAR2(11)");
-            });
-
-            modelBuilder.Entity<Referral>(entity =>
-            {
-                entity.ToTable("REFERRAL");
-
-                entity.HasIndex(e => e.Id)
-                    .HasName("REFERRAL_PK")
-                    .IsUnique();
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .HasColumnType("NUMBER(38)")
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(e => e.Dateofissue)
-                    .HasColumnName("DATEOFISSUE")
-                    .HasColumnType("DATE");
-
-                entity.Property(e => e.Description)
-                    .IsRequired()
-                    .HasColumnName("DESCRIPTION")
-                    .HasColumnType("VARCHAR2(511)");
-
-                entity.Property(e => e.DoctorId)
-                    .HasColumnName("DOCTOR_ID")
-                    .HasColumnType("NUMBER(38)");
-
-                entity.Property(e => e.PatientId)
-                    .HasColumnName("PATIENT_ID")
-                    .HasColumnType("NUMBER(38)");
-
-                entity.Property(e => e.TreatmentId)
-                    .HasColumnName("TREATMENT_ID")
-                    .HasColumnType("NUMBER(38)");
-
-                entity.HasOne(d => d.Doctor)
-                    .WithMany(p => p.Referral)
-                    .HasForeignKey(d => d.DoctorId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("REFERRAL_DOCTOR");
-
-                entity.HasOne(d => d.Patient)
-                    .WithMany(p => p.Referral)
-                    .HasForeignKey(d => d.PatientId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("REFERRAL_PATIENT");
-
-                entity.HasOne(d => d.Treatment)
-                    .WithMany(p => p.Referral)
-                    .HasForeignKey(d => d.TreatmentId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("REFERRAL_TREATMENT");
             });
 
             modelBuilder.Entity<Reservation>(entity =>

@@ -9,7 +9,6 @@ namespace Lekarzowo.DataAccessLayer.Models
         {
             Oldillnesshistory = new HashSet<Oldillnesshistory>();
             Oldmedicinehistory = new HashSet<Oldmedicinehistory>();
-            Referral = new HashSet<Referral>();
             Reservation = new HashSet<Reservation>();
         }
 
@@ -18,7 +17,6 @@ namespace Lekarzowo.DataAccessLayer.Models
         public virtual Person IdNavigation { get; set; }
         public virtual ICollection<Oldillnesshistory> Oldillnesshistory { get; set; }
         public virtual ICollection<Oldmedicinehistory> Oldmedicinehistory { get; set; }
-        public virtual ICollection<Referral> Referral { get; set; }
         public virtual ICollection<Reservation> Reservation { get; set; }
     }
 }
