@@ -857,6 +857,23 @@ class AdminService {
     });
   }
 
+  getAlllUserRoles(){
+    return fetch(url + 'People/WithRoles', {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
+      return response;
+    });
+  }
+
   getWorkinghours(search, limit, skip, idObject){
     if (search === undefined)
     {

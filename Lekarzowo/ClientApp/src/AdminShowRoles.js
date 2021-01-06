@@ -4,7 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import Snackbar from './helpers/Snackbar.js';
 import Validation from './helpers/Validation.js';
 
-class AdminShowDoctors extends React.Component {
+class AdminShowRoles extends React.Component {
 constructor(props){
   super(props);
   this.state = {
@@ -23,8 +23,9 @@ showList() {
   this.setState({
     loading: true
   });
-  AdminService.getAllDoctors()
+  AdminService.getAlllUserRoles()
   .then(response => {
+
     this.setState({
       list: response,
       loading: false
@@ -41,21 +42,15 @@ showList() {
 render() {
   return(
     <div className = 'admin-content-holder flex-column' >
-      <a className = 'subheader-content-profile'>Lista Doktorów</a>
+      <a className = 'subheader-content-profile'>Lista Ról użytkowników</a>
       <div className = 'flex-column width-100'>
         <div className = 'flex-column width-100'>
           <div className = 'sickness-item'>
-            <div className = 'sickness-item-part part-1'>
-              <a className = 'table-header'>Imię</a>
-            </div>
-            <div className = 'sickness-item-part part-2'>
-              <a className = 'table-header'>Nazwisko</a>
-            </div>
-            <div className = 'sickness-item-part part-3'>
-              <a className = 'table-header'>Email</a>
+            <div className = 'sickness-item-part part-1-2-3'>
+              <a className = 'table-header'>Użytkownik</a>
             </div>
             <div className = 'sickness-item-part part-4-5'>
-              <a className = 'table-header'>Specjalizacja</a>
+              <a className = 'table-header'>Rola</a>
             </div>
           </div>
           {this.state.loading == true ?
@@ -69,18 +64,14 @@ render() {
           }
           {this.state.list && this.state.list.map((object, index ) => (
             <div className = 'sickness-item'>
-              <div className = 'sickness-item-part part-1'>
-                <a>{object.person.name}</a>
-              </div>
-              <div className = 'sickness-item-part part-2'>
-                <a>{object.person.lastname}</a>
-              </div>
-              <div className = 'sickness-item-part part-3'>
-                <a>{object.person.email}</a>
-              </div>
-              <div className = 'sickness-item-part part-4-5'>
-                <a>{object.speciality.name}</a>
-              </div>
+            <div className = 'sickness-item-part part-1-2-3'>
+              <a>{object.name} {object.lastname}</a>
+            </div>
+            <div className = 'sickness-item-part part-4-5'>
+              {object.userroles.map((role, index) => (
+                <a>{role.roleName} </a>
+              ))}
+            </div>
             </div>
           ))}
         </div>
@@ -91,4 +82,4 @@ render() {
 }
 
 }
-export default AdminShowDoctors;
+export default AdminShowRoles;

@@ -5,7 +5,7 @@ import Snackbar from './helpers/Snackbar.js';
 import Validation from './helpers/Validation.js';
 import AdminAddRole from './AdminAddRole.js';
 import AdminDeleteRole from './AdminDeleteRole.js';
-import AdminDeleteTreatment from './AdminDeleteTreatment.js';
+import AdminShowRoles from './AdminShowRoles.js';
 
 class AdminRoles extends React.Component {
 constructor(props){
@@ -31,6 +31,9 @@ showContent(){
     case 'delete':
       return <AdminDeleteRole />
       break;
+    case 'show':
+      return <AdminShowRoles />
+      break;
 
   }
 }
@@ -52,6 +55,11 @@ render() {
         'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
         name = 'delete' onClick = {this.handleClickBtn}>
         Usuń
+        </button>
+        <button className = {this.state.currentPage == 'show' ?
+        'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
+        name = 'show' onClick = {this.handleClickBtn}>
+        Lista
         </button>
       </div>
       {this.showContent()}
