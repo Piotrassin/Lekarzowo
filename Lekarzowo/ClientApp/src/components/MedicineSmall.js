@@ -12,7 +12,6 @@ class MedicineSmall extends React.Component {
         <img className = "medicine-image" src = {this.props.image} style={{width: '40px'}}/>
         <div className = "container-medicine-text">
           <b className = "small-white margin-top-small">{this.props.medicineName}</b>
-          <b className = "smaller-dashed margin-top-small">{this.props.dose}</b>
         </div>
       </div>
     );
