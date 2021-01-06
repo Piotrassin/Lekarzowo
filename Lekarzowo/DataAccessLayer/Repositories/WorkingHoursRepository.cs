@@ -111,16 +111,23 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 
         public async Task<IEnumerable<object>> AutoCompleteInfo(string date, decimal? doctorId, decimal? localId, int? limit, int? skip)
         {
-            return await _context.Workinghours
+            var query = _context.Workinghours
                 .Where(x => !doctorId.HasValue || x.DoctorId == doctorId)
                 .Where(x => !localId.HasValue || x.LocalId == localId)
                 .Where(x => date == null || x.From.Date.ToString().Contains(date))
+                .OrderBy(x => x.From)
                 .Select(x => new
                 {
                     id = x.Id,
-                    name = x.Doctor.IdNavigation.Name + " " + x.Doctor.IdNavigation.Lastname + " " + x.Local.Name + " " + x.From.Date
-                })
-                .ToListAsync();
+                    name = x.Doctor.IdNavigation.Name
+                           + " " + x.Doctor.IdNavigation.Lastname
+                           + " " + x.Local.Name
+                           + " " + x.From.Date
+                });
+
+            var trimmedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, (IOrderedQueryable<object>) query);
+
+            return await trimmedQuery.ToListAsync();
         }
 
         public async Task<bool> Exists(Workinghours wh)
