@@ -5,6 +5,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import UserService from  '../services/UserService.js';
 import { makeStyles } from '@material-ui/core/styles';
+import _ from 'lodash';
 
 const useStyles = makeStyles((theme) => ({
   label: {
@@ -45,21 +46,24 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Asynchronous(props) {
   const [def, setDef] = React.useState(null);
+  const [defAuto, setDefAuto] = React.useState(null);
   const [touched, setTouched] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const [requesting, setRequesting] = React.useState(true);
+  const [origOptions, setOrigOptions] = React.useState([]);
   const loading = open && requesting;
   const classes = useStyles();
 
-  async function handleInputChange(event) {
-    //setRequesting(true);
+  const delayedQuery = React.useCallback(_.debounce(q => sendQuery(q), 1000), []);
+
+  async function sendQuery(value){
     if(props.addId != undefined){
-      var requestOptions = (await props.requestCallback(event.target.value, 8, 0, props.addId).catch(err => {
+      var requestOptions = (await props.requestCallback(value, 8, 0, props.addId).catch(err => {
         setOptions([]);
       }));
     }else {
-      var requestOptions = (await props.requestCallback(event.target.value, 8).catch(err => {
+      var requestOptions = (await props.requestCallback(value, 8).catch(err => {
         setOptions([]);
 
       }));
@@ -83,6 +87,12 @@ export default function Asynchronous(props) {
 
   }
 
+  async function handleInputChange(event) {
+    //setRequesting(true);
+    delayedQuery(event.target.value);
+
+  }
+
   function onChangeAutoComplete(event, value) {
     if(value != null){
       props.changeCallback(value);
@@ -90,7 +100,7 @@ export default function Asynchronous(props) {
     }else {
       props.changeCallback("");
     }
-    setDef(value);
+    setDefAuto(value);
     setTouched(true);
 
   }
@@ -127,6 +137,7 @@ export default function Asynchronous(props) {
         }, {});
         if (active) {
           setOptions(Object.keys(requestOptions).map((key) => requestOptions[key]));
+          setOrigOptions(Object.keys(requestOptions).map((key) => requestOptions[key]));
         }else {
           setOptions([]);
         }
@@ -149,7 +160,7 @@ export default function Asynchronous(props) {
     if(props.selectedCustomValue && props.selectedCustomValue != null && touched == false){
       const customTab = [props.selectedCustomValue];
       setOptions(customTab);
-      setDef(customTab[0]);
+      setDefAuto(customTab[0]);
     }
     if (!open) {
       //setOptions([]);
@@ -170,6 +181,9 @@ export default function Asynchronous(props) {
         setOpen(true);
       }}
       onClose={() => {
+        if(defAuto == null || defAuto == ""){
+          setOptions(origOptions);
+        }
         setOpen(false);
       }}
       onChange = {onChangeAutoComplete}
@@ -177,7 +191,7 @@ export default function Asynchronous(props) {
       getOptionLabel={(option) => option.name}
       options={options}
       loading={loading}
-      value={def}
+      value={defAuto}
       renderInput={(params) => (
         <TextField
           {...params}
