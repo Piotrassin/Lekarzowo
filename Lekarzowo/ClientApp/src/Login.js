@@ -59,7 +59,8 @@ class Login extends React.Component {
       }else {
         AuthService.login(this.state.email, this.state.password).then(
           response => {
-              switch(response.currentRole.roleName){
+            console.log(response.currentRole);
+              switch(response.currentRole){
                 case 'doctor':
                   this.props.history.push('/dashboardDoctor');
                   break;
@@ -70,7 +71,7 @@ class Login extends React.Component {
                   this.props.history.push('/adminPanel');
                   break;
               }
-              window.location.reload();
+              //window.location.reload();
           })
           .catch(err => {
               try{

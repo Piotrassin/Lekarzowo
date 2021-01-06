@@ -12,7 +12,7 @@ import Sidebar from "react-sidebar";
 import AuthService from './authentication/AuthService.js'
 import './Main.css';
 
-const currentUserRole = AuthService.getUserCurrentRole();
+
 class Menu extends React.Component {
   constructor(props){
     super(props);
@@ -24,6 +24,7 @@ class Menu extends React.Component {
     this.onDoctorClick = this.onDoctorClick.bind(this);
     this.onAdminPanelClick = this.onAdminPanelClick.bind(this);
     this.onDashboardClick = this.onDashboardClick.bind(this);
+    this.currentUserRole = AuthService.getUserCurrentRole();
     this.state = {
       sidebarOpen: true
     }
@@ -59,7 +60,7 @@ class Menu extends React.Component {
   }
 
   onDashboardClick(event) {
-    if(currentUserRole == 'doctor'){
+    if(this.currentUserRole == 'doctor'){
         this.props.history.push('/dashboardDoctor')
     }else {
         this.props.history.push('/')
@@ -77,7 +78,7 @@ class Menu extends React.Component {
           <div className = "side-menu">
             <img src = {logo} className = "imge" style = {{marginTop: '10px'}}/>
             <div className = "icons">
-              {(currentUserRole == 'doctor' || currentUserRole == 'patient') ?
+              {(this.currentUserRole == 'doctor' || this.currentUserRole == 'patient') ?
               <div className = "menu-element" onClick={this.onDashboardClick}>
                 <img src = {mapIcon} className = "addSign" style = {{width: 35}} />
                 <a>Główna</a>
@@ -85,7 +86,7 @@ class Menu extends React.Component {
               :
               <div/>
               }
-              {currentUserRole == 'admin' ?
+              {this.currentUserRole == 'admin' ?
               <div className = "menu-element" onClick={this.onAdminPanelClick}>
                 <img src = {settingsIcon} className = "addSign" style = {{width: 30}} />
                 <a>Panel</a>
@@ -93,7 +94,7 @@ class Menu extends React.Component {
               :
               <div/>
               }
-              {(currentUserRole == 'patient') ?
+              {(this.currentUserRole == 'patient') ?
               <div className = "menu-element" onClick={this.onAddClick}>
                 <img src = {addSign} className = "addSign" style = {{width: 25}} />
                 <a>Dodaj</a>
@@ -101,7 +102,7 @@ class Menu extends React.Component {
               :
               <div/>
               }
-              {(currentUserRole == 'doctor' || currentUserRole == 'patient')  ?
+              {(this.currentUserRole == 'doctor' || this.currentUserRole == 'patient')  ?
               <div className = "menu-element" onClick={this.onVisitsClick}>
                 <img src = {zapisy} className = "addSign" style = {{width: 25}} />
                 <a>Wizyty</a>

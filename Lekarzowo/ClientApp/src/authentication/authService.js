@@ -22,10 +22,7 @@ class AuthService {
     })
     .then(response => {
       MasterService.handleResponseStatus(response);
-      if(response.token){
-        response.currentRole = response.roles[0];
-        localStorage.setItem("userData", JSON.stringify(response));
-      }
+      
       return response.json()
     }).then(response => {
       if(response.status && response.status == 400){
