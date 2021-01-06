@@ -372,11 +372,11 @@ class VisitService {
 
   putDescriptionOnVisit(visitId, description){
     var patientId = JSON.parse(AuthService.getLoggedUser()).id;
-    return fetch(url + 'Visits/' + visitId, {
-    method: 'PUT',
+    return fetch(url + 'visits/descriptiononly/' + visitId, {
+    method: 'PATCH',
     headers: authHeader({'Content-Type': 'application/json'}),
     body: JSON.stringify({
-      "ReservationId": visitId,
+      "id": visitId,
       "Description": description
     })
     }).then(response => {
