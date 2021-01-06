@@ -151,7 +151,7 @@ namespace Lekarzowo
                 .AddDbContext<ModelContext>(options =>
                 {
                     options.UseOracle(Configuration.GetConnectionString("pjatkConnection"));
-                    //options.UseOracle(Configuration.GetConnectionString("selfHostedConnection"));
+                  //options.UseOracle(Configuration.GetConnectionString("selfHostedConnection"));
                 });
         }
 

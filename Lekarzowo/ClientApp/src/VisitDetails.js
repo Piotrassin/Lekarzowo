@@ -147,10 +147,37 @@ class VisitDetails extends React.Component {
         })
 
 
-        this.getVisit();
-        this.getSicknessOnVisit();
-        this.getTreatmentOnVisit();
-        this.getMedicineOnVisit();
+        this.getVisit()
+        .then(response => {
+          this.getSicknessOnVisit();
+          this.getTreatmentOnVisit();
+          this.getMedicineOnVisit();
+        })
+        .catch(err => {
+          console.log('Error');
+          console.log(err);
+          if(err.message == 404){
+            console.log('Visit does not exist');
+            VisitService.canVisitBeOpened(this.state.id)
+            .then(response => {
+              if(response == true){
+                this.setState({
+                  showVisitStateBtn: true
+                });
+              }else {
+                this.setState({
+                  showVisitStateBtn: false
+                });
+              }
+
+            })
+            .catch(err => {
+              console.log(err.message);
+            });
+
+          }
+        });
+
         console.log('Array illness history');
         console.log(this.state.sicknessHistory);
       }
@@ -268,7 +295,7 @@ class VisitDetails extends React.Component {
   }
 
   getVisit(){
-    ReservationService.getVisitDetails(this.state.id)
+    return ReservationService.getVisitDetails(this.state.id)
     .then(response => {
       this.setState({
         description: response.description,
@@ -285,18 +312,9 @@ class VisitDetails extends React.Component {
           showVisitStateBtn: false
         });
       }
-
+      return response;
     })
-    .catch(err => {
-      console.log('Error');
-    console.log(err);
-      if(err.message == 404){
-        console.log('Visit does not exist');
-        this.setState({
-          showVisitStateBtn: true
-        });
-      }
-    });
+
   }
 
   getSicknessOnVisit(){
