@@ -46,9 +46,9 @@ namespace Lekarzowo.Controllers
         // GET: api/Doctors/5
         [AllowAnonymous]
         [HttpGet("{id}")]
-        public ActionResult<Doctor> Single(decimal id)
+        public async Task<ActionResult<Doctor>> Single(decimal id)
         {
-            var doctor = _repository.GetByID(id);
+            var doctor = await _repository.GetByIdWithSpecialization(id);
 
             if (doctor == null)
             {

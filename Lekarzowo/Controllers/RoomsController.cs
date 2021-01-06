@@ -42,6 +42,14 @@ namespace Lekarzowo.Controllers
             return room;
         }
 
+        // GET: api/Rooms/AllByRoomNumber?localId=1&roomNumber=110
+        [Authorize(Roles = "doctor,admin")]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Room>>> AllByRoomNumber(decimal localId, decimal? roomNumber)
+        {
+            return Ok(await _repository.AllByRoomNumber(localId, roomNumber));
+        }
+
         // PUT: api/Rooms/5
         [Authorize(Roles = "admin")]
         [HttpPut("{id}")]

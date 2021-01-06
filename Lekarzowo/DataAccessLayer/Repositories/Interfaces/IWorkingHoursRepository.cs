@@ -65,5 +65,12 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// <param name="newHours"></param>
         /// <returns></returns>
         Task<IEnumerable<Workinghours>> IsWorkingHourOverlapping(Workinghours newHours);
+
+        /// <summary>
+        /// Returns two columns: id with workingHoursId and name with concatenated doctor name, doctors lastname, locals name and workingHours starting DateTime (date only)
+        /// </summary>
+        /// <param name="workingHoursId"></param>
+        /// <returns></returns>
+        Task<IEnumerable<object>> AutoCompleteInfo(string date, decimal? doctorId, decimal? localId, int? limit, int? skip);
     }
 }

@@ -1,11 +1,11 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Lekarzowo.Controllers
 {
@@ -37,9 +37,9 @@ namespace Lekarzowo.Controllers
 
         // GET: api/Locals/5
         [HttpGet("{id}")]
-        public ActionResult<Local> GetLocal(decimal id)
+        public async Task<ActionResult<Local>> GetLocal(decimal id)
         {
-            var local = _repository.GetByID(id);
+            var local = await _repository.GetByIdWithCity(id);
 
             if (local == null)
             {
@@ -62,11 +62,6 @@ namespace Lekarzowo.Controllers
             if (!LocalExists(local.Id))
             {
                 return NotFound(new JsonResult(""));
-            }
-
-            if (_repository.Exists(local.Name))
-            {
-                return Conflict(new JsonResult("Local with that name already exists"));
             }
 
             try

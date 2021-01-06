@@ -46,6 +46,18 @@ namespace Lekarzowo.Controllers
             return workinghours;
         }
 
+        // GET: api/Workinghours/allbyname
+        [Authorize(Roles = "admin")]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Workinghours>>> AllByName(string date, decimal? doctorId, decimal? localId, int? limit, int? skip)
+        {
+            //if (date == null)
+            //{
+            //    return BadRequest(new JsonResult(""));
+            //}
+            return Ok(await _repository.AutoCompleteInfo(date, doctorId, localId, limit, skip));
+        }
+
         // GET: api/workinghours/DoctorsWorkplacesByName?doctorId=1
         [Authorize]
         [HttpGet("[action]")]
