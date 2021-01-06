@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lekarzowo.DataAccessLayer.DTO;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.Services;
 
@@ -82,8 +83,43 @@ namespace Lekarzowo.Controllers
                 return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
+            var visitFromDb = _repository.GetByID(id);
             visit.Price = await UpdateVisitPrice(visit.ReservationId);
-            
+            visit.OnGoing = visitFromDb.OnGoing;
+            try
+            {
+                _repository.Update(visit);
+                _repository.Save();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
+            }
+
+            return Ok(OkEmptyJsonResult);
+        }
+
+        // PATCH: api/Visits/DescriptionOnly/5
+        [Authorize(Roles = "doctor,admin")]
+        [HttpPatch("[action]/{id}")]
+        public async Task<IActionResult> DescriptionOnly(decimal id, VisitDescriptionOnlyDTO visitDescDTO)
+        {
+            if (id != visitDescDTO.Id)
+            {
+                return BadRequest(BadRequestEmptyJsonResult);
+            }
+            if (!VisitExists(id))
+            {
+                return NotFound(NotFoundEmptyJsonResult);
+            }
+            if (! await _authorizationService.CanUserAccessVisit(visitDescDTO.Id, this))
+            {
+                return Unauthorized(UnauthorizedEmptyJsonResult);
+            }
+
+            var visit = _repository.GetByID(id);
+            visit.Description = visitDescDTO.Description;
+
             try
             {
                 _repository.Update(visit);
@@ -198,7 +234,17 @@ namespace Lekarzowo.Controllers
             }
 
             visit.OnGoing = isOnGoing;
-            return await PutVisit(visitId, visit);
+            try
+            {
+                _repository.Update(visit);
+                _repository.Save();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
+            }
+
+            return Ok(OkEmptyJsonResult);
         }
 
         // GET: api/Visits/CanBeOpened/5

@@ -47,7 +47,7 @@ namespace Lekarzowo.Controllers
         [HttpGet("{reservationId}")]
         public async Task<ActionResult<Reservation>> GetReservation(decimal reservationId)
         {
-            if (await _authorizationService.CanUserAccessVisit(reservationId, this)) return Unauthorized(UnauthorizedEmptyJsonResult);
+            if (! await _authorizationService.CanUserAccessVisit(reservationId, this)) return Unauthorized(UnauthorizedEmptyJsonResult);
 
             var reservation = await _repository.GetByID(reservationId);
 
@@ -63,7 +63,7 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]/{reservationId}")]
         public async Task<ActionResult<object>> WithPatientData(decimal reservationId)
         {
-            if (await _authorizationService.CanUserAccessVisit(reservationId, this)) return Unauthorized(UnauthorizedEmptyJsonResult);
+            if (! await _authorizationService.CanUserAccessVisit(reservationId, this)) return Unauthorized(UnauthorizedEmptyJsonResult);
 
             var reservation = await _repository.GetByIdWithPatientData(reservationId);
 
@@ -71,16 +71,10 @@ namespace Lekarzowo.Controllers
             {
                 return NotFound(NotFoundEmptyJsonResult);
             }
+
             return reservation;
         }
 
-
-        /// <summary>
-        /// TODO: ZROBIĆ WALIDACJĘ
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="reservation"></param>
-        /// <returns></returns>
         // PUT: api/Reservations/5
         [Authorize]
         [HttpPut("{id}")]
@@ -88,7 +82,7 @@ namespace Lekarzowo.Controllers
         {
             if (!_repository.Exists(id)) return NotFound(NotFoundEmptyJsonResult);
             if (id != reservation.Id) return BadRequest(BadRequestEmptyJsonResult);
-            if(await _authorizationService.CanUserAccessVisit(id, this)) return Unauthorized(UnauthorizedEmptyJsonResult);
+            if(! await _authorizationService.CanUserAccessVisit(id, this)) return Unauthorized(UnauthorizedEmptyJsonResult);
 
             try
             {
@@ -141,7 +135,9 @@ namespace Lekarzowo.Controllers
         public async Task<ActionResult<Reservation>> DeleteReservation(decimal id)
         {
             var reservation = await _repository.GetByID(id);
+
             if (reservation == null) return NotFound(NotFoundEmptyJsonResult);
+            if(! await _authorizationService.CanUserAccessVisit(id, this)) return Unauthorized(UnauthorizedEmptyJsonResult);
             if (reservation.Visit != null && reservation.Visit.OnGoing) return BadRequest(BadRequestJsonResult("Na tej rezerwacji odbywa się właśnie wizyta."));
 
             try
@@ -273,7 +269,7 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]/{reservationId}")]
         public async Task<IActionResult> Cancel(decimal reservationId)
         {
-            if (await IsPatientAccessingDataOwnedByOtherUser(reservationId)) return Unauthorized(UnauthorizedEmptyJsonResult);
+            if (! await _authorizationService.CanUserAccessVisit(reservationId, this)) return Unauthorized(UnauthorizedEmptyJsonResult);
 
             var result = await GetReservation(reservationId);
             if (result.Value == null)
