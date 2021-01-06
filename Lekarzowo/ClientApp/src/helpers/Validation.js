@@ -193,6 +193,9 @@ class Validation {
     this.addErrorToObject(errorObject, 'Miasto', this.validateBlankNumber(cityId));
     //this.addErrorToObject(errorObject, 'Doktor', this.validateBlank(doctorId));
     this.addErrorToObject(errorObject, 'Specjalizacja', this.validateBlankNumber(specId));
+    this.addErrorToObject(errorObject, 'Data Od', this.validateDateBeforeCustom(dateStart));
+    this.addErrorToObject(errorObject, 'Data Do', this.validateDateBefore(dateEnd));
+
 
 
     return errorObject;
@@ -293,6 +296,27 @@ class Validation {
     var validationResult = (new Date(input) >= new Date());
     if(validationResult){
       return " nie może być późniejsza niż dzisiejsza data";
+    }
+    return validationResult;
+  }
+
+  validateDateBefore(input){
+
+
+    var validationResult = ((new Date(input)).getDay() < (new Date()).getDay()) || ((new Date(input)).getMonth() < (new Date()).getMonth()) || ((new Date(input)).getYear() < (new Date()).getYear());
+    if(validationResult){
+      return " nie może być wcześniejsza niż dzisiejsza data";
+    }
+    return validationResult;
+  }
+
+  validateDateBeforeCustom(input){
+    var date = new Date(input);
+    date.setDate(date.getDate() + 1);
+
+    var validationResult = ((date).getDay() < (new Date()).getDay()) || ((date).getMonth() < (new Date()).getMonth()) || ((date).getYear() < (new Date()).getYear());
+    if(validationResult){
+      return " nie może być wcześniejsza niż dzisiejsza data";
     }
     return validationResult;
   }
