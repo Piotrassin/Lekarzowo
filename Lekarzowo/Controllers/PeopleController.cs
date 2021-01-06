@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 
 namespace Lekarzowo.Controllers
 {
@@ -20,22 +21,33 @@ namespace Lekarzowo.Controllers
     {
         private readonly IJWTService _jwtService;
         private readonly ICustomUserRolesService _customUserRolesService;
+        private readonly IStandardUserRolesRepository _standardUserRolesRepository;
+
 
         private readonly IPeopleRepository _repository;
 
-        public PeopleController(IPeopleRepository repository, IJWTService jwtService, ICustomUserRolesService urolesService)
+        public PeopleController(IPeopleRepository repository, IJWTService jwtService, IStandardUserRolesRepository standardUserRolesRepository, ICustomUserRolesService urolesService)
         {
             _jwtService = jwtService;
             _repository = repository;
             _customUserRolesService = urolesService;
+            _standardUserRolesRepository = standardUserRolesRepository;
         }
 
-        // GET: api/People/AllByPatientId
+        // GET: api/People/All
         [Authorize(Roles = "admin")]
         [HttpGet("[action]")]
-        public ActionResult<IEnumerable<Person>> All()
+        public ActionResult<IEnumerable<object>> All()
         {
             return Ok(_repository.GetAll());
+        }
+
+        // GET: api/People/WithRoles?limit=20&skip=0
+        [Authorize(Roles = "admin")]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> WithRoles(int? limit, int? skip)
+        {
+            return Ok(await _repository.GetAllWithRoles(limit, skip));
         }
 
         // GET: api/People/AllByName?Name=abc&limit=0&skip=0
@@ -142,7 +154,7 @@ namespace Lekarzowo.Controllers
         public ActionResult<Person> ChangePassword(PersonChangePasswordDTO current, decimal? userId)
         {
             var id = GetIdFromProperSource(userId);
-            if (id <= 1)
+            if (id < 1)
             {
                 return BadRequest(BadRequestEmptyJsonResult);
             }

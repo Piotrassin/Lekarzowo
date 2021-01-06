@@ -9,6 +9,7 @@ using Lekarzowo.Services;
 
 namespace Lekarzowo.Controllers
 {
+    //TODO data również jest częścią klucza głównego
     [Route("api/[controller]")]
     [ApiController]
     public class OldmedicinehistoriesController : BaseController

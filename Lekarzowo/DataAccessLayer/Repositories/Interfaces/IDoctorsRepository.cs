@@ -8,6 +8,13 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     public interface IDoctorsRepository : IBaseIdRepository<Doctor>
     {
         /// <summary>
+        /// Returns doctor data with included shortened person and specialization info
+        /// </summary>
+        /// <param name="doctorId"></param>
+        /// <returns></returns>
+        Task<IEnumerable<object>> GetAllWithPersonAndSpecializationData(int? limit, int? skip);
+        
+        /// <summary>
         /// Returns basic contact data for a given doctor
         /// </summary>
         /// <param name="doctorId"></param>

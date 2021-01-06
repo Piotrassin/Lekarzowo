@@ -7,6 +7,14 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
     public interface IRoomsRepository : IBaseIdRepository<Room>
     {
         /// <summary>
+        /// Returns basic data from room and local objects.
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="skip"></param>
+        /// <returns></returns>
+        Task<IEnumerable<object>> GetAllWithLocalData(int? limit, int? skip);
+
+        /// <summary>
         /// Returns all rooms with a given LocalId.
         /// </summary>
         /// <param name="LocalId"></param>

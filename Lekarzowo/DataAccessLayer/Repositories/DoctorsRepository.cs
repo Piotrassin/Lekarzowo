@@ -11,6 +11,29 @@ namespace Lekarzowo.DataAccessLayer.Repositories
     {
         public DoctorsRepository(ModelContext context) : base(context) {}
 
+        public async Task<IEnumerable<object>> GetAllWithPersonAndSpecializationData(int? limit, int? skip)
+        {
+            var query = _context.Doctor.Select(x => new
+            {
+                id = x.Id,
+                speciality = new
+                {
+                    id = x.SpecialityId,
+                    name = x.Speciality.Name
+                },
+                person = new
+                {
+                    name = x.IdNavigation.Name,
+                    lastname = x.IdNavigation.Lastname,
+                    email = x.IdNavigation.Email
+                }
+            }).OrderBy(x => x.person.name);
+
+            var trimmedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
+
+            return await trimmedQuery.ToListAsync();
+        }
+
         public object DoctorsContactData(decimal doctorId)
         {
             return _context.Person.Where(x => x.Doctor.Id == doctorId)

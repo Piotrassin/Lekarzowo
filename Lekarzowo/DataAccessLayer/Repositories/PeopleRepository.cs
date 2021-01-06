@@ -22,7 +22,37 @@ namespace Lekarzowo.Repositories
             return _context.Person.FirstOrDefault(p => p.Email.ToLower() == email.ToLower());
         }
 
-        public Person GetByEmailWithRoles(string email)
+        public async Task<IEnumerable<object>> GetAllWithRoles(int? limit, int? skip)
+        {
+            var query = _context.Person
+                .Select(x => new
+                {
+                    id = x.Id,
+                    name = x.Name,
+                    lastname = x.Lastname,
+                    email = x.Email,
+                    gender = x.Gender,
+                    birthdate = x.Birthdate,
+                    pesel = x.Pesel,
+                    userroles = _context.Userroles
+                        .Where(u => u.PersonId == x.Id)
+                        .Select(u => new
+                        {
+                            roleId = u.RoleId,
+                            dateofissue =u.Dateofissue,
+                            personId = u.PersonId,
+                            roleName = u.Role.Name
+                        })
+                })
+                .OrderBy(x => x.lastname)
+                .ThenBy(x => x.name);
+
+            var trimmed = PaginationService<object>.SplitAndLimitQueryable(skip, limit, query);
+
+            return await trimmed.ToListAsync();
+        }
+
+        public Person GetSingleByEmailWithRoles(string email)
         {
             return _context.Person.Include(x => x.Userroles).ThenInclude(x => x.Role)
                 .FirstOrDefault(p => p.Email.ToLower() == email.ToLower());

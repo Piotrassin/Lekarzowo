@@ -2,7 +2,6 @@
 using Lekarzowo.Controllers;
 using Lekarzowo.DataAccessLayer.DTO;
 using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.Models;
 using Lekarzowo.Repositories;
 using Lekarzowo.Services;
 using Microsoft.AspNetCore.Mvc;
