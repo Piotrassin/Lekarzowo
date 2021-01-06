@@ -37,7 +37,21 @@ handleResponseStatus(response, customDefaultMessage){
   console.log("Response.ok");
 }
 
-statusErrorHandler(response, customDefaultMessage){
+
+handleResponseStatusExclude404(response, customDefaultMessage){
+  console.log("HandleRESPPONSESTATUSjet");
+  if(!response.ok){
+      console.log("Response not ok");
+      var errorMessage = this.statusErrorHandler(response, customDefaultMessage, true);
+      if(errorMessage){
+        throw Error(errorMessage);
+      }
+  }
+  console.log("Response.ok");
+}
+
+
+statusErrorHandler(response, customDefaultMessage, exclude404){
   switch(response.status) {
     case 400:
       return false;
@@ -52,9 +66,9 @@ statusErrorHandler(response, customDefaultMessage){
       return 'Dostęp zablokowany';
       break;
     case 404:
-      return 'Nie znaleziono';
-      break;
-    case 404:
+      if(exclude404 == true){
+        return false;
+      }
       return 'Nie znaleziono';
       break;
     case 405:

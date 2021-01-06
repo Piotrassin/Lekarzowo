@@ -1,6 +1,7 @@
 import React from 'react';
 import removeSign from '../images/RemoveSign.svg';
 import VisitService from '../services/VisitService.js';
+import {Dialog} from './Dialog.js';
 
 
 class SicknessOnVisitItem extends React.Component {
@@ -12,9 +13,10 @@ constructor(props) {
     sicknessDescription: props.sicknessDescription
   }
   this.deleteSicknessOnVisit = this.deleteSicknessOnVisit.bind(this);
+  this.handleClickDeleteSicknessDialogBtn = this.handleClickDeleteSicknessDialogBtn.bind(this);
 }
 
-deleteSicknessOnVisit(event){
+handleClickDeleteSicknessDialogBtn(event){
   VisitService.deleteSicknessOnVisit(this.state.id)
   .then(response => {
     console.log('Done');
@@ -22,7 +24,13 @@ deleteSicknessOnVisit(event){
   }).catch(err => {
     console.log('Error');
     this.props.snackbarCallback('Nie udało się usuniąć', 'red-snackbar');
-  });
+  })
+}
+
+deleteSicknessOnVisit(event){
+  event.preventDefault();
+
+  Dialog.open("confirm-dialog")(event);
 }
 
 render() {
@@ -37,6 +45,21 @@ render() {
         :
         <div/>
         }
+        <Dialog id = "confirm-dialog">
+          <div className = "header-dialog">
+            <a>Czy jesteś pewien?</a>
+          </div>
+          <br/>
+          <div className = 'flex-column'>
+          <a className = 'dialog-margin dialog-text' >Usunięcie choroby spowoduje usunięcie wszystkich</a>
+          <a className = 'dialog-margin dialog-text'> powiązanych z nią leków.</a>
+          </div>
+
+          <div className = 'dialog-btn-hold'>
+            <a className = 'btn-dialog-cancel' onClick={this.handleClick} >Anuluj</a>
+            <a className = 'btn-dialog-primary' onClick = {this.handleClickDeleteSicknessDialogBtn}>Zatwierdź</a>
+          </div>
+        </Dialog>
     </div>
 
   );

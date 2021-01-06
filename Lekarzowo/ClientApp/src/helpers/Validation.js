@@ -73,6 +73,34 @@ class Validation {
     return errorObject;
   }
 
+  validateAddSicknessVisit(sicknessId, description){
+    var errorObject = {};
+    this.addErrorToObject(errorObject, 'Opis', this.validateBlank(description));
+    this.addErrorToObject(errorObject, 'Choroba', this.validateBlankObject(sicknessId));
+
+
+    return errorObject;
+  }
+
+  validateAddMedicineVisit(sickness, medicine, description){
+    var errorObject = {};
+    this.addErrorToObject(errorObject, 'Opis', this.validateBlank(description));
+    this.addErrorToObject(errorObject, 'Choroba', this.validateBlankObject(sickness));
+    this.addErrorToObject(errorObject, 'Lek', this.validateBlankObject(medicine));
+
+
+    return errorObject;
+  }
+
+  validateAddTreatmentVisit(treatment, description){
+    var errorObject = {};
+    this.addErrorToObject(errorObject, 'Opis', this.validateBlank(description));
+    this.addErrorToObject(errorObject, 'Zabieg', this.validateBlankObject(treatment));
+
+
+    return errorObject;
+  }
+
   validateAdminAddSeciality(specialityName, basePrice){
     var errorObject = {};
     this.addErrorToObject(errorObject, 'Specjalizacja', this.validateBlank(specialityName));

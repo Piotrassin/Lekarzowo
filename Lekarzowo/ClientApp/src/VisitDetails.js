@@ -6,7 +6,6 @@ import plusSign from './images/plusSign.svg';
 import MedicineSmall from './components/MedicineSmall.js';
 import { withStyles } from '@material-ui/core/styles';
 import sicknessSign from './images/SicknessSign.svg';
-import TreatmenrSmall from './TreatmenrSmall';
 import SicknessSmall from './SicknessSmall';
 import Menu from './Menu.js';
 import Autocomplete from './components/Autocomplete.js';
@@ -22,6 +21,7 @@ import MedicineOnVisitItem from './components/MedicineOnVisitItem.js';
 import { Dialog } from './components/Dialog.js';
 import Snackbar from './helpers/Snackbar.js';
 import Formater from './helpers/Formater.js';
+import Validation from './helpers/Validation.js';
 
 const currentUserRole = AuthService.getUserCurrentRole();
 const WhiteTextField = withStyles({
@@ -96,10 +96,9 @@ class VisitDetails extends React.Component {
         sickness: null,
         descriptionTreatment: "",
         sicknessforMedicine: null,
-        endDate: new Date().toISOString().split('T')[0]
+        endDate: ""
       }
     }
-    this.getMedicineHistory = this.getMedicineHistory.bind(this);
     this.getSicknessHistory = this.getSicknessHistory.bind(this);
     this.getTreatmentHistory = this.getTreatmentHistory.bind(this);
     this.getActiveMedicine = this.getActiveMedicine.bind(this);
@@ -142,8 +141,11 @@ class VisitDetails extends React.Component {
         }
         this.getReservation()
         .then(response => {
-            this.getSicknessHistory();
-            this.getActiveMedicine();
+            if(currentUserRole == 'doctor'){
+              this.getSicknessHistory();
+              this.getActiveMedicine();
+            }
+
         })
 
 
@@ -177,9 +179,6 @@ class VisitDetails extends React.Component {
 
           }
         });
-
-        console.log('Array illness history');
-        console.log(this.state.sicknessHistory);
       }
 
     });
@@ -192,10 +191,10 @@ class VisitDetails extends React.Component {
       this.state.snackbarRef.current.openSnackBar('Zaktualizowano notatkę', 'green-snackbar');
     }).catch(err => {
         try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+          this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }catch(erorr){
+          console.log('Missed Reference');
+        };
     });
 
   }
@@ -210,10 +209,8 @@ class VisitDetails extends React.Component {
 
 
   getReservation(){
-    return ReservationService.getReservation(this.state.id)
+    return ReservationService.getReservationWithPatient(this.state.id)
     .then(response => {
-      console.log("Rezerwacja");
-      console.log(response);
       this.setState({
         patientId: response.patientId,
         patientName: response.patientName,
@@ -224,32 +221,25 @@ class VisitDetails extends React.Component {
     })
     .catch(err => {
         try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+          this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }catch(erorr){
+          console.log('Missed Reference');
+        };
     });
   }
 
   openSnackbarOnRemove(content, classId, arrayName, item, idColumnName){
     this.state.snackbarRef.current.openSnackBar(content, classId);
-    this.setState({
-      refresh: true
-    });
     if(arrayName){
       this.setState(prevState => ({
         ...prevState,
         [arrayName]: prevState[arrayName].filter(el => {return el[idColumnName] != item.id })
       }));
-      console.log('Array');
-      console.log(arrayName);
-      console.log(this.state[arrayName]);
     }
 
   }
 
   handleChangeMedicineDescription(event) {
-    console.log(event.target.value);
     var newValue = event.target.value;
     this.setState(prevState => ({
         clicked: {
@@ -260,9 +250,6 @@ class VisitDetails extends React.Component {
   }
 
   handleChangeMedicineEndDate(event) {
-    console.log('End date medicine value:');
-    console.log(event.target.value);
-    console.log(new Date(event.target.value));
     var newValue = event.target.value;
     this.setState(prevState => ({
         clicked: {
@@ -273,7 +260,6 @@ class VisitDetails extends React.Component {
   }
 
   handleChangeTreatmentDescription(event) {
-    console.log(event.target.value);
     var newValue = event.target.value;
     this.setState(prevState => ({
         clicked: {
@@ -284,7 +270,6 @@ class VisitDetails extends React.Component {
   }
 
   handleChangeSicknessDescription(event) {
-    console.log(event.target.value);
     var newValue = event.target.value;
     this.setState(prevState => ({
         clicked: {
@@ -302,12 +287,10 @@ class VisitDetails extends React.Component {
         price: response.price
       });
       if(this.state.openedVisit){
-        console.log('Visit Exist and opened');
         this.setState({
           showVisitStateBtn: true
         });
       }else {
-        console.log('Visit exist and not opened');
         this.setState({
           showVisitStateBtn: false
         });
@@ -323,14 +306,13 @@ class VisitDetails extends React.Component {
       this.setState({
         visitSickness: response
       });
-      console.log(this.state.visitSickness);
     })
     .catch(err => {
         try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+          this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }catch(erorr){
+          console.log('Missed Reference');
+        };
     });
   }
 
@@ -340,14 +322,13 @@ class VisitDetails extends React.Component {
       this.setState({
         visitTreatment: response
       });
-      console.log(this.state.visitTreatment);
     })
     .catch(err => {
         try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+          this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }catch(erorr){
+          console.log('Missed Reference');
+        };
     });
   }
 
@@ -361,16 +342,11 @@ class VisitDetails extends React.Component {
     })
     .catch(err => {
         try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+          this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }catch(erorr){
+          console.log('Missed Reference');
+        };
     });
-  }
-
-
-  getMedicineHistory() {
-
   }
 
   getSicknessHistory() {
@@ -382,10 +358,10 @@ class VisitDetails extends React.Component {
     })
     .catch(err => {
         try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+          this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }catch(erorr){
+          console.log('Missed Reference');
+        };
     });
   }
 
@@ -398,10 +374,10 @@ class VisitDetails extends React.Component {
     })
     .catch(err => {
         try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+          this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }catch(erorr){
+          console.log('Missed Reference');
+        };
     });
   }
 
@@ -416,25 +392,31 @@ class VisitDetails extends React.Component {
   }
 
   handleClickBtnVisit(event) {
-    console.log('Hello');
     if(VisitService.getOpenedVisit() == false){
       if(VisitService.canVisitBeOpened(this.state.id)){
-
-
           VisitService.postVisit(this.state.id)
           .then(response => {
-            this.setState({
-              openedVisit: true
-            });
             VisitService.startVisit(this.state.id);
-            VisitService.setVisitOngoing(this.state.id, true);
+            VisitService.setVisitOngoing(this.state.id, true)
+            .then(resp => {
+              this.setState({
+                openedVisit: true
+              });
+            })
+            .catch(err => {
+                try{
+                  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+                }catch(erorr){
+                  console.log('Missed Reference');
+                };
+            });
           })
           .catch(err => {
               try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+                this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+              }catch(erorr){
+                console.log('Missed Reference');
+              };
           });
 
 
@@ -446,32 +428,38 @@ class VisitDetails extends React.Component {
       }
 
     }else {
-      console.log('Masz aktywną wizytę');
       if(VisitService.getOpenedVisit().id == this.state.id){
-        console.log("Zakonczenie wizyty");
         VisitService.putDescriptionOnVisit(this.state.id, this.state.description)
         .then(response => {
           VisitService.setVisitOngoing(this.state.id, false)
-          .then(response => {
+          .then(resp => {
             VisitService.endVisit();
-            this.setState({
-              openedVisit: false
-            });
             window.location.reload();
           })
           .catch(err => {
               try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+                this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+              }catch(erorr){
+                console.log('Missed Reference');
+              };
           });
 
 
+        })
+        .catch(err => {
+            try{
+              this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+            }catch(erorr){
+              console.log('Missed Reference');
+            };
         });
 
       }else {
-        console.log('Nie mozesz zakonczyc tej wiizty');
+        try{
+          this.state.snackbarRef.current.openSnackBar('Wizyta nie jest aktualnie otwartą. Nie można zakończyć.', 'red-snackbar');
+        }catch(erorr){
+          console.log('Missed Reference');
+        };
       }
 
     }
@@ -542,157 +530,164 @@ class VisitDetails extends React.Component {
 
 
   handleClickAddMedicineDialogBtn(event){
-    var medicineVisitObject = {
-      id : this.state.clicked.medicine.id,
-      illnessId: this.state.clicked.sicknessforMedicine.id,
-      startDate: (new Date()).toISOString(),
-      endDate: new Date(this.state.clicked.endDate).toISOString(),
-      description: this.state.clicked.descriptionMedicine,
-      visitId: this.state.id,
-      patientId: this.state.patientId
-    }
 
-    console.log('Medicine Object Request');
-    console.log(medicineVisitObject);
-
-    VisitService.postMedicineOnVisit(medicineVisitObject)
-    .then(response => {
-      if(response.status >= 400){
-        console.log('error');
+    this.setState ({
+      errors: Validation.validateAddMedicineVisit(this.state.clicked.sicknessforMedicine,
+        this.state.clicked.medicine, this.state.clicked.descriptionMedicine)
+    }, () => {
+      if(Object.keys(this.state.errors).length > 0){
+        var message = Validation.handleValidationOutcome(this.state.errors);
+        this.state.snackbarRef.current.openSnackBar( message ,'red-snackbar');
       }else {
-        console.log(response);
-        this.state.visitMedicine.push({
-          illnessHistoryId: medicineVisitObject.illnessId,
-          medicineDosage: medicineVisitObject.description,
-          medicineId: medicineVisitObject.id,
-          medicineName: this.state.clicked.medicine.name,
-          startDate: medicineVisitObject.startDate,
+        var medicineVisitObject = {
+          id : this.state.clicked.medicine.id,
+          illnessId: this.state.clicked.sicknessforMedicine.id,
+          startDate: (new Date()).toISOString(),
+          endDate: (this.state.clicked.endDate == "" ? "" : new Date(this.state.clicked.endDate).toISOString()),
           description: this.state.clicked.descriptionMedicine,
+          visitId: this.state.id,
+          patientId: this.state.patientId
+        }
+
+        VisitService.postMedicineOnVisit(medicineVisitObject)
+        .then(response => {
+            this.state.visitMedicine.push({
+              illnessHistoryId: medicineVisitObject.illnessId,
+              medicineDosage: medicineVisitObject.description,
+              medicineId: medicineVisitObject.id,
+              medicineName: this.state.clicked.medicine.name,
+              startDate: medicineVisitObject.startDate,
+              description: this.state.clicked.descriptionMedicine,
+            });
+            this.setState(prevState  => ({
+              ...prevState,
+              clear: {
+                ...prevState.clear,
+                sicknessOnVisit: prevState + 1000,
+                medicine: prevState + 2000
+              }
+              ,
+              clicked: {
+                ...prevState.clicked,
+                medicine: null,
+                sicknessforMedicine: null,
+                descriptionMedicine: "",
+                endDate: ""
+              }
+            }));
+            Dialog.close("medicine-dialog")(event);
+        })
+        .catch(err => {
+            try{
+              this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+            }catch(erorr){
+              console.log('Missed Reference');
+            };
         });
-        console.log(medicineVisitObject);
-        this.setState(prevState  => ({
-          ...prevState,
-          clear: {
-            ...prevState.clear,
-            sicknessOnVisit: prevState + 1000,
-            medicine: prevState + 2000
-          }
-          ,
-          clicked: {
-            ...prevState.clicked,
-            medicine: null,
-            sicknessforMedicine: null,
-            descriptionMedicine: "",
-            endDate: ""
-          }
-        }));
-        Dialog.close("medicine-dialog")(event);
-
       }
-
-    })
-    .catch(err => {
-        try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
     });
 
 
-
-
-  }
-
-  handleClickAddDescriptionBtn(event) {
 
   }
 
   handleClickAddTreatmentDialogBtn(event){
-    var treatmentVisitObject = {
-      id : this.state.clicked.treatment.id,
-      description: this.state.clicked.descriptionTreatment,
-      visitId: this.state.id,
-      patientId: this.state.patientId
-    }
-    VisitService.postTreatmentOnVisit(treatmentVisitObject)
-    .then(response => {
-      console.log(response);
-      this.state.visitTreatment.push({
-        name: this.state.clicked.treatment.name,
-        description: this.state.clicked.descriptionTreatment,
-        id: response.id
-      });
-      this.setState(prevState => ({
-        ...prevState,
-        clear:{
-          ...prevState.clear,
-          treatment: prevState - 1
-        },
-        clicked: {
-          ...prevState.clicked,
-          treatment: null,
-          descriptionTreatment: ""
+    this.setState ({
+      errors: Validation.validateAddTreatmentVisit(this.state.clicked.treatment, this.state.clicked.descriptionTreatment)
+    }, () => {
+      if(Object.keys(this.state.errors).length > 0){
+        var message = Validation.handleValidationOutcome(this.state.errors);
+        this.state.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+      }else {
+        var treatmentVisitObject = {
+          id : this.state.clicked.treatment.id,
+          description: this.state.clicked.descriptionTreatment,
+          visitId: this.state.id,
+          patientId: this.state.patientId
         }
-      }));
-    })
-    .catch(err => {
-        try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+        VisitService.postTreatmentOnVisit(treatmentVisitObject)
+        .then(response => {
+          Dialog.close("treatment-dialog")(event);
+          this.state.visitTreatment.push({
+            name: this.state.clicked.treatment.name,
+            description: this.state.clicked.descriptionTreatment,
+            id: response.id
+          });
+          this.setState(prevState => ({
+            ...prevState,
+            clear:{
+              ...prevState.clear,
+              treatment: prevState - 1
+            },
+            clicked: {
+              ...prevState.clicked,
+              treatment: null,
+              descriptionTreatment: ""
+            }
+          }));
+        })
+        .catch(err => {
+            try{
+              this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+            }catch(erorr){
+              console.log('Missed Reference');
+            };
+        });
+      }
     });
-    console.log(this.state.visitTreatment);
-    Dialog.close("treatment-dialog")(event);
+
+
   }
 
   handleClickAddSicknessDialogBtn(event){
-    var sicknessVisitObject = {
-      id : this.state.clicked.sickness.id,
-      description: this.state.clicked.descriptionSickness,
-      visitId: this.state.id,
-      patientId: this.state.patientId
-    }
-    VisitService.postSicknessOnVisit(sicknessVisitObject)
-    .then(response => {
-      console.log(response);
-      this.state.visitSickness.push({
-        illnessName: this.state.clicked.sickness.name,
-        illnessHistoryId: response.id,
-        description: this.state.clicked.descriptionSickness
-      });
-      this.setState(prevState => ({
-        ...prevState,
-        clear: {
-          ...prevState.clear,
-          sickness: prevState + 1
-        },
-        clicked: {
-          ...prevState.clicked,
-          sickness: null,
-          descriptionSickness: ''
+    this.setState ({
+      errors: Validation.validateAddSicknessVisit(this.state.clicked.sickness, this.state.clicked.descriptionSickness)
+    }, () => {
+      if(Object.keys(this.state.errors).length > 0){
+        var message = Validation.handleValidationOutcome(this.state.errors);
+        this.state.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+      }else {
+        var sicknessVisitObject = {
+          id : this.state.clicked.sickness.id,
+          description: this.state.clicked.descriptionSickness,
+          visitId: this.state.id,
+          patientId: this.state.patientId
         }
-      }));
-    })
-    .catch(err => {
-        try{
-          this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-        }catch(erorr){
-          console.log('Missed Reference');
-        };
+        VisitService.postSicknessOnVisit(sicknessVisitObject)
+        .then(response => {
+          Dialog.close("sickness-dialog")(event);
+          this.state.visitSickness.push({
+            illnessName: this.state.clicked.sickness.name,
+            illnessHistoryId: response.id,
+            description: this.state.clicked.descriptionSickness
+          });
+          this.setState(prevState => ({
+            ...prevState,
+            clear: {
+              ...prevState.clear,
+              sickness: prevState + 1
+            },
+            clicked: {
+              ...prevState.clicked,
+              sickness: null,
+              descriptionSickness: ''
+            }
+          }));
+        })
+        .catch(err => {
+            try{
+              this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+            }catch(erorr){
+              console.log('Missed Reference');
+            };
+        });
+      }
     });
 
 
-    console.log(this.state.visitSickness);
-
-    Dialog.close("sickness-dialog")(event);
   }
 
   render(){
-    var sicknesses = this.state.sicknessHistory;
-    var medicines = this.getMedicineHistory()
-    var treatments = this.getTreatmentHistory();
     return(
 
       <div className = "VisitPanels">
@@ -900,6 +895,7 @@ class VisitDetails extends React.Component {
         variant = 'outlined'
         rowsMax = {2}
         type = "date"
+        InputLabelProps={{ shrink: true }}
         style = {{marginLeft: '20px', width: '94%'}}
         size="small" fullWidth />
         <br/><br/>

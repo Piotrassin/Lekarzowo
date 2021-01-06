@@ -173,6 +173,22 @@ class ReservationService {
   }
 
   getReservation(reservationId){
+    return fetch(url + 'Reservations/' + reservationId, {
+      headers: authHeader()
+    })
+    .then(response => {
+      MasterService.handleResponseStatus(response);
+
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
+  getReservationWithPatient(reservationId){
     return fetch(url + 'Reservations/WithPatientData/' + reservationId, {
       headers: authHeader()
     })
@@ -193,7 +209,7 @@ class ReservationService {
       headers: authHeader()
     })
     .then(response => {
-      //MasterService.handleResponseStatus(response);
+      MasterService.handleResponseStatusExclude404(response);
       if(response.status == 404){
         throw Error(404);
       }
