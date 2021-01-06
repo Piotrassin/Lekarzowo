@@ -47,7 +47,7 @@ namespace Lekarzowo.Controllers
         {
             if (await IsPatientAccessingDataOwnedByOtherUser(reservationId)) return Unauthorized(new JsonResult(""));
 
-            var reservation = await _repository.GetById(reservationId);
+            var reservation = await _repository.GetByID(reservationId);
 
             if (reservation == null)
             {
@@ -138,7 +138,7 @@ namespace Lekarzowo.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Reservation>> DeleteReservation(decimal id)
         {
-            var reservation = await _repository.GetById(id);
+            var reservation = await _repository.GetByID(id);
             if (reservation == null) return NotFound(new JsonResult(""));
             if (reservation.Visit != null && reservation.Visit.OnGoing) return BadRequest(new JsonResult("Na tej rezerwacji odbywa się właśnie wizyta."));
 

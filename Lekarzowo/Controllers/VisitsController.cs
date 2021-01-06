@@ -192,7 +192,7 @@ namespace Lekarzowo.Controllers
                 return Unauthorized(new JsonResult(""));
             }
 
-            if (!await CanVisitBeOpened(visitId))
+            if (! await CanVisitBeOpened(visitId))
             {
                 return BadRequest(new JsonResult(""));
             }
@@ -206,12 +206,12 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]/{visitId}")]
         public async Task<IActionResult> CanBeOpened(decimal visitId)
         {
-            var visit = _repository.GetByID(visitId);
-            if (visit == null)
+            var reservation = await _reservationsRepository.GetByID(visitId);
+            if (reservation == null)
             {
                 return NotFound(new JsonResult(""));
             }
-            if (!await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
+            if (!await _authorizationService.CanUserAccessVisit(reservation.Id, this))
             {
                 return Unauthorized(new JsonResult(""));
             }
@@ -228,7 +228,7 @@ namespace Lekarzowo.Controllers
             var visit = _repository.GetByID(visitId);
             if (visit == null)
             {
-                return false;
+                return true;
             }
             var onGoingVisits = await _repository.OnGoingVisitsToday(visit.Reservation.DoctorId);
 
@@ -245,7 +245,7 @@ namespace Lekarzowo.Controllers
         {
             decimal sum = 0;
 
-            var doctor = await _reservationsRepository.GetById(visitId);
+            var doctor = await _reservationsRepository.GetByID(visitId);
             var specPrice = (await _doctorsRepository.GetByIdWithSpecialization(doctor.DoctorId)).Speciality.Price;
             sum += specPrice;
 

@@ -34,7 +34,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories.Interfaces
         /// </summary>
         /// <param name="reservationId"></param>
         /// <returns></returns>
-        Task<Reservation> GetById(decimal reservationId);
+        Task<Reservation> GetByID(decimal reservationId);
 
         /// <summary>
         /// Checks if any reservation meets given criteria.

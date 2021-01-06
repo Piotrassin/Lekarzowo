@@ -110,7 +110,7 @@ namespace Lekarzowo.Services
 
         private async Task<bool> CanDoctorAccessVisit(decimal visitId, BaseController baseController)
         {
-            var reservation = await _reservationsRepository.GetById(visitId);
+            var reservation = await _reservationsRepository.GetByID(visitId);
             return await CanDoctorAccessPatientsData(reservation.PatientId, baseController);
         }
 

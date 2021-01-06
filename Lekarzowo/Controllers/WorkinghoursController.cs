@@ -46,7 +46,7 @@ namespace Lekarzowo.Controllers
             return workinghours;
         }
 
-        // GET: api/Workinghours/allbyname
+        // GET: api/Workinghours/allbyname?date=1&doctorId=141&localId=1&limit=100&skip=0
         [Authorize(Roles = "admin")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<Workinghours>>> AllByName(string date, decimal? doctorId, decimal? localId, int? limit, int? skip)
