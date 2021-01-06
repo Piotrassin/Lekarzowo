@@ -52,9 +52,9 @@ render() {
             <a className = 'table-header'>Lek</a>
           </div>
           <div className = 'sickness-item-part part-3-4'>
-            <a className = 'table-header'>Dawka</a>
+            <a className = 'table-header'>Stosowanie</a>
           </div>
-          
+
           <div className = 'sickness-item-part part-5'>
             <a className = 'table-header'>Okres przyjmowania</a>
           </div>
