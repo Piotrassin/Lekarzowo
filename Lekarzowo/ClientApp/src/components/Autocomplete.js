@@ -55,7 +55,7 @@ export default function Asynchronous(props) {
   const loading = open && requesting;
   const classes = useStyles();
 
-  const delayedQuery = React.useCallback(_.debounce(q => sendQuery(q), 1000), []);
+  const delayedQuery = React.useCallback(_.debounce(q => sendQuery(q), 500), []);
 
   async function sendQuery(value){
     if(props.addId != undefined){
