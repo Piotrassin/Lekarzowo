@@ -142,7 +142,7 @@ namespace Lekarzowo.Controllers
         public ActionResult<Person> ChangePassword(PersonChangePasswordDTO current, decimal? userId)
         {
             var id = GetIdFromProperSource(userId);
-            if (id <= 1)
+            if (id < 1)
             {
                 return BadRequest(BadRequestEmptyJsonResult);
             }

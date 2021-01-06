@@ -20,12 +20,12 @@ namespace Lekarzowo.Controllers
             _repository = repository;
         }
 
-        // GET: api/Rooms
+        // GET: api/rooms?limit=20&skip=0
         [Authorize(Roles = "doctor,admin")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Room>>> GetRoom()
+        public async Task<ActionResult<IEnumerable<Room>>> GetRoom(int? limit, int? skip)
         {
-            return Ok(_repository.GetAll());
+            return Ok(await _repository.GetAllWithLocalData(limit, skip));
         }
 
         // GET: api/Rooms/5
