@@ -31,6 +31,9 @@ class AuthService {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
       if(response.token){
         response.currentRole = response.roles[0];
         localStorage.setItem("userData", JSON.stringify(response));
@@ -69,6 +72,9 @@ class AuthService {
     }).then(response => {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
       }
       return response;
     });

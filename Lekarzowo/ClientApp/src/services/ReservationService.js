@@ -33,6 +33,9 @@ class ReservationService {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
       return response;
     });
 
@@ -64,6 +67,9 @@ class ReservationService {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
       return response;
     });
   }
@@ -88,6 +94,9 @@ class ReservationService {
     }).then(response => {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
       }
       return response;
     });
@@ -116,6 +125,9 @@ class ReservationService {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
       return response;
     });
   }
@@ -132,6 +144,9 @@ class ReservationService {
     }).then(response => {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
       }
       return response;
     });
@@ -151,6 +166,9 @@ class ReservationService {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
       return response;
     });
   }
@@ -168,6 +186,9 @@ class ReservationService {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
       return response;
     });
   }
@@ -184,6 +205,9 @@ class ReservationService {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
       return response;
     });
   }
@@ -199,6 +223,9 @@ class ReservationService {
     }).then(response => {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
       }
       return response;
     });
@@ -218,6 +245,9 @@ class ReservationService {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
       return response;
     });
   }
@@ -235,6 +265,9 @@ class ReservationService {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
       return response;
     });
   }
@@ -251,6 +284,9 @@ class ReservationService {
     }).then(response => {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
       }
       return response;
     });
@@ -277,6 +313,9 @@ class ReservationService {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
       return response;
     });
   }
@@ -294,6 +333,9 @@ class ReservationService {
     }).then(response => {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
       }
       return response;
     });

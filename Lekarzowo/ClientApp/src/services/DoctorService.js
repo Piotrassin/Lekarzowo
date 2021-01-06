@@ -21,6 +21,9 @@ class DoctorService {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
       return response;
     });
   }
@@ -36,6 +39,9 @@ class DoctorService {
     }).then(response => {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
       }
       return response;
     });
@@ -55,6 +61,9 @@ class DoctorService {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
       return response;
     });
   }
@@ -72,6 +81,9 @@ class DoctorService {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
       return response;
     });
   }
@@ -84,6 +96,9 @@ class DoctorService {
     }).then(response => {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
       }
       return response;
     });
