@@ -337,6 +337,26 @@ class AdminService {
 
   }
 
+  putDoctor(doctorId, specialityId){
+    return fetch(url + 'Doctors/' + doctorId, {
+    method: 'PUT',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "Id":  doctorId,
+      "SpecialityId": specialityId
+    })})
+    .then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+
+  }
+
   getDoctor(id){
     return fetch(url + 'Doctors/' + id, {
       headers: authHeader()
