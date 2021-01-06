@@ -18,7 +18,7 @@ render() {
         <img src = {sicknessSign} className = "small-icon" />
       </div>
       <div className = 'sickness-item-part part-2'>
-        <a>{this.props.sickness.illness.name}</a>
+        <a>{this.props.sickness.illness ? this.props.sickness.illness.name : this.props.sickness.illnessName}</a>
       </div>
       <div className = 'sickness-item-part part-3-4'>
         <a>{this.props.sickness.description}</a>

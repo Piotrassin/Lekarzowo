@@ -1,6 +1,7 @@
 import React from 'react';
 import SicknessItem from './components/SicknessItem.js';
 import UserService from './services/UserService.js';
+import ReservationService from './services/ReservationService.js';
 import Fade from '@material-ui/core/Fade';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
@@ -22,7 +23,7 @@ componentDidMount() {
     loading: true,
     snackbarRef: React.createRef()
   }, () => {
-    UserService.getUserSicknessHistory()
+    ReservationService.getPastIllnesses("")
     .then(response => {
       this.setState({
       illnesses: response.filter(responseObject => responseObject.curedate == null),
