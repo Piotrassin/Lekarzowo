@@ -43,7 +43,7 @@ onClickRoomSearch(value) {
 
 handleClickDelete(event){
   this.setState ({
-    errors: Validation.validateUniversalBlank(this.state.roomNumber, "Pole Numer pokoju")
+    errors: Validation.validateUniversalNumberBlank(this.state.selectedRoomId, "Pole Pokój")
   }, () => {
     console.log(this.state.errors);
     if(Object.keys(this.state.errors).length > 0){
@@ -51,7 +51,7 @@ handleClickDelete(event){
       this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
 
     }else {
-      AdminService.deleteRoom(this.state.selectedRoomId, this.state.roomNumber, this.state.selectedObjectId)
+      AdminService.deleteRoom(this.state.selectedRoomId)
       .then(response => {
         console.log(response);
         this.setState({

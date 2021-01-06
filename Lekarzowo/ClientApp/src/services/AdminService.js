@@ -271,8 +271,8 @@ class AdminService {
     });
   }
 
-  deleteRoom(roomId, localId){
-    return fetch(url + 'Rooms/' + roomId + '/' + localId, {
+  deleteRoom(roomId){
+    return fetch(url + 'Rooms/' + roomId , {
       method: 'DELETE',
       headers: authHeader()
     }).then(response => {
