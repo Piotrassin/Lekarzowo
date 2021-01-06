@@ -24,7 +24,11 @@ render() {
         <a>{this.props.sickness.description}</a>
       </div>
       <div className = 'sickness-item-part part-5'>
+        {this.props.sickness.visitId ?
         <a className = 'button-primary' onClick = {this.onClickShowVisit}>Zobacz Wizytę</a>
+        :
+        <a/>
+      }
       </div>
     </div>
 
