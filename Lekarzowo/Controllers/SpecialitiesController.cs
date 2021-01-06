@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -63,11 +64,6 @@ namespace Lekarzowo.Controllers
             {
                 return NotFound(new JsonResult(""));
             }
-            //TODO jeśli już to jeśli istnieje specka o tej nazwie i ma inne id niż wstawiana
-            //if (_repository.Exists(speciality.Name))
-            //{
-            //    return Conflict(new JsonResult("Specialization with that name already exists"));
-            //}
 
             try
             {
@@ -87,6 +83,12 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public async Task<ActionResult<Speciality>> PostSpeciality(Speciality speciality)
         {
+            if (_repository.Exists(speciality.Name))
+            {
+                return Conflict(new JsonResult("Specialization with that name already exists"));
+            }
+
+            speciality.Id = Decimal.Zero;
             try
             {
                 _repository.Insert(speciality);

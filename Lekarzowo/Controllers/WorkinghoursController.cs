@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -123,6 +124,8 @@ namespace Lekarzowo.Controllers
         public async Task<ActionResult<Workinghours>> PostWorkinghours(Workinghours workinghours)
         {
             if (IsDoctorAccessingElsesData(workinghours.DoctorId)) return Unauthorized(new JsonResult(""));
+
+            workinghours.Id = Decimal.Zero;
             try
             {
                 _repository.Insert(workinghours);

@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -87,6 +88,7 @@ namespace Lekarzowo.Controllers
                 return Conflict(new JsonResult("That room already exists"));
             }
 
+            room.Id = Decimal.Zero;
             try
             {
                 _repository.Insert(room);

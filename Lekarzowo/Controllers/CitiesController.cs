@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -86,11 +87,12 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public IActionResult PostCity(City city)
         {
-            if(_repository.Exists(city.Name))
+            if (_repository.Exists(city.Name))
             {
                 return Conflict(new JsonResult("City with that name already exists"));
             }
 
+            city.Id = Decimal.Zero;
             try
             {
                 _repository.Insert(city);

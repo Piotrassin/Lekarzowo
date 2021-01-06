@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -87,6 +88,7 @@ namespace Lekarzowo.Controllers
                 return Conflict(new JsonResult("That illness with that name already exists"));
             }
 
+            illness.Id = Decimal.Zero;
             try
             {
                 _repository.Insert(illness);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lekarzowo.DataAccessLayer.Models;
@@ -87,6 +88,7 @@ namespace Lekarzowo.Controllers
                 return Conflict(new JsonResult("Local with that name already exists"));
             }
 
+            local.Id = Decimal.Zero;
             try
             {
                 _repository.Insert(local);

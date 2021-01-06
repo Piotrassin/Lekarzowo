@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -115,6 +116,7 @@ namespace Lekarzowo.Controllers
                 return Unauthorized(new JsonResult(""));
             }
 
+            treatmentonvisit.Id = Decimal.Zero;
             try
             {
                 _repository.Insert(treatmentonvisit);

@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -190,6 +191,7 @@ namespace Lekarzowo.Controllers
                 return Conflict(new JsonResult("That illness history already exists"));
             }
 
+            illnesshistory.Id = Decimal.Zero;
             try
             {
                 _repository.Insert(illnesshistory);

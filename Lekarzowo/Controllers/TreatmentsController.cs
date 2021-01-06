@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -80,11 +81,12 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public async Task<ActionResult<Treatment>> PostTreatment(Treatment treatment)
         {
-            if (TreatmentExists(treatment.Id))
+            if (_repository.Exists(treatment.Name))
             {
-                return Conflict(new JsonResult("That treatment already exists"));
+                return Conflict(new JsonResult("Treatment with that name already exists"));
             }
 
+            treatment.Id = Decimal.Zero;
             try
             {
                 _repository.Insert(treatment);
@@ -94,7 +96,6 @@ namespace Lekarzowo.Controllers
             {
                 return StatusCode(500, new JsonResult(e.Message));
             }
-
 
             return Created("", treatment);
         }
