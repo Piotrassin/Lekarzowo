@@ -1,9 +1,11 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lekarzowo.Services;
 
 namespace Lekarzowo.DataAccessLayer.Repositories
 {
@@ -22,22 +24,22 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             _context.Oldmedicinehistory.Remove(t);
         }
 
-        public async Task<bool> Exists(decimal MedicineId, decimal PatientId)
+        public async Task<bool> Exists(decimal MedicineId, decimal PatientId, DateTime date)
         {
-            return await _context.Oldmedicinehistory.AnyAsync(x => x.MedicineId == MedicineId && x.PatientId == PatientId);
+            return await _context.Oldmedicinehistory.AnyAsync(x => x.MedicineId == MedicineId && x.PatientId == PatientId && x.Date == date);
         }
 
-        public async Task<IEnumerable<Oldmedicinehistory>> GetAll()
+        public async Task<IEnumerable<Oldmedicinehistory>> GetAll(int? limit, int? skip)
         {
-            return await _context.Oldmedicinehistory.OrderByDescending(x => x.Date).ToListAsync();
+            var query = _context.Oldmedicinehistory.OrderByDescending(x => x.Date); 
+            var trimmed = (IOrderedQueryable<Oldmedicinehistory>)PaginationService<Oldmedicinehistory>.SplitAndLimitQueryable(skip, limit, query);
+            return await trimmed.ToListAsync();
         }
 
-        //TODO dopisać obiekt lek
         public async Task<IEnumerable<Oldmedicinehistory>> GetAll(decimal PatientId)
         {
             return await _context.Oldmedicinehistory
                 .Where(x => x.PatientId == PatientId)
-                .OrderByDescending(x => x.Date)
                 .Select(x => new Oldmedicinehistory()
                 {
                     MedicineId = x.MedicineId,
@@ -51,12 +53,14 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                         Medicinehistory = null,
                         Oldmedicinehistory = null
                     }
-                }).ToListAsync();
+                })
+                .OrderByDescending(x => x.Date)
+                .ToListAsync();
         }
 
-        public async Task<Oldmedicinehistory> GetByID(decimal MedicineId, decimal PatientId)
+        public async Task<Oldmedicinehistory> GetByID(decimal MedicineId, decimal PatientId, DateTime date)
         {
-            return await _context.Oldmedicinehistory.FirstOrDefaultAsync(x => x.MedicineId == MedicineId && x.PatientId == PatientId);
+            return await _context.Oldmedicinehistory.FirstOrDefaultAsync(x => x.MedicineId == MedicineId && x.PatientId == PatientId && x.Date == date);
         }
 
         public async Task Insert(Oldmedicinehistory t)

@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 
 namespace Lekarzowo.Controllers
 {
@@ -21,17 +20,15 @@ namespace Lekarzowo.Controllers
     {
         private readonly IJWTService _jwtService;
         private readonly ICustomUserRolesService _customUserRolesService;
-        private readonly IStandardUserRolesRepository _standardUserRolesRepository;
 
 
         private readonly IPeopleRepository _repository;
 
-        public PeopleController(IPeopleRepository repository, IJWTService jwtService, IStandardUserRolesRepository standardUserRolesRepository, ICustomUserRolesService urolesService)
+        public PeopleController(IPeopleRepository repository, IJWTService jwtService, ICustomUserRolesService urolesService)
         {
             _jwtService = jwtService;
             _repository = repository;
             _customUserRolesService = urolesService;
-            _standardUserRolesRepository = standardUserRolesRepository;
         }
 
         // GET: api/People/All
