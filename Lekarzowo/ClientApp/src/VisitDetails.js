@@ -909,7 +909,6 @@ class VisitDetails extends React.Component {
         size="small" fullWidth />
         <br/>
         <div className = 'dialog-btn-hold'>
-          <a className = 'btn-dialog-cancel'>Anuluj</a>
           <a className = 'btn-dialog-primary' onClick = {this.handleClickAddMedicineDialogBtn}>Zatwierdź</a>
         </div>
       </Dialog>
@@ -941,7 +940,6 @@ class VisitDetails extends React.Component {
         size="small" fullWidth />
         <br/>
         <div className = 'dialog-btn-hold'>
-          <a className = 'btn-dialog-cancel' onClick={this.handleClick} >Anuluj</a>
           <a className = 'btn-dialog-primary' onClick = {this.handleClickAddTreatmentDialogBtn}>Zatwierdź</a>
         </div>
       </Dialog>
@@ -973,7 +971,6 @@ class VisitDetails extends React.Component {
         size="small" fullWidth />
         <br/>
         <div className = 'dialog-btn-hold'>
-          <a className = 'btn-dialog-cancel' onClick={this.handleClick} >Anuluj</a>
           <a className = 'btn-dialog-primary' onClick = {this.handleClickAddSicknessDialogBtn}>Zatwierdź</a>
         </div>
       </Dialog>
