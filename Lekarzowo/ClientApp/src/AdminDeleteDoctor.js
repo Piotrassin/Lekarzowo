@@ -12,7 +12,7 @@ constructor(props){
   this.state = {
     loading: false,
     selectedObjectId: "",
-    clear: false
+    clear: 1
   };
 
   this.handleClickDelete = this.handleClickDelete.bind(this);
@@ -41,7 +41,7 @@ handleClickDelete(event){
       AdminService.deleteDoctor(this.state.selectedObjectId)
       .then(response => {
         this.setState({
-          clear: !this.state.clear,
+          clear: this.state.clear + 1,
           selectedObjectId: ""
         });
         this.snackbarRef.current.openSnackBar('Usunięto', 'green-snackbar');
@@ -70,7 +70,7 @@ render() {
           title = "Doktor"
           changeCallback = {this.onClickSearch}
           dataTestId="autocomplete-doctor"
-          clear = {this.state.clear}
+          key = {this.state.clear}
           />
           </div>
           <br/><br/>

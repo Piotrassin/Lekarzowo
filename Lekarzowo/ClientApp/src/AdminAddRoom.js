@@ -15,7 +15,7 @@ constructor(props){
       localId: ""
     },
     loading: false,
-    clear: false
+    clear: 1
   };
   this.onChangeTextField = this.onChangeTextField.bind(this);
   this.handleClickAddRoom = this.handleClickAddRoom.bind(this);
@@ -60,7 +60,7 @@ handleClickAddRoom(event){
             number: "",
             localId: ""
           },
-          clear: !this.state.clear
+          clear: this.state.clear + 1
         });
         this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
       })
@@ -88,7 +88,7 @@ render() {
             title = "Lokal"
             changeCallback = {this.onClickLocalSearch}
             dataTestId = 'autocomplete-local'
-            clear = {this.state.clear}
+            key = {this.state.clear}
             />
             <br/>
             <TextField id="number" name="number"

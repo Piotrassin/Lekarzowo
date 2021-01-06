@@ -18,7 +18,8 @@ constructor(props){
       streetNumber: "",
       blockNumber: ""
     },
-    loading: false
+    loading: false,
+    clear: 1
   };
   this.onChangeTextField = this.onChangeTextField.bind(this);
   this.handleClickAddCity = this.handleClickAddCity.bind(this);
@@ -68,7 +69,8 @@ handleClickAddCity(event){
             postCode: "",
             streetNumber: "",
             blockNumber: ""
-          }
+          },
+          clear: this.state.clear + 1
         });
         this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
       })
@@ -96,6 +98,7 @@ render() {
             title = "Miasto"
             changeCallback = {this.onClickCitySearch}
             dataTestId = 'autocomplete-cities'
+            key = {this.state.clear}
             />
             <br/>
             <TextField id="name" name="name"

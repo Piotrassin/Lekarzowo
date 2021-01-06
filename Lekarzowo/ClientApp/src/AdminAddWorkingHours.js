@@ -18,7 +18,9 @@ constructor(props){
     timeEnd: "22:00",
     loading: false,
     doctorSelected: null,
-    localSelected: null
+    localSelected: null,
+    clear1: 1,
+    clear2: 2
   };
   this.onChangeTextField = this.onChangeTextField.bind(this);
   this.handleClickAddWorkinghours = this.handleClickAddWorkinghours.bind(this);
@@ -71,7 +73,9 @@ handleClickAddWorkinghours(event){
           timeStart: "07:30",
           timeEnd: "22:00",
           doctorSelected: null,
-          localSelected: null
+          localSelected: null,
+          clear1: this.state.clear1 - 1,
+          clear2: this.state.clear2 + 1
         });
         this.snackbarRef.current.openSnackBar('Dodano godziny pracy', 'green-snackbar');
       })
@@ -100,6 +104,7 @@ render() {
             title = "Doktor"
             changeCallback = {this.onClickDoctorSearch}
             dataTestId = 'autocomplete-doctor'
+            key = {this.state.clear1}
             />
             <br/>
             <Autocomplete
@@ -107,6 +112,7 @@ render() {
             title = "Lokal"
             dataTestId  = 'autocomplete-local'
             changeCallback = {this.onClickLocalSearch}
+            key = {this.state.clear2}
             addId = {this.state.doctorSelected == undefined ? -1 : this.state.doctorSelected}
             />
             <br/>

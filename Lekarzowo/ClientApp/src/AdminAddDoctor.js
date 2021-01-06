@@ -19,7 +19,8 @@ constructor(props){
     password: "",
     gender: "",
     pesel: "",
-    specialityId: null
+    specialityId: null,
+    clear: 1
   };
 
   this.onChangeTextField = this.onChangeTextField.bind(this);
@@ -80,7 +81,8 @@ handleClickAddDoctor(event){
           password: "",
           gender: "",
           pesel: "",
-          specialityId: null
+          specialityId: null,
+          clear: this.state.clear + 1
         });
         this.snackbarRef.current.openSnackBar('Dodano lekarza', 'green-snackbar');
       })
@@ -109,6 +111,7 @@ render() {
             title = "Specjalizacja"
             changeCallback = {this.onClickSpecializationSearch}
             noOptionsText={'Your Customized No Options Text'}
+            key = {this.state.clear}
             />
             <br/>
             <TextField id="name" name="name"
