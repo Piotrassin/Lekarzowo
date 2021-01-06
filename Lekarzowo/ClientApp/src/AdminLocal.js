@@ -6,6 +6,7 @@ import Validation from './helpers/Validation.js';
 import AdminAddLocal from './AdminAddLocal.js';
 import AdminEditLocal from './AdminEditLocal.js';
 import AdminDeleteLocal from './AdminDeleteLocal.js';
+import AdminShowLocals from './AdminShowLocals.js';
 
 class AdminLocal extends React.Component {
 constructor(props){
@@ -34,6 +35,9 @@ showContent(){
     case 'delete':
       return <AdminDeleteLocal />
       break;
+    case 'show':
+      return <AdminShowLocals />
+      break;
 
   }
 }
@@ -60,6 +64,11 @@ render() {
         'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
         name = 'delete' onClick = {this.handleClickBtn}>
         Usuń
+        </button>
+        <button className = {this.state.currentPage == 'show' ?
+        'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
+        name = 'show' onClick = {this.handleClickBtn}>
+        Lista
         </button>
       </div>
       {this.showContent()}

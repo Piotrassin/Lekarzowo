@@ -6,6 +6,7 @@ import Validation from './helpers/Validation.js';
 import AdminAddDoctor from './AdminAddDoctor.js';
 import AdminEditDoctor from './AdminEditDoctor.js';
 import AdminDeleteDoctor from './AdminDeleteDoctor.js';
+import AdminShowDoctors from './AdminShowDoctors.js';
 
 class AdminDoctor extends React.Component {
 constructor(props){
@@ -34,6 +35,9 @@ showContent(){
     case 'delete':
       return <AdminDeleteDoctor />
       break;
+    case 'show':
+      return <AdminShowDoctors />
+      break;
 
   }
 }
@@ -60,6 +64,11 @@ render() {
         'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
         name = 'delete' onClick = {this.handleClickBtn}>
         Usuń
+        </button>
+        <button className = {this.state.currentPage == 'show' ?
+        'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
+        name = 'show' onClick = {this.handleClickBtn}>
+        Lista
         </button>
       </div>
       <div className = 'overflow-y-auto' style = {{height: '80%'}}>

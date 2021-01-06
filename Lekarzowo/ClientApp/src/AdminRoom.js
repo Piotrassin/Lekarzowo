@@ -6,6 +6,7 @@ import Validation from './helpers/Validation.js';
 import AdminAddRoom from './AdminAddRoom.js';
 import AdminEditRoom from './AdminEditRoom.js';
 import AdminDeleteRoom from './AdminDeleteRoom.js';
+import AdminShowRooms from './AdminShowRooms.js';
 
 class AdminRoom extends React.Component {
 constructor(props){
@@ -34,6 +35,9 @@ showContent(){
     case 'delete':
       return <AdminDeleteRoom />
       break;
+    case 'show':
+      return <AdminShowRooms />
+      break;
 
   }
 }
@@ -60,6 +64,11 @@ render() {
         'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
         name = 'delete' onClick = {this.handleClickBtn}>
         Usuń
+        </button>
+        <button className = {this.state.currentPage == 'show' ?
+        'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
+        name = 'show' onClick = {this.handleClickBtn}>
+        Lista
         </button>
       </div>
       {this.showContent()}

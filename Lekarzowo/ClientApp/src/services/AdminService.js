@@ -62,6 +62,48 @@ class AdminService {
     });
   }
 
+  getAllSickness(){
+    return fetch(url + 'Illnesses', {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
+  getAllMedicines(){
+    return fetch(url + 'Medicines', {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
+  getAllLocals() {
+    return fetch(url + 'Locals', {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
   deleteSickness(id){
     return fetch(url + 'Illnesses/' + id, {
     method: 'DELETE',
@@ -249,6 +291,63 @@ class AdminService {
       return response;
     });
 
+  }
+
+  getAllRooms(){
+    return fetch(url + 'Rooms', {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
+  getAllTreatments() {
+    return fetch(url + 'Treatments', {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
+  getAllSpecializations(){
+    return fetch(url + 'Specialities', {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
+  getAllWorkingHours(doctorId, localId){
+    return fetch(url + 'Workinghours/allbyname?date=&limit='
+    + '&doctorId=' + doctorId + '&localId=' + localId, {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
   }
 
   putRoom(roomId, roomNumber, localId){
@@ -602,6 +701,34 @@ class AdminService {
       return response;
     });
 
+  }
+
+  getAllCities(){
+    return fetch(url + 'Cities', {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
+  getAllDoctors() {
+    return fetch(url + 'Doctors/All', {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
   }
 
   getWorkinghours(search, limit, skip, idObject){

@@ -6,6 +6,7 @@ import Validation from './helpers/Validation.js';
 import AdminAddSpeciality from './AdminAddSpeciality.js';
 import AdminEditSpeciality from './AdminEditSpeciality.js';
 import AdminDeleteSpeciality from './AdminDeleteSpeciality.js';
+import AdminShowSpeciality from './AdminShowSpeciality.js';
 
 class AdminSpeciality extends React.Component {
 constructor(props){
@@ -34,6 +35,9 @@ showContent(){
     case 'delete':
       return <AdminDeleteSpeciality />
       break;
+    case 'show':
+      return <AdminShowSpeciality />
+      break;
 
   }
 }
@@ -60,6 +64,11 @@ render() {
         'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
         name = 'delete' onClick = {this.handleClickBtn}>
         Usuń
+        </button>
+        <button className = {this.state.currentPage == 'show' ?
+        'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
+        name = 'show' onClick = {this.handleClickBtn}>
+        Lista
         </button>
       </div>
       {this.showContent()}

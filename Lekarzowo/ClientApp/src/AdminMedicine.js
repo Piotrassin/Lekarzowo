@@ -6,6 +6,7 @@ import Validation from './helpers/Validation.js';
 import AdminAddMedicine from './AdminAddMedicine.js';
 import AdminEditMedicine from './AdminEditMedicine.js';
 import AdminDeleteMedicine from './AdminDeleteMedicine.js';
+import AdminShowMedicine from './AdminShowMedicine.js';
 
 class AdminMedicine extends React.Component {
 constructor(props){
@@ -34,6 +35,9 @@ showContent(){
     case 'delete':
       return <AdminDeleteMedicine />
       break;
+    case 'show':
+      return <AdminShowMedicine />
+      break;
 
   }
 }
@@ -60,6 +64,11 @@ render() {
         'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
         name = 'delete' onClick = {this.handleClickBtn}>
         Usuń
+        </button>
+        <button className = {this.state.currentPage == 'show' ?
+        'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
+        name = 'show' onClick = {this.handleClickBtn}>
+        Lista
         </button>
       </div>
       {this.showContent()}

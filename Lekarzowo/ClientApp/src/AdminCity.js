@@ -6,6 +6,7 @@ import Validation from './helpers/Validation.js';
 import AdminAddCity from './AdminAddCity.js';
 import AdminEditCity from './AdminEditCity.js';
 import AdminDeleteCity from './AdminDeleteCity.js';
+import AdminShowCity from './AdminShowCity.js';
 
 class AdminCity extends React.Component {
 constructor(props){
@@ -34,6 +35,10 @@ showContent(){
     case 'delete':
       return <AdminDeleteCity />
       break;
+    case 'show' :
+      return <AdminShowCity />
+      break;
+
 
   }
 }
@@ -60,6 +65,11 @@ render() {
         'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
         name = 'delete' onClick = {this.handleClickBtn}>
         Usuń
+        </button>
+        <button className = {this.state.currentPage == 'show' ?
+        'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
+        name = 'show' onClick = {this.handleClickBtn}>
+        Lista
         </button>
       </div>
       {this.showContent()}

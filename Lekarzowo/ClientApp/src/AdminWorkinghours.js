@@ -6,6 +6,7 @@ import Validation from './helpers/Validation.js';
 import AdminAddWorkingHours from './AdminAddWorkingHours.js';
 import AdminEditWorkingHours from './AdminEditWorkingHours.js';
 import AdminDeleteWorkingHours from './AdminDeleteWorkingHours.js';
+import AdminShowWorkingHours from './AdminShowWorkingHours.js';
 
 class AdminWorkinghours extends React.Component {
 constructor(props){
@@ -34,6 +35,9 @@ showContent(){
     case 'delete':
       return <AdminDeleteWorkingHours />
       break;
+    case 'show':
+      return <AdminShowWorkingHours />
+      break;
 
   }
 }
@@ -60,6 +64,11 @@ render() {
         'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
         name = 'delete' onClick = {this.handleClickBtn}>
         Usuń
+        </button>
+        <button className = {this.state.currentPage == 'show' ?
+        'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
+        name = 'show' onClick = {this.handleClickBtn}>
+        Lista
         </button>
       </div>
       {this.showContent()}

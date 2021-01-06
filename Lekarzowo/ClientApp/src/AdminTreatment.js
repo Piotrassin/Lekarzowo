@@ -6,6 +6,7 @@ import Validation from './helpers/Validation.js';
 import AdminAddTreatment from './AdminAddTreatment.js';
 import AdminEditTreatment from './AdminEditTreatment.js';
 import AdminDeleteTreatment from './AdminDeleteTreatment.js';
+import AdminShowTreatment from './AdminShowTreatment.js';
 
 class AdminTreatment extends React.Component {
 constructor(props){
@@ -34,6 +35,9 @@ showContent(){
     case 'delete':
       return <AdminDeleteTreatment />
       break;
+    case 'show':
+      return <AdminShowTreatment />
+      break;
 
   }
 }
@@ -60,6 +64,11 @@ render() {
         'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
         name = 'delete' onClick = {this.handleClickBtn}>
         Usuń
+        </button>
+        <button className = {this.state.currentPage == 'show' ?
+        'btn-primary margin-right-small' : 'btn-primary-outlined margin-right-small'}
+        name = 'show' onClick = {this.handleClickBtn}>
+        Lista
         </button>
       </div>
       {this.showContent()}

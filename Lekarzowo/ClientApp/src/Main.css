@@ -914,6 +914,7 @@ padding-right: 15px;
   border-radius: 10px;
   padding: 15px;
   height: 75vh;
+  overflow-y: auto;
 
 }
 .profile-right-holder {
@@ -1002,6 +1003,15 @@ border-bottom: 1px solid #D6D6D6;
   justify-content: center;
   height: 100%;
   margin: auto;
+}
+.part-1-2-3-4-5 {
+  width: 100%;
+}
+.part-1-2-3 {
+  width: 60%;
+}
+.part-4-5 {
+  width: 40%;
 }
 .part-1 {
   width: 10%;
