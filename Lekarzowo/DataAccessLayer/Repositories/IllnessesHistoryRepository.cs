@@ -56,6 +56,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
             var query = _context.Illnesshistory.Where(x => x.Visit.Reservation.PatientId == patientId)
                 .Select(x => new
                 {
+                    visitId = x.VisitId,
                     illnessHistoryId = x.Id,
                     illnessName = x.Illness.Name,
                     diagnoseDate = x.Visit.Reservation.Starttime,
