@@ -4,8 +4,8 @@ import TextField from '@material-ui/core/TextField';
 import Snackbar from './helpers/Snackbar.js';
 import Validation from './helpers/Validation.js';
 import AdminAddWorkingHours from './AdminAddWorkingHours.js';
-import AdminEditTreatment from './AdminEditTreatment.js';
-import AdminDeleteTreatment from './AdminDeleteTreatment.js';
+import AdminEditWorkingHours from './AdminEditWorkingHours.js';
+import AdminDeleteWorkingHours from './AdminDeleteWorkingHours.js';
 
 class AdminWorkinghours extends React.Component {
 constructor(props){
@@ -29,10 +29,10 @@ showContent(){
       return <AdminAddWorkingHours />
       break;
     case 'edit':
-      return <AdminEditTreatment />
+      return <AdminEditWorkingHours />
       break;
     case 'delete':
-      return <AdminDeleteTreatment />
+      return <AdminDeleteWorkingHours />
       break;
 
   }

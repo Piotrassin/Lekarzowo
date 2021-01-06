@@ -98,7 +98,7 @@ class Validation {
     this.addErrorToObject(errorObject, 'Ulica', this.validateBlank(streetName));
     this.addErrorToObject(errorObject, 'Kod Pocztowy', this.validateBlank(postalCode));
     this.addErrorToObject(errorObject, 'Numer ulicy', this.validateBlankNumber(streetNumber));
-    
+
 
     return errorObject;
   }
@@ -111,6 +111,14 @@ class Validation {
     this.addErrorToObject(errorObject, 'Data do', this.validateBlankObject(endDate));
     this.addErrorToObject(errorObject, 'Godzina od', this.validateBlankObject(startHour));
     this.addErrorToObject(errorObject, 'Godzina do', this.validateBlankObject(endHour));
+
+    return errorObject;
+  }
+  validateAdminDeleteWorkingHours(doctorId, localId, workinghoursId){
+    var errorObject = {};
+    this.addErrorToObject(errorObject, 'Doktor', this.validateBlankNumber(doctorId));
+    this.addErrorToObject(errorObject, 'Lokal', this.validateBlankNumber(localId));
+    this.addErrorToObject(errorObject, 'Godziny pracy', this.validateBlankNumber(workinghoursId));
 
     return errorObject;
   }

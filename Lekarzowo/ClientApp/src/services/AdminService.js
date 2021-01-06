@@ -211,7 +211,7 @@ class AdminService {
     method: 'PUT',
     headers: authHeader({'Content-Type': 'application/json'}),
     body: JSON.stringify({
-      "Id": localId, 
+      "Id": localId,
       "Name": local.name,
       "CityId": local.cityId,
       "Streetname": local.streetName,
@@ -476,6 +476,43 @@ class AdminService {
     });
   }
 
+  putWorkinghours(workinghoursID, workinghours){
+    return fetch(url + 'Workinghours/' + workinghoursID, {
+    method: 'PUT',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "Id": workinghoursID,
+      "From": workinghours.From,
+      "To": workinghours.To,
+      "DoctorId": workinghours.DoctorId,
+      "LocalId": workinghours.LocalId
+    })})
+    .then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
+  deleteWorkinghours(workinghoursID){
+    return fetch(url + 'Workinghours/' + workinghoursID, {
+      method: 'DELETE',
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
   getLocals(search, limit){
     if (search === undefined)
     {
@@ -493,6 +530,42 @@ class AdminService {
       return response;
     });
 
+  }
+
+  getWorkinghours(search, limit, skip, idObject){
+    if (search === undefined)
+    {
+      search  = '';
+    }
+    if(skip === undefined){
+      skip = '';
+    }
+    return fetch(url + 'Workinghours/allbyname?date=' + search + '&limit=' + limit
+    + '&doctorId=' + idObject.doctorId + '&localId' + idObject.localId, {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
+  getWorkinghoursById(id){
+    return fetch(url + 'Workinghours/' + id, {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
   }
 
   getUsers(search, limit ){
