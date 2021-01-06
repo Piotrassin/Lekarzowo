@@ -27,12 +27,12 @@ namespace Lekarzowo.Controllers
             _peopleRepository = peopleRepository;
         }
 
-        // GET: api/Doctors
+        // GET: api/doctors/all?limit=30&skip=0
         [Authorize(Roles = "admin")]
         [HttpGet("[action]")]
-        public ActionResult<IEnumerable<Doctor>> All()
+        public async Task<ActionResult<IEnumerable<Doctor>>> All(int? limit, int? skip)
         {
-            return _repository.GetAll().ToList();
+            return Ok(await _repository.GetAllWithPersonAndSpecializationData(limit, skip));
         }
 
         // GET: api/Doctors/AllByName?Name=abc&limit=0&skip=0
