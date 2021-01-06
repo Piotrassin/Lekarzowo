@@ -43,11 +43,11 @@ namespace Lekarzowo.Controllers
 
             if (treatmentonvisit == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             if (! await _authorizationService.CanUserAccessVisit(treatmentonvisit.VisitId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             return treatmentonvisit;
@@ -59,11 +59,11 @@ namespace Lekarzowo.Controllers
         {
             if (!_visitsRepository.Exists(visitId))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             if (! await _authorizationService.CanUserAccessVisit(visitId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             return Ok(await _repository.PerformedTreatments(visitId, limit, skip));
@@ -76,16 +76,16 @@ namespace Lekarzowo.Controllers
         {
             if (id != treatmentonvisit.Id)
             {
-                return BadRequest(new JsonResult(""));
+                return BadRequest(BadRequestEmptyJsonResult);
             }
             if (!TreatmentonvisitExists(id))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             var visit = _visitsRepository.GetByID(treatmentonvisit.VisitId);
             if (! await _authorizationService.CanUserAccessPatientData(visit.Reservation.PatientId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             try
@@ -95,10 +95,10 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
-            return Ok(new JsonResult(""));
+            return Ok(OkEmptyJsonResult);
         }
 
         // POST: api/Treatmentonvisits
@@ -109,11 +109,11 @@ namespace Lekarzowo.Controllers
             var visit = _visitsRepository.GetByID(treatmentonvisit.VisitId);
             if (visit == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             if (! await _authorizationService.CanUserAccessPatientData(visit.Reservation.PatientId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             treatmentonvisit.Id = Decimal.Zero;
@@ -124,7 +124,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return Created("", treatmentonvisit);
@@ -138,12 +138,12 @@ namespace Lekarzowo.Controllers
             var treatmentonvisit = _repository.GetByID(id);
             if (treatmentonvisit == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             var visit = _visitsRepository.GetByID(treatmentonvisit.VisitId);
             if (! await _authorizationService.CanUserAccessPatientData(visit.Reservation.PatientId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             try
@@ -153,7 +153,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return treatmentonvisit;

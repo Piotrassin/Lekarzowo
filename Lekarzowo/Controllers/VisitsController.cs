@@ -53,12 +53,12 @@ namespace Lekarzowo.Controllers
 
             if (visit == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             if (! await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             return visit;
@@ -71,15 +71,15 @@ namespace Lekarzowo.Controllers
         {
             if (id != visit.ReservationId)
             {
-                return BadRequest(new JsonResult(""));
+                return BadRequest(BadRequestEmptyJsonResult);
             }
             if (!VisitExists(id))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             if (! await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             visit.Price = await UpdateVisitPrice(visit.ReservationId);
@@ -91,10 +91,10 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
-            return Ok(new JsonResult(""));
+            return Ok(OkEmptyJsonResult);
         }
 
         // POST: api/Visits
@@ -104,16 +104,16 @@ namespace Lekarzowo.Controllers
         {
             if (!_reservationsRepository.Exists(visit.ReservationId))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             if (! await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             if (VisitExists(visit.ReservationId))
             {
-                return Conflict(new JsonResult("That visit already exists"));
+                return Conflict(ConflictJsonResult("That visit already exists"));
             }
 
             visit.OnGoing = true;
@@ -125,7 +125,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return Created("", visit);
@@ -139,11 +139,11 @@ namespace Lekarzowo.Controllers
             var visit = _repository.GetByID(id);
             if (visit == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             if (! await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
             try
             {
@@ -152,7 +152,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return visit;
@@ -165,13 +165,13 @@ namespace Lekarzowo.Controllers
         {
             if (UserIsDoctorAndDoesntHaveAccess(doctorId))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             var visit = await _repository.OnGoingVisit(doctorId);
             if (visit == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             return Ok(visit);
@@ -185,16 +185,16 @@ namespace Lekarzowo.Controllers
             var visit = _repository.GetByID(visitId);
             if (visit == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             if (! await _authorizationService.CanUserAccessVisit(visit.ReservationId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             if (! await CanVisitBeOpened(visitId))
             {
-                return BadRequest(new JsonResult(""));
+                return BadRequest(BadRequestEmptyJsonResult);
             }
 
             visit.OnGoing = isOnGoing;
@@ -209,11 +209,11 @@ namespace Lekarzowo.Controllers
             var reservation = await _reservationsRepository.GetByID(visitId);
             if (reservation == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             if (!await _authorizationService.CanUserAccessVisit(reservation.Id, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             if (await CanVisitBeOpened(visitId))

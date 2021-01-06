@@ -40,10 +40,10 @@ namespace Lekarzowo.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Patient>> GetPatient(decimal id)
         {
-            if (UserIsPatientAndDoesntHaveAccess(id)) return Unauthorized(new JsonResult(""));
+            if (UserIsPatientAndDoesntHaveAccess(id)) return Unauthorized(UnauthorizedEmptyJsonResult);
 
             var patient = _repository.GetByID(id);
-            if (patient == null) return NotFound(new JsonResult(""));
+            if (patient == null) return NotFound(NotFoundEmptyJsonResult);
 
             return patient;
         }
@@ -53,9 +53,9 @@ namespace Lekarzowo.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPatient(decimal id, Patient patient)
         {
-            if (id != patient.Id) return BadRequest(new JsonResult(""));
-            if (UserIsPatientAndDoesntHaveAccess(id)) return Unauthorized(new JsonResult(""));
-            if (!PatientExists(id)) return NotFound(new JsonResult(""));
+            if (id != patient.Id) return BadRequest(BadRequestEmptyJsonResult);
+            if (UserIsPatientAndDoesntHaveAccess(id)) return Unauthorized(UnauthorizedEmptyJsonResult);
+            if (!PatientExists(id)) return NotFound(NotFoundEmptyJsonResult);
 
             try
             {
@@ -64,10 +64,10 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
-            return Ok(new JsonResult(""));
+            return Ok(OkEmptyJsonResult);
         }
 
         // POST: api/Patients
@@ -77,7 +77,7 @@ namespace Lekarzowo.Controllers
         {
             if (PatientExists(patient.Id))
             {
-                return Conflict(new JsonResult("This person already is a patient"));
+                return Conflict(ConflictJsonResult("This person already is a patient"));
             }
 
             try
@@ -87,7 +87,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return Created("", patient);
@@ -103,7 +103,7 @@ namespace Lekarzowo.Controllers
             {
                 if (!(_peopleController.RegisterUser(person) is CreatedResult result))
                 {
-                    return BadRequest(new JsonResult(""));
+                    return BadRequest(BadRequestEmptyJsonResult);
                 }
 
                 Person user = _peopleRepository.GetByEmail(person.Email);
@@ -112,7 +112,7 @@ namespace Lekarzowo.Controllers
 
                 if (!(await PostPatient(newPatient) is CreatedResult resultDoctor))
                 {
-                    return BadRequest(new JsonResult(""));
+                    return BadRequest(BadRequestEmptyJsonResult);
                 }
                 //_repository.Insert(newPatient);
                 //_repository.Save();
@@ -129,10 +129,10 @@ namespace Lekarzowo.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Patient>> DeletePatient(decimal id)
         {
-            if (UserIsPatientAndDoesntHaveAccess(id)) return Unauthorized(new JsonResult(""));
+            if (UserIsPatientAndDoesntHaveAccess(id)) return Unauthorized(UnauthorizedEmptyJsonResult);
 
             var patient = _repository.GetByID(id);
-            if (patient == null) return NotFound(new JsonResult(""));
+            if (patient == null) return NotFound(NotFoundEmptyJsonResult);
 
             try
             {
@@ -141,7 +141,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return patient;

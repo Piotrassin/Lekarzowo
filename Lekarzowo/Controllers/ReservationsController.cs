@@ -19,15 +19,17 @@ namespace Lekarzowo.Controllers
         private readonly IReservationsRepository _repository;
         private readonly IWorkingHoursRepository _workHoursRepository;
         private readonly IRoomsRepository _roomsRepository;
+        private readonly AuthorizationService _authorizationService;
 
         public const int chunkSizeMinutes = 15;
 
         public ReservationsController(IReservationsRepository repository, 
-            IWorkingHoursRepository whRepo, IRoomsRepository roomRepo)
+            IWorkingHoursRepository whRepo, IRoomsRepository roomRepo, AuthorizationService authorizationService)
         {
             _repository = repository;
             _workHoursRepository = whRepo;
             _roomsRepository = roomRepo;
+            _authorizationService = authorizationService;
         }
 
         #region CRUD
@@ -45,13 +47,13 @@ namespace Lekarzowo.Controllers
         [HttpGet("{reservationId}")]
         public async Task<ActionResult<Reservation>> GetReservation(decimal reservationId)
         {
-            if (await IsPatientAccessingDataOwnedByOtherUser(reservationId)) return Unauthorized(new JsonResult(""));
+            if (await _authorizationService.CanUserAccessVisit(reservationId, this)) return Unauthorized(UnauthorizedEmptyJsonResult);
 
             var reservation = await _repository.GetByID(reservationId);
 
             if (reservation == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             return reservation;
         }
@@ -61,13 +63,13 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]/{reservationId}")]
         public async Task<ActionResult<object>> WithPatientData(decimal reservationId)
         {
-            if (await IsPatientAccessingDataOwnedByOtherUser(reservationId)) return Unauthorized(new JsonResult(""));
+            if (await _authorizationService.CanUserAccessVisit(reservationId, this)) return Unauthorized(UnauthorizedEmptyJsonResult);
 
             var reservation = await _repository.GetByIdWithPatientData(reservationId);
 
             if (reservation == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             return reservation;
         }
@@ -84,9 +86,9 @@ namespace Lekarzowo.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutReservation(decimal id, Reservation reservation)
         {
-            if (!_repository.Exists(id)) return NotFound(new JsonResult(""));
-            if (id != reservation.Id) return BadRequest(new JsonResult(""));
-            if(await IsPatientAccessingDataOwnedByOtherUser(id)) return Unauthorized(new JsonResult(""));
+            if (!_repository.Exists(id)) return NotFound(NotFoundEmptyJsonResult);
+            if (id != reservation.Id) return BadRequest(BadRequestEmptyJsonResult);
+            if(await _authorizationService.CanUserAccessVisit(id, this)) return Unauthorized(UnauthorizedEmptyJsonResult);
 
             try
             {
@@ -95,9 +97,9 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
-            return Ok(new JsonResult(""));
+            return Ok(OkEmptyJsonResult);
         }
 
         // POST: api/Reservations
@@ -105,10 +107,10 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public async Task<ActionResult<Reservation>> PostReservation(ReservationDTO input)
         {
-            if (UserIsPatientAndDoesntHaveAccess(input.PatientId)) return Unauthorized(new JsonResult(""));
+            if (UserIsPatientAndDoesntHaveAccess(input.PatientId)) return Unauthorized(UnauthorizedEmptyJsonResult);
 
             var room = await FindAvailableRoom(input);
-            if (room == null) return BadRequest(new JsonResult("No rooms available in that local."));
+            if (room == null) return BadRequest(BadRequestJsonResult("No rooms available in that local."));
 
             var reservationToInsert = new Reservation
             {
@@ -127,7 +129,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return Created("", reservationToInsert);
@@ -139,8 +141,8 @@ namespace Lekarzowo.Controllers
         public async Task<ActionResult<Reservation>> DeleteReservation(decimal id)
         {
             var reservation = await _repository.GetByID(id);
-            if (reservation == null) return NotFound(new JsonResult(""));
-            if (reservation.Visit != null && reservation.Visit.OnGoing) return BadRequest(new JsonResult("Na tej rezerwacji odbywa się właśnie wizyta."));
+            if (reservation == null) return NotFound(NotFoundEmptyJsonResult);
+            if (reservation.Visit != null && reservation.Visit.OnGoing) return BadRequest(BadRequestJsonResult("Na tej rezerwacji odbywa się właśnie wizyta."));
 
             try
             {
@@ -149,7 +151,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return reservation;
@@ -164,7 +166,7 @@ namespace Lekarzowo.Controllers
         {
             if (UserIsDoctorAndDoesntHaveAccess(doctorId))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             if (start == null || start > end || start > DateTime.Now)
@@ -186,7 +188,7 @@ namespace Lekarzowo.Controllers
         {
             if (UserIsDoctorAndDoesntHaveAccess(doctorId))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             if (start == null || start > end || start < DateTime.Now)
@@ -210,7 +212,7 @@ namespace Lekarzowo.Controllers
             {
                 if (patientId != GetUserIdFromToken())
                 {
-                    return Unauthorized(new JsonResult(""));
+                    return Unauthorized(UnauthorizedEmptyJsonResult);
                 }
                 return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, true, true, doctorId, from, to, limit, skip));
             }
@@ -226,7 +228,7 @@ namespace Lekarzowo.Controllers
             {
                 if (patientId != GetUserIdFromToken())
                 {
-                    return Unauthorized(new JsonResult(""));
+                    return Unauthorized(UnauthorizedEmptyJsonResult);
                 }
                 return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, false, true, doctorId, from, to, limit, skip));
             }
@@ -244,7 +246,7 @@ namespace Lekarzowo.Controllers
                 || (!cityId.HasValue && specId.HasValue && doctorId.HasValue)
                 || (!cityId.HasValue && !specId.HasValue && !doctorId.HasValue))
             {
-                return BadRequest(new JsonResult("Niepoprawne kryteria wyszukiwania"));
+                return BadRequest(BadRequestJsonResult("Niepoprawne kryteria wyszukiwania"));
             }
 
             IEnumerable<Reservation> allReservations = _repository.AllReservationsForPossibleAppointments(cityId, specId, doctorId, startDate, endDate);
@@ -271,12 +273,12 @@ namespace Lekarzowo.Controllers
         [HttpGet("[action]/{reservationId}")]
         public async Task<IActionResult> Cancel(decimal reservationId)
         {
-            if (await IsPatientAccessingDataOwnedByOtherUser(reservationId)) return Unauthorized(new JsonResult(""));
+            if (await IsPatientAccessingDataOwnedByOtherUser(reservationId)) return Unauthorized(UnauthorizedEmptyJsonResult);
 
             var result = await GetReservation(reservationId);
             if (result.Value == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             var reservation = result.Value;
             reservation.Canceled = true;

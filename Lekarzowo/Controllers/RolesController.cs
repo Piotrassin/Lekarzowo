@@ -45,7 +45,7 @@ namespace Lekarzowo.Controllers
 
             if (role == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             return role;
@@ -57,12 +57,12 @@ namespace Lekarzowo.Controllers
         {
             if (id != role.Id)
             {
-                return BadRequest(new JsonResult(""));
+                return BadRequest(BadRequestEmptyJsonResult);
             }
 
             if (!RoleExists(id))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             var storedRole = _repository.GetByID(role.Id);
@@ -75,10 +75,10 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
-            return NotFound(new JsonResult(""));
+            return NotFound(NotFoundEmptyJsonResult);
         }
 
         // POST: api/Roles
@@ -88,7 +88,7 @@ namespace Lekarzowo.Controllers
             var storedRole = await _repository.GetSingleByName(role.Name);
             if (storedRole != null)
             {
-                return Conflict(new JsonResult("Role with that name already exist"));
+                return Conflict(ConflictJsonResult("Role with that name already exist"));
             }
 
             role.Id = Decimal.Zero;
@@ -99,7 +99,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return Created("", role);
@@ -112,7 +112,7 @@ namespace Lekarzowo.Controllers
             var role = _repository.GetByID(id);
             if(role == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             try
@@ -122,7 +122,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return role;

@@ -45,7 +45,7 @@ namespace Lekarzowo.Controllers
 
             if (speciality == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             return speciality;
@@ -58,11 +58,11 @@ namespace Lekarzowo.Controllers
         {
             if (id != speciality.Id)
             {
-                return BadRequest(new JsonResult(""));
+                return BadRequest(BadRequestEmptyJsonResult);
             }
             if (!SpecialityExists(id))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             try
@@ -72,10 +72,10 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
-            return Ok(new JsonResult(""));
+            return Ok(OkEmptyJsonResult);
         }
 
         // POST: api/Specialities
@@ -85,7 +85,7 @@ namespace Lekarzowo.Controllers
         {
             if (_repository.Exists(speciality.Name))
             {
-                return Conflict(new JsonResult("Specialization with that name already exists"));
+                return Conflict(ConflictJsonResult("Specialization with that name already exists"));
             }
 
             speciality.Id = Decimal.Zero;
@@ -96,7 +96,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return Created("", speciality);
@@ -110,7 +110,7 @@ namespace Lekarzowo.Controllers
             var speciality = _repository.GetByID(id);
             if (speciality == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             try
@@ -120,7 +120,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return speciality;

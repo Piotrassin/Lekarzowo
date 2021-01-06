@@ -46,7 +46,7 @@ namespace Lekarzowo.Controllers
 
             if (medicine == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             return medicine;
@@ -59,17 +59,17 @@ namespace Lekarzowo.Controllers
         {
             if (id != medicine.Id)
             {
-                return BadRequest(new JsonResult(""));
+                return BadRequest(BadRequestEmptyJsonResult);
             }
 
             if (!MedicineExists(medicine.Id))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             if (_repository.Exists(medicine.Name))
             {
-                return Conflict(new JsonResult("Medicine with that name already exists"));
+                return Conflict(ConflictJsonResult("Medicine with that name already exists"));
             }
 
             try
@@ -79,10 +79,10 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
-            return Ok(new JsonResult(""));
+            return Ok(OkEmptyJsonResult);
         }
 
         // POST: api/Medicines
@@ -92,7 +92,7 @@ namespace Lekarzowo.Controllers
         {
             if (_repository.Exists(medicine.Name))
             {
-                return Conflict(new JsonResult("Medicine with that name already exists"));
+                return Conflict(ConflictJsonResult("Medicine with that name already exists"));
             }
 
             medicine.Id = Decimal.Zero;
@@ -103,7 +103,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return Created("", medicine);
@@ -117,7 +117,7 @@ namespace Lekarzowo.Controllers
             var medicine = _repository.GetByID(id);
             if (medicine == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             try
@@ -127,7 +127,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return medicine;
