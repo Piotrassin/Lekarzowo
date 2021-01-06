@@ -14,7 +14,7 @@ class Validation {
   handleValidationOutcome(errors){
     var message  = '';
     for (const [key, value] of Object.entries(errors)) {
-      message = message.concat(`${key}${value}`).concat('\n')
+      message = message.concat('Pole ').concat(`${key}${value}`).concat('\n')
     }
     return message;
   }
