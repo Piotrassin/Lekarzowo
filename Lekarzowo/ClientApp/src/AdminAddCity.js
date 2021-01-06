@@ -24,7 +24,7 @@ onChangeTextField(event){
 
 handleClickAddCity(event){
   this.setState ({
-    errors: Validation.validateUniversalBlank(this.state.cityName, "Pole Nazw miasta")
+    errors: Validation.validateUniversalBlank(this.state.cityName, "Pole Nazwa miasta")
   }, () => {
     console.log(this.state.errors);
     if(Object.keys(this.state.errors).length > 0){

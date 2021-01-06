@@ -39,7 +39,7 @@ onClickSearch(value) {
 
 handleClickEdit(event){
   this.setState ({
-    errors: Validation.validateUniversalBlank(this.state.sicknessName, "Pole Nazwy leku")
+    errors: Validation.validateUniversalBlank(this.state.sicknessName, "Pole Nazwy Choroby")
   }, () => {
     console.log(this.state.errors);
     if(Object.keys(this.state.errors).length > 0){
