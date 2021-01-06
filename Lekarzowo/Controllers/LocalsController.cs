@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lekarzowo.DataAccessLayer.Models;
@@ -43,7 +44,7 @@ namespace Lekarzowo.Controllers
 
             if (local == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             return local;
@@ -56,12 +57,12 @@ namespace Lekarzowo.Controllers
         {
             if (id != local.Id)
             {
-                return BadRequest(new JsonResult(""));
+                return BadRequest(BadRequestEmptyJsonResult);
             }
 
             if (!LocalExists(local.Id))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             try
@@ -71,10 +72,10 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
-            return Ok(new JsonResult(""));
+            return Ok(OkEmptyJsonResult);
         }
 
         // POST: api/Locals
@@ -84,9 +85,10 @@ namespace Lekarzowo.Controllers
         {
             if (_repository.Exists(local.Name))
             {
-                return Conflict(new JsonResult("Local with that name already exists"));
+                return Conflict(ConflictJsonResult("Local with that name already exists"));
             }
 
+            local.Id = Decimal.Zero;
             try
             {
                 _repository.Insert(local);
@@ -94,7 +96,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return Created("", local);
@@ -108,7 +110,7 @@ namespace Lekarzowo.Controllers
             var city = _repository.GetByID(id);
             if (city == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             try
@@ -118,7 +120,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return city;

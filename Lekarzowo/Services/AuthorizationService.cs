@@ -78,8 +78,8 @@ namespace Lekarzowo.Services
 
         private async Task<bool> IsOwnedByPatientVisit(decimal visitId, BaseController baseController)
         {
-            var visit = _visitsRepository.GetByID(visitId);
-            if (baseController.UserIsPatientAndDoesntHaveAccess(visit.Reservation.PatientId))
+            var reservation = await _reservationsRepository.GetByID(visitId);
+            if (baseController.UserIsPatientAndDoesntHaveAccess(reservation.PatientId))
             {
                 return false;
             }
@@ -110,7 +110,7 @@ namespace Lekarzowo.Services
 
         private async Task<bool> CanDoctorAccessVisit(decimal visitId, BaseController baseController)
         {
-            var reservation = await _reservationsRepository.GetById(visitId);
+            var reservation = await _reservationsRepository.GetByID(visitId);
             return await CanDoctorAccessPatientsData(reservation.PatientId, baseController);
         }
 

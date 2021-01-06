@@ -39,18 +39,18 @@ namespace Lekarzowo.Controllers
         {
             if (!_patientsRepository.Exists(patientId))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             if (! await _authorizationService.CanUserAccessPatientData(patientId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             var oldillnesshistory = await _repository.GetByID(illnessId, patientId);
 
             if (oldillnesshistory == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             return oldillnesshistory;
@@ -63,15 +63,15 @@ namespace Lekarzowo.Controllers
         {
             if (illnessId != oldillnesshistory.IllnessId || patientId != oldillnesshistory.PatientId)
             {
-                return BadRequest(new JsonResult(""));
+                return BadRequest(BadRequestEmptyJsonResult);
             }
             if (! await OldillnesshistoryExists(oldillnesshistory.IllnessId, oldillnesshistory.PatientId))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             if (!await _authorizationService.CanUserAccessPatientData(patientId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             try
@@ -81,10 +81,10 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
-            return Ok(new JsonResult(""));
+            return Ok(OkEmptyJsonResult);
         }
 
         // POST: api/Oldillnesshistories
@@ -94,15 +94,15 @@ namespace Lekarzowo.Controllers
         {
             if (!_patientsRepository.Exists(oldillnesshistory.PatientId))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             if (!await _authorizationService.CanUserAccessPatientData(oldillnesshistory.PatientId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
             if (await OldillnesshistoryExists(oldillnesshistory.IllnessId, oldillnesshistory.PatientId))
             {
-                return Conflict(new JsonResult("Old illness history with that illness and patient already exists"));
+                return Conflict(ConflictJsonResult("Old illness history with that illness and patient already exists"));
             }
 
             try
@@ -112,7 +112,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return Created("", oldillnesshistory);
@@ -126,11 +126,11 @@ namespace Lekarzowo.Controllers
             var oldillnesshistory = await _repository.GetByID(illnessId, patientId);
             if (oldillnesshistory == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             if (!await _authorizationService.CanUserAccessPatientData(oldillnesshistory.PatientId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             try
@@ -140,7 +140,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return oldillnesshistory;

@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +43,7 @@ namespace Lekarzowo.Controllers
 
             if (treatment == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             return treatment;
@@ -55,11 +56,11 @@ namespace Lekarzowo.Controllers
         {
             if (id != treatment.Id)
             {
-                return BadRequest(new JsonResult(""));
+                return BadRequest(BadRequestEmptyJsonResult);
             }
             if (!TreatmentExists(id))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             try
@@ -69,10 +70,10 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
-            return Ok(new JsonResult(""));
+            return Ok(OkEmptyJsonResult);
         }
 
         // POST: api/Treatments
@@ -80,11 +81,12 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public async Task<ActionResult<Treatment>> PostTreatment(Treatment treatment)
         {
-            if (TreatmentExists(treatment.Id))
+            if (_repository.Exists(treatment.Name))
             {
-                return Conflict(new JsonResult("That treatment already exists"));
+                return Conflict(ConflictJsonResult("Treatment with that name already exists"));
             }
 
+            treatment.Id = Decimal.Zero;
             try
             {
                 _repository.Insert(treatment);
@@ -92,9 +94,8 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
-
 
             return Created("", treatment);
         }
@@ -107,7 +108,7 @@ namespace Lekarzowo.Controllers
             var treatment = _repository.GetByID(id);
             if (treatment == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             try
@@ -117,7 +118,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return treatment;

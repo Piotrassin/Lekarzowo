@@ -39,18 +39,18 @@ namespace Lekarzowo.Controllers
         {
             if (!_patientsRepository.Exists(patientId))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             if (! await _authorizationService.CanUserAccessPatientData(patientId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             var oldmedicinehistory = await _repository.GetByID(medicineId, patientId);
 
             if (oldmedicinehistory == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             return oldmedicinehistory;
@@ -63,15 +63,15 @@ namespace Lekarzowo.Controllers
         {
             if (patientId != oldmedicinehistory.PatientId || medicineId != oldmedicinehistory.MedicineId)
             {
-                return BadRequest(new JsonResult(""));
+                return BadRequest(BadRequestEmptyJsonResult);
             }
             if (!await OldmedicinehistoryExists(oldmedicinehistory.MedicineId, oldmedicinehistory.PatientId))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             if (!await _authorizationService.CanUserAccessPatientData(patientId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
 
@@ -82,10 +82,10 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
-            return Ok(new JsonResult(""));
+            return Ok(OkEmptyJsonResult);
         }
 
         // POST: api/Oldmedicinehistories
@@ -95,11 +95,11 @@ namespace Lekarzowo.Controllers
         {
             if (!_patientsRepository.Exists(oldmedicinehistory.PatientId))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             if (!await _authorizationService.CanUserAccessPatientData(oldmedicinehistory.PatientId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
             if (await OldmedicinehistoryExists(oldmedicinehistory.MedicineId, oldmedicinehistory.PatientId))
             {
@@ -113,7 +113,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return Created("", oldmedicinehistory);
@@ -127,11 +127,11 @@ namespace Lekarzowo.Controllers
             var oldmedicinehistory = await _repository.GetByID(medicineId, patientId);
             if (oldmedicinehistory == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             if (!await _authorizationService.CanUserAccessPatientData(oldmedicinehistory.PatientId, this))
             {
-                return Unauthorized(new JsonResult(""));
+                return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
             try
@@ -141,7 +141,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return oldmedicinehistory;

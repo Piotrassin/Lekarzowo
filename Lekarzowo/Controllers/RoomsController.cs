@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,7 @@ namespace Lekarzowo.Controllers
 
             if (room == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             return room;
@@ -57,11 +58,11 @@ namespace Lekarzowo.Controllers
         {
             if (id != room.Id)
             {
-                return BadRequest(new JsonResult(""));
+                return BadRequest(BadRequestEmptyJsonResult);
             }
             if (!RoomExists(id))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             try
@@ -71,10 +72,10 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
-            return Ok(new JsonResult(""));
+            return Ok(OkEmptyJsonResult);
         }
 
         // POST: api/Rooms
@@ -84,9 +85,10 @@ namespace Lekarzowo.Controllers
         {
             if (await _repository.Exists(room))
             {
-                return Conflict(new JsonResult("That room already exists"));
+                return Conflict(ConflictJsonResult("That room already exists"));
             }
 
+            room.Id = Decimal.Zero;
             try
             {
                 _repository.Insert(room);
@@ -94,7 +96,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return Created("", room);
@@ -108,7 +110,7 @@ namespace Lekarzowo.Controllers
             var room = _repository.GetByID(id);
             if (room == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             try
@@ -118,7 +120,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return room;

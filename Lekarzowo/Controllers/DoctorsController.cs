@@ -52,7 +52,7 @@ namespace Lekarzowo.Controllers
 
             if (doctor == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             return doctor;
@@ -67,7 +67,7 @@ namespace Lekarzowo.Controllers
 
             if (doctor == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             return doctor;
@@ -80,11 +80,11 @@ namespace Lekarzowo.Controllers
         {
             if (id != doctor.Id)
             {
-                return BadRequest(new JsonResult(""));
+                return BadRequest(BadRequestEmptyJsonResult);
             }
             if (!_repository.Exists(doctor.Id))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             try
@@ -94,9 +94,9 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
-            return Ok(new JsonResult(""));
+            return Ok(OkEmptyJsonResult);
 
         }
 
@@ -117,7 +117,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
             return Created("", doctor);
         }
@@ -133,7 +133,7 @@ namespace Lekarzowo.Controllers
             {
                 if (!(_peopleController.RegisterUser(person) is CreatedResult result))
                 {
-                    return BadRequest(new JsonResult(""));
+                    return BadRequest(BadRequestEmptyJsonResult);
                 }
 
                 addedUser = _peopleRepository.GetByEmail(person.Email);
@@ -141,7 +141,7 @@ namespace Lekarzowo.Controllers
 
                 if (!(PostDoctor(doctor) is CreatedResult resultDoctor))
                 {
-                    return BadRequest(new JsonResult(""));
+                    return BadRequest(BadRequestEmptyJsonResult);
                 }
 
                 transaction.Complete();
@@ -158,7 +158,7 @@ namespace Lekarzowo.Controllers
             var doctor = _repository.GetByID(doctorId);
             if (doctor == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             try
@@ -168,7 +168,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return doctor;

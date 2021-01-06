@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,20 +41,20 @@ namespace Lekarzowo.Controllers
 
             if (workinghours == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             return workinghours;
         }
 
-        // GET: api/Workinghours/allbyname
+        // GET: api/Workinghours/allbyname?date=1&doctorId=141&localId=1&limit=100&skip=0
         [Authorize(Roles = "admin")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<Workinghours>>> AllByName(string date, decimal? doctorId, decimal? localId, int? limit, int? skip)
         {
             //if (date == null)
             //{
-            //    return BadRequest(new JsonResult(""));
+            //    return BadRequest(BadRequestJsonResult);
             //}
             return Ok(await _repository.AutoCompleteInfo(date, doctorId, localId, limit, skip));
         }
@@ -67,7 +68,7 @@ namespace Lekarzowo.Controllers
 
             if (workplaces == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             return Ok(workplaces);
@@ -82,7 +83,7 @@ namespace Lekarzowo.Controllers
 
             if (workplaces == null || !workplaces.Any())
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             foreach (var workplace in workplaces)
             {
@@ -97,13 +98,13 @@ namespace Lekarzowo.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutWorkinghours(decimal id, Workinghours workhours)
         {
-            if (id != workhours.Id) return BadRequest(new JsonResult(""));
-            if (IsDoctorAccessingElsesData(workhours.DoctorId)) return Unauthorized(new JsonResult(""));
+            if (id != workhours.Id) return BadRequest(BadRequestEmptyJsonResult);
+            if (IsDoctorAccessingElsesData(workhours.DoctorId)) return Unauthorized(UnauthorizedEmptyJsonResult);
             if (await _reservationsRepository.IsAnyReservationScheduledThatDay(workhours.LocalId, workhours.DoctorId, workhours.From, workhours.To))
             {
-                return BadRequest(new JsonResult("During these work hours, there's already an appointment reserved"));
+                return BadRequest(BadRequestJsonResult("During these work hours, there's already an appointment reserved"));
             }
-            if (!WorkinghoursExists(id)) return NotFound(new JsonResult(""));
+            if (!WorkinghoursExists(id)) return NotFound(NotFoundEmptyJsonResult);
 
             try
             {
@@ -112,9 +113,9 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
-            return Ok(new JsonResult(""));
+            return Ok(OkEmptyJsonResult);
         }
 
         // POST: api/Workinghours
@@ -122,7 +123,9 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public async Task<ActionResult<Workinghours>> PostWorkinghours(Workinghours workinghours)
         {
-            if (IsDoctorAccessingElsesData(workinghours.DoctorId)) return Unauthorized(new JsonResult(""));
+            if (IsDoctorAccessingElsesData(workinghours.DoctorId)) return Unauthorized(UnauthorizedEmptyJsonResult);
+
+            workinghours.Id = Decimal.Zero;
             try
             {
                 _repository.Insert(workinghours);
@@ -130,7 +133,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
             return Created("", workinghours);
         }
@@ -141,11 +144,11 @@ namespace Lekarzowo.Controllers
         public async Task<ActionResult<Workinghours>> DeleteWorkinghours(decimal id)
         {
             var workhours = _repository.GetByID(id);
-            if (workhours == null) return NotFound(new JsonResult(""));
-            if (IsDoctorAccessingElsesData(workhours.DoctorId)) return Unauthorized(new JsonResult(""));
+            if (workhours == null) return NotFound(NotFoundEmptyJsonResult);
+            if (IsDoctorAccessingElsesData(workhours.DoctorId)) return Unauthorized(UnauthorizedEmptyJsonResult);
             if (await _reservationsRepository.IsAnyReservationScheduledThatDay(workhours.LocalId, workhours.DoctorId, workhours.From, workhours.To))
             {
-                return BadRequest(new JsonResult("W ciągu tych godzin pracy stworzono już rezerwację."));
+                return BadRequest(BadRequestJsonResult("W ciągu tych godzin pracy stworzono już rezerwację."));
             }
 
             try
@@ -155,7 +158,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return workhours;

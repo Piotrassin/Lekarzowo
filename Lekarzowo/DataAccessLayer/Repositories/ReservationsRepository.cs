@@ -44,7 +44,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 .FirstOrDefaultAsync(x => x.Id == reservationId);
         }
 
-        public async Task<Reservation> GetById(decimal reservationId)
+        public new async Task<Reservation> GetByID(decimal reservationId)
         {
             return await _context.Reservation.Include(x => x.Visit).FirstOrDefaultAsync(x => x.Id == reservationId);
         }

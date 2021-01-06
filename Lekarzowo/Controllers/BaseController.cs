@@ -11,6 +11,30 @@ namespace Lekarzowo.Controllers
     [ApiController]
     public abstract class BaseController : ControllerBase
     {
+        protected static readonly JsonResult NotFoundEmptyJsonResult = new JsonResult("") { StatusCode = 404 };
+        protected static readonly JsonResult UnauthorizedEmptyJsonResult = new JsonResult("") { StatusCode = 401 };
+        protected static readonly JsonResult BadRequestEmptyJsonResult = new JsonResult("") { StatusCode = 400 };
+        protected static readonly JsonResult CreatedEmptyJsonResult = new JsonResult("") { StatusCode = 201 };
+        protected static readonly JsonResult OkEmptyJsonResult = new JsonResult("") { StatusCode = 200 };
+
+        [HttpOptions]
+        protected static JsonResult ConflictJsonResult(string message)
+        {
+            return new JsonResult(message) { StatusCode = 409 };
+        }
+
+        [HttpOptions]
+        protected static JsonResult BadRequestJsonResult(string message)
+        {
+            return new JsonResult(message) { StatusCode = 400 };
+        }
+
+        [HttpOptions]
+        protected static JsonResult InternalServerErrorJsonResult(string message)
+        {
+            return new JsonResult(message) { StatusCode = 500 };
+        }
+
         [HttpOptions]
         public decimal GetUserIdFromToken()
         {

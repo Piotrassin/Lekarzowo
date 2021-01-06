@@ -34,7 +34,7 @@ namespace Lekarzowo.Controllers
 
             if (referral == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             return referral;
@@ -46,7 +46,7 @@ namespace Lekarzowo.Controllers
         {
             if (id != referral.Id)
             {
-                return BadRequest(new JsonResult(""));
+                return BadRequest(BadRequestEmptyJsonResult);
             }
 
             if (_repository.GetByID(referral.Id) != null)
@@ -62,13 +62,13 @@ namespace Lekarzowo.Controllers
             {
                 if (!ReferralExists(id))
                 {
-                    return NotFound(new JsonResult(""));
+                    return NotFound(NotFoundEmptyJsonResult);
                 }
 
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
-            return Ok(new JsonResult(""));
+            return Ok(OkEmptyJsonResult);
         }
 
         // POST: api/Referrals
@@ -77,7 +77,7 @@ namespace Lekarzowo.Controllers
         {
             if (ReferralExists(referral.Id))
             {
-                return Conflict(new JsonResult("That referral already exists"));
+                return Conflict(ConflictJsonResult("That referral already exists"));
             }
             _repository.Insert(referral);
             _repository.Save();
@@ -92,7 +92,7 @@ namespace Lekarzowo.Controllers
             var referral = _repository.GetByID(id);
             if (referral == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             try
@@ -102,7 +102,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return referral;

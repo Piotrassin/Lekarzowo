@@ -1,4 +1,5 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Lekarzowo.Controllers
 {
@@ -45,7 +47,7 @@ namespace Lekarzowo.Controllers
 
             if (city == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             return city;
         }
@@ -57,15 +59,15 @@ namespace Lekarzowo.Controllers
         {
             if (id != city.Id)
             {
-                return BadRequest(new JsonResult(""));
+                return BadRequest(BadRequestEmptyJsonResult);
             }
             if (!_repository.Exists(city.Id))
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
             if (_repository.Exists(city.Name))
             {
-                return Conflict(new JsonResult("City with that name already exists"));
+                return Conflict(ConflictJsonResult("City with that name already exists"));
             }
 
             try
@@ -75,10 +77,10 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
-            return Ok(new JsonResult(""));
+            return Ok(OkEmptyJsonResult);
         }
 
         // POST: api/Cities
@@ -86,11 +88,12 @@ namespace Lekarzowo.Controllers
         [HttpPost]
         public IActionResult PostCity(City city)
         {
-            if(_repository.Exists(city.Name))
+            if (_repository.Exists(city.Name))
             {
-                return Conflict(new JsonResult("City with that name already exists"));
+                return Conflict(ConflictJsonResult("City with that name already exists"));
             }
 
+            city.Id = Decimal.Zero;
             try
             {
                 _repository.Insert(city);
@@ -98,7 +101,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return Created("", city);
@@ -112,7 +115,7 @@ namespace Lekarzowo.Controllers
             var city = _repository.GetByID(id);
             if(city == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             try
@@ -122,7 +125,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return city;

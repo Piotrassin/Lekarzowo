@@ -54,7 +54,7 @@ namespace Lekarzowo.Controllers
 
             if (userroles == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             return userroles;
@@ -77,7 +77,7 @@ namespace Lekarzowo.Controllers
             }
             if (UserrolesExists(userroles.PersonId, userroles.RoleId))
             {
-                return Conflict(new JsonResult("User already has that role"));
+                return Conflict(ConflictJsonResult("User already has that role"));
             }
 
             try
@@ -87,7 +87,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return Created("", userroles);
@@ -100,7 +100,7 @@ namespace Lekarzowo.Controllers
             var userroles = _repository.GetByID(PersonId, RoleId);
             if (userroles == null)
             {
-                return NotFound(new JsonResult(""));
+                return NotFound(NotFoundEmptyJsonResult);
             }
 
             try
@@ -110,7 +110,7 @@ namespace Lekarzowo.Controllers
             }
             catch (DbUpdateException e)
             {
-                return StatusCode(500, new JsonResult(e.Message));
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
             }
 
             return userroles;
