@@ -65,7 +65,6 @@ namespace Lekarzowo.Controllers
             }
             if (_repository.Exists(city.Name))
             {
-                //return Conflict();
                 return Conflict(new JsonResult("City with that name already exists"));
             }
 

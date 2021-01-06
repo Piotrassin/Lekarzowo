@@ -1,12 +1,12 @@
-﻿using Lekarzowo.DataAccessLayer.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Lekarzowo.Controllers
 {
@@ -65,37 +65,7 @@ namespace Lekarzowo.Controllers
         /// Edytowanie przypisanych ról do użytkownika w sumie nie ma sensu, bo i tak nie powinno się zmieniać dat,
         /// a RoleId i PersonId są częścią klucza głównego, więc ich też nie powinno się/nie można ruszać.
         /// </summary>
-        /// <param name="PersonId"></param>
-        /// <param name="RoleId"></param>
-        /// <param name="inputUserRole"></param>
-        /// <returns></returns>
-        ////PUT: api/Userroles/5/2
-        //[HttpPut("{PersonId}/{RoleId}")]
-        //public async Task<IActionResult> PutUserroles(decimal PersonId, decimal RoleId, Userroles inputUserRole)
-        //{
-        //    if (PersonId != inputUserRole.PersonId)
-        //    {
-        //        return BadRequest(new JsonResult(""));
-        //    }
-        //    if (UserrolesExists(PersonId, RoleId))
-        //    {
-        //        var storedUserRole = _repository.GetByID(PersonId, RoleId);
-        //        storedUserRole.RoleId = inputUserRole.RoleId;
-        //        _repository.Update(inputUserRole);
-        //        try
-        //        {
-        //            _repository.Save();
-        //            return Ok(new JsonResult(""));
-        //        }
-        //        catch (DbUpdateConcurrencyException e)
-        //        {
-        //            //throw;
-        //            return StatusCode(503, new JsonResult(e.Message));
-        //        }
-        //    }
 
-        //    return NotFound(new JsonResult(""));
-        //}
 
         // POST: api/Userroles
         [HttpPost]
@@ -123,7 +93,7 @@ namespace Lekarzowo.Controllers
             return Created("", userroles);
         }
 
-        // DELETE: api/Userroles/5
+        // DELETE: api/Userroles/5/1
         [HttpDelete("{PersonId}/{RoleId}")]
         public async Task<ActionResult<Userroles>> DeleteUserroles(decimal PersonId, decimal RoleId)
         {

@@ -6,5 +6,6 @@ namespace Lekarzowo.DataAccessLayer.Repositories
 {
     public interface ILocalsRepository : IBaseNameRepository<Local>
     {
+        Task<Local> GetByIdWithCity(decimal localId);
     }
 }
