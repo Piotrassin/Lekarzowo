@@ -10,6 +10,7 @@ constructor(props){
   super(props);
   this.state = {
     treatmentName: "",
+    treatmentPrice: "",
     loading: false
   };
   this.onChangeTextField = this.onChangeTextField.bind(this);
@@ -26,16 +27,17 @@ onChangeTextField(event){
 
 handleClickAddTreatment(event){
   this.setState ({
-    errors: Validation.validateUniversalBlank(this.state.treatmentName, "Pole Nazwa zabiegu")
+    errors: Validation.validateUniversalBlankTwoinputs(this.state.treatmentName, this.state.treatmentPrice, "Pole Nazwa zabiegu", "Pole Cena zabiegu")
   }, () => {
     if(Object.keys(this.state.errors).length > 0){
       var message = Validation.handleValidationOutcome(this.state.errors);
       this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
     }else {
-      AdminService.postTreatment(this.state.treatmentName)
+      AdminService.postTreatment(this.state.treatmentName, this.state.treatmentPrice)
       .then(response => {
         this.setState({
-          treatmentName: ""
+          treatmentName: "",
+          treatmentPrice: ""
         });
         this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
       })
@@ -63,6 +65,13 @@ render() {
             value = {this.state.treatmentName}
             onChange = {this.onChangeTextField}
             type = 'text'
+            size="small" fullWidth />
+            <br/>
+            <TextField id="treatmentPrice" name="treatmentPrice"
+            label="Cena zabiegu"
+            value = {this.state.treatmentPrice}
+            onChange = {this.onChangeTextField}
+            type = 'number'
             size="small" fullWidth />
           </div>
           <br/><br/>

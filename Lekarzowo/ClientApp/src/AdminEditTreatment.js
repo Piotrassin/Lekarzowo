@@ -12,6 +12,7 @@ constructor(props){
   super(props);
   this.state = {
     treatmentName: "",
+    treatmentPrice: "",
     loading: false,
     selectedObjectId: "",
     clear: false
@@ -32,14 +33,15 @@ onClickSearch(value) {
   console.log(value);
   this.setState({
     selectedObjectId: value.id,
-    treatmentName: value.name
+    treatmentName: value.name,
+    treatmentPrice: value.price
   });
 
 }
 
 handleClickEdit(event){
   this.setState ({
-    errors: Validation.validateUniversalBlank(this.state.treatmentName, "Pole Nazwy zabiegu")
+    errors: Validation.validateUniversalBlankTwoinputs(this.state.treatmentName, this.state.treatmentPrice, "Pole Nazwa zabiegu", "Pole Cena zabiegu")
   }, () => {
     console.log(this.state.errors);
     if(Object.keys(this.state.errors).length > 0){
@@ -47,11 +49,12 @@ handleClickEdit(event){
       this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
 
     }else {
-      AdminService.putTreatment(this.state.selectedObjectId, this.state.treatmentName)
+      AdminService.putTreatment(this.state.selectedObjectId, this.state.treatmentName, this.state.treatmentPrice)
       .then(response => {
         console.log(response);
         this.setState({
           treatmentName: "",
+          treatmentPrice: "", 
           clear: !this.state.clear,
           selectedObjectId: ""
         });
@@ -78,17 +81,24 @@ render() {
           <div className = 'flex-column width-100'>
             <Autocomplete
             requestCallback = {VisitService.getAvailableTreatments}
-            title = "Choroba"
+            title = "Zabieg"
             changeCallback = {this.onClickSearch}
             dataTestId="autocomplete-local"
             key = {this.state.clear}
             />
             <br/>
-            <TextField id="sicknessName" name="sicknessName"
-            label="Nazwa choroby"
-            value = {this.state.sicknessName}
+            <TextField id="treatmentName" name="treatmentName"
+            label="Nazwa zabiegu"
+            value = {this.state.treatmentName}
             onChange = {this.onChangeTextField}
             type = 'text'
+            size="small" fullWidth />
+            <br/>
+            <TextField id="treatmentPrice" name="treatmentPrice"
+            label="Cena zabiegu"
+            value = {this.state.treatmentPrice}
+            onChange = {this.onChangeTextField}
+            type = 'number'
             size="small" fullWidth />
           </div>
           <br/><br/>

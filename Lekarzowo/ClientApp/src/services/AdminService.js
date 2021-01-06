@@ -305,12 +305,34 @@ class AdminService {
     });
   }
 
-  postTreatment(treatment){
+  postTreatment(treatment, price){
     return fetch(url + 'Treatments', {
     method: 'POST',
     headers: authHeader({'Content-Type': 'application/json'}),
     body: JSON.stringify({
-      "Name": treatment
+      "Name": treatment,
+      "Price": price
+    })})
+    .then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+
+  }
+
+  putTreatment(treatmentId, treatment, price){
+    return fetch(url + 'Treatments/' + treatmentId, {
+    method: 'PUT',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "Id": treatmentId,
+      "Name": treatment,
+      "Price": price
     })})
     .then(response => {
       MasterService.handleResponseStatus(response);
