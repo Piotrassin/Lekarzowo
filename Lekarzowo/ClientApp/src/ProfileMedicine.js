@@ -51,13 +51,12 @@ render() {
           <div className = 'sickness-item-part part-2'>
             <a className = 'table-header'>Lek</a>
           </div>
-          <div className = 'sickness-item-part part-3'>
+          <div className = 'sickness-item-part part-3-4'>
             <a className = 'table-header'>Dawka</a>
           </div>
-          <div className = 'sickness-item-part part-4'>
-            <a className = 'table-header'>Okres przyjmowania</a>
-          </div>
+          
           <div className = 'sickness-item-part part-5'>
+            <a className = 'table-header'>Okres przyjmowania</a>
           </div>
         </div>
         {this.state.medicines && this.state.medicines.map((medicine, index ) => (

@@ -7,6 +7,7 @@ import ProfileMedicine from './ProfileMedicine.js';
 import UserService from './services/UserService.js';
 import AuthService from './authentication/AuthService.js';
 import Snackbar from './helpers/Snackbar.js';
+import Formater from './helpers/Formater.js';
 
 class Profile extends React.Component {
 constructor(props){
@@ -94,7 +95,7 @@ componentDidMount(){
           </a>
           <br/>
           <div className = 'status-info status-info-green'>
-            <a>{AuthService.getUserCurrentRole()}</a>
+            <a>{Formater.mapRoleNames(AuthService.getUserCurrentRole())}</a>
           </div>
           <div className = 'subheader-profile'>
             <a>Dane Osobiste</a>

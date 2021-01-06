@@ -8,6 +8,7 @@ import AuthService from './authentication/AuthService.js';
 import RoleButton from './components/RoleButton.js';
 import SicknessItem from './components/SicknessItem.js';
 import Snackbar from './helpers/Snackbar.js';
+import Formater from './helpers/Formater.js';
 import './Main.css';
 
 
@@ -105,9 +106,8 @@ class Dashboard extends React.Component {
             <div className = "visits-container">
               {this.state.visitArray && this.state.visitArray.map((visit, index ) => (
               <div className = "visit-item">
-                <b className = "standarder-black">{visit.reservationStartTime.split("T")[0]}</b>
-                <a className = "small-dash">{visit.reservationStartTime.split("T")[1]} -
-                {visit.reservationEndTime.split("T")[1]}
+                <b className = "standarder-black">{Formater.formatDate(visit.reservationStartTime)}</b>
+                <a className = "small-dash">{Formater.formatHour(visit.reservationStartTime)} - {Formater.formatHour(visit.reservationEndTime)}
                 </a>
                 <a className = "small-dash">{visit.doctorName} {visit.doctorLastname}</a>
                 <a className = 'status-info status-info-green'>{visit.doctorSpecialization}</a>
