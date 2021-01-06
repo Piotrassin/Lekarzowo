@@ -69,10 +69,10 @@ class VisitDetails extends React.Component {
       clearVar: false,
       clearSick: false,
       clear: {
-        treatment: "",
-        sickness: "",
-        sicknessOnVisit: "",
-        medicine: ""
+        treatment: 1,
+        sickness: 2,
+        sicknessOnVisit: 3,
+        medicine: 4
       },
       openedVisit: openVisit,
       medicineHistory: [],
@@ -572,7 +572,11 @@ class VisitDetails extends React.Component {
         console.log(medicineVisitObject);
         this.setState(prevState  => ({
           ...prevState,
-          clearVar: !prevState.clearVar
+          clear: {
+            ...prevState.clear,
+            sicknessOnVisit: prevState + 1000,
+            medicine: prevState + 2000
+          }
           ,
           clicked: {
             ...prevState.clicked,
@@ -621,7 +625,10 @@ class VisitDetails extends React.Component {
       });
       this.setState(prevState => ({
         ...prevState,
-        clearVar: !prevState.clearVar,
+        clear:{
+          ...prevState.clear,
+          treatment: prevState - 1
+        },
         clicked: {
           ...prevState.clicked,
           treatment: null,
@@ -657,7 +664,10 @@ class VisitDetails extends React.Component {
       });
       this.setState(prevState => ({
         ...prevState,
-        clearVar: !prevState.clearVar,
+        clear: {
+          ...prevState.clear,
+          sickness: prevState + 1
+        },
         clicked: {
           ...prevState.clicked,
           sickness: null,
@@ -667,10 +677,10 @@ class VisitDetails extends React.Component {
     })
     .catch(err => {
         try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+          this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }catch(erorr){
+          console.log('Missed Reference');
+        };
     });
 
 
@@ -735,7 +745,7 @@ class VisitDetails extends React.Component {
 
           </div>
           </div>
-          <div className = "row-container">
+          <div className = "row-container" style= {{height: '45vh'}}>
           <div className = "flex-column justify-content-space column-container">
             <div className = "basic-container-small basic-container">
               <b className = "standard-black">Zdiagnozowane choroby</b>
@@ -868,7 +878,7 @@ class VisitDetails extends React.Component {
         cssId = 'medicine-search'
         className = 'dialog-margin'
         variant = 'outlined'
-        clear={this.state.clearVar}
+        key = {this.state.clear.sicknessOnVisit}
         addId = {this.state.id}
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
@@ -878,7 +888,7 @@ class VisitDetails extends React.Component {
         title = "Lek"
         cssId = 'medicine-search'
         variant = 'outlined'
-        clear={this.state.clearVar}
+        key = {this.state.clear.medicine}
         className = 'dialog-margin'
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
@@ -921,7 +931,7 @@ class VisitDetails extends React.Component {
         cssId = 'medicine-search'
         className = 'dialog-margin'
         variant = 'outlined'
-        clear={this.state.clearVar}
+        key = {this.state.clear.treatment}
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
         <br/>
@@ -953,7 +963,7 @@ class VisitDetails extends React.Component {
         cssId = 'medicine-search'
         variant = 'outlined'
         className = 'dialog-margin'
-        clear={this.state.clearVar}
+        key = {this.state.clear.sickness}
         styles = {{ width: "94%", marginTop: "20px", marginLeft: "20px" }}
         />
         <br/>
