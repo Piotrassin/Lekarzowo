@@ -68,7 +68,7 @@ render() {
           <div className = 'flex-column width-100'>
           <Autocomplete
           requestCallback = {VisitService.getAvailableTreatments}
-          title = "Choroba"
+          title = "Zabieg"
           changeCallback = {this.onClickSearch}
           dataTestId="autocomplete-local"
           key = {this.state.clear}

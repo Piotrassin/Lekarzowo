@@ -251,6 +251,41 @@ class AdminService {
 
   }
 
+  putRoom(roomId, roomNumber, localId){
+    return fetch(url + 'Rooms/' + roomId, {
+    method: 'PUT',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "Id": roomId,
+      "Number": roomNumber,
+      "LocalId": localId
+    })})
+    .then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
+  deleteRoom(roomId, localId){
+    return fetch(url + 'Rooms/' + roomId + '/' + localId, {
+      method: 'DELETE',
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+  }
+
   postUserAddRole(roleId, userId){
     return fetch(url + 'Userroles', {
     method: 'POST',
@@ -307,6 +342,21 @@ class AdminService {
       return response;
     });
 
+  }
+
+  deleteTreatment(id) {
+    return fetch(url + 'Treatments/' + id, {
+      method: 'DELETE',
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
   }
 
   putSpeciality(specialityId, specialityName, specialityPrice){
@@ -635,6 +685,31 @@ class AdminService {
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
+      return response;
+    });
+  }
+
+  getRoomsByLocalId(search, limit, skip, localId){
+    if (search === undefined)
+    {
+      search  = ''
+    }
+    return fetch(url + 'Rooms/AllByRoomNumber?roomNumber=' + search + '&limit=' + limit +
+    '&localId=' + localId, {
+      headers: authHeader()
+    }).then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      response = response.map((object) => {
+        return {
+          id: object.id,
+          name: "" + object.number
+        }
+      })
       return response;
     });
   }

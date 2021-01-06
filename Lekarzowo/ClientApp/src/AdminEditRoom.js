@@ -12,9 +12,10 @@ constructor(props){
   this.state = {
     roomNumber: "",
     loading: false,
-    selectedObjectId: "",
+    selectedObjectId: null,
     selectedRoomId: "",
-    clear: false
+    clear1: 1,
+    clear2: 2
   };
   this.onChangeTextField = this.onChangeTextField.bind(this);
   this.handleClickEdit = this.handleClickEdit.bind(this);
@@ -33,6 +34,8 @@ onClickSearch(value) {
   console.log(value);
   this.setState({
     selectedObjectId: value.id
+  }, () => {
+    console.log(this.state.selectedObjectId);
   });
 
 }
@@ -40,7 +43,8 @@ onClickSearch(value) {
 onClickRoomSearch(value) {
   console.log(value);
   this.setState({
-    selectedRoomId: value.id
+    selectedRoomId: value.id,
+    roomNumber: value.name
   });
 
 }
@@ -55,13 +59,15 @@ handleClickEdit(event){
       this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
 
     }else {
-      AdminService.putRoom(this.state.selectedRoomId, this.state.roomNumber)
+      AdminService.putRoom(this.state.selectedRoomId, this.state.roomNumber, this.state.selectedObjectId)
       .then(response => {
         console.log(response);
         this.setState({
-          cityName: "",
-          clear: !this.state.clear,
-          selectedCityId: ""
+          selectedRoomId: null,
+          selectedObjectId: null,
+          roomNumber: "",
+          clear1: this.state.clear1 -1,
+          clear2: this.state.clear2 + 1
         });
         this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
       })
@@ -89,22 +95,34 @@ render() {
             title = "Lokal"
             changeCallback = {this.onClickSearch}
             dataTestId="autocomplete-local"
+            key = {this.state.clear1}
             />
             <br/>
-
+            {this.state.selectedObjectId == null ||  this.state.selectedObjectId === undefined ?
+              <div/>
+              :
             <Autocomplete
-            requestCallback = {AdminService.getRooms}
+            requestCallback = {AdminService.getRoomsByLocalId}
             title = "Pokój"
             changeCallback = {this.onClickRoomSearch}
             dataTestId = 'autocomplete-rooms'
+            key = {this.state.clear2}
+            addId = {
+              this.state.selectedObjectId == undefined ? -1 : this.state.selectedObjectId
+            }
             />
+          }
             <br/>
-            <TextField id="number" name="number"
+            {this.state.selectedRoomId == "" ||  this.state.selectedObjectId === null ?
+              <div/>
+              :
+            <TextField id="roomNumber" name="roomNumber"
             label="Numer pokoju"
             value = {this.state.roomNumber}
             onChange = {this.onChangeTextField}
             type = 'number'
             size="small" fullWidth />
+          }
           </div>
           <br/><br/>
           <div>
