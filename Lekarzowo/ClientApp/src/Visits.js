@@ -1,17 +1,15 @@
 import React from 'react';
-import Dashboard from './Dashboard'
 import Menu from './Menu.js';
 import { withStyles } from '@material-ui/core/styles';
 import { Dialog } from './components/Dialog.js';
 import VisitItem from './components/VisitItem.js';
 import Switch from '@material-ui/core/Switch';
 import ReservationService from './services/ReservationService.js';
-import VisitService from './services/VisitService.js';
 import AuthService from './authentication/AuthService';
 import VisitAlert from './components/VisitAlert.js';
 import Formater from './helpers/Formater.js';
 import Snackbar from './helpers/Snackbar.js';
-const PurpleSwitch = withStyles({
+const YellowSwitch = withStyles({
   switchBase: {
     color: '#DBD887',
     '&$checked': {
@@ -26,14 +24,10 @@ const PurpleSwitch = withStyles({
 })(Switch);
 
 const currentRole = AuthService.getUserCurrentRole();
-
 class Visits extends React.Component {
   constructor(props){
     super(props);
-    this.onCheckVisitType = this.onCheckVisitType.bind(this);
-    this.openConfirmCancelReservationDialog = this.openConfirmCancelReservationDialog.bind(this);
-    this.cancelVisit = this.cancelVisit.bind(this);
-    this.onClickLoadMore = this.onClickLoadMore.bind(this);
+
     this.state = {
       snackbarRef: null,
       checkedVisit: true,
@@ -41,11 +35,16 @@ class Visits extends React.Component {
       recentVisits: [],
       visitToCancel: {},
       daysVisitCountBefore: 7,
-      daysVisitCountAfter: 2,
+      daysVisitCountAfter: 7,
       limitBefore:  10,
       limitAfter: 10,
-      showButton: true
+      showButton: false
     };
+
+    this.onCheckVisitType = this.onCheckVisitType.bind(this);
+    this.openConfirmCancelReservationDialog = this.openConfirmCancelReservationDialog.bind(this);
+    this.cancelVisit = this.cancelVisit.bind(this);
+    this.onClickLoadMore = this.onClickLoadMore.bind(this);
   }
 
 
@@ -53,7 +52,7 @@ class Visits extends React.Component {
     this.setState({
       snackbarRef: React.createRef()
     }, () => {
-        this.getUppcomingVisit();
+        this.getUpcomingVisit();
     });
 
   }
@@ -62,36 +61,46 @@ class Visits extends React.Component {
     var daysBefore = new Date(new Date());
     daysBefore.setDate(daysBefore.getDate() - this.state.daysVisitCountBefore);
     var daysAfter = new Date(new Date());
-    daysAfter.setDate(daysAfter.getDate() + 2);
+    daysAfter.setDate(daysAfter.getDate() + 1);
 
     if(currentRole == 'doctor'){
       return await ReservationService.getRecentDoctorReservations(daysBefore , daysAfter)
       .then(response => {
+        if(response.length > 0 ){
+          this.setState({
+            showButton: true
+          });
+        }
         this.setState({
           recentVisits: response
         });
       })
       .catch(err => {
           try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+            this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
       });
     }
     else if (currentRole == 'patient'){
       return await ReservationService.getRecentReservations(10, 0)
       .then(response => {
+        if(response.length == 10 ){
+          this.setState({
+            showButton: true
+          });
+        }
         this.setState({
           recentVisits: response
         });
       })
       .catch(err => {
           try{
-  this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
-}catch(erorr){
-  console.log('Missed Reference');
-};
+            this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
       });
     }
 
@@ -101,15 +110,20 @@ class Visits extends React.Component {
     var daysBefore = new Date(new Date());
     daysBefore.setDate(daysBefore.getDate() - this.state.daysVisitCountBefore - 7);
     var daysAfter = new Date(new Date());
-    daysAfter.setDate(daysAfter.getDate() - this.state.daysVisitCountBefore);
+    daysAfter.setDate(daysAfter.getDate() - this.state.daysVisitCountBefore - 1);
 
     if(currentRole == 'doctor'){
 
       return await ReservationService.getRecentDoctorReservations(daysBefore , daysAfter)
       .then(response => {
+        if(response.length == 0 ){
+          this.setState({
+            showButton: false
+          });
+        }
         this.setState({
           recentVisits: (this.state.recentVisits).concat(response),
-          daysVisitCountBefore: this.state.daysVisitCountBefore - 7
+          daysVisitCountBefore: this.state.daysVisitCountBefore + 7
         });
       })
       .catch(err => {
@@ -146,7 +160,7 @@ class Visits extends React.Component {
 
   }
 
-  async getUppcomingVisit() {
+  async getUpcomingVisit() {
     if(currentRole == 'doctor' ){
       var daysBefore = new Date(new Date());
       daysBefore.setDate(daysBefore.getDate());
@@ -171,6 +185,11 @@ class Visits extends React.Component {
 
       await ReservationService.getUpcomingReservations(10, 0)
       .then(response => {
+        if(response.length == 10 ){
+          this.setState({
+            showButton: true
+          });
+        }
         this.setState({
           upcomingVisits: response
         });
@@ -186,12 +205,12 @@ class Visits extends React.Component {
 
   }
 
-  async getUppcomingVisitLoadMore() {
+  async getUpcomingVisitLoadMore() {
     if(currentRole == 'doctor' ){
       var daysBefore = new Date(new Date());
-      daysBefore.setDate(daysBefore.getDate() - this.state.daysVisitCountAfter);
+      daysBefore.setDate(daysBefore.getDate() + this.state.daysVisitCountAfter + 1);
       var daysAfter = new Date(new Date());
-      daysAfter.setDate(daysAfter.getDate() - this.state.daysVisitCountAfter + 7);
+      daysAfter.setDate(daysAfter.getDate() + this.state.daysVisitCountAfter + 7);
       return await ReservationService.getUpcomingDoctorReservations(daysBefore, daysAfter)
       .then(response => {
         this.setState({
@@ -235,7 +254,7 @@ class Visits extends React.Component {
 
   onClickLoadMore(event){
     if(this.state.checkedVisit){
-      this.getUppcomingVisitLoadMore();
+      this.getUpcomingVisitLoadMore();
     }else {
       this.getPreviousVisitLoadMore();
     }
@@ -246,10 +265,10 @@ class Visits extends React.Component {
     console.log(event.target.checked);
     this.setState({
       checkedVisit: event.target.checked,
-      showButton: true
+      showButton: false
     }, () => {
       if(this.state.checkedVisit){
-        this.getUppcomingVisit();
+        this.getUpcomingVisit();
       }else {
         this.getPreviousVisit();
       }
@@ -271,7 +290,6 @@ class Visits extends React.Component {
 
   cancelVisit(event) {
     if(!(Object.keys(this.state.visitToCancel).length === 0)){
-      console.log('helo');
       ReservationService.cancelReservation(this.state.visitToCancel.reservationId)
       .then(response => {
         this.state.snackbarRef.current.openSnackBar('Odwołano wizytę', 'green-snackbar');
@@ -361,7 +379,7 @@ class Visits extends React.Component {
               <a className = 'subheader-content-white'>Filtrowanie</a>
               <div>
               <a>Przeszłe</a>
-              <PurpleSwitch
+              <YellowSwitch
                 checked={this.state.checkedVisit}
                 onChange = {this.onCheckVisitType}
                 name="checkedB"

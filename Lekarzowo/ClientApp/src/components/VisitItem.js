@@ -28,8 +28,11 @@ render() {
       <div className = 'sickness-item-part part-2'>
         <a>{Formater.formatHour(this.props.visit.reservationStartTime)} - {Formater.formatHour(this.props.visit.reservationEndTime)}</a>
       </div>
-      <div className = 'sickness-item-part part-3'>
-        <a>{this.props.role == 'doctor' ? this.props.visit.localName : this.props.visit.doctorSpecialization}</a>
+      <div className = 'sickness-item-part part-3 flex-column'>
+        <a>{this.props.visit.localName}</a>
+        {this.props.role == 'patient' ?
+        <a className = 'tiny-dashed'>{this.props.visit.streetName} {this.props.visit.streetNumber}, {this.props.visit.cityName}</a> : ""}
+        <a className = 'tiny-dashed'>Pokój: {this.props.visit.roomNumber}</a>
       </div>
       <div className = 'sickness-item-part part-4'>
         <a>{this.props.role == 'doctor' ? this.props.visit.patientName : this.props.visit.doctorName} {this.props.role == 'doctor' ? this.props.visit.patientLastname : this.props.visit.doctorLastname}</a>
