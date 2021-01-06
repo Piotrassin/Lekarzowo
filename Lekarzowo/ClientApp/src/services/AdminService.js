@@ -206,6 +206,31 @@ class AdminService {
 
   }
 
+  putLocal(localId, local){
+    return fetch(url + 'Locals/' + localId, {
+    method: 'PUT',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "Id": localId, 
+      "Name": local.name,
+      "CityId": local.cityId,
+      "Streetname": local.streetName,
+      "Postcode": local.postCode,
+      "Streetnumber": local.streetNumber,
+      "Blocknumber": local.blockNumber
+    })})
+    .then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      return response;
+    });
+
+  }
+
   postRoom(room){
     return fetch(url + 'Rooms', {
     method: 'POST',

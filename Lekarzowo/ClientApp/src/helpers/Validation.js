@@ -61,6 +61,18 @@ class Validation {
     return errorObject;
   }
 
+  validateBlankLocal(local){
+    var errorObject = {};
+
+    this.addErrorToObject(errorObject, 'Nazwa', this.validateBlank(local.name));
+    this.addErrorToObject(errorObject, 'Miasto', this.validateBlankNumber(local.cityId));
+    this.addErrorToObject(errorObject, 'Ulica', this.validateBlank(local.streetName));
+    this.addErrorToObject(errorObject, 'Kod pocztowy', this.validateBlankNumber(local.postCode));
+    this.addErrorToObject(errorObject, 'Numer ulicy', this.validateBlankNumber(local.streetNumber));
+
+    return errorObject;
+  }
+
   validateAdminAddSeciality(specialityName, basePrice){
     var errorObject = {};
     this.addErrorToObject(errorObject, 'Specjalizacja', this.validateBlank(specialityName));
@@ -86,7 +98,7 @@ class Validation {
     this.addErrorToObject(errorObject, 'Ulica', this.validateBlank(streetName));
     this.addErrorToObject(errorObject, 'Kod Pocztowy', this.validateBlank(postalCode));
     this.addErrorToObject(errorObject, 'Numer ulicy', this.validateBlankNumber(streetNumber));
-    this.addErrorToObject(errorObject, 'Numer bloku', this.validateBlankNumber(blockNumber));
+    
 
     return errorObject;
   }

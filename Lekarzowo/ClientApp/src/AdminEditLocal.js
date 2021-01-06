@@ -21,7 +21,8 @@ constructor(props){
     loading: false,
     selectedObjectId: "",
     selectedCustomValue: null,
-    clear: false
+    clear1: 1,
+    clear2: 2
   };
   this.onChangeTextField = this.onChangeTextField.bind(this);
   this.handleClickEdit = this.handleClickEdit.bind(this);
@@ -30,11 +31,6 @@ constructor(props){
 }
 snackbarRef = React.createRef();
 
-onChangeTextField(event){
-  this.setState({
-      [event.target.name]: event.target.value
-  });
-}
 
 onClickSearch(value) {
   console.log(value);
@@ -55,11 +51,10 @@ onClickSearch(value) {
           blockNumber: response.blocknumber
         },
         selectedCustomValue: {
-          id: response.cityId,
-          //To change to city when it wont be null
-          name: "Miasto"
+          id: response.city.id,
+          name: response.city.name
         },
-        clear: !prevState.clear
+        clear2: prevState.clear2 + 1
       }));
     })
     .catch(err => {
@@ -75,7 +70,8 @@ onClickCitySearch(value) {
     local: {
       ...prevState.local,
       cityId: value.id
-    }
+    },
+    selectedCustomValue: null
   }));
 }
 
@@ -92,7 +88,7 @@ onChangeTextField(event){
 
 handleClickEdit(event){
   this.setState ({
-    errors: Validation.validateUniversalBlank(this.state.cityName, "Pole Nazw miasta")
+    errors: Validation.validateBlankLocal(this.state.local)
   }, () => {
     console.log(this.state.errors);
     if(Object.keys(this.state.errors).length > 0){
@@ -100,13 +96,22 @@ handleClickEdit(event){
       this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
 
     }else {
-      AdminService.putDoctor(this.state.selectedCityId, this.state.cityName)
+      AdminService.putLocal(this.state.selectedObjectId, this.state.local)
       .then(response => {
         console.log(response);
         this.setState({
-          cityName: "",
-          clear: !this.state.clear,
-          selectedCityId: ""
+          local: {
+            name: "",
+            cityId: "",
+            streetName: "",
+            postCode: "",
+            streetNumber: "",
+            blockNumber: ""
+          },
+          clear1: this.state.clear1 - 1,
+          clear2: this.state.clear2 + 2,
+          selectedObjectId: "",
+          selectedCustomValue: null
         });
         this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
       })
@@ -134,7 +139,7 @@ render() {
             title = "Lokal"
             changeCallback = {this.onClickSearch}
             dataTestId="autocomplete-local"
-
+            key = {this.state.clear1}
             />
             <br/>
             <Autocomplete
@@ -143,7 +148,7 @@ render() {
             changeCallback = {this.onClickCitySearch}
             dataTestId = 'autocomplete-cities'
             selectedCustomValue = {this.state.selectedCustomValue}
-            key = {this.state.clear}
+            key = {this.state.clear2}
             clear = {this.state.selectedCustomValue}
             />
             <br/>
