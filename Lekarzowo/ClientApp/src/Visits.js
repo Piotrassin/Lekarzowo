@@ -343,6 +343,7 @@ class Visits extends React.Component {
               <div className = 'overflow-y-auto' style = {{height: '70vh'}}>
               {this.state.checkedVisit && this.state.upcomingVisits.map((visit, index ) => (
                   <VisitItem
+                  key = {visit.reservationId}
                   visit={visit}
                   role={currentRole}
                   history= {this.props.history}
@@ -351,7 +352,7 @@ class Visits extends React.Component {
                   />
                 ))}
                 {(!this.state.checkedVisit) && this.state.recentVisits.map((visit, index ) => (
-                    <VisitItem
+                    <VisitItem key = {visit.reservationId}
                     visit={visit}
                     role={currentRole}
                     history= {this.props.history}

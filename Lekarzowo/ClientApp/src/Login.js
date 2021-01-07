@@ -112,8 +112,8 @@ class Login extends React.Component {
             />
             <br/>
             <button className = "login-button">Zaloguj</button>
-            <a onClick = {this.onRegisterRequest} class = 'white-link' >Nie masz konta?</a>
-            <a onClick = {this.onFindDoctorRequest} class = 'white-link' >Znajdz naszych lekarzy</a>
+            <a onClick = {this.onRegisterRequest} className = 'white-link' >Nie masz konta?</a>
+            <a onClick = {this.onFindDoctorRequest} className = 'white-link' >Znajdz naszych lekarzy</a>
           </form>
         </div>
         <Snackbar ref = {this.snackbarRef} />

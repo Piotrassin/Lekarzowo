@@ -149,6 +149,7 @@ class Dashboard extends React.Component {
               <div className = 'overflow-y-auto' style = {{height: "300px"}}>
                 {this.state.illnesses && this.state.illnesses.map((illness, index ) => (
                 <SicknessItem
+                key = {illness.id}
                 sickness={illness}
                 history= {this.props.history}
                 />
