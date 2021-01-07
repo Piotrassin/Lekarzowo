@@ -223,6 +223,30 @@ class UserService {
   });
   }
 
+  sicknessEnded(id, visitId, illnessId){
+    return fetch(url + 'Illnesseshistory/' + id, {
+    method: 'PUT',
+    headers: authHeader({'Content-Type': 'application/json'}),
+    body: JSON.stringify({
+      "cureDate": new Date(),
+      "id": id,
+      "visitId": visitId,
+      "illnessId": illnessId
+    })
+  }).then(response => {
+    MasterService.handleResponseStatus(response);
+    return response.json()
+  }).then(response => {
+    if(response.status && response.status == 400){
+      throw Error(Validation.handleValidationFetchOutcome(response.errors));
+    }
+    if(response.statusCode && response.statusCode == 400){
+      throw Error('Złe parametry. Skontaktuj się z administratorem.')
+    }
+    return response;
+  });
+  }
+
 }
 
 export default new UserService();

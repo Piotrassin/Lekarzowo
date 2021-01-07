@@ -303,7 +303,7 @@ class PatientHistory extends React.Component {
         <div className = "visit-member-long">
           <a style={{color: 'white', cursor: 'pointer'}} onClick={this.handleBack}><img src = {backArrow} style={{width: '12px'}}/> Powrót</a>
           <b className = "big-white" style={{marginBottom: '10px'}}>{this.state.patientName} {this.state.patientLastname}</b>
-          <a style={{color: '#E4E4E4', fontWeight: 'bold'}}>Przebyte choroby</a>
+          <a style={{color: '#E4E4E4', fontWeight: 'bold'}}>Choroby pacjenta</a>
           <hr style= {{width: '100%'}} />
           <br/>
           <div className='overflow-y-auto' style={{width: '100%', height: '20vh'}}>
@@ -311,6 +311,7 @@ class PatientHistory extends React.Component {
             <SicknessPatientItem
             sickness = {illness}
             id = {illness.illnessHistoryId}
+            snackbarCallback = {this.showSnackbarCallback}
             />
             ))}
           </div>
