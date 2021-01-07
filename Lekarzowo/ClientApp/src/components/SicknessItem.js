@@ -17,11 +17,11 @@ render() {
       <div className = 'sickness-item-part part-1'>
         <img src = {sicknessSign} className = "small-icon" />
       </div>
-      <div className = 'sickness-item-part part-2'>
-        <a>{this.props.sickness.illness ? this.props.sickness.illness.name : this.props.sickness.illnessName}</a>
+      <div className = 'sickness-item-part part-2 overflow-y-auto'>
+        <a className = 'text-center'>{this.props.sickness.illness ? this.props.sickness.illness.name : this.props.sickness.illnessName}</a>
       </div>
-      <div className = 'sickness-item-part part-3-4'>
-        <a>{this.props.sickness.description}</a>
+      <div className = 'sickness-item-part part-3-4 overflow-y-auto'>
+        <a className = 'text-center'>{this.props.sickness.description}</a>
       </div>
       <div className = 'sickness-item-part part-5'>
         {this.props.sickness.visitId ?

@@ -59,11 +59,13 @@ render() {
             <a className = 'table-header'>Okres przyjmowania</a>
           </div>
         </div>
+        <div className = 'overflow-y-auto' style = {{height: '70vh'}}>
         {this.state.medicines && this.state.medicines.map((medicine, index ) => (
         <MedicineItem
         medicine={medicine}
         />
         ))}
+        </div>
       </div>
       <br/>
       <div className='progress-holder'>
