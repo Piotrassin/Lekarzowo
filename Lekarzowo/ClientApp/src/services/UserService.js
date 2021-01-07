@@ -199,16 +199,11 @@ class UserService {
   }
 
   medicineNoLongerTaken(medicineObject){
-    return fetch(url + 'medicinehistories?IllnessHistoryId=' + medicineObject.illnesshistoryId +
-    '&MedicineId=' + medicineObject.medicineId + '&StartDate=' + medicineObject.startdate, {
+    return fetch(url + 'medicinehistories/UpdateFinishDate?illnessHistoryId=' + medicineObject.illnesshistoryId +
+    '&medicineId=' + medicineObject.medicineId + '&startDate=' + medicineObject.startdate
+    + '&finishDate=' + new Date().toISOString() , {
     method: 'PUT',
-    headers: authHeader({'Content-Type': 'application/json'}),
-    body: JSON.stringify({
-      "Finishdate": new Date(),
-      "IllnessHistoryId": medicineObject.illnesshistoryId ,
-      "MedicineId": medicineObject.medicineId,
-      "StartDate": medicineObject.startdate
-    })
+    headers: authHeader({'Content-Type': 'application/json'})
   }).then(response => {
     MasterService.handleResponseStatus(response);
     return response.json()
@@ -223,16 +218,10 @@ class UserService {
   });
   }
 
-  sicknessEnded(id, visitId, illnessId){
-    return fetch(url + 'Illnesseshistory/' + id, {
+  sicknessEnded(id){
+    return fetch(url + 'illnesseshistory/updatecuredate?illnesshistoryid=' + id + '&curedate=' + new Date().toISOString(), {
     method: 'PUT',
-    headers: authHeader({'Content-Type': 'application/json'}),
-    body: JSON.stringify({
-      "cureDate": new Date(),
-      "id": id,
-      "visitId": visitId,
-      "illnessId": illnessId
-    })
+    headers: authHeader({'Content-Type': 'application/json'})
   }).then(response => {
     MasterService.handleResponseStatus(response);
     return response.json()

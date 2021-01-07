@@ -11,7 +11,7 @@ constructor(props) {
 
 onClickChangeSickness(event){
 
-  UserService.sicknessEnded(this.props.sickness.illnessHistoryId, this.props.sickness.visitId, this.props.sickness.illnessId)
+  UserService.sicknessEnded(this.props.sickness.illnessHistoryId)
   .then(response => {
     window.location.reload();
   })
@@ -47,7 +47,7 @@ render() {
         </div>
       </div>
       <div className = 'sickness-item-part-small part-5'>
-        {this.props.finishDate == undefined  ?
+        {this.props.sickness.cureDate == undefined  ?
           <a className = 'button-primary' onClick = {this.onClickChangeSickness}>Choroba zakończona</a>
           :
           <div/>
