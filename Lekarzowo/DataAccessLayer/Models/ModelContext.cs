@@ -535,6 +535,10 @@ namespace Lekarzowo.DataAccessLayer.Models
                 entity.Property(e => e.Price)
                     .HasColumnName("PRICE")
                     .HasColumnType("NUMBER(38)");
+
+                entity.Property(e => e.DurationOfVisit)
+                    .HasColumnName("DURATIONOFVISIT")
+                    .HasColumnType("TIMESTAMP(6)");
             });
 
             modelBuilder.Entity<Treatment>(entity =>

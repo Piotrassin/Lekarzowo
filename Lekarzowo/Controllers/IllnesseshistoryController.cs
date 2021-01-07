@@ -1,14 +1,14 @@
 ﻿using System;
-using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.DataAccessLayer.Repositories;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lekarzowo.DataAccessLayer.Models;
+using Lekarzowo.DataAccessLayer.Repositories;
+using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Lekarzowo.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lekarzowo.Controllers
 {
@@ -18,16 +18,18 @@ namespace Lekarzowo.Controllers
     {
         private readonly IIllnessesHistoryRepository _repository;
         private readonly IVisitsRepository _visitsRepository;
+        private readonly IReservationsRepository _reservationsRepository;
         private readonly IOldIllnessesHistoryRepository _oldIllnessesHistoryRepository;
         private readonly AuthorizationService _authorizationService;
 
 
         public IllnesseshistoryController(IIllnessesHistoryRepository context, IVisitsRepository visitsRepository, 
-            IOldIllnessesHistoryRepository oldIllnessesHistoryRepository, AuthorizationService authorizationService)
+            IOldIllnessesHistoryRepository oldIllnessesHistoryRepository, IReservationsRepository reservationsRepository, AuthorizationService authorizationService)
         {
             _repository = context;
             _visitsRepository = visitsRepository;
             _oldIllnessesHistoryRepository = oldIllnessesHistoryRepository;
+            _reservationsRepository = reservationsRepository;
             _authorizationService = authorizationService;
         }
 
@@ -158,6 +160,41 @@ namespace Lekarzowo.Controllers
                 return Unauthorized(UnauthorizedEmptyJsonResult);
             }
 
+            try
+            {
+                _repository.Update(illnesshistory);
+                _repository.Save();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
+            }
+
+            return Ok(OkEmptyJsonResult);
+        }
+
+        // PUT: api/illnesseshistory/updatecuredate?illnesshistoryid=1&curedate=1999-12-05
+        [Authorize(Roles = "doctor,admin")]
+        [HttpPut("[action]")]
+        public async Task<IActionResult> UpdateCuredate(decimal illnessHistoryId, DateTime cureDate)
+        {
+            var illnesshistory = _repository.GetByID(illnessHistoryId); 
+            if (illnesshistory == null)
+            {
+                return NotFound(NotFoundEmptyJsonResult);
+            }
+            if (!await _authorizationService.CanUserAccessIllnessHistory(illnessHistoryId, this))
+            {
+                return Unauthorized(UnauthorizedEmptyJsonResult);
+            }
+
+            var reservation = await _reservationsRepository.GetByID(illnesshistory.VisitId);
+            if (reservation.Starttime > cureDate)
+            {
+                return BadRequest(BadRequestJsonResult("CureDate cannot be earlier than startDate."));
+            }
+
+            illnesshistory.Curedate = cureDate;
             try
             {
                 _repository.Update(illnesshistory);
