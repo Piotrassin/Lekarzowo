@@ -5,6 +5,9 @@ import TextField from '@material-ui/core/TextField';
 import Snackbar from './helpers/Snackbar.js';
 import Validation from './helpers/Validation.js';
 import Autocomplete from './components/Autocomplete.js';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
 
 class AdminAddDoctor extends React.Component {
 constructor(props){
@@ -17,7 +20,7 @@ constructor(props){
     birthdate: "1999-01-01",
     email: "",
     password: "",
-    gender: "",
+    gender: "M",
     pesel: "",
     specialityId: null,
     clear: 1
@@ -26,7 +29,7 @@ constructor(props){
   this.onChangeTextField = this.onChangeTextField.bind(this);
   this.handleClickAddDoctor = this.handleClickAddDoctor.bind(this);
   this.onClickSpecializationSearch = this.onClickSpecializationSearch.bind(this);
-
+  this.handleGenferChange = this.handleGenferChange.bind(this);
 }
 
 snackbarRef = React.createRef();
@@ -43,6 +46,18 @@ onClickSpecializationSearch(value) {
   this.setState({
     specialityId: value.id
   });
+}
+
+handleGenferChange(event){
+  this.setState({
+    gender: event.target.value
+  });
+  this.setState(prevState => ({
+    touched: {
+      ...prevState.touched,
+      user: true
+    }
+  }));
 }
 
 
@@ -79,7 +94,7 @@ handleClickAddDoctor(event){
           birthdate: "1999-01-01",
           email: "",
           password: "",
-          gender: "",
+          gender: "M",
           pesel: "",
           specialityId: null,
           clear: this.state.clear + 1
@@ -149,12 +164,18 @@ render() {
             type = 'password'
             size="small" fullWidth />
             <br/>
-            <TextField id="gender" name="gender"
+            <InputLabel style={{fontSize: '12.5px'}} >Płeć</InputLabel>
+            <Select
+
+            value={this.state.gender}
+            onChange={this.handleGenferChange}
+            fullWidth
             label="Płeć"
-            value = {this.state.gender}
-            onChange = {this.onChangeTextField}
-            type = 'text'
-            size="small" fullWidth />
+            size="small"
+            >
+              <MenuItem value={"M"}>Mężczyzna</MenuItem>
+              <MenuItem value={"K"}>Kobieta</MenuItem>
+            </Select>
             <br/>
             <TextField id="pesel" name="pesel"
             label="PESEL"

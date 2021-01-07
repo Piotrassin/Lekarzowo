@@ -14,7 +14,7 @@ class Registration extends React.Component {
       name: "",
       lastname: "",
       birthdate: "",
-      gender: "",
+      gender: "M",
       pesel: "",
       touched: {
         email: false,
@@ -30,11 +30,21 @@ class Registration extends React.Component {
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleGenderClick = this.handleGenderClick.bind(this);
   }
   snackbarRef = React.createRef();
 
   handleChange(event) {
     this.setState({ [event.target.name]: event.target.value });
+  }
+
+  handleGenderClick(event){
+    console.log('clicked');
+    console.log(event.target.value);
+    console.log('state ' + this.state.gender);
+    this.setState({
+      gender: event.target.value
+    });
   }
 
   handleSubmit(event) {
@@ -67,7 +77,13 @@ class Registration extends React.Component {
     });
 
   }
-
+  /*<input id = "gender"
+  className = "input"
+  type = "text"
+  name = "gender"
+  value = {this.state.gender}
+  onChange = {this.handleChange}
+  />*/
 
   render(){
     return (
@@ -102,7 +118,7 @@ class Registration extends React.Component {
           <div className = "label-input-group flex-column">
           <label htmlFor="birthdate" className = "label">Data Urodzenia</label>
           <input id = "birthdate"
-          className = "input"
+          className = "input input-registration"
           type = "date"
           name = "birthdate"
           value = {this.state.birthdate}
@@ -111,20 +127,18 @@ class Registration extends React.Component {
           </div>
           <div className = "label-input-group flex-column">
           <label htmlFor="gender" className = "label">Płeć</label>
-          <input id = "gender"
-          className = "input"
-          type = "text"
-          name = "gender"
-          value = {this.state.gender}
-          onChange = {this.handleChange}
-          />
+          <select onChange = {this.handleGenderClick} style = {{height: '100%'}} className = "input input-registration" name="gender" id="gender">
+            <option value="M" >Mężczyzna</option>
+            <option value="K" >Kobieta</option>
+          </select>
+
           </div>
           </div>
           <div className = "flex-row justify-space-between">
           <div className = "label-input-group flex-column">
           <label htmlFor="pesel" className = "label">Pesel</label>
           <input id = "pesel"
-          className = "input"
+          className = "input input-registration"
           type = "number"
           name = "pesel"
           value = {this.state.pesel}
@@ -134,7 +148,7 @@ class Registration extends React.Component {
           <div className = "label-input-group flex-column">
           <label htmlFor="email" className = "label">Email</label>
           <input id = "email"
-          className = "input"
+          className = "input input-registration"
           type = "text"
           name = "email"
           value = {this.state.email}
@@ -146,7 +160,7 @@ class Registration extends React.Component {
           <div className = "label-input-group flex-column">
           <label htmlFor = "password" className = "label">Hasło</label>
           <input
-          className = "input"
+          className = "input input-registration"
           type = "password"
           name = "password"
           value = {this.state.password}
@@ -156,7 +170,7 @@ class Registration extends React.Component {
           <div className = "label-input-group flex-column">
           <label htmlFor = "passwordValid" className = "label">Powtórz Hasło</label>
           <input
-          className = "input"
+          className = "input input-registration"
           type = "password"
           name = "passwordValid"
           value = {this.state.passwordValid}

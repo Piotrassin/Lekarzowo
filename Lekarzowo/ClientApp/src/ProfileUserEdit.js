@@ -5,6 +5,9 @@ import UserService from './services/UserService.js';
 import AuthService from './authentication/AuthService.js';
 import Snackbar from './helpers/Snackbar.js';
 import Validation from './helpers/Validation.js';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
 
 
 class ProfileUserEdit extends React.Component {
@@ -30,6 +33,7 @@ constructor(props){
   this.handleChange = this.handleChange.bind(this);
   this.handleClickUserChange = this.handleClickUserChange.bind(this);
   this.handleClickPasswordChange = this.handleClickPasswordChange.bind(this);
+  this.handleGenferChange = this.handleGenferChange.bind(this);
 }
 
 componentDidMount(){
@@ -76,6 +80,18 @@ handleChange(event) {
       }
     }));
   }
+}
+
+handleGenferChange(event){
+  this.setState({
+    gender: event.target.value
+  });
+  this.setState(prevState => ({
+    touched: {
+      ...prevState.touched,
+      user: true
+    }
+  }));
 }
 
 handleClickUserChange(event){
@@ -196,11 +212,18 @@ render() {
             onChange = {this.handleChange}
             size="small" fullWidth />
             <br/>
-            <TextField id="gender" name="gender"
+            <InputLabel style={{fontSize: '12.5px'}} >Płeć</InputLabel>
+            <Select
+
+            value={this.state.gender}
+            onChange={this.handleGenferChange}
+            fullWidth
             label="Płeć"
-            value = {this.state.gender}
-            onChange = {this.handleChange}
-            size="small" fullWidth />
+            size="small"
+            >
+              <MenuItem value={"M"}>Mężczyzna</MenuItem>
+              <MenuItem value={"K"}>Kobieta</MenuItem>
+            </Select>
           </div>
           <div className = 'flex-column form-right-column'>
             <TextField id="lastname" name="lastname"

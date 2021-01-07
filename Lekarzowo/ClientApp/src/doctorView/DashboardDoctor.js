@@ -12,10 +12,6 @@ import Menu from '../Menu.js';
 import Formater from '../helpers/Formater.js';
 import Snackbar from '../helpers/Snackbar.js';
 
-
-
-const user = AuthService.getUserName();
-const userId = AuthService.getUserId();
 class Dashboard extends React.Component {
   constructor(props){
       super(props);
@@ -28,6 +24,8 @@ class Dashboard extends React.Component {
     this.handleClickShowVisit = this.handleClickShowVisit.bind(this);
     this.getDoctorWorkingHours = this.getDoctorWorkingHours.bind(this);
     this.getUpcomingDoctorReservations = this.getUpcomingDoctorReservations.bind(this);
+    this.user = AuthService.getUserName();
+    this.userId = AuthService.getUserId();
   }
   snackbarRef = React.createRef();
 
@@ -83,7 +81,7 @@ class Dashboard extends React.Component {
       <Menu history= {this.props.history}/>
       <div className ="dashboard">
         <div className = "headline-container">
-          <b className = "headline">{user}</b>
+          <b className = "headline">{this.user}</b>
           <RoleButton history= {this.props.history}/>
         </div>
         <div className = "dash-container">

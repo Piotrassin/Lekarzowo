@@ -12,7 +12,7 @@ import Formater from './helpers/Formater.js';
 import './Main.css';
 
 
-const user = AuthService.getUserName();
+
 class Dashboard extends React.Component {
   constructor(props){
       super(props);
@@ -26,6 +26,7 @@ class Dashboard extends React.Component {
     this.handleClickShowProfile = this.handleClickShowProfile.bind(this);
     this.getUpcomingReservations = this.getUpcomingReservations.bind(this);
     this.getUserSicknessHistory = this.getUserSicknessHistory.bind(this);
+    this.user = AuthService.getUserName();
   }
 
   componentWillMount() {
@@ -87,7 +88,7 @@ class Dashboard extends React.Component {
     return (
       <div className ="dashboard">
         <div className = "headline-container">
-          <b className = "headline">{user}</b>
+          <b className = "headline">{this.user}</b>
           <RoleButton history= {this.props.history}/>
         </div>
         <div className = "dash-container">
