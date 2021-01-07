@@ -158,7 +158,7 @@ namespace Lekarzowo.Controllers
             return Ok(OkEmptyJsonResult);
         }
 
-        // PUT: api/medicinehistories/UpdateFinishDate?illnessHistoryId=164&medicineId=2&startDate=2020-12-21
+        // PUT: api/medicinehistories/UpdateFinishDate?illnessHistoryId=164&medicineId=2&startDate=2020-12-21&finishDate=2020-12-21
         [Authorize(Roles = "admin,doctor")]
         [HttpPut("[action]")]
         public async Task<IActionResult> UpdateFinishDate(decimal illnessHistoryId, decimal medicineId, DateTime startDate, DateTime finishDate)

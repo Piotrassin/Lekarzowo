@@ -107,7 +107,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 .Where(x => x.Starttime.Date >= start.Value.Date && x.Endtime.Date <= end.Value.Date);
 
             query = showRecent
-                ? query.Where(x => x.Visit != null && x.Canceled == false).Where(x => x.Starttime < DateTime.Now)
+                ? query.Where(x => x.Visit != null && x.Canceled == false).Where(x => x.Starttime < DateTime.Now.AddMinutes(30))
                 : query.Where(x => x.Visit == null).Where(x => x.Starttime.AddMinutes(30) >= DateTime.Now);
 
             var anonymousQuery = query.Select(s => new
@@ -154,7 +154,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 : reservationTypeQuery
                     .Where(x => x.Visit != null)
                     .Where(x => x.Visit.OnGoing == false)
-                    .Where(x => x.Starttime < DateTime.Now);
+                    .Where(x => x.Starttime < DateTime.Now.AddMinutes(30));
 
             var anonymousTypeQuery = reservationTypeQuery.Select(x => new
             {
