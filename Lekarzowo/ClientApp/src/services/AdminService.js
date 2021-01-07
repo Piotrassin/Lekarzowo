@@ -883,7 +883,7 @@ class AdminService {
       skip = '';
     }
     return fetch(url + 'Workinghours/allbyname?date=' + search + '&limit=' + limit
-    + '&doctorId=' + idObject.doctorId + '&localId' + idObject.localId, {
+    + '&doctorId=' + idObject.doctorId + '&localId=' + idObject.localId, {
       headers: authHeader()
     }).then(response => {
       MasterService.handleResponseStatus(response);
