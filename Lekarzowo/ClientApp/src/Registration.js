@@ -14,7 +14,7 @@ class Registration extends React.Component {
       name: "",
       lastname: "",
       birthdate: "",
-      gender: "M",
+      gender: "X",
       pesel: "",
       touched: {
         email: false,
@@ -128,6 +128,7 @@ class Registration extends React.Component {
           <div className = "label-input-group flex-column">
           <label htmlFor="gender" className = "label">Płeć</label>
           <select onChange = {this.handleGenderClick} style = {{height: '100%'}} className = "input input-registration" name="gender" id="gender">
+            <option value="X" >Wolę nie podawać</option>
             <option value="M" >Mężczyzna</option>
             <option value="K" >Kobieta</option>
           </select>

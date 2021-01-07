@@ -19,7 +19,7 @@ constructor(props){
       name: "",
       lastname: "",
       birthdate: "1997-10-20",
-      gender: "",
+      gender: "X",
       pesel: "",
       oldPassword: "",
       password: "",
@@ -223,6 +223,7 @@ render() {
             >
               <MenuItem value={"M"}>Mężczyzna</MenuItem>
               <MenuItem value={"K"}>Kobieta</MenuItem>
+              <MenuItem value={"X"}>Wolę nie podawać</MenuItem>
             </Select>
           </div>
           <div className = 'flex-column form-right-column'>

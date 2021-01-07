@@ -20,7 +20,7 @@ constructor(props){
     birthdate: "1999-01-01",
     email: "",
     password: "",
-    gender: "M",
+    gender: "X",
     pesel: "",
     specialityId: null,
     clear: 1
@@ -173,6 +173,7 @@ render() {
             label="Płeć"
             size="small"
             >
+              <MenuItem value={"X"}>Wolę nie podawać</MenuItem>
               <MenuItem value={"M"}>Mężczyzna</MenuItem>
               <MenuItem value={"K"}>Kobieta</MenuItem>
             </Select>

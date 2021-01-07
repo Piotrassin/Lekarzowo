@@ -245,7 +245,6 @@ class Validation {
     this.addErrorToObject(errorObject, 'Nazwisko', this.validateBlank(lastName));
     this.addErrorToObject(errorObject, 'Data urodzenia', this.validateBlank(dateOfBirth));
     this.addErrorToObject(errorObject, 'Data urodzenia', this.validateDateOfBirth(dateOfBirth));
-    this.addErrorToObject(errorObject, 'Płeć', this.validateBlank(gender));
     this.addErrorToObject(errorObject, 'Płeć', this.validateGender(gender));
     this.addErrorToObject(errorObject, 'Pesel', this.validateBlank(pesel));
     this.addErrorToObject(errorObject, 'Pesel', this.validatePesel(pesel));
@@ -322,9 +321,9 @@ class Validation {
   }
 
   validateGender(input){
-    var validationResult = (input !=  'M' &&  input != 'K');
+    var validationResult = (input !=  'M' &&  input != 'K' &&  input != 'X');
     if(validationResult){
-      return " musi być M lub K";
+      return " musi być Mężczyzna lub Kobieta lub Wolę nie podawać";
     }
     return validationResult;
   }
