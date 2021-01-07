@@ -38,7 +38,6 @@ namespace Lekarzowo.Controllers
             return list;
         }
 
-
         // GET: api/Medicinehistories/ByIllnessId?IllnessHistoryId=1
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<Medicinehistory>>> ByIllnessId(decimal IllnessHistoryId)
@@ -149,6 +148,41 @@ namespace Lekarzowo.Controllers
             try
             {
                 _repository.Update(medicinehistory);
+                _repository.Save();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                return StatusCode(500, InternalServerErrorJsonResult(e.Message));
+            }
+
+            return Ok(OkEmptyJsonResult);
+        }
+
+        // PUT: api/medicinehistories/UpdateFinishDate?illnessHistoryId=164&medicineId=2&startDate=2020-12-21
+        [Authorize(Roles = "admin,doctor")]
+        [HttpPut("[action]")]
+        public async Task<IActionResult> UpdateFinishDate(decimal illnessHistoryId, decimal medicineId, DateTime startDate, DateTime finishDate)
+        {
+            var medicineHistory = _repository.GetById(illnessHistoryId, medicineId, startDate); 
+
+            if (medicineHistory == null)
+            {
+                return NotFound(NotFoundEmptyJsonResult);
+            }
+
+            if (medicineHistory.Startdate > medicineHistory.Finishdate)
+            {
+                return BadRequest(BadRequestJsonResult("FinishDate cannot be earlier than startDate."));
+            }
+            if (!await _authorizationService.CanUserAccessIllnessHistory(illnessHistoryId, this))
+            {
+                return Unauthorized(UnauthorizedEmptyJsonResult);
+            }
+
+            medicineHistory.Finishdate = finishDate;
+            try
+            {
+                _repository.Update(medicineHistory);
                 _repository.Save();
             }
             catch (DbUpdateConcurrencyException e)
