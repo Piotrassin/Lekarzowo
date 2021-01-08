@@ -12,7 +12,7 @@ namespace Lekarzowo.Validators
     public class DateTimeValidator
         //: PropertyValidator
     {
-        protected static int chunkSizeMinutes = ReservationsController.chunkSizeMinutes;
+        protected static int chunkSizeMinutes = ReservationsController.defaultChunkSizeMinutes;
 
         //public DateTimeValidator()
         //{

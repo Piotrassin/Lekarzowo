@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lekarzowo.DataAccessLayer.Repositories;
 
 namespace Lekarzowo.Controllers
 {
@@ -19,16 +20,21 @@ namespace Lekarzowo.Controllers
         private readonly IReservationsRepository _repository;
         private readonly IWorkingHoursRepository _workHoursRepository;
         private readonly IRoomsRepository _roomsRepository;
+        private readonly IDoctorsRepository _doctorsRepository; 
+        private readonly ISpecialitiesRepository _specialitiesRepository;
         private readonly AuthorizationService _authorizationService;
 
-        public const int chunkSizeMinutes = 15;
+        public const int defaultChunkSizeMinutes = 15;
 
-        public ReservationsController(IReservationsRepository repository, 
-            IWorkingHoursRepository whRepo, IRoomsRepository roomRepo, AuthorizationService authorizationService)
+        public ReservationsController(IReservationsRepository repository, IWorkingHoursRepository whRepo, 
+            IRoomsRepository roomRepo, IDoctorsRepository doctorsRepository, 
+            ISpecialitiesRepository specialitiesRepository, AuthorizationService authorizationService)
         {
             _repository = repository;
             _workHoursRepository = whRepo;
             _roomsRepository = roomRepo;
+            _doctorsRepository = doctorsRepository;
+            _specialitiesRepository = specialitiesRepository;
             _authorizationService = authorizationService;
         }
 
@@ -231,6 +237,23 @@ namespace Lekarzowo.Controllers
             return Ok(await _repository.RecentOrUpcomingByPatientId(patientId, false, false, doctorId, from, to, limit, skip));
         }
 
+        // GET: api/Reservations/Cancel/5
+        [Authorize(Roles = "patient,doctor,admin")]
+        [HttpGet("[action]/{reservationId}")]
+        public async Task<IActionResult> Cancel(decimal reservationId)
+        {
+            if (!await _authorizationService.CanUserAccessVisit(reservationId, this)) return Unauthorized(UnauthorizedEmptyJsonResult);
+
+            var result = await GetReservation(reservationId);
+            if (result.Value == null)
+            {
+                return NotFound(NotFoundEmptyJsonResult);
+            }
+            var reservation = result.Value;
+            reservation.Canceled = true;
+            return await PutReservation(reservationId, reservation);
+        }
+
         // GET: api/reservations/possibleappointments?CityId=2&SpecId=1&DoctorId=1&startDate=2020-12-20&endDate=2020-12-30&startHour=09:00:00&endHour=10:30:00
         [Authorize]
         [HttpGet("[action]")]
@@ -248,7 +271,17 @@ namespace Lekarzowo.Controllers
             IEnumerable<Reservation> allReservations = _repository.AllReservationsForPossibleAppointments(cityId, specId, doctorId, startDate, endDate);
             IEnumerable<Workinghours> workinghours = _workHoursRepository.GetAllFutureWorkHours(cityId, specId, doctorId, startDate, endDate);
 
-            var slotList = CalcPossibleAppointments(allReservations, workinghours);
+            Speciality doctorSpeciality;
+            if (specId.HasValue)
+            {
+                doctorSpeciality = _specialitiesRepository.GetByID(specId.Value);
+            }
+            else
+            {
+                doctorSpeciality = (await _doctorsRepository.GetByIdWithSpecialization(doctorId.Value)).Speciality;
+            }
+
+            var slotList = CalcPossibleAppointments(allReservations, workinghours, doctorSpeciality);
 
             if (startDate.HasValue && endDate.HasValue)
             {
@@ -264,26 +297,8 @@ namespace Lekarzowo.Controllers
             return Ok(slotList);
         }
 
-        // GET: api/Reservations/Cancel/5
-        [Authorize(Roles = "patient,doctor,admin")]
-        [HttpGet("[action]/{reservationId}")]
-        public async Task<IActionResult> Cancel(decimal reservationId)
-        {
-            if (! await _authorizationService.CanUserAccessVisit(reservationId, this)) return Unauthorized(UnauthorizedEmptyJsonResult);
-
-            var result = await GetReservation(reservationId);
-            if (result.Value == null)
-            {
-                return NotFound(NotFoundEmptyJsonResult);
-            }
-            var reservation = result.Value;
-            reservation.Canceled = true;
-            return await PutReservation(reservationId, reservation);
-        }
-
-
         #region Slots
-        private static IEnumerable<SlotDTO> CalcPossibleAppointments(IEnumerable<Reservation> allReservations, IEnumerable<Workinghours> workinghours)
+        private static IEnumerable<SlotDTO> CalcPossibleAppointments(IEnumerable<Reservation> allReservations, IEnumerable<Workinghours> workinghours, Speciality speciality)
         {
             var outputList = new List<SlotDTO>();
 
@@ -294,7 +309,7 @@ namespace Lekarzowo.Controllers
                     .Where(res => res.Room.LocalId == workDay.LocalId)
                     .Where(res => res.DoctorId == workDay.DoctorId).ToList();
 
-                var slotsThatDay = SplitDayIntoChunks(workDay, reservationsThatDay).ToList();
+                var slotsThatDay = SplitDayIntoChunks(workDay, reservationsThatDay, speciality).ToList();
                 slotsThatDay.ForEach(x =>
                 {
                     x.LocalId = workDay.LocalId;
@@ -311,27 +326,28 @@ namespace Lekarzowo.Controllers
             return outputList;
         }
 
-        private static IEnumerable<SlotDTO> SplitDayIntoChunks(Workinghours wh, List<Reservation> rlist)
+        private static IEnumerable<SlotDTO> SplitDayIntoChunks(Workinghours wh, List<Reservation> rlist, Speciality speciality)
         {
             var slotList = new List<SlotDTO>();
+            var specialityVisitDurationMinutes = speciality.DurationOfVisit.Hour * 60 + speciality.DurationOfVisit.Minute;
 
             if (rlist.Count > 0)
             {
                 rlist = rlist.OrderBy(x => x.Starttime).ToList();
                 //podziel na sloty, okres między początkiem pracy, a pierwszą wizytą
-                slotList = SplitChunkIntoSlots(wh.From, rlist.First().Starttime, chunkSizeMinutes);
+                slotList = SplitChunkIntoSlots(wh.From, rlist.First().Starttime, specialityVisitDurationMinutes);
                 for (int i = 0; i < (rlist.Count - 1); i++)
                 {
                     //podziel na sloty, okres między końcem i-tej wizyty, a początkiem (i+1)-szej wizyty
-                    slotList.AddRange(SplitChunkIntoSlots(rlist.ElementAt(i).Endtime, rlist.ElementAt(i + 1).Starttime, chunkSizeMinutes));
+                    slotList.AddRange(SplitChunkIntoSlots(rlist.ElementAt(i).Endtime, rlist.ElementAt(i + 1).Starttime, specialityVisitDurationMinutes));
                 }
                 //podziel na sloty, okres między końcem ostatniej wizyty, a końcem dnia pracy
-                slotList.AddRange(SplitChunkIntoSlots(rlist.Last().Endtime, wh.To, chunkSizeMinutes));
+                slotList.AddRange(SplitChunkIntoSlots(rlist.Last().Endtime, wh.To, specialityVisitDurationMinutes));
             }
             else
             {
                 //gdy nie ma wizyt tego dnia, podziel cały dzień na sloty
-                slotList.AddRange(SplitChunkIntoSlots(wh.From, wh.To, chunkSizeMinutes));
+                slotList.AddRange(SplitChunkIntoSlots(wh.From, wh.To, specialityVisitDurationMinutes));
             }
 
             return slotList;
@@ -341,7 +357,7 @@ namespace Lekarzowo.Controllers
         {
             var slots = new List<SlotDTO>();
 
-            if ((start.AddMinutes(chunkSizeMinutes) <= end))
+            if ((start.AddMinutes(minuteChunkSize) <= end))
             {
                 foreach (var slot in GenerateSlots(start, end, minuteChunkSize))
                 {
