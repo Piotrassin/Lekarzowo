@@ -1,12 +1,12 @@
 ﻿using FluentValidation;
+using Lekarzowo.Controllers;
 using Lekarzowo.DataAccessLayer.Models;
-using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 
 namespace Lekarzowo.Validators
 {
     public class SpecialityValidator : AbstractValidator<Speciality>
     {
-        public SpecialityValidator(ISpecialitiesRepository specialitiesRepository)
+        public SpecialityValidator()
         {
             RuleFor(x => x.Name)
                 .Cascade(CascadeMode.Stop)
@@ -17,6 +17,17 @@ namespace Lekarzowo.Validators
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("Pole nie może być puste.")
                 .Must(x => x > 0).WithMessage("Niepoprawna wartość");
+
+            RuleFor(x => x.DurationOfVisit)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty().WithMessage("Pole nie może być puste.")
+                .Must(BeAValidDurationTime).WithMessage("Niepoprawna wartość");
+        }
+
+        private bool BeAValidDurationTime(decimal visitDuration)
+        {
+            var minDuration = ReservationsController.defaultChunkSizeMinutes;
+            return visitDuration >= minDuration && visitDuration % minDuration == 0;
         }
     }
 }

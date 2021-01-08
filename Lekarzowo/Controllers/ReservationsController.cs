@@ -329,7 +329,7 @@ namespace Lekarzowo.Controllers
         private static IEnumerable<SlotDTO> SplitDayIntoChunks(Workinghours wh, List<Reservation> rlist, Speciality speciality)
         {
             var slotList = new List<SlotDTO>();
-            var specialityVisitDurationMinutes = speciality.DurationOfVisit.Hour * 60 + speciality.DurationOfVisit.Minute;
+            var specialityVisitDurationMinutes =Convert.ToInt32(speciality.DurationOfVisit);
 
             if (rlist.Count > 0)
             {

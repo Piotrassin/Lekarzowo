@@ -12,8 +12,9 @@ namespace Lekarzowo.Validators
     public class DateTimeValidator
         //: PropertyValidator
     {
-        protected static int chunkSizeMinutes = ReservationsController.defaultChunkSizeMinutes;
+        public static int chunkSizeMinutes = ReservationsController.defaultChunkSizeMinutes;
 
+        #region dark shadowy place
         //public DateTimeValidator()
         //{
         //    RuleFor(x => x)
@@ -48,6 +49,7 @@ namespace Lekarzowo.Validators
         //    var value = context.PropertyValue;
         //    return value != null;
         //}
+        #endregion
 
         public static bool BeInTheFuture(DateTime date)
         {
