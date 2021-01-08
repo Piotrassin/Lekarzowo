@@ -119,10 +119,10 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 .Select(x => new
                 {
                     id = x.Id,
-                    name = x.Doctor.IdNavigation.Name
-                           + " " + x.Doctor.IdNavigation.Lastname
-                           + " " + x.Local.Name
-                           + " " + x.From.Date
+                    name = x.Local.Name + " " + 
+                           x.From.Date.ToString("dd/MM/yyyy") + ", " +
+                           x.From.ToString("HH:mm") + " - " +
+                           x.To.ToString("HH:mm")
                 });
 
             var trimmedQuery = PaginationService<object>.SplitAndLimitQueryable(skip, limit, (IOrderedQueryable<object>) query);
