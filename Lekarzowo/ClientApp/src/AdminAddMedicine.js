@@ -1,10 +1,8 @@
 import React from 'react';
-import SicknessItem from './components/SicknessItem.js';
 import AdminService from './services/AdminService.js';
-import Fade from '@material-ui/core/Fade';
-import TextField from '@material-ui/core/TextField';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
+import Validation from './helpers/Validation.js';
+import TextField from '@material-ui/core/TextField';
 
 class AdminAddMedicine extends React.Component {
 constructor(props){
@@ -26,25 +24,29 @@ onChangeTextField(event){
 }
 
 handleClickAddMedicine(event){
-  AdminService.postMedicine(this.state.medicineName)
-  .then(response => {
-    console.log(response);
-    this.setState({
-      medicineName: ""
-    });
-    this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
-  })
-  .catch(err => {
-    if(err.message ==  401){
-      this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+  this.setState ({
+    errors: Validation.validateUniversalBlank(this.state.medicineName, "Pole Nazwa leku")
+  }, () => {
+    if(Object.keys(this.state.errors).length > 0){
+      var message = Validation.handleValidationOutcome(this.state.errors);
+      this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
     }else {
-      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      AdminService.postMedicine(this.state.medicineName)
+      .then(response => {
+        this.setState({
+          medicineName: ""
+        });
+        this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
+      })
+      .catch(err => {
+          try{
+            this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
+      });
     }
   });
-}
-
-componentDidMount() {
-
 }
 
 render() {
@@ -61,14 +63,13 @@ render() {
             type = 'text'
             size="small" fullWidth />
           </div>
-
           <br/><br/>
           <div>
-          <a className = 'button-green' onClick = {this.handleClickAddMedicine}>Dodaj</a>
+            <a className = 'button-green' onClick = {this.handleClickAddMedicine}>Dodaj</a>
           </div>
-          </form>
-          </div>
-        <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
+        </form>
+      </div>
+      <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
     </div>
   );
 }

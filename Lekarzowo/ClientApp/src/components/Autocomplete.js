@@ -5,6 +5,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import UserService from  '../services/UserService.js';
 import { makeStyles } from '@material-ui/core/styles';
+import _ from 'lodash';
 
 const useStyles = makeStyles((theme) => ({
   label: {
@@ -44,19 +45,31 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Asynchronous(props) {
+  const [def, setDef] = React.useState(null);
+  const [defAuto, setDefAuto] = React.useState(null);
+  const [touched, setTouched] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
-  const loading = open && options.length === 0;
+  const [requesting, setRequesting] = React.useState(true);
+  const [origOptions, setOrigOptions] = React.useState([]);
+  const loading = open && requesting;
   const classes = useStyles();
 
-  async function handleInputChange(event) {
-    console.log(event.target.value);
+  const delayedQuery = React.useCallback(_.debounce(q => sendQuery(q), 500), []);
+
+  async function sendQuery(value){
     if(props.addId != undefined){
-      var requestOptions = (await props.requestCallback(event.target.value, 100, 0, props.addId));
+      var requestOptions = (await props.requestCallback(value, 8, 0, props.addId).catch(err => {
+        setOptions([]);
+      }));
     }else {
-      var requestOptions = (await props.requestCallback(event.target.value, 100));
+      var requestOptions = (await props.requestCallback(value, 8).catch(err => {
+        setOptions([]);
+
+      }));
     }
 
+    if(requestOptions){
      requestOptions = requestOptions.reduce(function(acc, curr) {
       if(curr.lastname){
         curr.name = curr.name.concat(" ", curr.lastname);
@@ -65,20 +78,31 @@ export default function Asynchronous(props) {
       return acc;
     }, {});
 
-    console.log('requestOptions');
-    console.log(requestOptions);
+
       setOptions(Object.keys(requestOptions).map((key) => requestOptions[key]));
+    }else {
+      setOptions([]);
+      //setRequesting(false);
+    }
+
+  }
+
+  async function handleInputChange(event) {
+    //setRequesting(true);
+    delayedQuery(event.target.value);
 
   }
 
   function onChangeAutoComplete(event, value) {
-    console.log("inside");
-    console.log(value);
     if(value != null){
       props.changeCallback(value);
+
     }else {
       props.changeCallback("");
     }
+    setDefAuto(value);
+    setTouched(true);
+
   }
 
 
@@ -90,13 +114,20 @@ export default function Asynchronous(props) {
     }
 
     (async () => {
+      setRequesting(true);
       if(props.addId != undefined){
-        var requestOptions = (await props.requestCallback('', 2, 0, props.addId));
+        var requestOptions = (await props.requestCallback('', 8, 0, props.addId).catch(err => {
+          setOptions([]);
+          setRequesting(false);
+        }));
       }else {
-        var requestOptions = (await props.requestCallback('', 2));
+        var requestOptions = (await props.requestCallback('', 8).catch(err => {
+          setOptions([]);
+          setRequesting(false);
+        }));
       }
 
-
+      if(requestOptions){
         requestOptions = requestOptions.reduce(function(acc, curr) {
           if(curr.lastname){
             curr.name = curr.name.concat(" ", curr.lastname);
@@ -104,14 +135,20 @@ export default function Asynchronous(props) {
           acc[curr.id] = curr;
           return acc;
         }, {});
-
-
-
-      if (active) {
-        //setOptions(Object.keys(requestOptions).map((key) => requestOptions[key].item[0]));
-
-        setOptions(Object.keys(requestOptions).map((key) => requestOptions[key]));
+        if (active) {
+          setOptions(Object.keys(requestOptions).map((key) => requestOptions[key]));
+          setOrigOptions(Object.keys(requestOptions).map((key) => requestOptions[key]));
+        }else {
+          setOptions([]);
+        }
+      }else {
+        setOptions([]);
       }
+      setRequesting(false);
+
+
+
+
     })();
 
     return () => {
@@ -120,13 +157,21 @@ export default function Asynchronous(props) {
   }, [loading]);
 
   React.useEffect(() => {
+    if(props.selectedCustomValue && props.selectedCustomValue != null && touched == false){
+      const customTab = [props.selectedCustomValue];
+      setOptions(customTab);
+      setDefAuto(customTab[0]);
+    }
     if (!open) {
-      setOptions([]);
+      //setOptions([]);
+
+
     }
   }, [open]);
 
   return (
     <Autocomplete
+      data-testid = {props.dataTestId}
       id={props.cssId}
       style={props.styles}
       key={props.clear}
@@ -136,6 +181,9 @@ export default function Asynchronous(props) {
         setOpen(true);
       }}
       onClose={() => {
+        if(defAuto == null || defAuto == ""){
+          setOptions(origOptions);
+        }
         setOpen(false);
       }}
       onChange = {onChangeAutoComplete}
@@ -143,10 +191,12 @@ export default function Asynchronous(props) {
       getOptionLabel={(option) => option.name}
       options={options}
       loading={loading}
+      value={defAuto}
       renderInput={(params) => (
         <TextField
           {...params}
           label={props.title}
+          value={def}
           className={classes.input}
           variant={props.variant}
           size="small"

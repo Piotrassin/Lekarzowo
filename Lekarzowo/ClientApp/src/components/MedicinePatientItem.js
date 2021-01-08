@@ -1,5 +1,5 @@
 import React from 'react';
-import sicknessSign from '../images/SicknessSign.svg';
+import medicine1 from '../images/MedicineSmallRound.svg';
 import UserService from '../services/UserService.js';
 import Formater from '../helpers/Formater.js';
 
@@ -13,10 +13,10 @@ onClickChangeMedicine(event){
 
   UserService.medicineNoLongerTaken(this.props.medicine)
   .then(response => {
-    console.log(response);
     window.location.reload();
   })
   .catch(err => {
+    this.props.snackbarCallback(err.message, 'red-snackbar');
     console.log(err.message);
   })
 }
@@ -25,9 +25,9 @@ render() {
   return(
     <div className = 'sickness-item' style = {{border: 'none', color: 'white'}}>
       <div className = 'sickness-item-part-small part-1-small'>
-        <img src = {sicknessSign} className = "small-icon" />
+        <img src = {medicine1} className = "small-icon" />
       </div>
-      <div className = 'sickness-item-part-small part-2'>
+      <div className = 'sickness-item-part-small part-2' style = {{overflowX: 'auto'}}>
         <div className = 'flex-column'>
         <b>{this.props.medicineName}</b>
         <a>{this.props.dose}</a>

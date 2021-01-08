@@ -1,10 +1,8 @@
 import React from 'react';
-import SicknessItem from './components/SicknessItem.js';
 import AdminService from './services/AdminService.js';
-import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
+import Validation from './helpers/Validation.js';
 
 class AdminAddCity extends React.Component {
 constructor(props){
@@ -16,7 +14,6 @@ constructor(props){
   this.onChangeTextField = this.onChangeTextField.bind(this);
   this.handleClickAddCity = this.handleClickAddCity.bind(this);
 }
-
 snackbarRef = React.createRef();
 
 onChangeTextField(event){
@@ -26,24 +23,32 @@ onChangeTextField(event){
 }
 
 handleClickAddCity(event){
-  AdminService.postCity(this.state.cityName)
-  .then(response => {
-    console.log(response);
-    this.setState({
-      cityName: ""
-    });
-    this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
-  })
-  .catch(err => {
-    if(err.message ==  401){
-      this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+  this.setState ({
+    errors: Validation.validateUniversalBlank(this.state.cityName, "Pole Nazwa miasta")
+  }, () => {
+    console.log(this.state.errors);
+    if(Object.keys(this.state.errors).length > 0){
+      var message = Validation.handleValidationOutcome(this.state.errors);
+      this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+
     }else {
-      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      AdminService.postCity(this.state.cityName)
+      .then(response => {
+        console.log(response);
+        this.setState({
+          cityName: ""
+        });
+        this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
+      })
+      .catch(err => {
+          try{
+            this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
+      });
     }
   });
-}
-
-componentDidMount() {
 
 }
 
@@ -61,14 +66,13 @@ render() {
             type = 'text'
             size="small" fullWidth />
           </div>
-
           <br/><br/>
           <div>
-          <a className = 'button-green' onClick = {this.handleClickAddCity}>Dodaj</a>
+            <a className = 'button-green' onClick = {this.handleClickAddCity}>Dodaj</a>
           </div>
-          </form>
-          </div>
-        <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
+        </form>
+      </div>
+      <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
     </div>
   );
 }

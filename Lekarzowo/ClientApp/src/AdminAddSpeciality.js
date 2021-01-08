@@ -1,11 +1,9 @@
 import React from 'react';
-import SicknessItem from './components/SicknessItem.js';
 import AdminService from './services/AdminService.js';
-import Fade from '@material-ui/core/Fade';
-import TextField from '@material-ui/core/TextField';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
+import Validation from './helpers/Validation.js';
 import Autocomplete from './components/Autocomplete.js';
+import TextField from '@material-ui/core/TextField';
 
 class AdminAddSpeciality extends React.Component {
 constructor(props){
@@ -35,28 +33,33 @@ onChangeTextField(event){
 }
 
 handleClickAddSpeciality(event){
-  AdminService.postSpeciality(this.state.speciality)
-  .then(response => {
-    console.log(response);
-    this.setState({
-      speciality: {
-        name: "",
-        price: ""
-      }
-    });
-    this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
-  })
-  .catch(err => {
-    if(err.message ==  401){
-      this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+  this.setState ({
+    errors: Validation.validateAdminAddSeciality(this.state.speciality.name,
+    this.state.speciality.price)
+  }, () => {
+    if(Object.keys(this.state.errors).length > 0){
+      var message = Validation.handleValidationOutcome(this.state.errors);
+      this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
     }else {
-      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      AdminService.postSpeciality(this.state.speciality)
+      .then(response => {
+        this.setState({
+          speciality: {
+            name: "",
+            price: ""
+          }
+        });
+        this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
+      })
+      .catch(err => {
+          try{
+            this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
+      });
     }
   });
-}
-
-componentDidMount() {
-
 }
 
 render() {
@@ -68,26 +71,25 @@ render() {
           <div className = 'flex-column width-100'>
             <TextField id="name" name="name"
             label="Nazwa specializacji"
-            value = {this.state.name}
+            value = {this.state.speciality.name}
             onChange = {this.onChangeTextField}
             type = 'text'
             size="small" fullWidth />
             <br/>
             <TextField id="price" name="price"
             label="Cena bazowa za wizytę"
-            value = {this.state.price}
+            value = {this.state.speciality.price}
             onChange = {this.onChangeTextField}
             type = 'number'
             size="small" fullWidth />
           </div>
-
           <br/><br/>
           <div>
-          <a className = 'button-green' onClick = {this.handleClickAddSpeciality}>Dodaj</a>
+            <a className = 'button-green' onClick = {this.handleClickAddSpeciality}>Dodaj</a>
           </div>
-          </form>
-          </div>
-        <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
+        </form>
+      </div>
+      <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
     </div>
   );
 }

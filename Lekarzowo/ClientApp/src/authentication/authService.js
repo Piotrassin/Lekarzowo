@@ -1,6 +1,7 @@
-const url = 'https://localhost:5001/api/';
+import MasterService  from  '../services/MasterService.js';
+import Validation from '../helpers/Validation.js';
 
-
+const url = MasterService.url();
 class AuthService {
 
 
@@ -18,12 +19,21 @@ class AuthService {
           "Value": password
         }
       })
-    }).then(response => response.json())
+    })
     .then(response => {
+      MasterService.handleResponseStatus(response);
+      
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
       if(response.token){
         response.currentRole = response.roles[0];
         localStorage.setItem("userData", JSON.stringify(response));
-        console.log(response.token);
       }
       return response;
     });
@@ -52,7 +62,19 @@ class AuthService {
         gender: gender,
         pesel: pesel
       })
-    }).then(response => response.json());
+    })
+    .then(response => {
+      MasterService.handleResponseStatus(response);
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
+      return response;
+    });
   }
 
   checkifAnyUserData(){
@@ -71,6 +93,13 @@ class AuthService {
       return JSON.parse(localStorage.getItem("userData"));
     }
     return {status: 401};
+  }
+
+  getUserId(){
+    if(this.checkifAnyUserData() == true){
+      return JSON.parse(localStorage.getItem("userData")).id;
+    }
+    return '';
   }
 
   getUserName(){

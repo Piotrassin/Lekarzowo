@@ -24,7 +24,7 @@ export default class Snackbar extends PureComponent {
   render() {
     const { isActive } = this.state;
     return (
-      <div className = {isActive ? "snackbar show " + this.state.classes  : "snackbar"}>
+      <div role='alert' className = {isActive ? "snackbar show " + this.state.classes  : "snackbar"}>
         {this.message}
       </div>
     )

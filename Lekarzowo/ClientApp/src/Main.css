@@ -47,7 +47,7 @@ button:focus {
   display: flex;
   flex-direction: row;
   min-height: 100vh;
-  height: 100%;
+  height: 100vh;
 font-family: roboto;
 }
 .containerLogin{
@@ -207,6 +207,7 @@ overflow: scroll;
   width: 100%;
   min-height: 20px;
   overflow: auto;
+  padding: 0px 10px;
 }
 .left-margin-small {
   margin-left: 20px;
@@ -376,7 +377,7 @@ background-color: #EBEBEB;
 
 }
 .hello-container {
-  background-image: url("images/Rec_backgouond.png");
+  background-image: url("images/Rec_backgound2.png");
 grid-column-start: 1;
 grid-column-end: 3;
 grid-row: 1;
@@ -433,6 +434,7 @@ border-radius: 20px;
   background-color: red;
   border-radius: 20px;
   background-color: #97BCDE;
+  cursor: pointer;
 }
 .chart-container {
   background-color: white;
@@ -716,12 +718,26 @@ padding-right: 15px;
 #async-cities-label {
   color: white;
 }
+#async-speciality-label {
+  color: white;
+}
+#async-doctors-label {
+  color: white;
+}
 .MuiOutlinedInput-notchedOutline {
   border: 1.5px solid white !important;
   border-color: white !important;
   border-radius: 10px !important;
 }
 #async-cities {
+  color: white;
+  width: 160px;
+}
+#async-speciality {
+  color: white;
+  width: 160px;
+}
+#async-doctors {
   color: white;
   width: 160px;
 }
@@ -894,10 +910,10 @@ padding-right: 15px;
 .admin-content-holder {
   margin-top: 5px;
   background-color: white;
-  height: 100%;
   width: 97%;
   border-radius: 10px;
   padding: 15px;
+  height: 75vh;
   overflow-y: auto;
 
 }
@@ -987,6 +1003,15 @@ border-bottom: 1px solid #D6D6D6;
   justify-content: center;
   height: 100%;
   margin: auto;
+}
+.part-1-2-3-4-5 {
+  width: 100%;
+}
+.part-1-2-3 {
+  width: 60%;
+}
+.part-4-5 {
+  width: 40%;
 }
 .part-1 {
   width: 10%;
@@ -1323,9 +1348,14 @@ align-items: center;
   margin-right: 20px;
   border-radius: 5px;
 }
-#reservation-dialog {
+.btn-white-filled {
   background-color: white;
+  border: 0px;
+  color: #1859A6;
+  font-weight: bold;
+
 }
+
 .dialog-title {
   font-size: large;
   font-weight: bold;
@@ -1426,6 +1456,9 @@ align-items: center;
   color: #565656;
   font-size: 13px;
 }
+.text-center{
+  text-align: center;
+}
 .item-holder {
   height: 60%;
   overflow-y: auto;
@@ -1437,4 +1470,10 @@ align-items: center;
   overflow-y: auto;
   overflow-x: hidden;
   width: 100%;
+}
+.display-none {
+  display: none;
+}
+.overflow-x-auto {
+  overflow-x: auto;
 }

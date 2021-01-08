@@ -3,7 +3,7 @@ import Dashboard from './Dashboard.js'
 import React from 'react';
 import './Main.css';
 
-class MainContainer extends React.Component {
+class DashboardContainer extends React.Component {
   constructor(props){
     super(props);
   }
@@ -17,4 +17,4 @@ class MainContainer extends React.Component {
     );
   }
 }
-export default MainContainer;
+export default DashboardContainer;

@@ -21,18 +21,19 @@ constructor(props) {
 
 handleRedirect(){
   var role = AuthService.getUserCurrentRole();
+  console.log(role);
   var redirectPath = "/";
   switch(role){
     case 'patient': redirectPath = "/"; break;
     case 'doctor': redirectPath = '/dashboardDoctor'; break;
-    case 'admin': redirectPath = '/'; break;
+    case 'admin': redirectPath = '/adminPanel'; break;
   }
   this.props.history.push(redirectPath);
   window.location.reload();
 }
 
 onchangeUserRole(event){
-  console.log(event.currentTarget);
+
   this.setState({
     value: event.currentTarget
   });
@@ -77,19 +78,20 @@ handleCloseRoleBtn(event) {
         console.log("Nie udało się");
       }
   })
-  this.setState({
-    value: null
-  })
   .catch(err => {
     console.log(err.message);
   });
+  this.setState({
+    value: null
+  })
+
 
 }
 
 render() {
   const user = AuthService.getUser();
   return(
-    <div>
+    <div className={AuthService.getUserRoles().length > 1 ? '' : 'display-none'}>
       <Button onClick = {this.onchangeUserRole} className = "btn-roles">
         {AuthService.getUserCurrentRole() == 'doctor' ?
           <img src = {DoctorIcon} style = {{width: '30px', marginRight: '10px'}} />
@@ -111,6 +113,7 @@ render() {
           <MenuItem
           onClick={this.handleCloseRoleBtn}
           id = {el}
+          key = {id}
           >
             {this.mapRoleNames(el)}
 

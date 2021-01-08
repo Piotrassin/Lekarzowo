@@ -26,8 +26,7 @@ render(){
       <a className = "smaller-font">data</a>
       </div>
       <div className = "res-item-part-2">
-      <a>{Formater.formatHour(this.props.reservation.start)} -
-      {Formater.formatHour(this.props.reservation.end)}</a>
+      <a>{Formater.formatHour(this.props.reservation.start)} - {Formater.formatHour(this.props.reservation.end)}</a>
       <a className = "smaller-font">Godziny</a>
       </div>
       <div className = "res-item-part-3">

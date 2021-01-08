@@ -1,12 +1,10 @@
 import React from 'react';
-import SicknessItem from './components/SicknessItem.js';
 import AdminService from './services/AdminService.js';
 import UserService from './services/UserService.js';
-import Fade from '@material-ui/core/Fade';
-import TextField from '@material-ui/core/TextField';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
+import Validation from './helpers/Validation.js';
 import Autocomplete from './components/Autocomplete.js';
+import TextField from '@material-ui/core/TextField';
 
 class AdminAddRoom extends React.Component {
 constructor(props){
@@ -16,8 +14,8 @@ constructor(props){
       number: "",
       localId: ""
     },
-
-    loading: false
+    loading: false,
+    clear: 1
   };
   this.onChangeTextField = this.onChangeTextField.bind(this);
   this.handleClickAddRoom = this.handleClickAddRoom.bind(this);
@@ -44,31 +42,37 @@ onClickLocalSearch(value) {
       localId: value.id
     }
   }));
-  console.log(value.id);
 }
 
 handleClickAddRoom(event){
-  AdminService.postRoom(this.state.room)
-  .then(response => {
-    console.log(response);
-    this.setState({
-      room: {
-        number: "",
-        localId: ""
-      }
-    });
-    this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
-  })
-  .catch(err => {
-    if(err.message ==  401){
-      this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+  this.setState ({
+    errors: Validation.validateAdminAddRoom(this.state.room.localId,
+    this.state.room.number)
+  }, () => {
+    if(Object.keys(this.state.errors).length > 0){
+      var message = Validation.handleValidationOutcome(this.state.errors);
+      this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
     }else {
-      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      AdminService.postRoom(this.state.room)
+      .then(response => {
+        this.setState({
+          room: {
+            number: "",
+            localId: ""
+          },
+          clear: this.state.clear + 1
+        });
+        this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
+      })
+      .catch(err => {
+          try{
+            this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
+      });
     }
   });
-}
-
-componentDidMount() {
 
 }
 
@@ -83,24 +87,24 @@ render() {
             requestCallback = {AdminService.getLocals}
             title = "Lokal"
             changeCallback = {this.onClickLocalSearch}
+            dataTestId = 'autocomplete-local'
+            key = {this.state.clear}
             />
             <br/>
             <TextField id="number" name="number"
             label="Numer pokoju"
             value = {this.state.room.number}
             onChange = {this.onChangeTextField}
-            type = 'text'
+            type = 'number'
             size="small" fullWidth />
-
           </div>
-
           <br/><br/>
           <div>
-          <a className = 'button-green' onClick = {this.handleClickAddRoom}>Dodaj</a>
+            <a className = 'button-green' onClick = {this.handleClickAddRoom}>Dodaj</a>
           </div>
-          </form>
-          </div>
-        <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
+        </form>
+      </div>
+      <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
     </div>
   );
 }

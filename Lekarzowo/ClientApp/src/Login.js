@@ -5,22 +5,11 @@ import logo from './images/logo.svg';
 import { Route , withRouter} from 'react-router-dom';
 import AuthService from './authentication/AuthService.js';
 import Snackbar from './helpers/Snackbar.js';
-
-function validate(email, password){
-  return {
-    email: (!email.includes("@")) && email.length === 0,
-    password: password.length === 0
-  }
-}
+import Validation from './helpers/Validation.js';
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    this.onChangeEmail = this.onChangeEmail.bind(this);
-    this.onChangePassword = this.onChangePassword.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.onRegisterRequest = this.onRegisterRequest.bind(this);
-    this.onFindDoctorRequest = this.onFindDoctorRequest.bind(this);
     this.state = {
       email: "",
       password: "",
@@ -30,6 +19,11 @@ class Login extends React.Component {
         password: false
       }
     };
+    this.onChangeEmail = this.onChangeEmail.bind(this);
+    this.onChangePassword = this.onChangePassword.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.onRegisterRequest = this.onRegisterRequest.bind(this);
+    this.onFindDoctorRequest = this.onFindDoctorRequest.bind(this);
   }
   snackbarRef = React.createRef();
 
@@ -56,86 +50,70 @@ class Login extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    //here set the waiitiing and loading values
-    AuthService.login(this.state.email, this.state.password).then(
-      response => {
-        if(response.status >= 400){
-          this.snackbarRef.current.openSnackBar('Złe dane logowania');
-        }else{
-          console.log(response.currentRole.roleName);
-          if(response.currentRole.roleName == 'doctor'){
-              this.props.history.push('/dashboardDoctor');
-              console.log("doctor");
-          }
-          else{
-              this.props.history.push('/');
-              console.log("not doctor");
-          }
-          console.log("Wyszlo Login");
-          window.location.reload();
-        }
+    this.setState ({
+      errors: Validation.validateLogin(this.state.email, this.state.password)
+    }, () => {
+      if(Object.keys(this.state.errors).length > 0){
+        var message = Validation.handleValidationOutcome(this.state.errors);
+        this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
+      }else {
+        AuthService.login(this.state.email, this.state.password).then(
+          response => {
+            console.log(response.currentRole);
+              switch(response.currentRole){
+                case 'doctor':
+                  this.props.history.push('/dashboardDoctor');
+                  break;
+                case 'patient':
+                  this.props.history.push('/');
+                  break;
+                case 'admin':
+                  this.props.history.push('/adminPanel');
+                  break;
+              }
+              //window.location.reload();
+          })
+          .catch(err => {
+              try{
+                this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+              }catch(erorr){
+                console.log('Missed Reference');
+              };
+          });
       }
-    );
-  }
-
-  handleBlur = (field) => (evt) => {
-    this.setState({
-      touched: { ...this.state.touched, [field]: true },
     });
+
+
+
+
   }
 
   render() {
-    const errors = validate(this.state.email, this.state.password);
-    const isEnabled = Object.keys(errors).some(x => errors[x]);
-    const shouldMarkError = (field) => {
-      const hasError = errors[field];
-      const shouldShow = this.state.touched[field];
-      return hasError ? shouldShow : false;
-    };
     return(
       <div className = "loginContainer">
         <div className = "loginPictureContainer">
-        <img
-            className = "centeredImage"
-            src={doctorDraw}
-            height="300"
-             />
+          <img className = "centeredImage" src={doctorDraw} height="300"/>
         </div>
         <div className = "loginInputContainer">
-        <img
-            className = "logo"
-            src={logo}
-            height="90"
-             />
+          <img className = "logo" src={logo} height="90" />
           <form onSubmit = {this.handleSubmit} className = "loginForm">
             <label htmlFor="login" className = "label">Login</label>
             <input id = "login"
-            className = {shouldMarkError('email') ? "input error" : "input"}
+            className = "input"
             type = "text"
-            onBlur={this.handleBlur('email')}
             value = {this.state.email}
             onChange = {this.onChangeEmail}
             />
             <label htmlFor = "password" className = "label">Hasło</label>
-            <input className = {shouldMarkError('password') ? "input error" : "input"}
+            <input className = "input"
             type = "password"
-            onBlur={this.handleBlur('password')}
             value = {this.state.password}
             onChange = {this.onChangePassword}
             />
             <br/>
-            <button disabled={isEnabled} className = "login-button">Zaloguj</button>
-            <a
-            onClick = {this.onRegisterRequest}
-            class = 'white-link'
-            >Nie masz konta?
-            </a>
-            <a
-            onClick = {this.onFindDoctorRequest}
-            class = 'white-link'
-            >
-            Znajdz naszych lekarzy
-            </a>
+            <button className = "login-button">Zaloguj</button>
+            <a onClick = {this.onRegisterRequest} className = 'white-link' >Nie masz konta?</a>
+            <a onClick = {this.onFindDoctorRequest} className = 'white-link' >Znajdz naszych lekarzy</a>
           </form>
         </div>
         <Snackbar ref = {this.snackbarRef} />

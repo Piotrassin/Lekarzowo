@@ -1,6 +1,7 @@
 import authHeader from '../authentication/AuthHeader.js';
 import AuthService from '../authentication/AuthService.js';
 import MasterService  from  './MasterService.js';
+import Validation from '../helpers/Validation.js';
 
 const url = MasterService.url();
 
@@ -13,10 +14,16 @@ class VisitService {
     + '&localId=' + localId + '&start=' + startDate.toISOString() + '&end=' + endDate.toISOString(), {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
+      return response;
     });
   }
 
@@ -44,7 +51,10 @@ class VisitService {
       if(response.status == 401 && (!MasterService.handle401Logout(response))){
           throw new Error(401);
       }
-      return response.json()
+      if(response.status != 204){
+        return response.json();
+      }
+      return response.text()
     });
   }
 
@@ -88,17 +98,20 @@ class VisitService {
     return fetch(url + 'Visits/CanBeOpened/' + id, {
      headers: authHeader()
    }).then(response => {
-     if(response.status == 401 && (!MasterService.handle401Logout(response))){
-         throw new Error(401);
+     MasterService.handleResponseStatus(response);
+     return response.json()
+   }).then(response => {
+     if(response.status && response.status == 400){
+       throw Error(Validation.handleValidationFetchOutcome(response.errors));
      }
-     if(response.status >= 400){
-       throw Error("err");
+     if(response.statusCode && response.statusCode == 400){
+       throw Error('Złe parametry. Skontaktuj się z administratorem.')
      }
-     return response.json();
+     return response;
    })
    .then(response => {
      return response.value;
-   })
+   });
 
   }
 
@@ -115,10 +128,16 @@ class VisitService {
     + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
+      return response;
     });
   }
 
@@ -137,10 +156,16 @@ class VisitService {
     + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
+      return response;
     });
   }
 
@@ -157,10 +182,16 @@ class VisitService {
     + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
+      return response;
     });
   }
 
@@ -177,10 +208,16 @@ class VisitService {
     + '&skip=' + skip + '&visitId=' + visitId, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
+      return response;
     });
   }
 
@@ -189,10 +226,16 @@ class VisitService {
     '&limit='+ limit + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
+      return response;
     });
   }
 
@@ -202,10 +245,16 @@ class VisitService {
     '&limit='+ limit + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
+      return response;
     });
   }
 
@@ -214,10 +263,16 @@ class VisitService {
     '&limit='+ limit + '&skip=' + skip, {
       headers: authHeader()
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
+      return response;
     });
   }
 
@@ -227,11 +282,14 @@ class VisitService {
     headers: authHeader()
     })
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
+      MasterService.handleResponseStatus(response, "Nie udało się usunąć. Spróbuj ponownie później");
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
-      if(!response.ok){
-        throw new Error("Nie udało sie");
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
       }
       return response;
     });
@@ -245,14 +303,17 @@ class VisitService {
     headers: authHeader()
     })
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
+      MasterService.handleResponseStatus(response, "Nie udało się usunąć. Spróbuj ponownie później");
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
-      if(!response.ok){
-        throw new Error("Nie udało sie");
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
       }
       return response;
-    })
+    });
   }
 
   deleteMedicineOnVisit(illnessHistoryId, medicineId, startDate){
@@ -263,14 +324,17 @@ class VisitService {
     headers: authHeader()
     })
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
+      MasterService.handleResponseStatus(response, "Nie udało się usunąć. Spróbuj ponownie później");
+      return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }
-      if(!response.ok){
-        throw new Error("Nie udało sie");
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
       }
       return response;
-    })
+    });
   }
 
   postSicknessOnVisit(sickness){
@@ -284,10 +348,16 @@ class VisitService {
       "Description": sickness.description
     })
   }).then(response => {
-    if(response.status == 401 && (!MasterService.handle401Logout(response))){
-        throw new Error(401);
-    }
+    MasterService.handleResponseStatus(response);
     return response.json()
+  }).then(response => {
+    if(response.status && response.status == 400){
+      throw Error(Validation.handleValidationFetchOutcome(response.errors));
+    }
+    if(response.statusCode && response.statusCode == 400){
+      throw Error('Złe parametry. Skontaktuj się z administratorem.')
+    }
+    return response;
   });
 
 
@@ -306,10 +376,16 @@ class VisitService {
       "Description": medicine.description
     })
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
+      return response;
     });
   }
 
@@ -326,27 +402,42 @@ class VisitService {
       "PatientId": treatment.patientId
     })
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
+      return response;
     });
   }
 
   putDescriptionOnVisit(visitId, description){
     var patientId = JSON.parse(AuthService.getLoggedUser()).id;
-    return fetch(url + 'Visits/' + visitId, {
-    method: 'PUT',
+    return fetch(url + 'visits/descriptiononly/' + visitId, {
+    method: 'PATCH',
     headers: authHeader({'Content-Type': 'application/json'}),
     body: JSON.stringify({
-      "ReservationId": visitId,
+      "id": visitId,
       "Description": description
     })
     }).then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
+      MasterService.handleResponseStatus(response);
+      if(response.status != 204){
+        return response.json();
       }
-      return response.json()
+      return response.text();
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
+      return response;
     });
   }
 
@@ -361,10 +452,16 @@ class VisitService {
     })
     })
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
+      return response;
     });
   }
 
@@ -382,10 +479,16 @@ class VisitService {
     })
     })
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
+      return response;
     });
   }
 
@@ -402,10 +505,16 @@ class VisitService {
     })
     })
     .then(response => {
-      if(response.status == 401 && (!MasterService.handle401Logout(response))){
-          throw new Error(401);
-      }
+      MasterService.handleResponseStatus(response);
       return response.json()
+    }).then(response => {
+      if(response.status && response.status == 400){
+        throw Error(Validation.handleValidationFetchOutcome(response.errors));
+      }
+      if(response.statusCode && response.statusCode == 400){
+        throw Error('Złe parametry. Skontaktuj się z administratorem.')
+      }
+      return response;
     });
 
   }

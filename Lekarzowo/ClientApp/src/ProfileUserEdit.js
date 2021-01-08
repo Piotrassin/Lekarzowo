@@ -5,19 +5,21 @@ import UserService from './services/UserService.js';
 import AuthService from './authentication/AuthService.js';
 import Snackbar from './helpers/Snackbar.js';
 import Validation from './helpers/Validation.js';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
+
 
 class ProfileUserEdit extends React.Component {
 constructor(props){
   super(props);
-  this.handleChange = this.handleChange.bind(this);
-  this.handleClickUserChange = this.handleClickUserChange.bind(this);
-  this.handleClickPasswordChange = this.handleClickPasswordChange.bind(this);
+
   this.state = {
       email: "",
       name: "",
       lastname: "",
       birthdate: "1997-10-20",
-      gender: "",
+      gender: "X",
       pesel: "",
       oldPassword: "",
       password: "",
@@ -25,10 +27,39 @@ constructor(props){
       touched: {
         user: false,
         password: false
-      }
+      },
+      snackbarRef: null
   }
+  this.handleChange = this.handleChange.bind(this);
+  this.handleClickUserChange = this.handleClickUserChange.bind(this);
+  this.handleClickPasswordChange = this.handleClickPasswordChange.bind(this);
+  this.handleGenferChange = this.handleGenferChange.bind(this);
 }
-snackbarRef = React.createRef();
+
+componentDidMount(){
+  this.setState({
+    snackbarRef: React.createRef()
+  }, () => {
+    UserService.getUserData()
+    .then(response => {
+        this.setState({
+            email: response.email,
+            name: response.name,
+            lastname: response.lastname,
+            birthdate: response.birthdate.split('T')[0],
+            gender: response.gender,
+            pesel: response.pesel
+        });
+    })
+    .catch(err => {
+        try{
+          this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+        }catch(erorr){
+          console.log('Missed Reference');
+        };
+    });
+  });
+}
 
 handleChange(event) {
   this.setState({
@@ -51,17 +82,27 @@ handleChange(event) {
   }
 }
 
+handleGenferChange(event){
+  this.setState({
+    gender: event.target.value
+  });
+  this.setState(prevState => ({
+    touched: {
+      ...prevState.touched,
+      user: true
+    }
+  }));
+}
+
 handleClickUserChange(event){
   if(this.state.touched.user){
     this.setState ({
       errors: Validation.validateUserChange(this.state.name, this.state.lastname, this.state.birthdate,
         this.state.gender, this.state.pesel, this.state.email)
     }, () => {
-      console.log(this.state.errors);
       if(Object.keys(this.state.errors).length > 0){
         var message = Validation.handleValidationOutcome(this.state.errors);
-        this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
-
+        this.state.snackbarRef.current.openSnackBar( message ,'red-snackbar');
       }else {
         var userObject = {
           email: this.state.email,
@@ -73,33 +114,36 @@ handleClickUserChange(event){
         }
         UserService.postUserChangeDetails(userObject)
         .then(response => {
-          console.log(response);
-          this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
+          this.state.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
         })
-        .catch(err => console.log(err));
-    }
-  })
-}
-else {
-  this.snackbarRef.current.openSnackBar( 'Nic nie zostało zmienione' ,'red-snackbar');
+        .catch(err => {
+            try{
+              this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+            }catch(erorr){
+              console.log('Missed Reference');
+            };
+        });
+      }
+    })
+  }
+  else {
+    try{
+      this.state.snackbarRef.current.openSnackBar( 'Dane nie zostały zmienione.' ,'red-snackbar');
+    }catch(erorr){
+      console.log('Missed Reference');
+  }
 }
 }
 
 handleClickPasswordChange(event){
-
   if(this.state.touched.password){
     if(this.state.password == this.state.passwordValid){
-      console.log(this.state.errors);
-      console.log(this.state.password);
       this.setState ({
         errors: Validation.validatePasswordChange(this.state.password, this.state.passwordValid)
       }, () => {
-        console.log('Zmieniono errors');
-        console.log(this.state.errors);
         if(Object.keys(this.state.errors).length > 0){
           var message = Validation.handleValidationOutcome(this.state.errors);
-          this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
-
+          this.state.snackbarRef.current.openSnackBar( message ,'red-snackbar')
         }else {
       var passwordObject = {
         currentPassword: this.state.oldPassword,
@@ -108,55 +152,43 @@ handleClickPasswordChange(event){
       }
       UserService.changePassword(passwordObject)
       .then(response => {
-        console.log(response);
-        if(response.status >= 400){
-          if(response.status == 400){
-            var message = Validation.handleValidationFetchOutcome(response.errors);
-            this.snackbarRef.current.openSnackBar(message, 'red-snackbar');
-          }else {
-            this.snackbarRef.current.openSnackBar('Wystąpił problem, spróbuj ponownie później.', 'red-snackbar');
+        this.setState({
+          oldPassword: "",
+          password: "",
+          passwordValid: "",
+          touched: {
+            password: false
           }
-        }else {
-            this.snackbarRef.current.openSnackBar('Zaktualizowano Hasło', 'green-snackbar');
-        }
-
+        })
+        this.state.snackbarRef.current.openSnackBar('Zaktualizowano Hasło', 'green-snackbar');
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+          try{
+            this.state.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
+      });
+      }})
     }
-  })
+    else {
+      try{
+        this.state.snackbarRef.current.openSnackBar('Pola Nowe Hasło oraz Powtórz Hasło są różne.', 'red-snackbar');
+      }catch(erorr){
+        console.log('Missed Reference');
+      };
     }
-    else {this.snackbarRef.current.openSnackBar('Wpisane hasła są różne', 'red-snackbar');}
-
-  }else {
-  this.snackbarRef.current.openSnackBar('Niepełne dane', 'red-snackbar');
+  }
+  else {
+  try{
+    this.state.snackbarRef.current.openSnackBar('Pola do zmiany hasła nie zostały wypełnione.', 'red-snackbar');
+  }catch(erorr){
+    console.log('Missed Reference');
+  };
   }
 
 
 }
-
-componentDidMount(){
-  console.log(JSON.parse(AuthService.getLoggedUser()).id);
-  UserService.getUserData()
-  .then(response => {
-      this.setState({
-          email: response.email,
-          name: response.name,
-          lastname: response.lastname,
-          birthdate: response.birthdate.split('T')[0],
-          gender: response.gender,
-          pesel: response.pesel
-      });
-  })
-  .catch(err => {
-    if(err.message ==  401){
-      this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
-    }else {
-      this.snackbarRef.current.openSnackBar(err.message, 'green-snackbar');
-    }
-  });
-
-}
-
 
 render() {
   return(
@@ -180,11 +212,19 @@ render() {
             onChange = {this.handleChange}
             size="small" fullWidth />
             <br/>
-            <TextField id="gender" name="gender"
+            <InputLabel style={{fontSize: '12.5px'}} >Płeć</InputLabel>
+            <Select
+
+            value={this.state.gender}
+            onChange={this.handleGenferChange}
+            fullWidth
             label="Płeć"
-            value = {this.state.gender}
-            onChange = {this.handleChange}
-            size="small" fullWidth />
+            size="small"
+            >
+              <MenuItem value={"M"}>Mężczyzna</MenuItem>
+              <MenuItem value={"K"}>Kobieta</MenuItem>
+              <MenuItem value={"X"}>Wolę nie podawać</MenuItem>
+            </Select>
           </div>
           <div className = 'flex-column form-right-column'>
             <TextField id="lastname" name="lastname"
@@ -247,10 +287,10 @@ render() {
       </div>
       <br/><br/>
       <div className = 'rodo'>
-      <a>Wypełnienie formularza oznacza wyrażenie zgody na przetwarzanie przez Lekarzowo Systems podanych w formularzu danych osobowych w celu udzielenia odpowiedzi na zadane pytanie i w zależności od treści zapytania przedstawienia oferty. Tutaj dowiesz się kim jesteśmy i jak przetwarzamy Twoje dane.
-Zobacz więcej: https://lekarzowo.pl/o-nas </a>
+        <a>Wypełnienie formularza oznacza wyrażenie zgody na przetwarzanie przez Lekarzowo Systems podanych w formularzu danych osobowych w celu udzielenia odpowiedzi na zadane pytanie i w zależności od treści zapytania przedstawienia oferty. Tutaj dowiesz się kim jesteśmy i jak przetwarzamy Twoje dane.
+        Zobacz więcej: https://lekarzowo.pl/o-nas </a>
       </div>
-      <Snackbar ref = {this.snackbarRef} classes = 'green-snackbar' />
+      <Snackbar ref = {this.state.snackbarRef} classes = 'green-snackbar' />
     </div>
   );
 }

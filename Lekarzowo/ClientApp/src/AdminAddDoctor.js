@@ -1,16 +1,18 @@
 import React from 'react';
-import SicknessItem from './components/SicknessItem.js';
 import AdminService from './services/AdminService.js';
-import DoctorService from './services/DoctorService.js';
-import Fade from '@material-ui/core/Fade';
+import UserService from './services/UserService.js';
 import TextField from '@material-ui/core/TextField';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from './helpers/Snackbar.js';
+import Validation from './helpers/Validation.js';
 import Autocomplete from './components/Autocomplete.js';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
 
 class AdminAddDoctor extends React.Component {
 constructor(props){
   super(props);
+
   this.state = {
     specializationArray: [],
     name: "",
@@ -18,14 +20,16 @@ constructor(props){
     birthdate: "1999-01-01",
     email: "",
     password: "",
-    gender: "",
+    gender: "X",
     pesel: "",
-    specialityId: null
+    specialityId: null,
+    clear: 1
   };
+
   this.onChangeTextField = this.onChangeTextField.bind(this);
   this.handleClickAddDoctor = this.handleClickAddDoctor.bind(this);
   this.onClickSpecializationSearch = this.onClickSpecializationSearch.bind(this);
-
+  this.handleGenferChange = this.handleGenferChange.bind(this);
 }
 
 snackbarRef = React.createRef();
@@ -33,7 +37,7 @@ snackbarRef = React.createRef();
 onChangeTextField(event){
   this.setState({
       [event.target.name]: event.target.value
-  });
+  });;
 }
 
 
@@ -42,52 +46,73 @@ onClickSpecializationSearch(value) {
   this.setState({
     specialityId: value.id
   });
-  console.log(value.id);
+}
+
+handleGenferChange(event){
+  this.setState({
+    gender: event.target.value
+  });
+  this.setState(prevState => ({
+    touched: {
+      ...prevState.touched,
+      user: true
+    }
+  }));
 }
 
 
 handleClickAddDoctor(event){
-  var doctorObject = {
-    name: this.state.name,
-	  lastname: this.state.lastname,
-	  birthdate: this.state.birthdate,
-	  email: this.state.email,
-	  password: {
-		  value: this.state.password
-	  },
-	  gender: this.state.gender,
-	  pesel: this.state.pesel,
-	  specialityId: this.state.specialityId
-  }
-
-  AdminService.postDoctor(doctorObject)
-  .then(response => {
-    console.log(response);
-    this.setState({
-      specializationArray: [],
-      name: "",
-      lastname: "",
-      birthdate: "1999-01-01",
-      email: "",
-      password: "",
-      gender: "",
-      pesel: "",
-      specialityId: null
-    });
-    this.snackbarRef.current.openSnackBar('Dodano lekarza', 'green-snackbar');
-  })
-  .catch(err => {
-    if(err.message ==  401){
-      this.snackbarRef.current.openSnackBar('Nie masz dostępu do tego zasobu.', 'red-snackbar');
+  this.setState ({
+    errors: Validation.validateAdminAddDoctor(this.state.specialityId, this.state.name, this.state.lastname,
+      this.state.birthdate, this.state.email, this.state.password, this.state.gender,
+      this.state.pesel)
+  }, () => {
+    if(Object.keys(this.state.errors).length > 0){
+      var message = Validation.handleValidationOutcome(this.state.errors);
+      this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
     }else {
-      this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+      var doctorObject = {
+        name: this.state.name,
+    	  lastname: this.state.lastname,
+    	  birthdate: this.state.birthdate,
+    	  email: this.state.email,
+    	  password: {
+    		  value: this.state.password
+    	  },
+    	  gender: this.state.gender,
+    	  pesel: this.state.pesel,
+    	  specialityId: this.state.specialityId
+      }
+
+      AdminService.postDoctor(doctorObject)
+      .then(response => {
+        console.log(response);
+        this.setState({
+          specializationArray: [],
+          name: "",
+          lastname: "",
+          birthdate: "1999-01-01",
+          email: "",
+          password: "",
+          gender: "M",
+          pesel: "",
+          specialityId: null,
+          clear: this.state.clear + 1
+        });
+        this.snackbarRef.current.openSnackBar('Dodano lekarza', 'green-snackbar');
+      })
+      .catch(err => {
+          try{
+            this.snackbarRef.current.openSnackBar(err.message, 'red-snackbar');
+          }catch(erorr){
+            console.log('Missed Reference');
+          };
+      });
     }
   });
-}
-
-componentDidMount() {
 
 }
+
 
 render() {
   return(
@@ -97,9 +122,11 @@ render() {
         <form className = 'edit-user-form flex-column'>
           <div className = 'flex-column width-100'>
             <Autocomplete
-            requestCallback = {DoctorService.getSpecializations}
+            requestCallback = {UserService.getSpecializations}
             title = "Specjalizacja"
             changeCallback = {this.onClickSpecializationSearch}
+            noOptionsText={'Your Customized No Options Text'}
+            key = {this.state.clear}
             />
             <br/>
             <TextField id="name" name="name"
@@ -137,12 +164,19 @@ render() {
             type = 'password'
             size="small" fullWidth />
             <br/>
-            <TextField id="gender" name="gender"
+            <InputLabel style={{fontSize: '12.5px'}} >Płeć</InputLabel>
+            <Select
+
+            value={this.state.gender}
+            onChange={this.handleGenferChange}
+            fullWidth
             label="Płeć"
-            value = {this.state.gender}
-            onChange = {this.onChangeTextField}
-            type = 'text'
-            size="small" fullWidth />
+            size="small"
+            >
+              <MenuItem value={"X"}>Wolę nie podawać</MenuItem>
+              <MenuItem value={"M"}>Mężczyzna</MenuItem>
+              <MenuItem value={"K"}>Kobieta</MenuItem>
+            </Select>
             <br/>
             <TextField id="pesel" name="pesel"
             label="PESEL"
@@ -150,16 +184,14 @@ render() {
             onChange = {this.onChangeTextField}
             type = 'number'
             size="small" fullWidth />
-
           </div>
-
           <br/><br/>
           <div>
-          <a className = 'button-green' onClick = {this.handleClickAddDoctor}>Dodaj</a>
+            <a className = 'button-green' onClick = {this.handleClickAddDoctor}>Dodaj</a>
           </div>
-          </form>
-          </div>
-        <Snackbar ref = {this.snackbarRef} />
+        </form>
+      </div>
+      <Snackbar ref = {this.snackbarRef} />
     </div>
   );
 }
