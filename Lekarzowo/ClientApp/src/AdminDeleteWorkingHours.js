@@ -41,13 +41,18 @@ onChangeTextField(event){
 
 onClickDoctorSearch(value) {
   this.setState({
-    doctorSelected: value.id
+    doctorSelected: value.id,
+    localSelected: null,
+    clear1: this.state.clear1 + 1000,
+    clear2: this.state.clear2 + 2
   });
 }
 
 onClickLocalSearch(value) {
   this.setState({
-    localSelected: value.id
+    localSelected: value.id,
+    wFSelected: null,
+    clear2: this.state.clear2 + 2
   });
 }
 

@@ -14,7 +14,9 @@ constructor(props){
     doctorSelected: "",
     localSelected: "",
     list: [],
-    loading: false
+    loading: false,
+    clear: 1,
+    clear1: 2
   };
 
   this.onClickDoctorSearch = this.onClickDoctorSearch.bind(this);
@@ -48,7 +50,9 @@ showList(doctor, local) {
 
 onClickDoctorSearch(value) {
   this.setState({
-    doctorSelected: value.id
+    doctorSelected: value.id,
+    localSelected: null,
+    clear1: this.state.clear1 + 1,
   });
 }
 
@@ -71,6 +75,7 @@ render() {
         title = "Doktor"
         changeCallback = {this.onClickDoctorSearch}
         dataTestId = 'autocomplete-doctor'
+        key = {this.state.clear}
         />
         <br/>
         {(this.state.doctorSelected == undefined || this.state.doctorSelected == "") ?
@@ -81,6 +86,7 @@ render() {
         title = "Lokal"
         dataTestId  = 'autocomplete-local'
         changeCallback = {this.onClickLocalSearch}
+        key = {this.state.clear1}
         addId = {
           (this.state.doctorSelected == undefined || this.state.doctorSelected == "")  ? -1 : this.state.doctorSelected
         }
