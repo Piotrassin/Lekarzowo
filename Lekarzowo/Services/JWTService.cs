@@ -23,6 +23,7 @@ namespace Lekarzowo.Services
         private readonly IPeopleRepository _peopleRepository;
         private readonly SymmetricSecurityKey _key;
         private const string _algorithm = SecurityAlgorithms.HmacSha256Signature;
+        private readonly SigningCredentials _credentials;
 
 
         public JWTService(IOptions<SecretSettings> secretSettings, IStandardUserRolesRepository roles, 
@@ -32,12 +33,12 @@ namespace Lekarzowo.Services
             _standardUserRoles = roles;
             _customUserRolesService = urolesService;
             _peopleRepository = peopleRepository;
+            _credentials = new SigningCredentials(_key, _algorithm);
             _key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.Secret));
         }
 
         public async Task<string> GenerateAccessToken(Person person, string activeRole)
         {
-            var credentials = new SigningCredentials(_key, _algorithm);
             var storedUserRoles = await _customUserRolesService.GatherAllUserRoles(person.Id);
 
             var claims = new List<Claim>();
@@ -48,7 +49,7 @@ namespace Lekarzowo.Services
             var token = new JwtSecurityToken(
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(200),
-                signingCredentials: credentials);
+                signingCredentials: _credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
@@ -68,7 +69,8 @@ namespace Lekarzowo.Services
         public string GenerateRefreshToken()
         {
             //TODO zmienić losowy ciąg liczb na kolejny token szyfrowany, przechowujący czas trwania.
-            var randomNum = new byte[16];
+
+            var randomNum = new byte[64];
             var generator1 = RandomNumberGenerator.Create();
             generator1.GetBytes(randomNum);
             return Convert.ToBase64String(randomNum);
@@ -80,7 +82,6 @@ namespace Lekarzowo.Services
             return user.RefreshToken == refreshToken;
         }
 
-        //TODO
         public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
         {
             var tokenValidationParams = new TokenValidationParameters
@@ -97,7 +98,7 @@ namespace Lekarzowo.Services
             var jwtSecurityToken = tokenToValidate as JwtSecurityToken;
             if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(_algorithm, StringComparison.InvariantCultureIgnoreCase))
             {
-                throw new SecurityTokenException();
+                return null;
             }
 
             return principal;

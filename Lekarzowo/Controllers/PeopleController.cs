@@ -256,13 +256,9 @@ namespace Lekarzowo.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<Person>> RefreshToken(TokenPairDTO tokenPairDto)
         {
-            try
+            if (_jwtService.GetPrincipalFromExpiredToken(tokenPairDto.AccessToken) == null)
             {
-                var principles = _jwtService.GetPrincipalFromExpiredToken(tokenPairDto.AccessToken);
-            }
-            catch (SecurityTokenException)
-            {
-                return BadRequest(BadRequestJsonResult("Invalid token"));
+                return BadRequest(BadRequestJsonResult("Invalid token. Sign in for a new one."));
             }
 
             var user = _repository.GetByID(GetUserIdFromToken());
