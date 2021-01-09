@@ -35,6 +35,7 @@ namespace Lekarzowo.Controllers
             return new JsonResult(message) { StatusCode = 500 };
         }
 
+
         [HttpOptions]
         public decimal GetUserIdFromToken()
         {
@@ -64,6 +65,7 @@ namespace Lekarzowo.Controllers
         {
             return GetActiveRoleFromToken() == CustomUserRolesService.PatientRoleName;
         }
+
 
         /// <summary>
         /// Checks if a logged user is a patient and if passed patientId from given endpoint matches id in user's token.

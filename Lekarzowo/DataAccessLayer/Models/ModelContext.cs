@@ -44,7 +44,7 @@ namespace Lekarzowo.DataAccessLayer.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
-                //.HasAnnotation("Relational:DefaultSchema", "S17437")    //Przy zmianie bazy, usunąć
+                .HasAnnotation("Relational:DefaultSchema", "S17437")    //Przy zmianie bazy, usunąć
                 ;
 
             modelBuilder.Entity<City>(entity =>
@@ -411,6 +411,10 @@ namespace Lekarzowo.DataAccessLayer.Models
                 entity.Property(e => e.Pesel)
                     .HasColumnName("PESEL")
                     .HasColumnType("VARCHAR2(11)");
+
+                entity.Property(e => e.RefreshToken)
+                    .HasColumnName("REFRESHTOKEN")
+                    .HasColumnType("VARCHAR2(256)");
             });
 
             modelBuilder.Entity<Reservation>(entity =>

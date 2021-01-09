@@ -43,6 +43,7 @@ namespace Lekarzowo.Services
             {
                 roles.Add(DoctorRoleName);
             }
+
             roles.AddRange(_repository.GetAll(personId).Select(x => x.Role.Name));
 
             return roles;
