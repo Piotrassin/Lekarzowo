@@ -35,6 +35,12 @@ namespace Lekarzowo.Controllers
             return new JsonResult(message) { StatusCode = 500 };
         }
 
+        [HttpOptions]
+        protected static JsonResult UserMadeErrorJsonResult(int statusCode, string message)
+        {
+            return new JsonResult(message) { StatusCode = statusCode };
+        }
+
 
         [HttpOptions]
         public decimal GetUserIdFromToken()

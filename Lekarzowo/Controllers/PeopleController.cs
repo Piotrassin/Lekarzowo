@@ -256,12 +256,13 @@ namespace Lekarzowo.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<Person>> RefreshToken(TokenPairDTO tokenPairDto)
         {
-            if (_jwtService.GetPrincipalFromExpiredToken(tokenPairDto.AccessToken) == null)
+            var principles = _jwtService.GetPrincipalFromExpiredToken(tokenPairDto.AccessToken);
+            if (principles == null)
             {
                 return BadRequest(BadRequestJsonResult("Invalid token. Sign in for a new one."));
             }
 
-            var user = _repository.GetByID(GetUserIdFromToken());
+            var user = _repository.GetByID(Convert.ToDecimal(principles.Claims.First(x => x.Type == "UserId").Value));
             if (user == null)
             {
                 return NotFound(NotFoundEmptyJsonResult);
@@ -269,8 +270,7 @@ namespace Lekarzowo.Controllers
 
             if (!await _jwtService.IsRefreshTokenValid(user.Id, tokenPairDto.RefreshToken))
             {
-                await UpdateRefreshToken(user, "");
-                return Unauthorized(UnauthorizedEmptyJsonResult);
+                return Unauthorized(UserMadeErrorJsonResult(401, "Refresh token expired or invalid. Sign in for a new one."));
             }
 
             try
