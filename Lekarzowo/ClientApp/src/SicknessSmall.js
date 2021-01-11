@@ -15,8 +15,7 @@ class SicknessSmall extends React.Component {
         <img className = "medicine-image" src = {this.props.image} style={{width: '40px'}}/>
         <div className = "container-medicine-text">
           <b className = "small-white margin-top-small">{this.props.sickness.illnessName}</b>
-          <b className = "smaller-dashed margin-top-small">{this.props.sickness.diagnoseDate.split('T')[0]}
-           - {this.props.sickness.cureDate}</b>
+
         </div>
 
       </div>

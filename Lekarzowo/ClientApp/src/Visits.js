@@ -23,7 +23,7 @@ const YellowSwitch = withStyles({
   track: {},
 })(Switch);
 
-const currentRole = AuthService.getUserCurrentRole();
+
 class Visits extends React.Component {
   constructor(props){
     super(props);
@@ -45,6 +45,7 @@ class Visits extends React.Component {
     this.openConfirmCancelReservationDialog = this.openConfirmCancelReservationDialog.bind(this);
     this.cancelVisit = this.cancelVisit.bind(this);
     this.onClickLoadMore = this.onClickLoadMore.bind(this);
+    this.currentRole = AuthService.getUserCurrentRole();
   }
 
 
@@ -63,7 +64,7 @@ class Visits extends React.Component {
     var daysAfter = new Date(new Date());
     daysAfter.setDate(daysAfter.getDate() + 1);
 
-    if(currentRole == 'doctor'){
+    if(this.currentRole == 'doctor'){
       return await ReservationService.getRecentDoctorReservations(daysBefore , daysAfter)
       .then(response => {
         if(response.length > 0 ){
@@ -83,7 +84,7 @@ class Visits extends React.Component {
           };
       });
     }
-    else if (currentRole == 'patient'){
+    else if (this.currentRole == 'patient'){
       return await ReservationService.getRecentReservations(10, 0)
       .then(response => {
         if(response.length == 10 ){
@@ -112,7 +113,7 @@ class Visits extends React.Component {
     var daysAfter = new Date(new Date());
     daysAfter.setDate(daysAfter.getDate() - this.state.daysVisitCountBefore - 1);
 
-    if(currentRole == 'doctor'){
+    if(this.currentRole == 'doctor'){
 
       return await ReservationService.getRecentDoctorReservations(daysBefore , daysAfter)
       .then(response => {
@@ -134,7 +135,7 @@ class Visits extends React.Component {
           };
       });
     }
-    else if (currentRole == 'patient'){
+    else if (this.currentRole == 'patient'){
       return await ReservationService.getRecentReservations(10, this.state.limitBefore)
       .then(response => {
         if(response.length == 0 ){
@@ -161,7 +162,7 @@ class Visits extends React.Component {
   }
 
   async getUpcomingVisit() {
-    if(currentRole == 'doctor' ){
+    if(this.currentRole == 'doctor' ){
       var daysBefore = new Date(new Date());
       daysBefore.setDate(daysBefore.getDate());
       var daysAfter = new Date(new Date());
@@ -181,7 +182,7 @@ class Visits extends React.Component {
           };
       });
     }
-    else if(currentRole == 'patient') {
+    else if(this.currentRole == 'patient') {
 
       await ReservationService.getUpcomingReservations(10, 0)
       .then(response => {
@@ -206,7 +207,7 @@ class Visits extends React.Component {
   }
 
   async getUpcomingVisitLoadMore() {
-    if(currentRole == 'doctor' ){
+    if(this.currentRole == 'doctor' ){
       var daysBefore = new Date(new Date());
       daysBefore.setDate(daysBefore.getDate() + this.state.daysVisitCountAfter + 1);
       var daysAfter = new Date(new Date());
@@ -226,7 +227,7 @@ class Visits extends React.Component {
           };
       });
     }
-    else if(currentRole == 'patient') {
+    else if(this.currentRole == 'patient') {
       await ReservationService.getUpcomingReservations(10, this.state.limitAfter)
       .then(response => {
         if(response.length == 0 ){
@@ -335,7 +336,7 @@ class Visits extends React.Component {
                   <a className = 'table-header'>Miejsce</a>
                 </div>
                 <div className = 'sickness-item-part part-4'>
-                  <a className = 'table-header'>{currentRole == 'doctor' ? 'Pacjent' : 'Lekarz'}</a>
+                  <a className = 'table-header'>{this.currentRole == 'doctor' ? 'Pacjent' : 'Lekarz'}</a>
                 </div>
                 <div className = 'sickness-item-part part-5'>
                 </div>
@@ -345,7 +346,7 @@ class Visits extends React.Component {
                   <VisitItem
                   key = {visit.reservationId}
                   visit={visit}
-                  role={currentRole}
+                  role={this.currentRole}
                   history= {this.props.history}
                   dialogCallback = {this.openConfirmCancelReservationDialog}
                   upcomingVisit = {true}
@@ -354,7 +355,7 @@ class Visits extends React.Component {
                 {(!this.state.checkedVisit) && this.state.recentVisits.map((visit, index ) => (
                     <VisitItem key = {visit.reservationId}
                     visit={visit}
-                    role={currentRole}
+                    role={this.currentRole}
                     history= {this.props.history}
                     upcomingVisit = {false}
                     />
@@ -402,7 +403,7 @@ class Visits extends React.Component {
             <hr/>
             </div>
 
-            {currentRole == 'patient' ?
+            {this.currentRole == 'patient' ?
             <div className = 'profile-data-slot'>
             <a className = 'profile-data-slot-header'>Lekarz</a><a>{this.state.visitToCancel.doctorName} {this.state.visitToCancel.doctorLastname}</a>
             </div>
