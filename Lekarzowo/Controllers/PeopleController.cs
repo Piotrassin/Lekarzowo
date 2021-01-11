@@ -1,17 +1,16 @@
-﻿using System;
-using Lekarzowo.DataAccessLayer.DTO;
+﻿using Lekarzowo.DataAccessLayer.DTO;
 using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.Repositories;
 using Lekarzowo.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Lekarzowo.Controllers
 {
@@ -256,8 +255,16 @@ namespace Lekarzowo.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<Person>> RefreshToken(TokenPairDTO tokenPairDto)
         {
-            var principles = _jwtService.GetPrincipalFromExpiredToken(tokenPairDto.AccessToken);
-            if (principles == null)
+            ClaimsPrincipal principles;
+            try
+            {
+                principles = _jwtService.GetPrincipalFromExpiredToken(tokenPairDto.AccessToken); 
+                if (principles == null)
+                {
+                    throw new ArgumentNullException();
+                }
+            }
+            catch (Exception)
             {
                 return BadRequest(BadRequestJsonResult("Invalid token. Sign in for a new one."));
             }

@@ -12,6 +12,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Lekarzowo.Repositories;
+using Newtonsoft.Json;
 
 namespace Lekarzowo.Services
 {
@@ -38,6 +39,7 @@ namespace Lekarzowo.Services
             _credentials = new SigningCredentials(_key, _algorithm);
         }
 
+
         public async Task<string> GenerateAccessToken(Person person, string activeRole)
         {
             var storedUserRoles = await _customUserRolesService.GatherAllUserRoles(person.Id);
@@ -49,7 +51,7 @@ namespace Lekarzowo.Services
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.Now.AddMinutes(5),
                 signingCredentials: _credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -91,7 +93,7 @@ namespace Lekarzowo.Services
            var dateFromToken = ParseTokenToDate(refreshToken);
            if (dateFromToken < DateTime.Now)
            {
-               UpdateRefreshToken(user, "");
+               await UpdateRefreshToken(user, "");
                return false;
            }
 
@@ -116,7 +118,7 @@ namespace Lekarzowo.Services
             {
                 return null;
             }
-
+            
             return principal;
         }
 
