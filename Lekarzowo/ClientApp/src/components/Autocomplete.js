@@ -182,7 +182,9 @@ export default function Asynchronous(props) {
       }}
       onClose={() => {
         if(defAuto == null || defAuto == ""){
-          setOptions(origOptions);
+          if(origOptions.length > 0){
+              setOptions(origOptions);
+          }
         }
         setOpen(false);
       }}
