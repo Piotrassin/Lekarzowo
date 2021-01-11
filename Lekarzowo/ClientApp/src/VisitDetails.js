@@ -23,7 +23,6 @@ import Snackbar from './helpers/Snackbar.js';
 import Formater from './helpers/Formater.js';
 import Validation from './helpers/Validation.js';
 
-const currentUserRole = AuthService.getUserCurrentRole();
 const WhiteTextField = withStyles({
   root: {
     '& label.Mui-focused': {
@@ -124,6 +123,7 @@ class VisitDetails extends React.Component {
     this.putDescriptionOnVisit = this.putDescriptionOnVisit.bind(this);
     this.patientHistoryLoadMore = this.patientHistoryLoadMore.bind(this);
     this.openSnackbarOnRemove = this.openSnackbarOnRemove.bind(this);
+    this.currentUserRole = AuthService.getUserCurrentRole();
   }
 
 
@@ -141,7 +141,7 @@ class VisitDetails extends React.Component {
         }
         this.getReservation()
         .then(response => {
-            if(currentUserRole == 'doctor'){
+            if(this.currentUserRole == 'doctor'){
               this.getSicknessHistory();
               this.getActiveMedicine();
             }
@@ -230,6 +230,7 @@ class VisitDetails extends React.Component {
 
   openSnackbarOnRemove(content, classId, arrayName, item, idColumnName){
     this.state.snackbarRef.current.openSnackBar(content, classId);
+    console.log('Usuwam element z ID ' + item.id);
     if(arrayName){
       this.setState(prevState => ({
         ...prevState,
@@ -315,6 +316,8 @@ class VisitDetails extends React.Component {
         };
     });
   }
+
+
 
   getTreatmentOnVisit(){
     VisitService.getTreatmentOnVisit(this.state.id, 10, 0)
@@ -692,7 +695,7 @@ class VisitDetails extends React.Component {
 
       <div className = "VisitPanels">
       <Menu history= {this.props.history}/>
-        <div className = {currentUserRole == 'doctor' ? 'visit-summary' : 'visit-summary summary-long'}>
+        <div className = {this.currentUserRole == 'doctor' ? 'visit-summary' : 'visit-summary summary-long'}>
 
           <div className = "headline-container">
             <b className = "headline">Wizyta nr {this.state.id}</b>
@@ -719,7 +722,7 @@ class VisitDetails extends React.Component {
             <b className = "standard-black">Notatki lekarza (wywiad, badanie, diagnoza, zalecenia)</b>
 
             <br/>
-            {(currentUserRole == 'doctor' && this.state.openedVisit) ?
+            {(this.currentUserRole == 'doctor' && this.state.openedVisit) ?
             <div style = {{width: '100%'}}>
             <TextField
             id="doctor-notes-input"
@@ -753,10 +756,11 @@ class VisitDetails extends React.Component {
                 visitId = {this.state.id}
                 isOpen = {this.state.openedVisit}
                 snackbarCallback = {this.openSnackbarOnRemove}
+                reloadMedicineCallback = {this.getMedicineOnVisit}
                 />
               ))}
               </div>
-              {(currentUserRole == 'doctor' && this.state.openedVisit) ?
+              {(this.currentUserRole == 'doctor' && this.state.openedVisit) ?
               <img src={plusSign}  style = {{width: "40px", cursor: "pointer"}} onClick = {this.handleClickAddSickness} className = 'plusSign'/>
               :
               <div/>
@@ -779,7 +783,7 @@ class VisitDetails extends React.Component {
                 />
               ))}
               </div>
-              {(currentUserRole == 'doctor' && this.state.openedVisit) ?
+              {(this.currentUserRole == 'doctor' && this.state.openedVisit) ?
               <img src={plusSign}  style = {{width: "40px", cursor: "pointer"}} onClick = {this.handleClickAddMedicine} className = 'plusSign'/>
               :
               <div/>
@@ -790,7 +794,7 @@ class VisitDetails extends React.Component {
             <div className = "active-medicine basic-container">
 
               <b className = "standard-black">Wykonane zabiegi</b>
-              {(currentUserRole == 'doctor' && this.state.openedVisit) ?
+              {(this.currentUserRole == 'doctor' && this.state.openedVisit) ?
               <img src={plusSign}  style = {{width: "40px", cursor: "pointer"}} className = 'plusSign' onClick = {this.handleClickAddTreatment}/>
               :
               <div/>
@@ -812,14 +816,14 @@ class VisitDetails extends React.Component {
 
 
           </div>
-          {(currentUserRole == 'doctor' && this.state.showVisitStateBtn )?
+          {(this.currentUserRole == 'doctor' && this.state.showVisitStateBtn )?
           <button className = "btn-end-visit" onClick = {this.handleClickBtnVisit}>{this.state.openedVisit ? 'Zakończ wizytę' : 'Rozpocznij wizytę'}</button>
           :
           <div />
         }
 
         </div>
-        {currentUserRole == 'doctor' ?
+        {this.currentUserRole == 'doctor' ?
         <div className = "visit-member">
           <b className = "standard-dashed">Profil Pacjenta</b>
           <b className = "big-white" style={{marginBottom: '15px'}}>{this.state.patientName} {this.state.patientLastname}</b>

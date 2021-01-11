@@ -1,5 +1,7 @@
 import MasterService  from  '../services/MasterService.js';
+import VisitService  from  '../services/VisitService.js';
 import Validation from '../helpers/Validation.js';
+import authHeader from '../authentication/AuthHeader.js';
 
 const url = MasterService.url();
 class AuthService {
@@ -22,7 +24,7 @@ class AuthService {
     })
     .then(response => {
       MasterService.handleResponseStatus(response);
-      
+
       return response.json()
     }).then(response => {
       if(response.status && response.status == 400){
@@ -33,6 +35,11 @@ class AuthService {
       }
       if(response.token){
         response.currentRole = response.roles[0];
+        console.log('LOGIN CURRENT ROLE');
+        console.log(response.currentRole);
+        if(response.currentRole == 'doctor'){
+          this.checkIfAnyOpenVisit(response.id, response.token);
+        }
         localStorage.setItem("userData", JSON.stringify(response));
       }
       return response;
@@ -133,7 +140,11 @@ class AuthService {
       console.log(response);
       var userData  = this.getUser();
       userData.token = response.token;
+      console.log('');
       userData.currentRole = userData.roles.find(el => el == roleName);
+      if(userData.currentRole == 'doctor'){
+        this.checkIfAnyOpenVisit(userData.id, response.token);
+      }
       localStorage.setItem("userData", JSON.stringify(userData));
       return {"state": 0, "message": 'Zmieniono rolę'};
     })
@@ -147,6 +158,27 @@ class AuthService {
     return localStorage.getItem("userData");
   }
 
+  checkIfAnyOpenVisit(doctorId, token){
+    //var doctorId = JSON.parse(this.getLoggedUser()).id;
+    return fetch(url + 'Visits/OnGoing/' + doctorId, {
+     headers: {Authorization: 'Bearer ' + token}
+   }).then(response => {
+     if(response.status == 404){
+       return false;
+     }
+     if(response.status == 200){
+       return response.json();
+     }
+     return false;
+   })
+   .then(response => {
+     if(response != false){
+       VisitService.startVisit(response.reservationId)
+     }
+   })
+
+
+  }
 
 
   getUserCurrentRole() {

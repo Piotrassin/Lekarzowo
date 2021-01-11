@@ -48,7 +48,7 @@ class Visits extends React.Component {
   }
 
 
-  async componentDidMount() {
+  componentDidMount() {
     this.setState({
       snackbarRef: React.createRef()
     }, () => {

@@ -28,7 +28,7 @@ namespace Lekarzowo.Services
         private const char delimiter = '.';
 
 
-        public JWTService(IOptions<SecretSettings> secretSettings, IStandardUserRolesRepository roles, 
+        public JWTService(IOptions<SecretSettings> secretSettings, IStandardUserRolesRepository roles,
             ICustomUserRolesService urolesService, IPeopleRepository peopleRepository)
         {
             _settings = secretSettings.Value;
@@ -51,7 +51,7 @@ namespace Lekarzowo.Services
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(5),
+                expires: DateTime.Now.AddMinutes(20),
                 signingCredentials: _credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -118,30 +118,30 @@ namespace Lekarzowo.Services
             {
                 return null;
             }
-            
+
             return principal;
         }
 
         private DateTime ParseTokenToDate(string token)
         {
-            var dateString = Encoding.UTF8.GetString(Convert.FromBase64String(token)).Substring(0, 16); 
+            var dateString = Encoding.UTF8.GetString(Convert.FromBase64String(token)).Substring(0, 16);
             var dateArray = dateString.Split(delimiter);
 
             return new DateTime(
-                Convert.ToInt32(dateArray[0]), 
-                Convert.ToInt32(dateArray[1]), 
-                Convert.ToInt32(dateArray[2]), 
-                Convert.ToInt32(dateArray[3]), 
+                Convert.ToInt32(dateArray[0]),
+                Convert.ToInt32(dateArray[1]),
+                Convert.ToInt32(dateArray[2]),
+                Convert.ToInt32(dateArray[3]),
                 Convert.ToInt32(dateArray[4]),
                 0);
         }
 
         private string ParseDateForTokenUse(DateTime expDate)
         {
-            return expDate.ToString("yyyy") + delimiter + 
-                   expDate.ToString("MM") + delimiter + 
-                   expDate.ToString("dd") + delimiter + 
-                   expDate.ToString("HH") + delimiter + 
+            return expDate.ToString("yyyy") + delimiter +
+                   expDate.ToString("MM") + delimiter +
+                   expDate.ToString("dd") + delimiter +
+                   expDate.ToString("HH") + delimiter +
                    expDate.ToString("mm");
         }
 
