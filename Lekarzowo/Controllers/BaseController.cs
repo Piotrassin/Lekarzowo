@@ -36,6 +36,13 @@ namespace Lekarzowo.Controllers
         }
 
         [HttpOptions]
+        protected static JsonResult UserMadeErrorJsonResult(int statusCode, string message)
+        {
+            return new JsonResult(message) { StatusCode = statusCode };
+        }
+
+
+        [HttpOptions]
         public decimal GetUserIdFromToken()
         {
             return decimal.Parse(this.User.Claims.First(x => x.Type == "UserId").Value);
@@ -64,6 +71,7 @@ namespace Lekarzowo.Controllers
         {
             return GetActiveRoleFromToken() == CustomUserRolesService.PatientRoleName;
         }
+
 
         /// <summary>
         /// Checks if a logged user is a patient and if passed patientId from given endpoint matches id in user's token.

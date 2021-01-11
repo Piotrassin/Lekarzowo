@@ -41,7 +41,7 @@ namespace Lekarzowo
             var appSettings = Configuration.GetSection("SecretSection");
             services.Configure<SecretSettings>(appSettings);
 
-            var key = Encoding.ASCII.GetBytes(appSettings.Get<SecretSettings>().Secret);
+            var keyByteArray = Encoding.ASCII.GetBytes(appSettings.Get<SecretSettings>().Secret);
             services.AddScoped<IJWTService, JWTService>();
             #endregion
 
@@ -62,7 +62,7 @@ namespace Lekarzowo
                 {
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    IssuerSigningKey = new SymmetricSecurityKey(keyByteArray),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ClockSkew = TimeSpan.Zero
@@ -149,8 +149,8 @@ namespace Lekarzowo
             services.AddEntityFrameworkOracle()
                 .AddDbContext<ModelContext>(options =>
                 {
-                    //options.UseOracle(Configuration.GetConnectionString("pjatkConnection"));
-                    options.UseOracle(Configuration.GetConnectionString("selfHostedConnection"));
+                    options.UseOracle(Configuration.GetConnectionString("pjatkConnection"));
+                    //options.UseOracle(Configuration.GetConnectionString("selfHostedConnection"));
                 });
         }
 
