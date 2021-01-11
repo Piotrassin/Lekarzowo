@@ -11,7 +11,8 @@ constructor(props){
   this.state = {
     speciality: {
       name: "",
-      price: ""
+      price: "",
+      duration: ""
     },
     loading: false
   };
@@ -35,7 +36,7 @@ onChangeTextField(event){
 handleClickAddSpeciality(event){
   this.setState ({
     errors: Validation.validateAdminAddSeciality(this.state.speciality.name,
-    this.state.speciality.price)
+    this.state.speciality.price, this.state.speciality.duration)
   }, () => {
     if(Object.keys(this.state.errors).length > 0){
       var message = Validation.handleValidationOutcome(this.state.errors);
@@ -46,7 +47,8 @@ handleClickAddSpeciality(event){
         this.setState({
           speciality: {
             name: "",
-            price: ""
+            price: "",
+            duration: ""
           }
         });
         this.snackbarRef.current.openSnackBar('Zaktualizowano Dane', 'green-snackbar');
@@ -79,6 +81,13 @@ render() {
             <TextField id="price" name="price"
             label="Cena bazowa za wizytę"
             value = {this.state.speciality.price}
+            onChange = {this.onChangeTextField}
+            type = 'number'
+            size="small" fullWidth />
+            <br/>
+            <TextField id="duration" name="duration"
+            label="Docelowy czas wizyty"
+            value = {this.state.speciality.duration}
             onChange = {this.onChangeTextField}
             type = 'number'
             size="small" fullWidth />

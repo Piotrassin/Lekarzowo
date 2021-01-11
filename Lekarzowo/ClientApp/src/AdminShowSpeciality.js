@@ -2,6 +2,7 @@ import React from 'react';
 import AdminService from './services/AdminService.js';
 import TextField from '@material-ui/core/TextField';
 import Snackbar from './helpers/Snackbar.js';
+import Formater from './helpers/Formater.js';
 import Validation from './helpers/Validation.js';
 
 class AdminShowSpeciality extends React.Component {
@@ -48,8 +49,11 @@ render() {
             <div className = 'sickness-item-part part-1-2-3'>
               <a className = 'table-header'>Specjalizacja</a>
             </div>
-            <div className = 'sickness-item-part part-4-5'>
+            <div className = 'sickness-item-part part-4'>
               <a className = 'table-header'>Cena</a>
+            </div>
+            <div className = 'sickness-item-part part-5'>
+              <a className = 'table-header'>Czas wizyty</a>
             </div>
           </div>
           {this.state.loading == true ?
@@ -66,8 +70,11 @@ render() {
             <div className = 'sickness-item-part part-1-2-3'>
               <a>{object.name}</a>
             </div>
-            <div className = 'sickness-item-part part-4-5'>
-              <a>{object.price}</a>
+            <div className = 'sickness-item-part part-4'>
+              <a>{Formater.formatPrice(object.price)}</a>
+            </div>
+            <div className = 'sickness-item-part part-5'>
+              <a>{object.durationOfVisit} min</a>
             </div>
             </div>
           ))}

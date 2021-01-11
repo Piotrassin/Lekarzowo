@@ -13,6 +13,7 @@ constructor(props){
   this.state = {
     specialityName: "",
     specialityPrice: "",
+    specialityDuration: "",
     loading: false,
     selectedObjectId: "",
     clear: false
@@ -39,6 +40,7 @@ onClickSearch(value) {
       this.setState({
         specialityName: response.name,
         specialityPrice: response.price,
+        specialityDuration: response.durationOfVisit
       })
     })
     .catch(err => {
@@ -54,7 +56,7 @@ onClickSearch(value) {
 
 handleClickEdit(event){
   this.setState ({
-    errors: Validation.validateUniversalBlank(this.state.specialityName, "Pole Specjalizacja")
+    errors: Validation.validateUniversalBlank(this.state.specialityName, "Specjalizacja")
   }, () => {
     console.log(this.state.errors);
     if(Object.keys(this.state.errors).length > 0){
@@ -62,12 +64,13 @@ handleClickEdit(event){
       this.snackbarRef.current.openSnackBar( message ,'red-snackbar');
 
     }else {
-      AdminService.putSpeciality(this.state.selectedObjectId, this.state.specialityName, this.state.specialityPrice)
+      AdminService.putSpeciality(this.state.selectedObjectId, this.state.specialityName, this.state.specialityPrice, this.state.specialityDuration)
       .then(response => {
         console.log(response);
         this.setState({
           specialityPrice: "",
           specialityName: "",
+          specialityDuration: "",
           clear: !this.state.clear,
           selectedObjectId: ""
         });
@@ -110,6 +113,13 @@ render() {
             <TextField id="specialityPrice" name="specialityPrice"
             label="Cena bazowa za wizytę"
             value = {this.state.specialityPrice}
+            onChange = {this.onChangeTextField}
+            type = 'number'
+            size="small" fullWidth />
+            <br/>
+            <TextField id="specialityDuration" name="specialityDuration"
+            label="Docelowy czas wizyty"
+            value = {this.state.specialityDuration}
             onChange = {this.onChangeTextField}
             type = 'number'
             size="small" fullWidth />

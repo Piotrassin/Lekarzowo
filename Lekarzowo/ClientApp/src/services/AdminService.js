@@ -526,7 +526,8 @@ class AdminService {
     headers: authHeader({'Content-Type': 'application/json'}),
     body: JSON.stringify({
       "Name": speciality.name,
-      "Price": speciality.price
+      "Price": speciality.price,
+      "DurationOfVisit": speciality.duration
     })})
     .then(response => {
       MasterService.handleResponseStatus(response);
@@ -561,14 +562,15 @@ class AdminService {
     });
   }
 
-  putSpeciality(specialityId, specialityName, specialityPrice){
+  putSpeciality(specialityId, specialityName, specialityPrice, specialityDuration){
     return fetch(url + 'Specialities/' + specialityId, {
     method: 'PUT',
     headers: authHeader({'Content-Type': 'application/json'}),
     body: JSON.stringify({
       "Id": specialityId,
       "Name": specialityName,
-      "Price": specialityPrice
+      "Price": specialityPrice,
+      "DurationOfVisit": specialityDuration
     })})
     .then(response => {
       MasterService.handleResponseStatus(response);

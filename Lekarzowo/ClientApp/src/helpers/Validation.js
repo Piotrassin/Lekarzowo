@@ -101,10 +101,11 @@ class Validation {
     return errorObject;
   }
 
-  validateAdminAddSeciality(specialityName, basePrice){
+  validateAdminAddSeciality(specialityName, basePrice, duration){
     var errorObject = {};
     this.addErrorToObject(errorObject, 'Specjalizacja', this.validateBlank(specialityName));
     this.addErrorToObject(errorObject, 'Cena bazowa', this.validateBlankNumber(basePrice));
+    this.addErrorToObject(errorObject, 'Docelowy czas wizyty', this.validateBlankNumber(duration));
 
 
     return errorObject;
