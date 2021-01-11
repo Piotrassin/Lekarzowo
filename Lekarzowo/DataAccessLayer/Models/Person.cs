@@ -20,6 +20,8 @@ namespace Lekarzowo.DataAccessLayer.Models
         public string Password { get; set; }
         public string Gender { get; set; }
         public string Pesel { get; set; }
+        [JsonIgnore]
+        public string RefreshToken { get; set; }
 
         public virtual Doctor Doctor { get; set; }
         public virtual Patient Patient { get; set; }
