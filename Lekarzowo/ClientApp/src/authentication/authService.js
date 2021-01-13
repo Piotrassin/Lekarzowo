@@ -84,6 +84,39 @@ class AuthService {
     });
   }
 
+  refreshToken(){
+    if(this.checkifAnyUserData() == true){
+      var userData = JSON.parse(localStorage.getItem("userData"));
+      return fetch(url + 'People/RefreshToken', {
+        method: 'POST',
+        headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + userData.token
+              },
+        body: JSON.stringify({
+          "accessToken": userData.token,
+          "refreshToken": userData.refreshToken
+        })
+      }).then(response => {
+        if(!response.ok){
+          throw false;
+          console.log('response not ok');
+        }
+        console.log(response);
+        return response.json();
+      });
+    }
+    return Promise.resolve(false);
+  }
+
+  async updateTokens(token, refreshToken){
+    var userData = this.getUser();
+    userData.token = token;
+    userData.refreshToken = refreshToken;
+    await localStorage.setItem("userData", JSON.stringify(userData));
+  }
+
   checkifAnyUserData(){
     try {
         var a = localStorage.getItem("userData");
