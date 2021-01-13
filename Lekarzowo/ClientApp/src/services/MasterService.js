@@ -73,7 +73,7 @@ statusErrorHandler(response, customDefaultMessage, exclude404){
       if (!this.handle401Logout(response)){
         return "Nie masz dostepu."
       }
-      return 'Wylogowywanie...';
+      return 'Zaczekaj chwilę...';
       break;
     case 403:
       return 'Dostęp zablokowany';

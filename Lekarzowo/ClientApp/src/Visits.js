@@ -67,11 +67,11 @@ class Visits extends React.Component {
     if(this.currentRole == 'doctor'){
       return await ReservationService.getRecentDoctorReservations(daysBefore , daysAfter)
       .then(response => {
-        if(response.length > 0 ){
+
           this.setState({
             showButton: true
           });
-        }
+
         this.setState({
           recentVisits: response
         });
@@ -171,7 +171,8 @@ class Visits extends React.Component {
       return await ReservationService.getUpcomingDoctorReservations(daysBefore, daysAfter)
       .then(response => {
         this.setState({
-          upcomingVisits: response
+          upcomingVisits: response,
+          showButton: true
         });
       })
       .catch(err => {
