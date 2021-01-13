@@ -154,7 +154,7 @@ namespace Lekarzowo.DataAccessLayer.Repositories
                 : reservationTypeQuery
                     .Where(x => x.Visit != null)
                     .Where(x => x.Visit.OnGoing == false)
-                    .Where(x => x.Starttime < DateTime.Now.AddMinutes(30));
+                    .Where(x => x.Starttime.AddMinutes(-30) < DateTime.Now);
 
             var anonymousTypeQuery = reservationTypeQuery.Select(x => new
             {
