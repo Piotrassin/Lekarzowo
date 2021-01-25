@@ -53,7 +53,7 @@ render() {
     <div className = 'sickness-on-visit-item'>
         <div className = 'flex-column'>
         <a>{this.props.sicknessName}</a>
-        <a className = 'tiny-dashed'>{this.props.sicknessDescription} {this.props.id} {this.state.id}</a>
+        <a className = 'tiny-dashed'>{this.props.sicknessDescription}</a>
         </div>
         {this.props.isOpen ?
         <img src = {removeSign} style = {{width: 30, pointer: 'cursor'}} onClick = {this.deleteSicknessOnVisit} />

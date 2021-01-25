@@ -9,15 +9,31 @@ url(){
   return url;
 }
 
-handle401Logout(response){
+async handle401Logout(response){
   console.log('Response');
   console.log(response);
-  console.log(response.headers.get('Token_has_expired'));
   if(response != undefined  && response.status == 401 && response.headers.has('Token_has_expired')){
     console.log("Weszlo");
-    AuthService.logout();
+    var userData = AuthService.getUser();
+    AuthService.refreshToken()
+    .then(async response => {
+      if(response == false){
+        AuthService.logout();
+        window.location.reload();
+
+      }
+      await AuthService.updateTokens(response.accessToken, response.refreshToken);
+      window.location.reload();
+
+    })
+    .catch(err => {
+      AuthService.logout();
+      window.location.reload();
+    });
+    //AuthService.logout();
     //history.push('/login');
-    window.location.reload();
+    //window.location.reload();
+
     return true;
   }else {
     console.log("Zwracam false");
@@ -26,28 +42,25 @@ handle401Logout(response){
 }
 
 handleResponseStatus(response, customDefaultMessage){
-  console.log("HandleRESPPONSESTATUSjet");
+
   if(!response.ok){
-      console.log("Response not ok");
+
       var errorMessage = this.statusErrorHandler(response, customDefaultMessage);
       if(errorMessage){
         throw Error(errorMessage);
       }
   }
-  console.log("Response.ok");
+
 }
 
 
 handleResponseStatusExclude404(response, customDefaultMessage){
-  console.log("HandleRESPPONSESTATUSjet");
   if(!response.ok){
-      console.log("Response not ok");
       var errorMessage = this.statusErrorHandler(response, customDefaultMessage, true);
       if(errorMessage){
         throw Error(errorMessage);
       }
   }
-  console.log("Response.ok");
 }
 
 
@@ -60,7 +73,7 @@ statusErrorHandler(response, customDefaultMessage, exclude404){
       if (!this.handle401Logout(response)){
         return "Nie masz dostepu."
       }
-      return 'Wylogowywanie...';
+      return 'Zaczekaj chwilę...';
       break;
     case 403:
       return 'Dostęp zablokowany';
