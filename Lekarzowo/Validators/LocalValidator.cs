@@ -7,7 +7,7 @@ namespace Lekarzowo.Validators
 {
     public class LocalValidator : AbstractValidator<Local>
     {
-        public LocalValidator(ICitiesRepository cityRepo)
+        public LocalValidator(IBaseNameRepository<City> cityRepo)
         {
             RuleFor(x => x.CityId)
                 .SetValidator(new BaseIdValidator<City>(cityRepo, "Miasto nie istnieje."));
