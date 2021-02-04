@@ -118,7 +118,7 @@ namespace Lekarzowo
 
             services.AddScoped(typeof(IBaseNameRepository<>), typeof(BaseNameRepository<>));
             services.AddScoped(typeof(IBaseIdRepository<>), typeof(BaseIdRepository<>));
-            services.AddScoped<ICitiesRepository, CitiesRepository>();
+            //services.AddScoped<ICitiesRepository, CitiesRepository>();
             services.AddScoped<IDoctorsRepository, DoctorsRepository>();
             services.AddScoped<IIllnessesRepository, IllnessesRepository>();
             services.AddScoped<IIllnessesHistoryRepository, IllnessesHistoryRepository>();
