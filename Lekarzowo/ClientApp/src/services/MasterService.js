@@ -1,7 +1,7 @@
 import history from '../History.js';
 import AuthService from '../authentication/AuthService.js';
 
-const url = 'https://localhost:5001/api/';
+const url = 'http://localhost:5000/api/';
 
 class MasterService {
 
