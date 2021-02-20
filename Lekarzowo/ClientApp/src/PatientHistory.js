@@ -17,7 +17,7 @@ import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
 
 
-const currentUserRole = AuthService.getUserCurrentRole();
+
 const WhiteTextField = withStyles({
   root: {
     '& label.Mui-focused': {
@@ -76,6 +76,7 @@ class PatientHistory extends React.Component {
     this.handleClickAddSickness = this.handleClickAddSickness.bind(this);
     this.handleClickAddMedicine = this.handleClickAddMedicine.bind(this);
     this.showSnackbarCallback = this.showSnackbarCallback.bind(this);
+    this.currentUserRole = AuthService.getUserCurrentRole();
   }
 
 
@@ -299,7 +300,7 @@ class PatientHistory extends React.Component {
     return(
       <div className = "VisitPanels">
         <Menu history= {this.props.history}/>
-        {currentUserRole == 'doctor' ?
+        {this.currentUserRole == 'doctor' ?
         <div className = "visit-member-long">
           <a style={{color: 'white', cursor: 'pointer'}} onClick={this.handleBack}><img src = {backArrow} style={{width: '12px'}}/> Powrót</a>
           <b className = "big-white" style={{marginBottom: '10px'}}>{this.state.patientName} {this.state.patientLastname}</b>

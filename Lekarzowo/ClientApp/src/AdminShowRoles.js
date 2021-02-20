@@ -62,7 +62,7 @@ render() {
             :
             <div/>
           }
-          {this.state.list && this.state.list.map((object, index ) => (
+          {this.state.list.length > 0 && this.state.list.map((object, index ) => (
             <div className = 'sickness-item'>
             <div className = 'sickness-item-part part-1-2-3'>
               <a>{object.name} {object.lastname}</a>

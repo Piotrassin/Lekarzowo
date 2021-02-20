@@ -165,7 +165,7 @@ render() {
             <Autocomplete
             requestCallback = {AdminService.getWorkinghours}
             title = "Godziny pracy"
-            dataTestId  = 'autocomplete-local'
+            dataTestId  = 'autocomplete-workinghours'
             changeCallback = {this.onClickWHSearch}
             key = {this.state.clear2}
             addId = {

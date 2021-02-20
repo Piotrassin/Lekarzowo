@@ -303,7 +303,8 @@ class Validation {
   validateDateBefore(input){
 
 
-    var validationResult = ((new Date(input)).getDay() < (new Date()).getDay()) || ((new Date(input)).getMonth() < (new Date()).getMonth()) || ((new Date(input)).getYear() < (new Date()).getYear());
+    //var validationResult = ((new Date(input)).getDate() < (new Date()).getDate()) || ((new Date(input)).getMonth() < (new Date()).getMonth()) || ((new Date(input)).getYear() < (new Date()).getYear());
+    var validationResult = new Date(input) < new Date();
     if(validationResult){
       return " nie może być wcześniejsza niż dzisiejsza data";
     }
@@ -312,9 +313,9 @@ class Validation {
 
   validateDateBeforeCustom(input){
     var date = new Date(input);
-    date.setDate(date.getDate() + 1);
-
-    var validationResult = ((date).getDay() < (new Date()).getDay()) || ((date).getMonth() < (new Date()).getMonth()) || ((date).getYear() < (new Date()).getYear());
+//    date.setDate(date.getDate() + 1);
+    var validationResult = date < new Date();
+    //var validationResult = ((date).getDate() < (new Date()).getDate()) || ((date).getMonth() < (new Date()).getMonth()) || ((date).getYear() < (new Date()).getYear());
     if(validationResult){
       return " nie może być wcześniejsza niż dzisiejsza data";
     }

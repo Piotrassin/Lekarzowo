@@ -11,7 +11,8 @@ const visitDoctor = {
   localName: "Szpital Kliniczny",
   doctorSpecialization: "Kardiologia",
   patientName: "Bartosz",
-  patientLastname: "Bartoszewski"
+  patientLastname: "Bartoszewski",
+  roomNumber: 5
 };
 
 const visitPatient = {
@@ -22,7 +23,8 @@ const visitPatient = {
   localName: "Szpital Kliniczny",
   doctorSpecialization: "Kardiologia",
   doctorName: "Andrzej",
-  doctorLastname: "Andrzejewski"
+  doctorLastname: "Andrzejewski",
+  roomNumber: 5
 };
 
 const doctorRole = 'doctor';
@@ -70,6 +72,8 @@ describe("Component functionality doctor view", () => {
     value = wrapper.find("a").at(2).text();
     expect(value).toEqual("Szpital Kliniczny");
     value = wrapper.find("a").at(3).text();
+    expect(value).toEqual("Pokój: 5");
+    value = wrapper.find("a").at(4).text();
     expect(value).toEqual("Bartosz Bartoszewski");
   });
 
@@ -82,7 +86,7 @@ describe("Component functionality doctor view", () => {
     var btnCancel = getByText('Odwołaj');
     fireEvent.click(btnCancel);
     expect(mockedCallBack).toHaveBeenCalledTimes(1);
-    expect(mockedCallBack.mock.calls[0][0]).toEqual({"doctorSpecialization": "Kardiologia", "isCanceled": false, "localName": "Szpital Kliniczny", "patientLastname": "Bartoszewski", "patientName": "Bartosz", "reservationEndTime": "2020-10-20T06:30:00.000Z", "reservationId": 1, "reservationStartTime": "2020-10-20T06:00:00.000Z"});
+    expect(mockedCallBack.mock.calls[0][0]).toEqual({"doctorSpecialization": "Kardiologia", "isCanceled": false, "localName": "Szpital Kliniczny", "patientLastname": "Bartoszewski", "patientName": "Bartosz", "reservationEndTime": "2020-10-20T06:30:00.000Z", "reservationId": 1, "reservationStartTime": "2020-10-20T06:00:00.000Z", "roomNumber": 5});
   });
 
   it('should call history.push when clicked on Zobacz button', () => {
@@ -109,8 +113,10 @@ describe("Component functionality patient view", () => {
     value = wrapper.find("a").at(1).text();
     expect(value).toEqual("06:00 - 06:30");
     value = wrapper.find("a").at(2).text();
-    expect(value).toEqual(visitPatient.doctorSpecialization);
-    value = wrapper.find("a").at(3).text();
+    expect(value).toEqual(visitPatient.localName);
+    value = wrapper.find("a").at(4).text();
+    expect(value).toEqual("Pokój: " + visitPatient.roomNumber);
+    value = wrapper.find("a").at(5).text();
     expect(value).toEqual(visitPatient.doctorName.concat(' ').concat(visitPatient.doctorLastname));
   });
 
@@ -120,7 +126,6 @@ describe("Component functionality patient view", () => {
     });
     const {debug, getByText} = render(<VisitItem visit = {visitPatient} role = {patientRole} upcomingVisit = {true}
       dialogCallback = {mockedCallBack}/>);
-    debug();
     var btnCancel = getByText('Odwołaj');
     fireEvent.click(btnCancel);
     expect(mockedCallBack).toHaveBeenCalledTimes(1);
@@ -133,7 +138,6 @@ describe("Component functionality patient view", () => {
     }) };
     const {debug, getByText} = render(<VisitItem visit = {visitPatient} role = {patientRole} upcomingVisit = {false}
       history = {historyMock}/>);
-    debug();
     var btnCancel = getByText('Zobacz');
     fireEvent.click(btnCancel);
     expect(historyMock.push).toHaveBeenCalledTimes(1);

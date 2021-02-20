@@ -119,7 +119,7 @@ render() {
             changeCallback = {this.onClickSpecializationSearch}
             selectedCustomValue = {this.state.selectedCustomValue}
             key = {this.state.clear2}
-
+            dataTestId="autocomplete-speciality"
             />
             <br/>
           </div>

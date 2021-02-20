@@ -70,7 +70,7 @@ render() {
           requestCallback = {UserService.getSpecializations}
           title = "Specjalizacja"
           changeCallback = {this.onClickSearch}
-          dataTestId="autocomplete-local"
+          dataTestId="autocomplete-speciality"
           key = {this.state.clear}
           />
           </div>

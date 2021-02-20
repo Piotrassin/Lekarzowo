@@ -131,6 +131,7 @@ class VisitDetails extends React.Component {
     this.setState({
       snackbarRef: React.createRef()
     }, () => {
+      console.log(window.location.href);
       if(this.state.id){
         if(VisitService.checkIfAnyOpenVisit()){
           if(VisitService.getOpenedVisit().id == this.state.id){

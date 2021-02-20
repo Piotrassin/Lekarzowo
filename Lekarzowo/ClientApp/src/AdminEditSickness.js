@@ -80,7 +80,7 @@ render() {
             requestCallback = {VisitService.getAvailableSicknesses}
             title = "Choroba"
             changeCallback = {this.onClickSearch}
-            dataTestId="autocomplete-local"
+            dataTestId="autocomplete-sickness"
             key = {this.state.clear}
             />
             <br/>

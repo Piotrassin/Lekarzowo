@@ -69,6 +69,8 @@ constructor(props){
 
 
 onClickDate(value) {
+  console.log('Data od ' + value[0]);
+  console.log('Data do ' + value[1]);
   this.setState({
     startDate: value[0],
     endDate: value[1],
@@ -124,6 +126,8 @@ onReservationClick(selectedReservationItem,event) {
 async onSubmitBtnClick(event){
   var startDateNew = new Date(this.state.startDate);
   startDateNew.setDate(startDateNew.getDate() + 1);
+  console.log('start ' + this.state.startDate);
+  console.log('end ' + this.state.endDate);
   var reservationRequestObject = {
     doctorId: this.state.doctorId,
     specialityId: this.state.specialityId,
@@ -135,7 +139,7 @@ async onSubmitBtnClick(event){
   };
   this.setState ({
     errors: Validation.validateAddVisit(this.state.cityId, this.state.doctorId, this.state.specialityId,
-      this.state.startDate, this.state.endDate)
+      startDateNew, this.state.endDate)
   }, () => {
     if(Object.keys(this.state.errors).length > 0){
       var message = Validation.handleValidationOutcome(this.state.errors);

@@ -164,6 +164,7 @@ class Registration extends React.Component {
           className = "input input-registration"
           type = "password"
           name = "password"
+          id = "password"
           value = {this.state.password}
           onChange = {this.handleChange}
           />
@@ -174,6 +175,7 @@ class Registration extends React.Component {
           className = "input input-registration"
           type = "password"
           name = "passwordValid"
+          id = "passwordValid"
           value = {this.state.passwordValid}
           onChange = {this.handleChange}
           />

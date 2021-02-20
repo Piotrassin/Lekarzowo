@@ -3,7 +3,7 @@ import {shallow, mount, debug} from 'enzyme';
 import {act, render, fireEvent, wait, cleanup} from '@testing-library/react';
 import React from 'react';
 import MockBackend from '../../__mocks__/MockBackend.js.js';
-
+import Formater from '../../helpers/Formater.js';
 
 
 it('renders', () => {
@@ -46,8 +46,9 @@ describe('site functionality with fetch status 200', () => {
     });
     render(<DashboardDoctor  />);
     expect(spyGlobalFetch).toHaveBeenCalledTimes(2);
+    var todaysDate = (new Date()).toISOString();
     expect(spyGlobalFetch.mock.calls[0][0]).toEqual('https://localhost:5001/api/workinghours/DoctorsUpcomingSchedule?doctorId=141&days=7');
-    expect(spyGlobalFetch.mock.calls[1][0]).toEqual('https://localhost:5001/api/Reservations/UpcomingByDoctorId?doctorId=141&localId=1&start=2021-01-04&end=2021-01-04&limit=&skip=');
+    expect(spyGlobalFetch.mock.calls[1][0]).toEqual('https://localhost:5001/api/Reservations/UpcomingByDoctorId?doctorId=141&localId=1&start=' + Formater.formatDate(todaysDate) + '&end=' + Formater.formatDate(todaysDate) + '&limit=&skip=');
   });
 
   it('should display data', async () => {
@@ -68,7 +69,7 @@ describe('site functionality with fetch status 200', () => {
     });
     const {debug, getByText} = render(<DashboardDoctor  />);
     await wait(() => expect(spyGlobalFetch).toHaveBeenCalledTimes(2));
-    var value = getByText('2020-10-20');
+    var value = getByText('2020-01-20');
     var value = getByText('08:30 - 09:00');
     var value = getByText('Bartosz Bartoszewski');
   });
@@ -122,7 +123,6 @@ describe('site functionality with fetch status 200', () => {
     const {debug, getByText} = render(<DashboardDoctor history = {historyMock}  />);
     await wait(() => expect(spyGlobalFetch).toHaveBeenCalledTimes(2));
     var btn = getByText('Twoje').parentNode.parentNode;
-    //debug();
     fireEvent.click(btn);
     expect(historyMock.push).toHaveBeenCalledTimes(1);
     expect(historyMock.push.mock.calls[0][0]).toEqual('/visits');
@@ -150,7 +150,6 @@ describe('site functionality with fetch status 200', () => {
     const {debug, getByText} = render(<DashboardDoctor history = {historyMock}  />);
     await wait(() => expect(spyGlobalFetch).toHaveBeenCalledTimes(2));
     var btn = getByText('Wyszukaj').parentNode.parentNode;
-    debug();
     fireEvent.click(btn);
     expect(historyMock.push).toHaveBeenCalledTimes(1);
     expect(historyMock.push.mock.calls[0][0]).toEqual('/findDoctor');

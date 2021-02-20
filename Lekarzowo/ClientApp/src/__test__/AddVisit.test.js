@@ -48,7 +48,7 @@ describe('site functionality with fetch status 200', () => {
     var inputCity = getByLabelText('Miasto');
     comboBoxInput.focus();
     fireEvent.change(inputCity, { target: { value: "W" }});
-    await wait(() => expect(spyGlobalFetch).toHaveBeenCalledTimes(2))
+    await wait(() => expect(spyGlobalFetch).toHaveBeenCalled())
     fireEvent.keyDown(comboBoxInput, { key: 'ArrowDown' });
     await wait();
     fireEvent.keyDown(comboBoxInput, { key: 'Enter' });
@@ -73,15 +73,10 @@ describe('site functionality with fetch status 200', () => {
     await wait();
     fireEvent.keyDown(comboBoxDoctor, { key: 'Enter' });
     await wait();
-    expect(inputDoctor.value).toEqual('Andrzej Andrzejewski');
-    var startDateBtn = getByRole('button', {name: 'January 2, 2021'});
-    fireEvent.click(startDateBtn);
-    var endDateBtn = getByRole('button', {name: 'January 4, 2021'});
-    fireEvent.click(endDateBtn);
+    expect(inputDoctor.value).toEqual('Anna Annowska');
     var searchBtn = getByRole('button', {name: 'Szukaj'});
     fireEvent.click(searchBtn);
     await wait(() => alert = getByRole('alert'));
-    console.log(alert.innerHTML);
     expect(alert.classList).not.toContain('show');
   });
 
@@ -105,7 +100,7 @@ describe('site functionality with fetch status 500', () => {
     var inputCity = getByLabelText('Miasto');
     comboBoxInput.focus();
     fireEvent.change(inputCity, { target: { value: "W" }});
-    await wait(() => expect(spyGlobalFetch).toHaveBeenCalledTimes(2))
+    await wait(() => expect(spyGlobalFetch).toHaveBeenCalled())
     fireEvent.keyDown(comboBoxInput, { key: 'ArrowDown' });
     await wait();
     fireEvent.keyDown(comboBoxInput, { key: 'Enter' });
@@ -130,11 +125,8 @@ describe('site functionality with fetch status 500', () => {
     await wait();
     fireEvent.keyDown(comboBoxDoctor, { key: 'Enter' });
     await wait();
-    expect(inputDoctor.value).toEqual('Andrzej Andrzejewski');
-    var startDateBtn = getByRole('button', {name: 'January 2, 2021'});
-    fireEvent.click(startDateBtn);
-    var endDateBtn = getByRole('button', {name: 'January 4, 2021'});
-    fireEvent.click(endDateBtn);
+    expect(inputDoctor.value).toEqual('Anna Annowska');
+
     jest.clearAllMocks();
     const spyGlobalFetchEror = jest.spyOn(window, 'fetch')
     .mockImplementation((url, options) => {

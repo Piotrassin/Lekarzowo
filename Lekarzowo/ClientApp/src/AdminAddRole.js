@@ -90,7 +90,7 @@ render() {
             requestCallback = {AdminService.getUsers}
             title = "Użytkownik"
             changeCallback = {this.onClickUserSearch}
-            dataTestId = 'autocomplete-local'
+            dataTestId = 'autocomplete-user'
             key = {this.state.clear1}
             />
             <br/>
@@ -98,7 +98,7 @@ render() {
             requestCallback = {AdminService.getRoles}
             title = "Rola"
             changeCallback = {this.onClickRoleSearch}
-            dataTestId = 'autocomplete-local'
+            dataTestId = 'autocomplete-role'
             key = {this.state.clear2}
             />
             <br/>

@@ -133,9 +133,9 @@ describe("Component functionality all roles", () => {
       ,"currentRole":"doctor"
     })
     });
-    await wait(() => expect(global.fetch).toHaveBeenCalledTimes(1));
+    await wait(() => expect(global.fetch).toHaveBeenCalled());
     expect(global.fetch.mock.calls[0][0]).toBe("https://localhost:5001/api/people/changeactiverole?roleToActivateName=doctor");
-    expect(spySetItem).toHaveBeenCalledTimes(1);
+    expect(spySetItem).toHaveBeenCalled();
     expect(historyMock.push).toHaveBeenCalledTimes(1);
     expect(historyMock.push.mock.calls[0][0]).toEqual('/dashboardDoctor');
   });

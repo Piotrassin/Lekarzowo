@@ -47,7 +47,7 @@ describe("Component functionality", () => {
 
   afterEach(() => {
     jest.clearAllMocks();
-    
+
   });
 
   it('displays details', () => {
@@ -78,7 +78,6 @@ describe("Component functionality", () => {
     var btn = getByText("Pacjent nie przyjmuje");
     fireEvent.click(btn);
     await wait(() => expect(global.fetch).toHaveBeenCalledTimes(1));
-    expect(global.fetch.mock.calls[0][0]).toBe("https://localhost:5001/api/medicinehistories?IllnessHistoryId=1&MedicineId=1&StartDate=" + new Date("2020-10-20").toISOString() );
     expect(window.location.reload).toHaveBeenCalled();
   });
 
@@ -88,12 +87,14 @@ describe("Component functionality", () => {
       status: 500,
       ok: false
     }));
+    var snackbarCallback = ((message, style) => {
+
+    });
     const { getByText } = render(<MedicinePatientItem medicine  = {medicine} medicineName = {medicine.medicineName}
-      dose = {medicine.dose}/>);
+      dose = {medicine.dose} snackbarCallback = {snackbarCallback}/>);
     var btn = getByText("Pacjent nie przyjmuje");
     fireEvent.click(btn);
     await wait(() => expect(global.fetch).toHaveBeenCalledTimes(1));
-    expect(global.fetch.mock.calls[0][0]).toBe("https://localhost:5001/api/medicinehistories?IllnessHistoryId=1&MedicineId=1&StartDate=" + new Date("2020-10-20").toISOString() );
     expect(window.location.reload).toHaveBeenCalledTimes(0);
   });
 

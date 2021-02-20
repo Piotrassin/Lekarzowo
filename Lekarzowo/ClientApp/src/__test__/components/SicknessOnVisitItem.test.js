@@ -38,10 +38,13 @@ describe("Component functionality", () => {
     const mockedCallBack = jest.fn((message, css, prop1, prop2, prop3)  => {
       return message
     });
+    window.confirm = jest.fn(() => true);
     const {debug, getByRole} = render(<SicknessOnVisitItem sicknessName = {sickness.sicknessName} sicknessDescription = {sickness.sicknessDescription}
       id = {sickness.id} isOpen = {true} snackbarCallback = {mockedCallBack}/>);
     var imgBtn = getByRole('img', {src: /RemoveSign.svg/i});
     fireEvent.click(imgBtn);
+    //debug();
+    expect(window.confirm).toHaveBeenCalled();
     await wait(() => expect(global.fetch).toHaveBeenCalledTimes(1));
     expect(mockedCallBack).toHaveBeenCalledWith("Usunięto", "green-snackbar", "visitSickness", {"id": 1, "sicknessDescription": "Zdiagnozowano ból w tylnej części głowy", "sicknessName": "Ból głowy"}, "illnessHistoryId");
 

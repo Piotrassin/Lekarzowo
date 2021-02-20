@@ -28,10 +28,13 @@ describe('site functionality with fetch status 200', () => {
 
 
   it('should be able to fill inputs', () => {
-    const {debug, getByRole} = render(<AdminAddTreatment />);
+    const {debug, getByRole, getByLabelText} = render(<AdminAddTreatment />);
     var input = getByRole('textbox');
     fireEvent.change(input, {target : {value: "Rentgen"}});
     expect(input.value).toEqual('Rentgen');
+    var inputNumber = getByLabelText('Cena zabiegu');
+    fireEvent.change(inputNumber, {target : {value: 5}});
+    expect(inputNumber.value).toEqual("5");
   });
 
   it('should display message when succesfuly added sickness', async () => {
@@ -39,10 +42,13 @@ describe('site functionality with fetch status 200', () => {
     .mockImplementation((url, options) => {
       return Promise.resolve(MockBackend.mockFetch(url, options));
     });
-    const {debug, getByRole, getByText} = render(<AdminAddTreatment />);
+    const {debug, getByRole, getByText,getByLabelText} = render(<AdminAddTreatment />);
     var input = getByRole('textbox');
     fireEvent.change(input, {target : {value: "Rentgen"}});
     expect(input.value).toEqual('Rentgen');
+    var inputNumber = getByLabelText('Cena zabiegu');
+    fireEvent.change(inputNumber, {target : {value: 5}});
+    expect(inputNumber.value).toEqual("5");
     var btn = getByText('Dodaj');
     fireEvent.click(btn);
     expect(spyGlobalFetch).toHaveBeenCalled();
@@ -65,10 +71,13 @@ describe('site functionality with fetch status 500', () => {
     .mockImplementation((url, options) => {
       return Promise.resolve(MockBackend.mockFetchWithError(url, options));
     });
-    const {debug, getByRole, getByText} = render(<AdminAddTreatment />);
+    const {debug, getByRole, getByText, getByLabelText} = render(<AdminAddTreatment />);
     var input = getByRole('textbox');
     fireEvent.change(input, {target : {value: "Rentgen"}});
     expect(input.value).toEqual('Rentgen');
+    var inputNumber = getByLabelText('Cena zabiegu');
+    fireEvent.change(inputNumber, {target : {value: 5}});
+    expect(inputNumber.value).toEqual("5");
     var btn = getByText('Dodaj');
     fireEvent.click(btn);
     expect(spyGlobalFetch).toHaveBeenCalled();

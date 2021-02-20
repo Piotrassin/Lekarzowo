@@ -28,13 +28,16 @@ describe('site functionality with fetch status 200', () => {
 
 
   it('should be able to fill inputs', () => {
-    const {debug, getByRole} = render(<AdminAddSpeciality />);
+    const {debug, getByRole, getByLabelText} = render(<AdminAddSpeciality />);
     var input = getByRole('textbox', {name: 'Nazwa specializacji'});
     fireEvent.change(input, {target : {value: "Kardiologia"}});
     expect(input.value).toEqual('Kardiologia');
     var input = getByRole('spinbutton', {name: 'Cena bazowa za wizytę'});
     fireEvent.change(input, {target : {value: 100}});
     expect(input.value).toEqual('100');
+    var inputNumber = getByLabelText('Docelowy czas wizyty');
+    fireEvent.change(inputNumber, {target : {value: 120}});
+    expect(inputNumber.value).toEqual('120');
   });
 
   it('should display message when succesfuly added sickness', async () => {
@@ -42,13 +45,16 @@ describe('site functionality with fetch status 200', () => {
     .mockImplementation((url, options) => {
       return Promise.resolve(MockBackend.mockFetch(url, options));
     });
-    const {debug, getByRole, getByText} = render(<AdminAddSpeciality />);
+    const {debug, getByRole, getByText, getByLabelText} = render(<AdminAddSpeciality />);
     var input = getByRole('textbox', {name: 'Nazwa specializacji'});
     fireEvent.change(input, {target : {value: "Kardiologia"}});
     expect(input.value).toEqual('Kardiologia');
     var input = getByRole('spinbutton', {name: 'Cena bazowa za wizytę'});
     fireEvent.change(input, {target : {value: 100}});
     expect(input.value).toEqual('100');
+    var inputNumber = getByLabelText('Docelowy czas wizyty');
+    fireEvent.change(inputNumber, {target : {value: 120}});
+    expect(inputNumber.value).toEqual('120');
     var btn = getByText('Dodaj');
     fireEvent.click(btn);
     expect(spyGlobalFetch).toHaveBeenCalled();
@@ -71,13 +77,16 @@ describe('site functionality with fetch status 500', () => {
     .mockImplementation((url, options) => {
       return Promise.resolve(MockBackend.mockFetchWithError(url, options));
     });
-    const {debug, getByRole, getByText} = render(<AdminAddSpeciality />);
+    const {debug, getByRole, getByText, getByLabelText} = render(<AdminAddSpeciality />);
     var input = getByRole('textbox', {name: 'Nazwa specializacji'});
     fireEvent.change(input, {target : {value: "Kardiologia"}});
     expect(input.value).toEqual('Kardiologia');
     var input = getByRole('spinbutton', {name: 'Cena bazowa za wizytę'});
     fireEvent.change(input, {target : {value: 100}});
     expect(input.value).toEqual('100');
+    var inputNumber = getByLabelText('Docelowy czas wizyty');
+    fireEvent.change(inputNumber, {target : {value: 120}});
+    expect(inputNumber.value).toEqual('120');
     var btn = getByText('Dodaj');
     fireEvent.click(btn);
     expect(spyGlobalFetch).toHaveBeenCalled();

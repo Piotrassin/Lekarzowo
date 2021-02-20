@@ -70,6 +70,7 @@ class FindDoctor extends React.Component {
 
     DoctorService.getDoctorWorkingHours(id, 7)
     .then(response => {
+      console.log('Working ' + response);
       this.setState({
         doctorWorkingHoursArray: response
       });

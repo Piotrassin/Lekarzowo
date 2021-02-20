@@ -9,7 +9,7 @@ export default class Snackbar extends PureComponent {
     classes: ""
   }
 
-  openSnackBar = (message = 'Seems there was a problem', classes = 'red-snackbar') => {
+  openSnackBar = (message = 'Wystąpł problem', classes = 'red-snackbar') => {
     this.message = message;
     this.setState({
       isActive: true,

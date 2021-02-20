@@ -4,8 +4,12 @@ import {render, fireEvent} from '@testing-library/react';
 import React from 'react';
 
 const medicine = {
-  medicineName: "Apap 10mg",
-  medicineDosage: "Stosować 1 dziennie - wieczorem"
+  medicine: {
+    name: "Apap 10mg"
+  },
+  description: "Stosować 1 dziennie - wieczorem",
+  startDate: new Date().toISOString(),
+  finishDate: new Date().toISOString()
 };
 
 it('renders', () => {
@@ -13,7 +17,7 @@ it('renders', () => {
 });
 
 it('accepts props', () => {
-  const wrapper = mount(<MedicineItem medicine = {medicine} />);
+  const wrapper = mount(<MedicineItem medicine = {medicine}  />);
   expect(wrapper.props().medicine.medicineName).toEqual(medicine.medicineName);
   expect(wrapper.props().medicine.medicineDosage).toEqual(medicine.medicineDosage);
 });

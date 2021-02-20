@@ -41,7 +41,7 @@ onClickSearch(value) {
 
 handleClickEdit(event){
   this.setState ({
-    errors: Validation.validateUniversalBlankTwoinputs(this.state.treatmentName, this.state.treatmentPrice, "Pole Nazwa zabiegu", "Pole Cena zabiegu")
+    errors: Validation.validateUniversalBlankTwoinputs(this.state.treatmentName, this.state.treatmentPrice.toString(), "Pole Nazwa zabiegu", "Pole Cena zabiegu")
   }, () => {
     console.log(this.state.errors);
     if(Object.keys(this.state.errors).length > 0){
@@ -54,7 +54,7 @@ handleClickEdit(event){
         console.log(response);
         this.setState({
           treatmentName: "",
-          treatmentPrice: "", 
+          treatmentPrice: "",
           clear: !this.state.clear,
           selectedObjectId: ""
         });
@@ -83,7 +83,7 @@ render() {
             requestCallback = {VisitService.getAvailableTreatments}
             title = "Zabieg"
             changeCallback = {this.onClickSearch}
-            dataTestId="autocomplete-local"
+            dataTestId="autocomplete-treatment"
             key = {this.state.clear}
             />
             <br/>

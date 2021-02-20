@@ -37,6 +37,7 @@ class DoctorService {
       MasterService.handleResponseStatus(response);
       return response.json()
     }).then(response => {
+      console.log('esonse: ' + response);
       if(response.status && response.status == 400){
         throw Error(Validation.handleValidationFetchOutcome(response.errors));
       }

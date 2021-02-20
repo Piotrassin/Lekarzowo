@@ -42,7 +42,7 @@ describe('site functionality with fetch status 200', () => {
     await wait();
     fireEvent.keyDown(comboBoxInput, { key: 'Enter' });
     await wait();
-    expect(inputDoctor.value).toEqual('Andrzej Andrzejewski');
+    expect(inputDoctor.value).toEqual('Anna Annowska');
     var comboBoxInput = getByTestId('autocomplete-local');
     var inputLocal = getByLabelText('Lokal');
     comboBoxInput.focus();
@@ -82,7 +82,7 @@ describe('site functionality with fetch status 200', () => {
     await wait();
     fireEvent.keyDown(comboBoxInput, { key: 'Enter' });
     await wait();
-    expect(inputDoctor.value).toEqual('Andrzej Andrzejewski');
+    expect(inputDoctor.value).toEqual('Anna Annowska');
     var comboBoxInput = getByTestId('autocomplete-local');
     var inputLocal = getByLabelText('Lokal');
     comboBoxInput.focus();

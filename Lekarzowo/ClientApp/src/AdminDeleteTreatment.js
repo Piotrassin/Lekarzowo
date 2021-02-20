@@ -70,7 +70,7 @@ render() {
           requestCallback = {VisitService.getAvailableTreatments}
           title = "Zabieg"
           changeCallback = {this.onClickSearch}
-          dataTestId="autocomplete-local"
+          dataTestId="autocomplete-treatment"
           key = {this.state.clear}
           />
           </div>
