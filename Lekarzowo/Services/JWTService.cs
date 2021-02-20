@@ -26,6 +26,8 @@ namespace Lekarzowo.Services
         private const string _algorithm = SecurityAlgorithms.HmacSha256Signature;
         private readonly SigningCredentials _credentials;
         private const char delimiter = '.';
+        private readonly DateTime acccessTokenExpirationTime = DateTime.Now.AddMinutes(20);
+        private readonly DateTime refreshTokenExpirationTime = DateTime.Now.AddDays(1);
 
 
         public JWTService(IOptions<SecretSettings> secretSettings, IStandardUserRolesRepository roles,
@@ -51,7 +53,7 @@ namespace Lekarzowo.Services
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(60),
+                expires: acccessTokenExpirationTime,
                 signingCredentials: _credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -76,7 +78,7 @@ namespace Lekarzowo.Services
             var randomNum = new byte[64];
             var generator1 = RandomNumberGenerator.Create();
             generator1.GetBytes(randomNum);
-            var expDate = ParseDateForTokenUse(DateTime.Now.AddDays(1));
+            var expDate = ParseDateForTokenUse(refreshTokenExpirationTime);
             var dateBytes = Encoding.ASCII.GetBytes(expDate);
             var payload = dateBytes.Concat(randomNum);
             return Convert.ToBase64String(payload.ToArray());
