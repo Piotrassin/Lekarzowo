@@ -1,13 +1,12 @@
-﻿using System;
-using Lekarzowo.DataAccessLayer.Models;
+﻿using Lekarzowo.DataAccessLayer.Models;
 using Lekarzowo.DataAccessLayer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace Lekarzowo.Controllers
 {
@@ -15,9 +14,9 @@ namespace Lekarzowo.Controllers
     [ApiController]
     public class CitiesController : BaseController
     {
-        private readonly ICitiesRepository _repository;
+        private readonly IBaseNameRepository<City> _repository;
 
-        public CitiesController(ICitiesRepository repository)
+        public CitiesController(IBaseNameRepository<City> repository)
         {
             _repository = repository;
         }

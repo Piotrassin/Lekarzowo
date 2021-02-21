@@ -271,16 +271,14 @@ namespace Lekarzowo.Controllers
 
         private async Task<bool> CanVisitBeOpened(decimal visitId)
         {
+            var reservation = await _reservationsRepository.GetByID(visitId);
             var visit = _repository.GetByID(visitId);
-            if (visit == null)
-            {
-                return true;
-            }
-            var onGoingVisits = await _repository.OnGoingVisitsToday(visit.Reservation.DoctorId);
 
-            if (visit.Reservation.Starttime > DateTime.Now.AddMinutes(visitStatusChangeTimeOffsetMinutes) ||
-                visit.Reservation.Endtime < DateTime.Now.AddMinutes(-visitStatusChangeTimeOffsetMinutes) ||
-                (onGoingVisits.Any() && !onGoingVisits.Contains(visit)))
+            var onGoingVisits = await _repository.OnGoingVisitsToday(reservation.DoctorId);
+
+            if (reservation.Starttime > DateTime.Now.AddMinutes(visitStatusChangeTimeOffsetMinutes) ||
+                reservation.Endtime < DateTime.Now.AddMinutes(-visitStatusChangeTimeOffsetMinutes) ||
+                visit != null || (onGoingVisits.Any() && !onGoingVisits.Contains(visit)))
             {
                 return false;
             }

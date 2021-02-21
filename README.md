@@ -1,0 +1,2 @@
+# Lekarzowo
+Praca inżynierska, której celem jest stworzenie portalu umożliwiającego zapisanie się na wizytę lekarską, przeglądanie swojej dotychczasowej historii medycznej jako pacjent oraz jako lekarz przeglądanie swojego terminarza i wprowadzanie danych na wizytach takich jak przeprowadzone zabiegi, przepisane leki, czy zdiagnozowane schorzenia. Wykorzystano frontend w technologii React, API napisane w języku C# z użyciem EF Core 2.2 i ASP.NET Core oraz bazę Oracle DB 11g.
