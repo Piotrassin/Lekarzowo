@@ -275,10 +275,16 @@ namespace Lekarzowo.Controllers
             var visit = _repository.GetByID(visitId);
 
             var onGoingVisits = await _repository.OnGoingVisitsToday(reservation.DoctorId);
+            var visitAlreadyOnGoing = false;
+
+            if(visit != null)
+            {
+                visitAlreadyOnGoing = onGoingVisits.Contains(visit);
+            }
 
             if (reservation.Starttime > DateTime.Now.AddMinutes(visitStatusChangeTimeOffsetMinutes) ||
                 reservation.Endtime < DateTime.Now.AddMinutes(-visitStatusChangeTimeOffsetMinutes) ||
-                visit != null || (onGoingVisits.Any() && !onGoingVisits.Contains(visit)))
+                onGoingVisits.Any() && !visitAlreadyOnGoing)
             {
                 return false;
             }
