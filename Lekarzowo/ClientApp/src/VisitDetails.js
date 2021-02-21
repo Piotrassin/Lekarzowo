@@ -403,19 +403,11 @@ class VisitDetails extends React.Component {
             VisitService.startVisit(this.state.id);
             VisitService.setVisitOngoing(this.state.id, true)
             .then(resp => {
-              if(resp.value){
-                if(resp.value == true){
+
                   this.setState({
                     openedVisit: true
                   });
-                }
-                else {
-                  throw new Error('Nie można otworzyć wizyty');
-                }
-              }
-              else {
-                throw new Error('Nie można otworzyć wizyty');
-              }
+              
 
             })
             .catch(err => {
